@@ -1,0 +1,27 @@
+.formulario{
+    background-color: #fff;
+}
+
+.form-main .control-label{
+    width: 130px;
+    font-family: Helvetica;
+    font-weight: bolder;
+    text-align: left;
+}
+
+.form-main .controls {
+    margin-left: 130px;
+}
+.titulo-form{
+    color: #0B0595;
+}
+
+.form-control {
+
+    border-radius: 10px;
+
+}
+
+.control-label{
+    letter-spacing: .1rem;
+}
