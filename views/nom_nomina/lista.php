@@ -38,12 +38,11 @@ $url_icons = (new views())->url_icons;
                 <tr>
                     <th scope="col">Acciones</th>
                     <th scope="col">Id</th>
+                    <th scope="col">Folio</th>
                     <th scope="col">RFC</th>
+                    <th scope="col">NSS</th>
                     <th scope="col">Razon Social</th>
-                    <th scope="col">Nombre comercial</th>
-                    <th scope="col">Tipo Sucursal</th>
-                    <th scope="col">Direccion</th>
-                    <th scope="col">Telefono 1</th>
+                    <th scope="col">Fecha</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -60,13 +59,12 @@ $url_icons = (new views())->url_icons;
                         </a>
 
                     </th>
-                    <th><?php echo $registro->org_empresa_id; ?></th>
-                    <th><?php echo $registro->org_empresa_rfc; ?></th>
-                    <th><?php echo $registro->org_empresa_razon_social; ?></th>
-                    <th><?php echo $registro->org_empresa_nombre_comercial; ?></th>
-                    <th><?php echo $registro->org_tipo_sucursal_descripcion; ?></th>
-                    <th><?php echo $registro->direccion; ?></th>
-                    <th><?php echo $registro->org_sucursal_telefono_1; ?></th>
+                    <th><?php echo $registro->nom_nomina_id; ?></th>
+                    <th><?php echo $registro->nom_nomina_folio; ?></th>
+                    <th><?php echo $registro->em_empleado_rfc; ?></th>
+                    <th><?php echo $registro->em_empleado_nss; ?></th>
+                    <th><?php echo $registro->razon_social; ?></th>
+                    <th><?php echo $registro->nom_nomina_fecha; ?></th>
                 </tr>
                 <?php } ?>
 

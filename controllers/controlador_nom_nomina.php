@@ -11,7 +11,7 @@ class controlador_nom_nomina extends \gamboamartin\nomina\controllers\controlado
     public function __construct(PDO $link, stdClass $paths_conf = new stdClass()){
         $html_base = new html();
         parent::__construct( link: $link, html: $html_base);
-        $this->titulo_lista = 'Sucursales';
+        $this->titulo_lista = 'Nominas';
     }
 
     public function lista(bool $header, bool $ws = false): array
@@ -32,7 +32,9 @@ class controlador_nom_nomina extends \gamboamartin\nomina\controllers\controlado
         foreach ($registros as $indice=>$registro){
             foreach($links as $link){
 
-                if((int)$registro->org_sucursal_id  === (int)$link->org_sucursal_id){
+                if((int)$registro->nom_nomina_id  === (int)$link->nom_nomina_id){
+                    $registro->razon_social = $registro->em_empleado_nombre.' '. $registro->em_empleado_ap.' ';
+                    $registro->razon_social .= $registro->em_empleado_am;
                     $registro->link_modifica = $link->link_modifica;
                     $registro->link_elimina_bd = $link->link_elimina_bd;
                 }
