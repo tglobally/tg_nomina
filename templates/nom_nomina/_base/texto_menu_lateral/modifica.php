@@ -1,1 +1,1 @@
-<span class="texto-menu-lateral">Generales</span>
+<span class="texto-menu-lateral">Nomina</span>
