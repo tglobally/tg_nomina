@@ -56,12 +56,16 @@
         "gamboa.martin/cat_sat": "dev-main",
         "gamboa.martin/empleado": "dev-main",
         "gamboa.martin/im_registro_patronal": "dev-main",
+        "gamboa.martin/comercial": "dev-master",
+        "gamboa.martin/documento": "dev-master",
+        "gamboa.martin/facturacion": "dev-main",
         "gamboa.martin/nomina": "dev-master",
         "gamboa.martin/organigrama": "dev-main",
         "gamboa.martin/direccion_postal": "dev-main",
         "tglobally/template_tg": "dev-main",
         "gamboa.martin/template_1": "dev-main",
         "gamboa.martin/js_base": "dev-master"
+
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5"

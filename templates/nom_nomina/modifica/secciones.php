@@ -6,6 +6,9 @@
         <div class="col-md-8">
             <h3>Nominas</h3>
             <?php include "templates/nom_nomina/_base/links/modifica.php"; ?>
+            <hr class="hr-menu-lateral">
+            <?php include "templates/nom_nomina/_base/links/2.php"; ?>
+
         </div>
     </div>
 </div>
