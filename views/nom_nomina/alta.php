@@ -17,6 +17,8 @@ $url_icons = (new views())->url_icons;
                 <?php echo $controlador->inputs->codigo; ?>
                 <?php echo $controlador->inputs->codigo_bis; ?>
                 <?php echo $controlador->inputs->descripcion; ?>
+                <?php echo $controlador->inputs->folio; ?>
+                <?php echo $controlador->inputs->fecha; ?>
                 <?php echo $controlador->inputs->num_dias_pagados; ?>
                 <?php echo $controlador->inputs->fecha_pago; ?>
                 <?php echo $controlador->inputs->fecha_inicial_pago; ?>
