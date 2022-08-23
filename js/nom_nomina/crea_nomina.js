@@ -1,7 +1,10 @@
+let url = getAbsolutePath();
+
+let session_id = getParameterByName('session_id');
 
 let sl_nom_empleado = $("#em_empleado_id");
 let sl_cat_sat_periodicidad_pago_nom = $("#cat_sat_periodicidad_pago_nom_id");
-
+let sl_em_cuenta_bancaria_id = $("#em_cuenta_bancaria_id");
 
 let txt_rfc = $('#rfc');
 let txt_curp = $('#curp');
@@ -13,6 +16,7 @@ let txt_num_dias_pagados = $('#num_dias_pagados');
 let txt_fecha_inicial_pago = $('#fecha_inicial_pago');
 let txt_fecha_final_pago = $('#fecha_final_pago');
 let txt_subtotal = $('#subtotal');
+
 
 sl_nom_empleado.change(function(){
     let selected = $(this).find('option:selected');
@@ -40,6 +44,33 @@ sl_nom_empleado.change(function(){
 
     let sub_Total = subTotal(txt_salario_diario.val(),txt_num_dias_pagados.val())
     txt_subtotal.val(sub_Total)
+
+    em_empleado_id = $(this).val();
+
+    let url = "index.php?seccion=em_cuenta_bancaria&ws=1&accion=get_cuentas_bancarias&em_empleado_id="+em_empleado_id+"&session_id="+session_id;
+
+    $.ajax({
+        type: 'GET',
+        url: url,
+    }).done(function( data ) {
+        console.log(data);
+
+        sl_em_cuenta_bancaria_id.empty();
+        integra_new_option("#em_cuenta_bancaria_id",'Seleccione una cuenta bancaria','-1');
+
+        $.each(data.registros, function( index, em_cuenta_bancaria ) {
+            integra_new_option("#em_cuenta_bancaria_id",em_cuenta_bancaria.bn_banco_descripcion_select+' '+em_cuenta_bancaria.em_cuenta_bancaria_num_cuenta,em_cuenta_bancaria.em_cuenta_bancaria_id);
+        });
+
+
+        sl_em_cuenta_bancaria_id.selectpicker('refresh');
+
+    }).fail(function (jqXHR, textStatus, errorThrown){
+        alert('Error al ejecutar');
+        console.log(url);
+    });
+
+
 });
 
 sl_cat_sat_periodicidad_pago_nom.change(function(){
@@ -49,9 +80,9 @@ sl_cat_sat_periodicidad_pago_nom.change(function(){
     let fechaFinal
 
     if (selected.val() !== '') {
-         fechaFinal = fecha(txt_fecha_inicial_pago, num_dias_pagados)
+        fechaFinal = fecha(txt_fecha_inicial_pago, num_dias_pagados)
     } else {
-         fechaFinal = fecha(txt_fecha_inicial_pago)
+        fechaFinal = fecha(txt_fecha_inicial_pago)
     }
     txt_num_dias_pagados.val(num_dias_pagados);
     txt_fecha_final_pago.val(fechaFinal)
@@ -91,6 +122,7 @@ txt_num_dias_pagados.change(function() {
     txt_subtotal.val(sub_Total)
 });
 
+
 let fecha = (fechaInicio, numDias = 1) => {
 
     var fechaInicial = new Date(fechaInicio.val());
@@ -102,6 +134,8 @@ let fecha = (fechaInicio, numDias = 1) => {
 };
 
 let subTotal = (salario = 0, diasPagados = 0,) => {
-   return salario * diasPagados
+    return salario * diasPagados
 };
+
+
 
