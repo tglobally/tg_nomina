@@ -1,2 +1,5 @@
-<?php include "templates/nom_nomina/_base/numero/1.azul.php"; ?>
-<?php include "templates/nom_nomina/_base/texto_menu_lateral/modifica.php"; ?>
+<?php /** @var string $seccion */ ?>
+<?php use config\views; ?>
+<?php include (new views())->ruta_templates."number.php"; ?>
+
+<?php echo($controlador->html_base->menu_lateral('Configuracion')); ?>
