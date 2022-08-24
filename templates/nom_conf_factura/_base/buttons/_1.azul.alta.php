@@ -1,4 +1,5 @@
-<button class="btn btn-default menu-lateral menu-lateral">
-<?php include "templates/nom_conf_factura/_base/numero/1.azul.php"; ?>
-<?php include "templates/nom_conf_factura/_base/texto_menu_lateral/alta.php"; ?>
-</button>
+<?php /** @var tglobally\tg_nomina\controllers\controlador_nom_conf_factura $controlador */ ?>
+<?php /** @var string $seccion */ ?>
+<?php use config\views; ?>
+<?php include (new views())->ruta_templates."number.php"; ?>
+<?php echo($controlador->html_base->menu_lateral('Nueva configuracion')); ?>

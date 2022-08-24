@@ -1,1 +1,0 @@
-<img src="img/3.gris.svg" class="numero">
