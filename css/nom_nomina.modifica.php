@@ -4,6 +4,8 @@ use config\views;
 
 $ruta_template_base = (new views())->ruta_template_base;
 include $ruta_template_base.'assets/css/_base_css.php';
+include 'nom_nomina.lista.php';
+
 ?>
 <style>
 .cont_tabla_sucursal{
