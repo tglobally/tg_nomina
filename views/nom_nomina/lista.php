@@ -60,11 +60,11 @@ $url_icons = (new views())->url_icons;
 
                     </th>
                     <th><?php echo $registro->nom_nomina_id; ?></th>
-                    <th><?php echo $registro->nom_nomina_folio; ?></th>
+                    <th><?php echo $registro->fc_factura_folio; ?></th>
                     <th><?php echo $registro->em_empleado_rfc; ?></th>
                     <th><?php echo $registro->em_empleado_nss; ?></th>
                     <th><?php echo $registro->razon_social; ?></th>
-                    <th><?php echo $registro->nom_nomina_fecha; ?></th>
+                    <th><?php echo $registro->fc_factura_fecha; ?></th>
                 </tr>
                 <?php } ?>
 
