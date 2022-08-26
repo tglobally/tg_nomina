@@ -25,6 +25,8 @@
                 <?php echo $controlador->inputs->salario_diario; ?>
                 <?php echo $controlador->inputs->salario_diario_integrado; ?>
                 <?php echo $controlador->inputs->subtotal; ?>
+                <?php echo $controlador->inputs->descuento; ?>
+                <?php echo $controlador->inputs->total; ?>
 
                 <div class="buttons col-md-12">
                     <div class="col-md-6">

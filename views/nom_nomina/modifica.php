@@ -37,6 +37,8 @@ $url_icons = (new views())->url_icons;
                 <?php echo $controlador->inputs->salario_diario; ?>
                 <?php echo $controlador->inputs->salario_diario_integrado; ?>
                 <?php echo $controlador->inputs->subtotal; ?>
+                <?php echo $controlador->inputs->descuento; ?>
+                <?php echo $controlador->inputs->total; ?>
                 <div class="buttons col-md-12">
                     <div class="col-md-6">
                         <button type="submit" class="btn btn-info btn-guarda col-md-12 " name="btn_action_next" value="modifica">Guarda</button>
