@@ -14,11 +14,6 @@ $url_icons = (new views())->url_icons;
         <div class="  form-main" id="form">
             <form method="post" action="./index.php?seccion=nom_nomina&accion=modifica_bd&session_id=<?php echo $controlador->session_id; ?>" class="form-additional">
                 <?php echo $controlador->inputs->id; ?>
-                <?php echo $controlador->inputs->codigo; ?>
-                <?php echo $controlador->inputs->codigo_bis; ?>
-                <?php echo $controlador->inputs->descripcion; ?>
-                <?php echo $controlador->inputs->descripcion_select; ?>
-                <?php echo $controlador->inputs->alias; ?>
                 <?php echo $controlador->inputs->select->im_registro_patronal_id; ?>
                 <?php echo $controlador->inputs->select->em_empleado_id; ?>
                 <?php echo $controlador->inputs->select->em_cuenta_bancaria_id; ?>
@@ -61,6 +56,16 @@ $url_icons = (new views())->url_icons;
                             <a href="index.php?seccion=nom_nomina&accion=nueva_deduccion&registro_id=<?php echo $controlador->nom_nomina_id; ?>&session_id=<?php echo $controlador->session_id; ?>"
                                class="btn btn-info btn-guarda col-md-12 "><i class="icon-edit"></i>
                                 Nueva Deduccion
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="buttons col-md-12 ">
+
+                        <div class="col-md-6">
+                            <a href="index.php?seccion=nom_nomina&accion=otro_pago&registro_id=<?php echo $controlador->nom_nomina_id; ?>&session_id=<?php echo $controlador->session_id; ?>"
+                               class="btn btn-info btn-guarda col-md-12"><i class="icon-edit"></i>
+                                Otro pago
                             </a>
                         </div>
 
