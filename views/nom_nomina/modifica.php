@@ -114,7 +114,7 @@ $url_icons = (new views())->url_icons;
                         <?php foreach ($controlador->percepciones->registros as $percepcion){?>
                             <tr>
                                 <td><?php echo $percepcion['nom_par_percepcion_id']; ?></td>
-                                <td><?php echo $percepcion['nom_par_percepcion_codigo']; ?></td>
+                                <td><?php echo $percepcion['nom_percepcion_codigo']; ?></td>
                                 <td><?php echo $percepcion['nom_par_percepcion_descripcion']; ?></td>
                                 <td><?php echo $percepcion['nom_par_percepcion_importe_gravado']; ?></td>
                                 <td><?php echo $percepcion['nom_par_percepcion_importe_exento']; ?></td>
@@ -174,7 +174,7 @@ $url_icons = (new views())->url_icons;
                         <?php foreach ($controlador->deducciones->registros as $deduccion){?>
                             <tr>
                                 <td><?php echo $deduccion['nom_par_deduccion_id']; ?></td>
-                                <td><?php echo $deduccion['nom_par_deduccion_codigo']; ?></td>
+                                <td><?php echo $deduccion['nom_deduccion_codigo']; ?></td>
                                 <td><?php echo $deduccion['nom_par_deduccion_descripcion']; ?></td>
                                 <td><?php echo $deduccion['nom_par_deduccion_importe_gravado']; ?></td>
                                 <td><?php echo $deduccion['nom_par_deduccion_importe_exento']; ?></td>
