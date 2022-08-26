@@ -164,8 +164,7 @@ $url_icons = (new views())->url_icons;
                             <th>Id</th>
                             <th>Codigo</th>
                             <th>Descripcion</th>
-                            <th>Importe Gravado</th>
-                            <th>Importe Exento</th>
+                            <th>Importe</th>
                             <th>Modifica</th>
                             <th>Elimina</th>
                         </tr>
@@ -177,7 +176,6 @@ $url_icons = (new views())->url_icons;
                                 <td><?php echo $deduccion['nom_deduccion_codigo']; ?></td>
                                 <td><?php echo $deduccion['nom_par_deduccion_descripcion']; ?></td>
                                 <td><?php echo $deduccion['nom_par_deduccion_importe_gravado']; ?></td>
-                                <td><?php echo $deduccion['nom_par_deduccion_importe_exento']; ?></td>
                                 <td><?php echo $deduccion['link_modifica']; ?></td>
                                 <td><?php echo $deduccion['link_elimina']; ?></td>
                             </tr>
