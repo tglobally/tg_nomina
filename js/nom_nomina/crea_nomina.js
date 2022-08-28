@@ -136,7 +136,9 @@ txt_num_dias_pagados.change(function() {
     }
     txt_fecha_final_pago.val(fechaFinal)
     let sub_Total = subTotal(txt_salario_diario.val(),txt_num_dias_pagados.val())
+    let total = sub_Total - txt_descuento.val()
     txt_subtotal.val(sub_Total)
+    txt_total.val(total)
 });
 
 
