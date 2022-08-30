@@ -127,7 +127,6 @@ $url_icons = (new views())->url_icons;
                     </table>
                     <div class="box-body">
                         * Total registros: <?php echo $controlador->percepciones->n_registros; ?><br />
-                        * Fecha Hora: <?php echo $controlador->fecha_hoy; ?>
                     </div>
                 </div>
 
@@ -185,7 +184,6 @@ $url_icons = (new views())->url_icons;
                     </table>
                     <div class="box-body">
                         * Total registros: <?php echo $controlador->deducciones->n_registros; ?><br />
-                        * Fecha Hora: <?php echo $controlador->fecha_hoy; ?>
                     </div>
                 </div>
 
@@ -245,7 +243,6 @@ $url_icons = (new views())->url_icons;
                     </table>
                     <div class="box-body">
                         * Total registros: <?php echo $controlador->otros_pagos->n_registros; ?><br />
-                        * Fecha Hora: <?php echo $controlador->fecha_hoy; ?>
                     </div>
                 </div>
 
