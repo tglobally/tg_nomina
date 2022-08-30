@@ -191,6 +191,66 @@ $url_icons = (new views())->url_icons;
 
             </div>
         </div>
+
+        <div class="col-md-12 info-lista">
+            <div class="col-lg-12 content">
+
+                <div class="col-md-12 mt-3 table-responsive-sm">
+
+                    <div class="filters">
+                        <div class="filter col-md-4 acciones_filter">
+                            <a class="icon_xls_lista">
+                                <img src="<?php echo $url_icons; ?>icon_xls.png">
+                            </a>
+                            <a class="icon_atras_lista">
+                                <img src="<?php echo $url_icons; ?>icon_pag_atras.svg">
+                            </a>
+                            <p class="paginador">3 de 35</p>
+                            <a class="icon_adelante_lista">
+                                <img src="<?php echo $url_icons; ?>icon_pag_adelante.svg">
+                            </a>
+                        </div>
+                        <div class="search col-md-8 input_search">
+                            <input type="text form-control input">
+                            <img class="input_icon" src="<?php echo $url_icons; ?>icon_lupa.svg">
+                        </div>
+                    </div>
+
+                    <table class="table table-dark">
+                        <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Codigo</th>
+                            <th>Descripcion</th>
+                            <th>Importe Gravado</th>
+                            <th>Importe Exento</th>
+                            <th>Modifica</th>
+                            <th>Elimina</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php foreach ($controlador->otros_pagos->registros as $otro_pago){?>
+                            <tr>
+                                <td><?php echo $otro_pago['nom_par_otro_pago_id']; ?></td>
+                                <td><?php echo $otro_pago['nom_par_otro_pago_codigo']; ?></td>
+                                <td><?php echo $otro_pago['nom_par_otro_pago_descripcion']; ?></td>
+                                <td><?php echo $otro_pago['nom_par_otro_pago_importe_gravado']; ?></td>
+                                <td><?php echo $otro_pago['nom_par_otro_pago_importe_exento']; ?></td>
+                                <td><?php echo $otro_pago['link_modifica']; ?></td>
+                                <td><?php echo $otro_pago['link_elimina']; ?></td>
+                            </tr>
+                        <?php } ?>
+
+                        </tbody>
+                    </table>
+                    <div class="box-body">
+                        * Total registros: <?php echo $controlador->otros_pagos->n_registros; ?><br />
+                        * Fecha Hora: <?php echo $controlador->fecha_hoy; ?>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </div>
 </div>
 

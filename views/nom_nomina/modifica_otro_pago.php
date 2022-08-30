@@ -11,7 +11,7 @@ $url_icons = (new views())->url_icons;
     <div class="col-lg-12">
         <h3 class="text-center titulo-form">Hola, <?php echo $controlador->datos_session_usuario['adm_usuario_user']; ?> </h3>
         <div class="  form-main" id="form">
-            <form method="post" action="<?php echo $controlador->link_nom_par_otro_pago_alta_bd; ?>" class="form-additional">
+            <form method="post" action="<?php echo $controlador->link_nom_par_otro_pago_modifica_bd; ?>&nom_par_otro_pago_id=<?php echo $controlador->nom_par_otro_pago_id; ?>" class="form-additional">
                 <?php echo $controlador->inputs->select->nom_nomina_id; ?>
                 <?php echo $controlador->inputs->select->nom_otro_pago_id; ?>
                 <?php echo $controlador->inputs->descripcion; ?>
