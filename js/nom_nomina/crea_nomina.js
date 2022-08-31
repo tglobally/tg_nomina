@@ -5,6 +5,7 @@ let session_id = getParameterByName('session_id');
 let sl_nom_empleado = $("#em_empleado_id");
 let sl_cat_sat_periodicidad_pago_nom = $("#cat_sat_periodicidad_pago_nom_id");
 let sl_em_cuenta_bancaria_id = $("#em_cuenta_bancaria_id");
+let sl_nom_conf_empleado = $("#nom_conf_empleado_id");
 
 let txt_rfc = $('#rfc');
 let txt_curp = $('#curp');
@@ -18,6 +19,8 @@ let txt_fecha_final_pago = $('#fecha_final_pago');
 let txt_subtotal = $('#subtotal');
 let txt_descuento = $('#descuento');
 let txt_total = $('#total');
+
+let configuraciones = {};
 
 
 sl_nom_empleado.change(function(){
@@ -54,12 +57,7 @@ sl_nom_empleado.change(function(){
 
     let url = "index.php?seccion=em_cuenta_bancaria&ws=1&accion=get_cuentas_bancarias&em_empleado_id="+em_empleado_id+"&session_id="+session_id;
 
-    $.ajax({
-        type: 'GET',
-        url: url,
-    }).done(function( data ) {
-        console.log(data);
-
+    getData(url,(data) => {
         sl_em_cuenta_bancaria_id.empty();
         integra_new_option("#em_cuenta_bancaria_id",'Seleccione una cuenta bancaria','-1');
 
@@ -67,16 +65,47 @@ sl_nom_empleado.change(function(){
             integra_new_option("#em_cuenta_bancaria_id",em_cuenta_bancaria.bn_banco_descripcion_select+' '+em_cuenta_bancaria.em_cuenta_bancaria_num_cuenta,em_cuenta_bancaria.em_cuenta_bancaria_id);
         });
 
-
         sl_em_cuenta_bancaria_id.selectpicker('refresh');
-
-    }).fail(function (jqXHR, textStatus, errorThrown){
-        alert('Error al ejecutar');
-        console.log(jqXHR);
     });
 
+    let url_conf = "index.php?seccion=nom_conf_empleado&ws=1&accion=get_configuraciones_empleado&em_empleado_id="+em_empleado_id+"&session_id="+session_id;
 
+    getData(url_conf,(data) => {
+        sl_nom_conf_empleado.empty();
+        integra_new_option("#nom_conf_empleado_id",'Seleccione una configuración','-1');
+
+        $.each(data.registros, function( index, nom_conf_empleado ) {
+            configuraciones[nom_conf_empleado.nom_conf_empleado_id] = nom_conf_empleado;
+            integra_new_option("#nom_conf_empleado_id",nom_conf_empleado.nom_conf_empleado_descripcion+' '+nom_conf_empleado.em_empleado_id,nom_conf_empleado.nom_conf_empleado_id);
+        });
+
+        sl_nom_conf_empleado.selectpicker('refresh');
+    });
+
+    sl_cat_sat_periodicidad_pago_nom.val("").change();
 });
+
+sl_nom_conf_empleado.change(function () {
+    let selected = $(this).find('option:selected').val();
+
+    let elemento = Object.keys(configuraciones)
+        .filter((key) => key.includes(selected))
+        .reduce((obj, key) => {
+            return configuraciones[key];
+        }, {});
+    sl_cat_sat_periodicidad_pago_nom.val(elemento.nom_conf_nomina_cat_sat_periodicidad_pago_nom_id).change();
+
+})
+
+let getData = async (url, acciones) => {
+    fetch(url)
+        .then(response => response.json())
+        .then(data => acciones(data))
+        .catch(err => {
+            alert('Error al ejecutar');
+            console.error("ERROR: ", err.message)
+        });
+}
 
 txt_descuento.change(function() {
 
@@ -136,9 +165,7 @@ txt_num_dias_pagados.change(function() {
     }
     txt_fecha_final_pago.val(fechaFinal)
     let sub_Total = subTotal(txt_salario_diario.val(),txt_num_dias_pagados.val())
-    let total = sub_Total - txt_descuento.val()
     txt_subtotal.val(sub_Total)
-    txt_total.val(total)
 });
 
 
