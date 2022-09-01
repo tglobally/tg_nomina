@@ -35,41 +35,27 @@ $url_icons = (new views())->url_icons;
                 <?php echo $controlador->inputs->descuento; ?>
                 <?php echo $controlador->inputs->total; ?>
                 <div class="buttons col-md-12">
-                    <div class="col-md-6">
-                        <button type="submit" class="btn btn-info btn-success col-md-12 " value="modifica">Guarda</button>
-                    </div>
-                    <div class="col-md-6 btn-ancho">
-                        <button type="submit" class="btn btn-info btn-guarda col-md-12 " name="btn_action_next" value="ubicacion">Siguiente</button>
-                    </div>
+                        <div class="row mt-3">
+                            <div class="col-sm-3">
+                                <button type="submit" class="btn btn-info btn-success col-md-12 " value="modifica">Modifica</button>
+                            </div>
+                            <div class="col-sm-3">
+                                <a href="index.php?seccion=nom_nomina&accion=nueva_percepcion&registro_id=<?php echo $controlador->nom_nomina_id; ?>&session_id=<?php echo $controlador->session_id; ?>"
+                                   class="btn btn-info btn-guarda col-md-12"><i class="icon-edit"></i>Nueva Percepcion
+                                </a>
+                            </div>
+                            <div class="col-sm-3">
+                                <a href="index.php?seccion=nom_nomina&accion=nueva_deduccion&registro_id=<?php echo $controlador->nom_nomina_id; ?>&session_id=<?php echo $controlador->session_id; ?>"
+                                   class="btn btn-info btn-guarda col-md-12 "><i class="icon-edit"></i>Nueva Deduccion
+                                </a>
+                            </div>
+                            <div class="col-sm-3">
+                                <a href="index.php?seccion=nom_nomina&accion=otro_pago&registro_id=<?php echo $controlador->nom_nomina_id; ?>&session_id=<?php echo $controlador->session_id; ?>"
+                                   class="btn btn-info btn-guarda col-md-12"><i class="icon-edit"></i>Otro pago
+                                </a>
+                            </div>
 
-
-                    <div class="buttons col-md-12 ">
-
-                        <div class="col-md-6">
-                            <a href="index.php?seccion=nom_nomina&accion=nueva_percepcion&registro_id=<?php echo $controlador->nom_nomina_id; ?>&session_id=<?php echo $controlador->session_id; ?>"
-                               class="btn btn-info btn-guarda col-md-12"><i class="icon-edit"></i>
-                                Nueva Percepcion
-                            </a>
                         </div>
-
-                        <div class="col-md-6">
-                            <a href="index.php?seccion=nom_nomina&accion=nueva_deduccion&registro_id=<?php echo $controlador->nom_nomina_id; ?>&session_id=<?php echo $controlador->session_id; ?>"
-                               class="btn btn-info btn-guarda col-md-12 "><i class="icon-edit"></i>
-                                Nueva Deduccion
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="buttons col-md-12 ">
-
-                        <div class="col-md-6">
-                            <a href="index.php?seccion=nom_nomina&accion=otro_pago&registro_id=<?php echo $controlador->nom_nomina_id; ?>&session_id=<?php echo $controlador->session_id; ?>"
-                               class="btn btn-info btn-guarda col-md-12"><i class="icon-edit"></i>
-                                Otro pago
-                            </a>
-                        </div>
-
-                    </div>
                 </div>
             </form>
         </div>
