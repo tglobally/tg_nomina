@@ -6,6 +6,7 @@ let sl_nom_empleado = $("#em_empleado_id");
 let sl_cat_sat_periodicidad_pago_nom = $("#cat_sat_periodicidad_pago_nom_id");
 let sl_em_cuenta_bancaria_id = $("#em_cuenta_bancaria_id");
 let sl_nom_conf_empleado = $("#nom_conf_empleado_id");
+let sl_cat_sat_tipo_nomina = $("#cat_sat_tipo_nomina_id");
 
 let txt_rfc = $('#rfc');
 let txt_curp = $('#curp');
@@ -59,7 +60,7 @@ sl_nom_empleado.change(function(){
 
     getData(url,(data) => {
         sl_em_cuenta_bancaria_id.empty();
-        integra_new_option("#em_cuenta_bancaria_id",'Seleccione una cuenta bancaria','-1');
+        integra_new_option("#em_cuenta_bancaria_id",'Seleccione una cuenta bancaria','');
 
         $.each(data.registros, function( index, em_cuenta_bancaria ) {
             integra_new_option("#em_cuenta_bancaria_id",em_cuenta_bancaria.bn_banco_descripcion_select+' '+em_cuenta_bancaria.em_cuenta_bancaria_num_cuenta,em_cuenta_bancaria.em_cuenta_bancaria_id);
@@ -72,7 +73,7 @@ sl_nom_empleado.change(function(){
 
     getData(url_conf,(data) => {
         sl_nom_conf_empleado.empty();
-        integra_new_option("#nom_conf_empleado_id",'Seleccione una configuración','-1');
+        integra_new_option("#nom_conf_empleado_id",'Seleccione una configuración','');
 
         $.each(data.registros, function( index, nom_conf_empleado ) {
             configuraciones[nom_conf_empleado.nom_conf_empleado_id] = nom_conf_empleado;
@@ -82,19 +83,25 @@ sl_nom_empleado.change(function(){
         sl_nom_conf_empleado.selectpicker('refresh');
     });
 
+    sl_cat_sat_tipo_nomina.val("").change();
     sl_cat_sat_periodicidad_pago_nom.val("").change();
 });
 
 sl_nom_conf_empleado.change(function () {
     let selected = $(this).find('option:selected').val();
 
-    let elemento = Object.keys(configuraciones)
-        .filter((key) => key.includes(selected))
-        .reduce((obj, key) => {
-            return configuraciones[key];
-        }, {});
-    sl_cat_sat_periodicidad_pago_nom.val(elemento.nom_conf_nomina_cat_sat_periodicidad_pago_nom_id).change();
-
+    if (selected !== "") {
+        let elemento = Object.keys(configuraciones)
+            .filter((key) => key.includes(selected))
+            .reduce((obj, key) => {
+                return configuraciones[key];
+            }, {});
+        sl_cat_sat_tipo_nomina.val(elemento.nom_conf_nomina_cat_sat_tipo_nomina_id).change();
+        sl_cat_sat_periodicidad_pago_nom.val(elemento.nom_conf_nomina_cat_sat_periodicidad_pago_nom_id).change();
+    } else {
+        sl_cat_sat_tipo_nomina.val("").change();
+        sl_cat_sat_periodicidad_pago_nom.val("").change();
+    }
 })
 
 let getData = async (url, acciones) => {

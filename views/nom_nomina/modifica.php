@@ -12,7 +12,7 @@ $url_icons = (new views())->url_icons;
         <h3 class="text-center titulo-form">Hola, <?php echo $controlador->datos_session_usuario['adm_usuario_user']; ?> </h3>
 
         <div class="  form-main" id="form">
-            <form method="post" action="./index.php?seccion=nom_nomina&accion=modifica_bd&session_id=<?php echo $controlador->session_id; ?>" class="form-additional">
+            <form method="post" action="<?php echo $controlador->link_nom_nomina_modifica_bd; ?>" class="form-additional">
                 <?php echo $controlador->inputs->id; ?>
                 <?php echo $controlador->inputs->select->im_registro_patronal_id; ?>
                 <?php echo $controlador->inputs->select->em_empleado_id; ?>
@@ -36,7 +36,7 @@ $url_icons = (new views())->url_icons;
                 <?php echo $controlador->inputs->total; ?>
                 <div class="buttons col-md-12">
                     <div class="col-md-6">
-                        <button type="submit" class="btn btn-info btn-guarda col-md-12 " name="btn_action_next" value="modifica">Guarda</button>
+                        <button type="submit" class="btn btn-info btn-success col-md-12 " value="modifica">Guarda</button>
                     </div>
                     <div class="col-md-6 btn-ancho">
                         <button type="submit" class="btn btn-info btn-guarda col-md-12 " name="btn_action_next" value="ubicacion">Siguiente</button>
