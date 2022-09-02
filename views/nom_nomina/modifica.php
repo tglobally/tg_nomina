@@ -51,7 +51,7 @@ $url_icons = (new views())->url_icons;
                 </div>
                 <div class="card-body">
                     <div class="cont_tabla_sucursal  col-md-12">
-                        <table class="table footable-sort">
+                        <table class="table">
                             <thead>
                             <tr>
                                 <th data-breakpoints="xs sm md" data-type="html" >Id</th>
@@ -95,7 +95,7 @@ $url_icons = (new views())->url_icons;
                 </div>
                 <div class="card-body">
                     <div class="cont_tabla_sucursal  col-md-12">
-                        <table class="table footable-sort">
+                        <table class="table ">
                             <thead>
                             <tr>
                                 <th data-breakpoints="xs sm md" data-type="html" >Id</th>
@@ -137,7 +137,7 @@ $url_icons = (new views())->url_icons;
                 </div>
                 <div class="card-body">
                     <div class="cont_tabla_sucursal  col-md-12">
-                        <table class="table footable-sort">
+                        <table class="table ">
                             <thead>
                             <tr>
                                 <th data-breakpoints="xs sm md" data-type="html" >Id</th>
