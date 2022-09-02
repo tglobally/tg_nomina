@@ -18,7 +18,7 @@ include $ruta_template_base.'assets/css/_base_css.php';
         margin-bottom: 20px;
     }
     .text-header {
-        font-family: cursive;
+        font-family: Helvetica;
         font-weight: 700!important;
         color: #000098;
     }
