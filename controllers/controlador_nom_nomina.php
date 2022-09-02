@@ -12,6 +12,14 @@ class controlador_nom_nomina extends \gamboamartin\nomina\controllers\controlado
         $html_base = new html();
         parent::__construct( link: $link, html: $html_base);
         $this->titulo_lista = 'Nominas';
+
+        $this->params_actions = new stdClass();
+        $this->params_actions->modifica = new stdClass();
+        $this->params_actions->modifica->im_registro_patronal_id = new stdClass();
+        $this->params_actions->modifica->im_registro_patronal_id->cols = 8;
+
+        $this->params_actions->modifica->em_empleado_id = new stdClass();
+        $this->params_actions->modifica->em_empleado_id->cols = 12;
     }
 
     public function lista(bool $header, bool $ws = false): array
@@ -47,4 +55,6 @@ class controlador_nom_nomina extends \gamboamartin\nomina\controllers\controlado
 
         return $r_lista;
     }
+
+
 }
