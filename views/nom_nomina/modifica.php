@@ -153,7 +153,7 @@ $url_icons = (new views())->url_icons;
                             <?php foreach ($controlador->otros_pagos->registros as $otro_pago){?>
                                 <tr>
                                     <td><?php echo $otro_pago['nom_par_otro_pago_id']; ?></td>
-                                    <td><?php echo $otro_pago['nom_par_otro_pago_codigo']; ?></td>
+                                    <td><?php echo $otro_pago['nom_otro_pago_codigo']; ?></td>
                                     <td><?php echo $otro_pago['nom_par_otro_pago_descripcion']; ?></td>
                                     <td><?php echo $otro_pago['nom_par_otro_pago_importe_gravado']; ?></td>
                                     <td><?php echo $otro_pago['nom_par_otro_pago_importe_exento']; ?></td>
