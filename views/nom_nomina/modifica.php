@@ -34,206 +34,146 @@ $url_icons = (new views())->url_icons;
                 <?php echo $controlador->inputs->subtotal; ?>
                 <?php echo $controlador->inputs->descuento; ?>
                 <?php echo $controlador->inputs->total; ?>
-                <div class="buttons col-md-12">
+                <div class="buttons col-md-12 ">
                         <div class="row mt-3">
                             <div class="col-sm-3">
                                 <button type="submit" class="btn btn-info btn-success col-md-12 " value="modifica">Modifica</button>
                             </div>
-                            <div class="col-sm-3">
-                                <a href="index.php?seccion=nom_nomina&accion=nueva_percepcion&registro_id=<?php echo $controlador->nom_nomina_id; ?>&session_id=<?php echo $controlador->session_id; ?>"
-                                   class="btn btn-info btn-guarda col-md-12"><i class="icon-edit"></i>Nueva Percepcion
-                                </a>
-                            </div>
-                            <div class="col-sm-3">
-                                <a href="index.php?seccion=nom_nomina&accion=nueva_deduccion&registro_id=<?php echo $controlador->nom_nomina_id; ?>&session_id=<?php echo $controlador->session_id; ?>"
-                                   class="btn btn-info btn-guarda col-md-12 "><i class="icon-edit"></i>Nueva Deduccion
-                                </a>
-                            </div>
-                            <div class="col-sm-3">
-                                <a href="index.php?seccion=nom_nomina&accion=otro_pago&registro_id=<?php echo $controlador->nom_nomina_id; ?>&session_id=<?php echo $controlador->session_id; ?>"
-                                   class="btn btn-info btn-guarda col-md-12"><i class="icon-edit"></i>Otro pago
-                                </a>
-                            </div>
-
                         </div>
                 </div>
             </form>
         </div>
 
-        <div class="col-md-12 info-lista">
-            <div class="col-lg-12 content">
-
-                <div class="col-md-12 mt-3 table-responsive-sm">
-
-                    <div class="filters">
-                        <div class="filter col-md-4 acciones_filter">
-                            <a class="icon_xls_lista">
-                                <img src="<?php echo $url_icons; ?>icon_xls.png">
-                            </a>
-                            <a class="icon_atras_lista">
-                                <img src="<?php echo $url_icons; ?>icon_pag_atras.svg">
-                            </a>
-                            <p class="paginador">3 de 35</p>
-                            <a class="icon_adelante_lista">
-                                <img src="<?php echo $url_icons; ?>icon_pag_adelante.svg">
-                            </a>
-                        </div>
-                        <div class="search col-md-8 input_search">
-                            <input type="text form-control input">
-                            <img class="input_icon" src="<?php echo $url_icons; ?>icon_lupa.svg">
-                        </div>
-                    </div>
-
-                    <table class="table table-dark">
-                        <thead>
-                        <tr>
-                            <th>Id</th>
-                            <th>Codigo</th>
-                            <th>Descripcion</th>
-                            <th>Importe Gravado</th>
-                            <th>Importe Exento</th>
-                            <th>Modifica</th>
-                            <th>Elimina</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <?php foreach ($controlador->percepciones->registros as $percepcion){?>
+        <div class="lista">
+            <div class="card">
+                <div class="card-header">
+                    <span class="text-header">Percepciones</span>
+                </div>
+                <div class="card-body">
+                    <div class="cont_tabla_sucursal  col-md-12">
+                        <table class="table footable-sort">
+                            <thead>
                             <tr>
-                                <td><?php echo $percepcion['nom_par_percepcion_id']; ?></td>
-                                <td><?php echo $percepcion['nom_percepcion_codigo']; ?></td>
-                                <td><?php echo $percepcion['nom_par_percepcion_descripcion']; ?></td>
-                                <td><?php echo $percepcion['nom_par_percepcion_importe_gravado']; ?></td>
-                                <td><?php echo $percepcion['nom_par_percepcion_importe_exento']; ?></td>
-                                <td><?php echo $percepcion['link_modifica']; ?></td>
-                                <td><?php echo $percepcion['link_elimina']; ?></td>
+                                <th data-breakpoints="xs sm md" data-type="html" >Id</th>
+                                <th data-breakpoints="xs sm md" data-type="html" >Codigo</th>
+                                <th data-breakpoints="xs sm md" data-type="html" >Descripcion</th>
+                                <th data-breakpoints="xs sm md" data-type="html" >Importe Gravado</th>
+                                <th data-breakpoints="xs sm md" data-type="html" >Importe Exento</th>
+                                <th data-breakpoints="xs sm md" data-type="html" data-filterable="false">Modifica</th>
+                                <th data-breakpoints="xs sm md" data-type="html" data-filterable="false">Elimina</th>
                             </tr>
-                        <?php } ?>
+                            </thead>
+                            <tbody>
+                            <?php foreach ($controlador->percepciones->registros as $percepcion){?>
+                                <tr>
+                                    <td><?php echo $percepcion['nom_par_percepcion_id']; ?></td>
+                                    <td><?php echo $percepcion['nom_percepcion_codigo']; ?></td>
+                                    <td><?php echo $percepcion['nom_par_percepcion_descripcion']; ?></td>
+                                    <td><?php echo $percepcion['nom_par_percepcion_importe_gravado']; ?></td>
+                                    <td><?php echo $percepcion['nom_par_percepcion_importe_exento']; ?></td>
+                                    <td><?php echo $percepcion['link_modifica']; ?></td>
+                                    <td><?php echo $percepcion['link_elimina']; ?></td>
+                                </tr>
+                            <?php } ?>
 
-                        </tbody>
-                    </table>
-                    <div class="box-body">
-                        * Total registros: <?php echo $controlador->percepciones->n_registros; ?><br />
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-sm-3">
+                        <a href="index.php?seccion=nom_nomina&accion=nueva_percepcion&registro_id=<?php echo $controlador->nom_nomina_id; ?>&session_id=<?php echo $controlador->session_id; ?>"
+                           class="btn btn-info btn-guarda col-md-12"><i class="icon-edit"></i>Nueva Percepcion
+                        </a>
                     </div>
                 </div>
-
             </div>
         </div>
 
-        <div class="col-md-12 info-lista">
-            <div class="col-lg-12 content">
-
-                <div class="col-md-12 mt-3 table-responsive-sm">
-
-                    <div class="filters">
-                        <div class="filter col-md-4 acciones_filter">
-                            <a class="icon_xls_lista">
-                                <img src="<?php echo $url_icons; ?>icon_xls.png">
-                            </a>
-                            <a class="icon_atras_lista">
-                                <img src="<?php echo $url_icons; ?>icon_pag_atras.svg">
-                            </a>
-                            <p class="paginador">3 de 35</p>
-                            <a class="icon_adelante_lista">
-                                <img src="<?php echo $url_icons; ?>icon_pag_adelante.svg">
-                            </a>
-                        </div>
-                        <div class="search col-md-8 input_search">
-                            <input type="text form-control input">
-                            <img class="input_icon" src="<?php echo $url_icons; ?>icon_lupa.svg">
-                        </div>
-                    </div>
-
-                    <table class="table table-dark">
-                        <thead>
-                        <tr>
-                            <th>Id</th>
-                            <th>Codigo</th>
-                            <th>Descripcion</th>
-                            <th>Importe</th>
-                            <th>Modifica</th>
-                            <th>Elimina</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <?php foreach ($controlador->deducciones->registros as $deduccion){?>
+        <div class="lista">
+            <div class="card">
+                <div class="card-header">
+                    <span class="text-header">Deducciones</span>
+                </div>
+                <div class="card-body">
+                    <div class="cont_tabla_sucursal  col-md-12">
+                        <table class="table footable-sort">
+                            <thead>
                             <tr>
-                                <td><?php echo $deduccion['nom_par_deduccion_id']; ?></td>
-                                <td><?php echo $deduccion['nom_deduccion_codigo']; ?></td>
-                                <td><?php echo $deduccion['nom_par_deduccion_descripcion']; ?></td>
-                                <td><?php echo $deduccion['nom_par_deduccion_importe_gravado']; ?></td>
-                                <td><?php echo $deduccion['link_modifica']; ?></td>
-                                <td><?php echo $deduccion['link_elimina']; ?></td>
+                                <th data-breakpoints="xs sm md" data-type="html" >Id</th>
+                                <th data-breakpoints="xs sm md" data-type="html" >Codigo</th>
+                                <th data-breakpoints="xs sm md" data-type="html" >Descripcion</th>
+                                <th data-breakpoints="xs sm md" data-type="html" >Importe</th>
+                                <th data-breakpoints="xs sm md" data-type="html" data-filterable="false">Modifica</th>
+                                <th data-breakpoints="xs sm md" data-type="html" data-filterable="false">Elimina</th>
                             </tr>
-                        <?php } ?>
+                            </thead>
+                            <tbody>
+                            <?php foreach ($controlador->deducciones->registros as $deduccion){?>
+                                <tr>
+                                    <td><?php echo $deduccion['nom_par_deduccion_id']; ?></td>
+                                    <td><?php echo $deduccion['nom_deduccion_codigo']; ?></td>
+                                    <td><?php echo $deduccion['nom_par_deduccion_descripcion']; ?></td>
+                                    <td><?php echo $deduccion['nom_par_deduccion_importe_gravado']; ?></td>
+                                    <td><?php echo $deduccion['link_modifica']; ?></td>
+                                    <td><?php echo $deduccion['link_elimina']; ?></td>
+                                </tr>
+                            <?php } ?>
 
-                        </tbody>
-                    </table>
-                    <div class="box-body">
-                        * Total registros: <?php echo $controlador->deducciones->n_registros; ?><br />
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-sm-3">
+                        <a href="index.php?seccion=nom_nomina&accion=nueva_deduccion&registro_id=<?php echo $controlador->nom_nomina_id; ?>&session_id=<?php echo $controlador->session_id; ?>"
+                           class="btn btn-info btn-guarda col-md-12 "><i class="icon-edit"></i>Nueva Deduccion
+                        </a>
                     </div>
                 </div>
-
             </div>
         </div>
 
-        <div class="col-md-12 info-lista">
-            <div class="col-lg-12 content">
-
-                <div class="col-md-12 mt-3 table-responsive-sm">
-
-                    <div class="filters">
-                        <div class="filter col-md-4 acciones_filter">
-                            <a class="icon_xls_lista">
-                                <img src="<?php echo $url_icons; ?>icon_xls.png">
-                            </a>
-                            <a class="icon_atras_lista">
-                                <img src="<?php echo $url_icons; ?>icon_pag_atras.svg">
-                            </a>
-                            <p class="paginador">3 de 35</p>
-                            <a class="icon_adelante_lista">
-                                <img src="<?php echo $url_icons; ?>icon_pag_adelante.svg">
-                            </a>
-                        </div>
-                        <div class="search col-md-8 input_search">
-                            <input type="text form-control input">
-                            <img class="input_icon" src="<?php echo $url_icons; ?>icon_lupa.svg">
-                        </div>
-                    </div>
-
-                    <table class="table table-dark">
-                        <thead>
-                        <tr>
-                            <th>Id</th>
-                            <th>Codigo</th>
-                            <th>Descripcion</th>
-                            <th>Importe Gravado</th>
-                            <th>Importe Exento</th>
-                            <th>Modifica</th>
-                            <th>Elimina</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <?php foreach ($controlador->otros_pagos->registros as $otro_pago){?>
+        <div class="lista">
+            <div class="card">
+                <div class="card-header">
+                    <span class="text-header">Otros pagos</span>
+                </div>
+                <div class="card-body">
+                    <div class="cont_tabla_sucursal  col-md-12">
+                        <table class="table footable-sort">
+                            <thead>
                             <tr>
-                                <td><?php echo $otro_pago['nom_par_otro_pago_id']; ?></td>
-                                <td><?php echo $otro_pago['nom_par_otro_pago_codigo']; ?></td>
-                                <td><?php echo $otro_pago['nom_par_otro_pago_descripcion']; ?></td>
-                                <td><?php echo $otro_pago['nom_par_otro_pago_importe_gravado']; ?></td>
-                                <td><?php echo $otro_pago['nom_par_otro_pago_importe_exento']; ?></td>
-                                <td><?php echo $otro_pago['link_modifica']; ?></td>
-                                <td><?php echo $otro_pago['link_elimina']; ?></td>
+                                <th data-breakpoints="xs sm md" data-type="html" >Id</th>
+                                <th data-breakpoints="xs sm md" data-type="html" >Codigo</th>
+                                <th data-breakpoints="xs sm md" data-type="html" >Descripcion</th>
+                                <th data-breakpoints="xs sm md" data-type="html" >Importe Gravado</th>
+                                <th data-breakpoints="xs sm md" data-type="html" >Importe Exento</th>
+                                <th data-breakpoints="xs sm md" data-type="html" data-filterable="false">Modifica</th>
+                                <th data-breakpoints="xs sm md" data-type="html" data-filterable="false">Elimina</th>
                             </tr>
-                        <?php } ?>
+                            </thead>
+                            <tbody>
+                            <?php foreach ($controlador->otros_pagos->registros as $otro_pago){?>
+                                <tr>
+                                    <td><?php echo $otro_pago['nom_par_otro_pago_id']; ?></td>
+                                    <td><?php echo $otro_pago['nom_par_otro_pago_codigo']; ?></td>
+                                    <td><?php echo $otro_pago['nom_par_otro_pago_descripcion']; ?></td>
+                                    <td><?php echo $otro_pago['nom_par_otro_pago_importe_gravado']; ?></td>
+                                    <td><?php echo $otro_pago['nom_par_otro_pago_importe_exento']; ?></td>
+                                    <td><?php echo $otro_pago['link_modifica']; ?></td>
+                                    <td><?php echo $otro_pago['link_elimina']; ?></td>
+                                </tr>
+                            <?php } ?>
 
-                        </tbody>
-                    </table>
-                    <div class="box-body">
-                        * Total registros: <?php echo $controlador->otros_pagos->n_registros; ?><br />
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-sm-3">
+                        <a href="index.php?seccion=nom_nomina&accion=otro_pago&registro_id=<?php echo $controlador->nom_nomina_id; ?>&session_id=<?php echo $controlador->session_id; ?>"
+                           class="btn btn-info btn-guarda col-md-12"><i class="icon-edit"></i>Otro pago
+                        </a>
                     </div>
                 </div>
-
             </div>
         </div>
+
     </div>
 </div>
 
