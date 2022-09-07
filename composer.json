@@ -65,7 +65,8 @@
         "tglobally/template_tg": "dev-main",
         "gamboa.martin/banco": "dev-main",
         "gamboa.martin/template_1": "dev-main",
-        "gamboa.martin/js_base": "dev-master"
+        "gamboa.martin/js_base": "dev-master",
+      "gamboa.martin/proceso": "dev-main"
 
     },
     "require-dev": {
