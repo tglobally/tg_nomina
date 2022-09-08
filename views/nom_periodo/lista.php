@@ -46,6 +46,8 @@ $url_icons = (new views())->url_icons;
                 <?php foreach ($controlador->registros as $registro){
                     ?>
                 <tr>
+
+
                     <th class="colum_accion" scope="row">
                         <?php
                         $link = "./index.php?seccion=nom_periodo&accion=procesa_nomina";
@@ -53,6 +55,13 @@ $url_icons = (new views())->url_icons;
                         ?>
                         <a class="btn btn-info" href="<?php echo $link; ?>">
                             Procesa Nomina
+                        </a>
+
+                        <a class="icon_modifica_lista" href="<?php echo $registro->link_modifica; ?>">
+                            <img src="<?php echo $url_icons; ?>icon_modifica.svg">
+                        </a>
+                        <a class="icon_elimina_lista" href="<?php echo $registro->link_elimina_bd; ?>">
+                            <img src="<?php echo $url_icons; ?>icon_elimina.svg">
                         </a>
 
                     </th>

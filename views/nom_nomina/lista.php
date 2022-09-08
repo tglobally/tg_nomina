@@ -56,7 +56,6 @@ $url_icons = (new views())->url_icons;
                         <a class="icon_elimina_lista" href="<?php echo $registro->link_elimina_bd; ?>">
                             <img src="<?php echo $url_icons; ?>icon_elimina.svg">
                         </a>
-
                     </th>
                     <th><?php echo $registro->nom_nomina_id; ?></th>
                     <th><?php echo $registro->fc_factura_folio; ?></th>
