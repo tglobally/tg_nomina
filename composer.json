@@ -66,7 +66,8 @@
         "gamboa.martin/banco": "dev-main",
         "gamboa.martin/template_1": "dev-main",
         "gamboa.martin/js_base": "dev-master",
-      "gamboa.martin/proceso": "dev-main"
+      "gamboa.martin/proceso": "dev-main",
+      "gamboa.martin/xml_cfdi_4": "dev-master"
 
     },
     "require-dev": {
