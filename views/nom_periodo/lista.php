@@ -47,7 +47,6 @@ $url_icons = (new views())->url_icons;
                     ?>
                 <tr>
 
-
                     <th class="colum_accion" scope="row">
                         <?php
                         $link = "./index.php?seccion=nom_periodo&accion=procesa_nomina";
@@ -55,6 +54,10 @@ $url_icons = (new views())->url_icons;
                         ?>
                         <a class="btn btn-info" href="<?php echo $link; ?>">
                             Procesa Nomina
+                        </a>
+
+                        <a class="btn btn-info" href="index.php?seccion=nom_periodo&accion=nominas&registro_id=<?php echo $registro->nom_periodo_id; ?>&session_id=<?php echo $controlador->session_id; ?>">
+                            Nominas
                         </a>
 
                         <a class="icon_modifica_lista" href="<?php echo $registro->link_modifica; ?>">

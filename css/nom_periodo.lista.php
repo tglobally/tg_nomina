@@ -27,6 +27,10 @@ h3{
     font-weight: bold;
 }
 
+.btn-info {
+    margin: 0 10px;
+}
+
 .content {
     display: flex;
     flex-direction: column;
