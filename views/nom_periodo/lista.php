@@ -35,43 +35,27 @@ $url_icons = (new views())->url_icons;
             <table class="table table-dark">
                 <thead>
                 <tr>
-                    <th scope="col">Acciones</th>
-                    <th scope="col">Id</th>
-                    <th scope="col">Descripcion</th>
-                    <th scope="col">Codigo</th>
-                    <th scope="col">Descripcion</th>
+                    <th data-breakpoints="xs sm md" data-type="html" >Id</th>
+                    <th data-breakpoints="xs sm md" data-type="html" >Codigo</th>
+                    <th data-breakpoints="xs sm md" data-type="html" >Descripción</th>
+                    <th data-breakpoints="xs sm md" data-type="html" >Fecha inicial pago</th>
+                    <th data-breakpoints="xs sm md" data-type="html" >Fecha final pago</th>
+                    <th data-breakpoints="xs sm md" data-type="html" >Fecha pago</th>
+                    <th data-breakpoints="xs md" class="control"  data-type="html" data-filterable="false">Modifica</th>
+                    <th data-breakpoints="xs md" class="control"  data-type="html" data-filterable="false">Elimina</th>
                 </tr>
                 </thead>
                 <tbody>
-                <?php foreach ($controlador->registros as $registro){
-                    ?>
+                <?php foreach ($controlador->registros as $registro){?>
                 <tr>
-
-                    <th class="colum_accion" scope="row">
-                        <?php
-                        $link = "./index.php?seccion=nom_periodo&accion=procesa_nomina";
-                        $link.="&session_id=$controlador->session_id&registro_id=".$registro->nom_periodo_id;
-                        ?>
-                        <a class="btn btn-info" href="<?php echo $link; ?>">
-                            Procesa Nomina
-                        </a>
-
-                        <a class="btn btn-info" href="index.php?seccion=nom_periodo&accion=nominas&registro_id=<?php echo $registro->nom_periodo_id; ?>&session_id=<?php echo $controlador->session_id; ?>">
-                            Nominas
-                        </a>
-
-                        <a class="icon_modifica_lista" href="<?php echo $registro->link_modifica; ?>">
-                            <img src="<?php echo $url_icons; ?>icon_modifica.svg">
-                        </a>
-                        <a class="icon_elimina_lista" href="<?php echo $registro->link_elimina_bd; ?>">
-                            <img src="<?php echo $url_icons; ?>icon_elimina.svg">
-                        </a>
-
-                    </th>
-                    <th><?php echo $registro->nom_periodo_id; ?></th>
-                    <th><?php echo $registro->nom_periodo_descripcion; ?></th>
-                    <th><?php echo $registro->nom_periodo_codigo; ?></th>
-                    <th><?php echo $registro->nom_periodo_descripcion_select; ?></th>
+                    <td><?php echo $registro->nom_periodo_id; ?></td>
+                    <td><?php echo $registro->nom_periodo_codigo; ?></td>
+                    <td><?php echo $registro->nom_periodo_descripcion; ?></td>
+                    <td><?php echo $registro->nom_periodo_fecha_inicial_pago; ?></td>
+                    <td><?php echo $registro->nom_periodo_fecha_final_pago; ?></td>
+                    <td><?php echo $registro->nom_periodo_fecha_pago; ?></td>
+                    <td><a class="btn btn-warning " href="<?php echo $registro->link_modifica; ?>">Modifica</a></td>
+                    <td><a class="btn btn-danger " href="<?php echo $registro->link_elimina; ?>">Elimina</a></td>
                 </tr>
                 <?php } ?>
 
