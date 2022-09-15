@@ -36,14 +36,16 @@ $url_icons = (new views())->url_icons;
             <table class="table table-dark">
                 <thead>
                 <tr>
-                    <th scope="col">Acciones</th>
-                    <th scope="col">Id</th>
-                    <th scope="col">RFC</th>
-                    <th scope="col">Razon Social</th>
-                    <th scope="col">Nombre comercial</th>
-                    <th scope="col">Tipo Sucursal</th>
-                    <th scope="col">Direccion</th>
-                    <th scope="col">Telefono 1</th>
+                    <th data-breakpoints="xs sm md" data-type="html" >Id</th>
+                    <th data-breakpoints="xs sm md" data-type="html" >Codigo</th>
+                    <th data-breakpoints="xs sm md" data-type="html" >RFC</th>
+                    <th data-breakpoints="xs sm md" data-type="html" >Razon social</th>
+                    <th data-breakpoints="xs sm md" data-type="html" >Nombre comercial</th>
+                    <th data-breakpoints="xs sm md" data-type="html" >Tipo sucursal</th>
+                    <th data-breakpoints="xs sm md" data-type="html" >Direccion</th>
+                    <th data-breakpoints="xs sm md" data-type="html" >Telefono 1</th>
+                    <th data-breakpoints="xs md" class="control"  data-type="html" data-filterable="false">Modifica</th>
+                    <th data-breakpoints="xs md" class="control"  data-type="html" data-filterable="false">Elimina</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -51,22 +53,16 @@ $url_icons = (new views())->url_icons;
 
                     ?>
                 <tr>
-                    <th class="colum_accion" scope="row">
-                        <a class="icon_modifica_lista" href="<?php echo $registro->link_modifica; ?>">
-                            <img src="<?php echo $url_icons; ?>icon_modifica.svg">
-                        </a>
-                        <a class="icon_elimina_lista" href="<?php echo $registro->link_elimina_bd; ?>">
-                            <img src="<?php echo $url_icons; ?>icon_elimina.svg">
-                        </a>
-
-                    </th>
-                    <th><?php echo $registro->org_empresa_id; ?></th>
-                    <th><?php echo $registro->org_empresa_rfc; ?></th>
-                    <th><?php echo $registro->org_empresa_razon_social; ?></th>
-                    <th><?php echo $registro->org_empresa_nombre_comercial; ?></th>
-                    <th><?php echo $registro->org_tipo_sucursal_descripcion; ?></th>
-                    <th><?php echo $registro->direccion; ?></th>
-                    <th><?php echo $registro->org_sucursal_telefono_1; ?></th>
+                    <td><?php echo $registro->org_empresa_id; ?></td>
+                    <td><?php echo $registro->org_empresa_codigo; ?></td>
+                    <td><?php echo $registro->org_empresa_rfc; ?></td>
+                    <td><?php echo $registro->org_empresa_razon_social; ?></td>
+                    <td><?php echo $registro->org_empresa_nombre_comercial; ?></td>
+                    <td><?php echo $registro->org_tipo_sucursal_descripcion; ?></td>
+                    <td><?php echo $registro->direccion; ?></td>
+                    <td><?php echo $registro->org_sucursal_telefono_1; ?></td>
+                    <td><a class="btn btn-warning " href="<?php echo $registro->link_modifica; ?>">Modifica</a></td>
+                    <td><a class="btn btn-danger " href="<?php echo $registro->link_elimina_bd; ?>">Elimina</a></td>
                 </tr>
                 <?php } ?>
 
