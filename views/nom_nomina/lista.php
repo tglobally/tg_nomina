@@ -59,7 +59,7 @@ $url_icons = (new views())->url_icons;
                         <td><?php echo $registro->em_empleado_nombre.' '.$registro->em_empleado_ap.' '.$registro->em_empleado_am; ?></td>
                         <td><?php echo $registro->org_empresa_id; ?></td>
                         <td><a class="btn btn-warning " href="<?php echo $registro->link_modifica; ?>">Modifica</a></td>
-                        <td><a class="btn btn-danger " href="<?php echo $registro->link_elimina; ?>">Elimina</a></td>
+                        <td><a class="btn btn-danger " href="<?php echo $registro->link_elimina_bd; ?>">Elimina</a></td>
                     </tr>
                 <?php } ?>
 
