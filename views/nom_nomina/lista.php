@@ -35,35 +35,32 @@ $url_icons = (new views())->url_icons;
             <table class="table table-dark">
                 <thead>
                 <tr>
-                    <th scope="col">Acciones</th>
-                    <th scope="col">Id</th>
-                    <th scope="col">Folio</th>
-                    <th scope="col">RFC</th>
-                    <th scope="col">NSS</th>
-                    <th scope="col">Razon Social</th>
-                    <th scope="col">Fecha</th>
+                    <th data-breakpoints="xs sm md" data-type="html" >Id</th>
+                    <th data-breakpoints="xs sm md" data-type="html" >Codigo</th>
+                    <th data-breakpoints="xs sm md" data-type="html" >Descripcion</th>
+                    <th data-breakpoints="xs sm md" data-type="html" >Fecha inicial pago</th>
+                    <th data-breakpoints="xs sm md" data-type="html" >Fecha final pago</th>
+                    <th data-breakpoints="xs sm md" data-type="html" >Codigo empleado</th>
+                    <th data-breakpoints="xs sm md" data-type="html" >Empleado</th>
+                    <th data-breakpoints="xs sm md" data-type="html" >Empresa</th>
+                    <th data-breakpoints="xs md" class="control"  data-type="html" data-filterable="false">Modifica</th>
+                    <th data-breakpoints="xs md" class="control"  data-type="html" data-filterable="false">Elimina</th>
                 </tr>
                 </thead>
                 <tbody>
-                <?php foreach ($controlador->registros as $registro){
-
-                    ?>
-                <tr>
-                    <th class="colum_accion" scope="row">
-                        <a class="icon_modifica_lista" href="<?php echo $registro->link_modifica; ?>">
-                            <img src="<?php echo $url_icons; ?>icon_modifica.svg">
-                        </a>
-                        <a class="icon_elimina_lista" href="<?php echo $registro->link_elimina_bd; ?>">
-                            <img src="<?php echo $url_icons; ?>icon_elimina.svg">
-                        </a>
-                    </th>
-                    <th><?php echo $registro->nom_nomina_id; ?></th>
-                    <th><?php echo $registro->fc_factura_folio; ?></th>
-                    <th><?php echo $registro->em_empleado_rfc; ?></th>
-                    <th><?php echo $registro->em_empleado_nss; ?></th>
-                    <th><?php echo $registro->razon_social; ?></th>
-                    <th><?php echo $registro->fc_factura_fecha; ?></th>
-                </tr>
+                <?php foreach ($controlador->registros as $registro){?>
+                    <tr>
+                        <td><?php echo $registro->nom_nomina_id; ?></td>
+                        <td><?php echo $registro->nom_nomina_codigo; ?></td>
+                        <td><?php echo $registro->nom_nomina_descripcion; ?></td>
+                        <td><?php echo $registro->nom_nomina_fecha_inicial_pago; ?></td>
+                        <td><?php echo $registro->nom_nomina_fecha_final_pago; ?></td>
+                        <td><?php echo $registro->em_empleado_codigo; ?></td>
+                        <td><?php echo $registro->em_empleado_nombre.' '.$registro->em_empleado_ap.' '.$registro->em_empleado_am; ?></td>
+                        <td><?php echo $registro->org_empresa_id; ?></td>
+                        <td><a class="btn btn-warning " href="<?php echo $registro->link_modifica; ?>">Modifica</a></td>
+                        <td><a class="btn btn-danger " href="<?php echo $registro->link_elimina; ?>">Elimina</a></td>
+                    </tr>
                 <?php } ?>
 
                 </tbody>
