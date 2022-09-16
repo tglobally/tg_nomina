@@ -41,6 +41,7 @@ $url_icons = (new views())->url_icons;
                     <th data-breakpoints="xs sm md" data-type="html" >Fecha inicial pago</th>
                     <th data-breakpoints="xs sm md" data-type="html" >Fecha final pago</th>
                     <th data-breakpoints="xs sm md" data-type="html" >Fecha pago</th>
+                    <th data-breakpoints="xs md" class="control"  data-type="html" data-filterable="false">Procesa Nomina</th>
                     <th data-breakpoints="xs md" class="control"  data-type="html" data-filterable="false">Modifica</th>
                     <th data-breakpoints="xs md" class="control"  data-type="html" data-filterable="false">Elimina</th>
                 </tr>
@@ -54,6 +55,7 @@ $url_icons = (new views())->url_icons;
                     <td><?php echo $registro->nom_periodo_fecha_inicial_pago; ?></td>
                     <td><?php echo $registro->nom_periodo_fecha_final_pago; ?></td>
                     <td><?php echo $registro->nom_periodo_fecha_pago; ?></td>
+                    <td><a class="btn btn-warning " href="<?php echo $registro->link_procesa_nomina; ?>">Procesa Nomina</a></td>
                     <td><a class="btn btn-warning " href="<?php echo $registro->link_modifica; ?>">Modifica</a></td>
                     <td><a class="btn btn-danger " href="<?php echo $registro->link_elimina_bd; ?>">Elimina</a></td>
                 </tr>
