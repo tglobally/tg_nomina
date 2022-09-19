@@ -108,6 +108,7 @@ $url_icons = (new views())->url_icons;
                             </thead>
                             <tbody>
                             <?php foreach ($controlador->deducciones->registros as $deduccion){?>
+                                <?php print_r($deduccion); ?>
                                 <tr>
                                     <td><?php echo $deduccion['nom_par_deduccion_id']; ?></td>
                                     <td><?php echo $deduccion['nom_deduccion_codigo']; ?></td>
@@ -151,6 +152,7 @@ $url_icons = (new views())->url_icons;
                             </thead>
                             <tbody>
                             <?php foreach ($controlador->otros_pagos->registros as $otro_pago){?>
+
                                 <tr>
                                     <td><?php echo $otro_pago['nom_par_otro_pago_id']; ?></td>
                                     <td><?php echo $otro_pago['nom_otro_pago_codigo']; ?></td>
