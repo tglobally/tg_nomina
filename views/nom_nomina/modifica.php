@@ -108,7 +108,6 @@ $url_icons = (new views())->url_icons;
                             </thead>
                             <tbody>
                             <?php foreach ($controlador->deducciones->registros as $deduccion){?>
-                                <?php print_r($deduccion); ?>
                                 <tr>
                                     <td><?php echo $deduccion['nom_par_deduccion_id']; ?></td>
                                     <td><?php echo $deduccion['nom_deduccion_codigo']; ?></td>
