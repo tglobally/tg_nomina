@@ -175,6 +175,35 @@ $url_icons = (new views())->url_icons;
             </div>
         </div>
 
+ <!--       <div class="lista">
+            <div class="card">
+                <div class="card-header">
+                    <span class="text-header">Cuotas Obrero Patronales</span>
+                </div>
+                <div class="card-body">
+                    <div class="cont_tabla_sucursal  col-md-12">
+                        <table class="table ">
+                            <thead>
+                            <tr>
+                                <th data-breakpoints="xs sm md" data-type="html" >Concepto</th>
+                                <th data-breakpoints="xs sm md" data-type="html" >Monto</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php /*foreach ($controlador->cuotas_obrero_patronales->registros as $cuota_obrero_patronal){?>
+                                <tr>
+                                    <td><?php echo $cuota_obrero_patronal['riesgo_trabajo_concepto']; ?></td>
+                                    <td><?php echo $cuota_obrero_patronal['riesgo_trabajo_monto']; ?></td>
+                                </tr>
+                            <?php } */?>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>-->
+
     </div>
 </div>
 

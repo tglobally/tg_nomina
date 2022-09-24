@@ -23,10 +23,11 @@ $url_icons = (new views())->url_icons;
                             <tr>
                                 <th data-breakpoints="xs sm md" data-type="html" >Id</th>
                                 <th data-breakpoints="xs sm md" data-type="html" >Codigo</th>
-                                <th data-breakpoints="xs sm md" data-type="html" >Codigo Bis</th>
-                                <th data-breakpoints="xs sm md" data-type="html" >Descripcion</th>
-                                <th data-breakpoints="xs sm md" data-type="html" >Descripcion Select</th>
-                                <th data-breakpoints="xs sm md" data-type="html" >Alias</th>
+                                <th data-breakpoints="xs sm md" data-type="html" >Fecha inicial pago</th>
+                                <th data-breakpoints="xs sm md" data-type="html" >Fecha final pago</th>
+                                <th data-breakpoints="xs sm md" data-type="html" >Codigo empleado</th>
+                                <th data-breakpoints="xs sm md" data-type="html" >Empleado</th>
+                                <th data-breakpoints="xs sm md" data-type="html" >Empresa</th>
                                 <th data-breakpoints="xs sm md" data-type="html" data-filterable="false">Modifica</th>
                                 <th data-breakpoints="xs sm md" data-type="html" data-filterable="false">Elimina</th>
                             </tr>
@@ -36,10 +37,11 @@ $url_icons = (new views())->url_icons;
                                 <tr>
                                     <td><?php echo $nomina['nom_nomina_id']; ?></td>
                                     <td><?php echo $nomina['nom_nomina_codigo']; ?></td>
-                                    <td><?php echo $nomina['nom_nomina_codigo_bis']; ?></td>
-                                    <td><?php echo $nomina['nom_nomina_descripcion']; ?></td>
-                                    <td><?php echo $nomina['nom_nomina_descripcion_select']; ?></td>
-                                    <td><?php echo $nomina['nom_nomina_alias']; ?></td>
+                                    <td><?php echo $nomina['nom_nomina_fecha_inicial_pago']; ?></td>
+                                    <td><?php echo $nomina['nom_nomina_fecha_final_pago']; ?></td>
+                                    <td><?php echo $nomina['em_empleado_codigo']; ?></td>
+                                    <td><?php echo $nomina['em_empleado_nombre'].' '.$nomina['em_empleado_ap'].' '.$nomina['em_empleado_am']; ?></td>
+                                    <td><?php echo $nomina['org_empresa_id']; ?></td>
                                     <td><?php echo $nomina['link_modifica']; ?></td>
                                     <td><?php echo $nomina['link_elimina']; ?></td>
                                 </tr>
