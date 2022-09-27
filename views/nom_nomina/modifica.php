@@ -175,7 +175,7 @@ $url_icons = (new views())->url_icons;
             </div>
         </div>
 
- <!--       <div class="lista">
+        <div class="lista">
             <div class="card">
                 <div class="card-header">
                     <span class="text-header">Cuotas Obrero Patronales</span>
@@ -190,19 +190,20 @@ $url_icons = (new views())->url_icons;
                             </tr>
                             </thead>
                             <tbody>
-                            <?php /*foreach ($controlador->cuotas_obrero_patronales->registros as $cuota_obrero_patronal){?>
+                            <?php foreach ($controlador->cuotas_obrero_patronales->registros as $cuota_obrero_patronal){?>
                                 <tr>
-                                    <td><?php echo $cuota_obrero_patronal['riesgo_trabajo_concepto']; ?></td>
-                                    <td><?php echo $cuota_obrero_patronal['riesgo_trabajo_monto']; ?></td>
+                                    <td><?php echo $cuota_obrero_patronal['concepto']; ?></td>
+                                    <td><?php echo $cuota_obrero_patronal['prestaciones']; ?></td>
+                                    <td><?php echo $cuota_obrero_patronal['monto']; ?></td>
                                 </tr>
-                            <?php } */?>
+                            <?php } ?>
 
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-        </div>-->
+        </div>
 
     </div>
 </div>
