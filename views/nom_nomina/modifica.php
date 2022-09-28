@@ -197,7 +197,11 @@ $url_icons = (new views())->url_icons;
                                     <td><?php echo $cuota_obrero_patronal['monto']; ?></td>
                                 </tr>
                             <?php } ?>
-
+                                <tr>
+                                    <td></td>
+                                    <td style="text-align: right">Total:</td>
+                                    <td><?php echo $controlador->cuota_total; ?></td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
