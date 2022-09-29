@@ -43,6 +43,7 @@ class controlador_nom_nomina extends \gamboamartin\nomina\controllers\controlado
                 if((int)$registro->nom_nomina_id  === (int)$link->nom_nomina_id){
                     $registro->razon_social = $registro->em_empleado_nombre.' '. $registro->em_empleado_ap.' ';
                     $registro->razon_social .= $registro->em_empleado_am;
+                    $registro->total_cuota_patronal = $link->total_cuota_patronal;
                     $registro->link_genera_xml = $link->link_genera_xml;
                     $registro->link_modifica = $link->link_modifica;
                     $registro->link_elimina_bd = $link->link_elimina_bd;
