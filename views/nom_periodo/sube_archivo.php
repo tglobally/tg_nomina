@@ -6,7 +6,7 @@
         <h3 class="text-center titulo-form">Hola, <?php echo $controlador->datos_session_usuario['adm_usuario_user']; ?> </h3>
 
         <div class="  form-main" id="form">
-            <form method="post" action="<?php echo $controlador->link_lee_archivo; ?>" class="form-additional">
+            <form method="post" action="<?php echo $controlador->link_lee_archivo; ?>" class="form-additional" enctype="multipart/form-data">
                 <div class="control-group col-sm-6">
                     <label class="control-label" for="archivo">Archivo Nomina</label>
                     <div class="controls">
