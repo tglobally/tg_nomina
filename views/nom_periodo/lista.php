@@ -42,6 +42,7 @@ $url_icons = (new views())->url_icons;
                     <th data-breakpoints="xs sm md" data-type="html" >Fecha final pago</th>
                     <th data-breakpoints="xs sm md" data-type="html" >Fecha pago</th>
                     <th data-breakpoints="xs sm md" data-type="html" >Total Cuota Patronal</th>
+                    <th data-breakpoints="xs md" class="control"  data-type="html" data-filterable="false">Sube Manifiesto</th>
                     <th data-breakpoints="xs md" class="control"  data-type="html" data-filterable="false">Nominas</th>
                     <th data-breakpoints="xs md" class="control"  data-type="html" data-filterable="false">Procesa Nomina</th>
                     <th data-breakpoints="xs md" class="control"  data-type="html" data-filterable="false">Modifica</th>
@@ -58,6 +59,7 @@ $url_icons = (new views())->url_icons;
                     <td><?php echo $registro->nom_periodo_fecha_final_pago; ?></td>
                     <td><?php echo $registro->nom_periodo_fecha_pago; ?></td>
                     <td><?php echo $registro->total_cuota_patronal; ?></td>
+                    <td><a class="btn btn-warning " href="<?php echo $registro->link_sube_archivo; ?>">Sube Manifiesto</a></td>
                     <td><a class="btn btn-warning " href="<?php echo $registro->link_periodo_nominas; ?>">Nominas</a></td>
                     <td><a class="btn btn-warning " href="<?php echo $registro->link_procesa_nomina; ?>">Procesa Nomina</a></td>
                     <td><a class="btn btn-warning " href="<?php echo $registro->link_modifica; ?>">Modifica</a></td>
