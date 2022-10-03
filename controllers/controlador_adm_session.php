@@ -25,6 +25,7 @@ class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_
     public string $link_lista_nom_conf_factura = '';
     public string $link_lista_nom_conf_nomina = '';
     public string $link_lista_tg_tipo_servicio = '';
+    public string $link_lista_tg_manifiesto = '';
 
     /**
      * Funcion de controlador donde se ejecutaran siempre que haya un acceso denegado
@@ -77,6 +78,9 @@ class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_
 
         $hd = "index.php?seccion=tg_tipo_servicio&accion=lista&session_id=$this->session_id";
         $this->link_lista_tg_tipo_servicio = $hd;
+
+        $hd = "index.php?seccion=tg_manifiesto&accion=lista&session_id=$this->session_id";
+        $this->link_lista_tg_manifiesto = $hd;
 
         $this->include_menu = (new generales())->path_base;
         $this->include_menu .= 'templates/inicio.php';
