@@ -10,13 +10,13 @@ use tglobally\tg_nomina\controllers\controlador_tg_manifiesto;
 
 class tg_manifiesto_html extends em_html {
 
-    private function asigna_inputs(controlador_tg_manifiesto $controler, stdClass $inputs): array|stdClass
+    private function asigna_inputs(controlador_tg_manifiesto $controler, array $inputs): array|stdClass
     {
         $controler->inputs->select = new stdClass();
-        $controler->inputs->select->fc_csd_id = $inputs->selects->fc_csd_id;
-        $controler->inputs->select->tg_tipo_servicio_id = $inputs->selects->tg_tipo_servicio_id;
-        $controler->inputs->fecha_envio = $inputs->dates->fecha_envio;
-        $controler->inputs->fecha_pago = $inputs->dates->fecha_pago;
+        $controler->inputs->select->fc_csd_id = $inputs['selects']->fc_csd_id;
+        $controler->inputs->select->tg_tipo_servicio_id =  $inputs['selects']->tg_tipo_servicio_id;
+        $controler->inputs->fecha_envio = $inputs['dates']->fecha_envio;
+        $controler->inputs->fecha_pago = $inputs['dates']->fecha_pago;
         return $controler->inputs;
     }
 
