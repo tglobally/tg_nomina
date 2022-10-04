@@ -16,8 +16,8 @@ $url_assets = (new views())->url_assets;
 </div>
 
 <div class="container">
-    <div class="row">
-        <div class="col-md-12">
+    <div class="row form-main">
+        <div class="col-md-12 control-group">
             <div class="col-sm-2">
                 <a href="<?php echo $controlador->link_lista_org_sucursal; ?>">
                     <div class="cont_imagen_accion">
@@ -84,7 +84,8 @@ $url_assets = (new views())->url_assets;
                     </div>
                 </a>
             </div>
-
+        </div>
+        <div class="col-md-12 control-group">
             <div class="col-sm-2">
                 <a href="<?php echo $controlador->link_lista_tg_manifiesto; ?>">
                     <div class="cont_imagen_accion">
@@ -96,8 +97,6 @@ $url_assets = (new views())->url_assets;
                     </div>
                 </a>
             </div>
-
         </div>
     </div>
-
 </div>
