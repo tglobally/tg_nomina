@@ -30,7 +30,7 @@ use stdClass;
 
 class controlador_tg_manifiesto extends system
 {
-
+    public controlador_tg_manifiesto_periodo $controlador_tg_manifiesto_periodo;
     public array $keys_selects = array();
 
     public function __construct(PDO      $link, html $html = new \gamboamartin\template_1\html(),
@@ -42,6 +42,7 @@ class controlador_tg_manifiesto extends system
         parent::__construct(html: $html_, link: $link, modelo: $modelo, obj_link: $obj_link, paths_conf: $paths_conf);
 
         $this->titulo_lista = 'Manifiesto';
+        $this->controlador_tg_manifiesto_periodo= new controlador_tg_manifiesto_periodo($this->link);
 
         $this->asignar_propiedad(identificador: 'fc_csd_id', propiedades: ["label" => "CSD"]);
         if (errores::$error) {
@@ -365,6 +366,24 @@ class controlador_tg_manifiesto extends system
         }
 
         return $im_registro_patronal->registros[0];
+    }
+
+    public function periodo(bool $header, bool $ws = false): array|stdClass
+    {
+        $alta = $this->controlador_tg_manifiesto_periodo->alta(header: false);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al generar template', data: $alta, header: $header, ws: $ws);
+        }
+
+        $this->inputs = $this->controlador_tg_manifiesto_periodo->genera_inputs(
+            keys_selects:  $this->controlador_tg_manifiesto_periodo->keys_selects);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al generar inputs', data: $this->inputs);
+            print_r($error);
+            die('Error');
+        }
+
+        return $this->inputs;
     }
 
     public function sube_manifiesto(bool $header, bool $ws = false){
