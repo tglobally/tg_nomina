@@ -15,8 +15,10 @@ use gamboamartin\system\system;
 use gamboamartin\template\html;
 use html\em_anticipo_html;
 use html\tg_manifiesto_html;
+use models\doc_documento;
 use models\tg_manifiesto;
 use PDO;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use stdClass;
 
 class controlador_tg_manifiesto extends system
@@ -168,6 +170,30 @@ class controlador_tg_manifiesto extends system
         return $r_lista;
     }
 
+    /**
+     * @throws \JsonException
+     */
+    public function lee_archivo(bool $header, bool $ws = false)
+    {
+        $doc_documento_modelo = new doc_documento($this->link);
+        $doc_documento_modelo->registro['doc_tipo_documento_id'] = 1;
+        $doc_documento = $doc_documento_modelo->alta_bd(file: $_FILES['archivo']);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al dar de alta el documento', data: $doc_documento);
+        }
+
+        $empleados_excel = $this->obten_empleados_excel(ruta_absoluta: $doc_documento->registro['doc_documento_ruta_absoluta']);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error obtener empleados',data:  $empleados_excel);
+        }
+        
+
+        $link = "./index.php?seccion=tg_manifiesto&accion=lista&registro_id=".$this->registro_id;
+        $link.="&session_id=$this->session_id";
+        header('Location:' . $link);
+        exit;
+    }
+
     private function maqueta_registros_lista(array $registros): array
     {
         foreach ($registros as $indice=> $row){
@@ -191,6 +217,49 @@ class controlador_tg_manifiesto extends system
         }
 
         return $base->template;
+    }
+
+    public function obten_empleados_excel(string $ruta_absoluta){
+        $documento = IOFactory::load($ruta_absoluta);
+        $totalDeHojas = $documento->getSheetCount();
+
+        $columna_faltas = $this->obten_columna_faltas(documento: $documento);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error obtener columna de faltas',data:  $columna_faltas);
+        }
+
+        $empleados = array();
+        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+            $hojaActual = $documento->getSheet($indiceHoja);
+            $registros = array();
+            foreach ($hojaActual->getRowIterator() as $fila) {
+                foreach ($fila->getCellIterator() as $celda) {
+                    $fila = $celda->getRow();
+                    $valorRaw = $celda->getValue();
+                    $columna = $celda->getColumn();
+
+                    if($fila >= 7){
+                        if($columna === "A" && is_numeric($valorRaw)){
+                            $reg = new stdClass();
+                            $reg->fila = $fila;
+                            $registros[] = $reg;
+                        }
+                    }
+                }
+            }
+
+            foreach ($registros as $registro){
+                $reg = new stdClass();
+                $reg->codigo = $hojaActual->getCell('A'.$registro->fila)->getValue();
+                $reg->nombre = $hojaActual->getCell('B'.$registro->fila)->getValue();
+                $reg->ap = $hojaActual->getCell('C'.$registro->fila)->getValue();
+                $reg->am = $hojaActual->getCell('D'.$registro->fila)->getValue();
+                $reg->faltas = $hojaActual->getCell($columna_faltas.$registro->fila)->getValue();
+                $empleados[] = $reg;
+            }
+        }
+
+        return $empleados;
     }
 
 
