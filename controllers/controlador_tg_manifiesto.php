@@ -22,6 +22,7 @@ use models\nom_conf_empleado;
 use models\nom_incidencia;
 use models\nom_periodo;
 use models\tg_manifiesto;
+use models\tg_manifiesto_periodo;
 use PDO;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
