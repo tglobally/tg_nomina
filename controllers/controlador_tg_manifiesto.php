@@ -18,6 +18,9 @@ use html\em_anticipo_html;
 use html\tg_manifiesto_html;
 use models\doc_documento;
 use models\im_registro_patronal;
+use models\nom_conf_empleado;
+use models\nom_incidencia;
+use models\nom_periodo;
 use models\tg_manifiesto;
 use PDO;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -212,6 +215,51 @@ class controlador_tg_manifiesto extends system
             }
             if($registro->n_registros > 0){
                 $empleados[] = $registro->registros[0];
+            }
+        }
+
+        $filtro_per['tg_manifiesto.id'] = $this->registro_id;
+        $nom_periodos = (new tg_manifiesto_periodo($this->link))->filtro_and(filtro: $filtro_per);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al al obtener periodos', data: $nom_periodos);
+        }
+
+        foreach ($nom_periodos->registros  as $nom_periodo) {
+            $empleados_res = array();
+            foreach ($empleados as $empleado) {
+                $filtro_em['em_empleado.id'] = $empleado['em_empleado_id'];
+                $filtro_em['cat_sat_periodicidad_pago_nom.id'] = $nom_periodo['cat_sat_periodicidad_pago_nom_id'];
+                $conf_empleado = (new nom_conf_empleado($this->link))->filtro_and(filtro: $filtro_em);
+                if (errores::$error) {
+                    return $this->errores->error(mensaje: 'Error al obtener configuracion de empleado',
+                        data: $conf_empleado);
+                }
+
+                if (isset($conf_empleado->registros[0])) {
+                    $empleados_res[] = $conf_empleado->registros[0];
+                }
+            }
+
+            foreach ($empleados_res as $empleado) {
+                foreach ($empleados_excel as $empleado_excel) {
+                    if ($empleado_excel->codigo === $empleado['em_empleado_codigo']) {
+                        $registro_inc['nom_tipo_incidencia_id'] = 1;
+                        $registro_inc['em_empleado_id'] = $empleado['em_empleado_id'];
+                        $registro_inc['n_dias'] = $empleado_excel->faltas;
+
+                        $nom_incidencia = (new nom_incidencia($this->link))->alta_registro(registro: $registro_inc);
+                        if (errores::$error) {
+                            return $this->errores->error(mensaje: 'Error al dar de alta incidencias',
+                                data: $nom_incidencia);
+                        }
+                    }
+                }
+                $alta_empleado = (new nom_periodo($this->link))->alta_empleado_periodo(empleado: $empleado,
+                    nom_periodo: $nom_periodo);
+                if (errores::$error) {
+                    return $this->errores->error(mensaje: 'Error al dar de alta la nomina del empleado',
+                        data: $alta_empleado);
+                }
             }
         }
 
