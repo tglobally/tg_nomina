@@ -10,6 +10,8 @@
             <?php include "templates/tg_manifiesto/_base/buttons/1.azul.modifica.php"; ?>
             <hr class="hr-menu-lateral">
             <?php include "templates/tg_manifiesto/_base/links/sube_manifiesto.php"; ?>
+            <hr class="hr-menu-lateral">
+            <?php include "templates/tg_manifiesto/_base/links/periodo.php"; ?>
         </div>
     </div>
 </div>
