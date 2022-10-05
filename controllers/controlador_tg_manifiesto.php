@@ -9,6 +9,7 @@
 namespace tglobally\tg_nomina\controllers;
 
 use gamboamartin\empleado\models\em_anticipo;
+use gamboamartin\empleado\models\em_empleado;
 use gamboamartin\errores\errores;
 use gamboamartin\system\links_menu;
 use gamboamartin\system\system;
@@ -16,6 +17,7 @@ use gamboamartin\template\html;
 use html\em_anticipo_html;
 use html\tg_manifiesto_html;
 use models\doc_documento;
+use models\im_registro_patronal;
 use models\tg_manifiesto;
 use PDO;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -188,6 +190,30 @@ class controlador_tg_manifiesto extends system
             return $this->errores->error(mensaje: 'Error obtener empleados',data:  $empleados_excel);
         }
 
+        $tg_manifiesto = (new tg_manifiesto($this->link))->registro(registro_id: $this->registro_id);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error obtener manifiesto',data:  $tg_manifiesto);
+        }
+
+        $filtro_im['fc_csd.id']=$tg_manifiesto['tg_manifiesto_fc_csd_id'];
+        $im_registro_patronal = (new im_registro_patronal($this->link))->filtro_and(filtro: $filtro_im);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error obtener registro patronal',data:  $im_registro_patronal);
+        }
+
+        $im_registro_patronal_id = $im_registro_patronal->registros[0]['im_registro_patronal_id'];
+        $empleados = array();
+        foreach ($empleados_excel as $empleado_excel){
+            $filtro['im_registro_patronal.id'] = $im_registro_patronal_id;
+            $filtro['em_empleado.codigo'] = $empleado_excel->codigo;
+            $registro = (new em_empleado($this->link))->filtro_and(filtro: $filtro);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al al obtener registro de empleado', data: $registro);
+            }
+            if($registro->n_registros > 0){
+                $empleados[] = $registro->registros[0];
+            }
+        }
 
         $link = "./index.php?seccion=tg_manifiesto&accion=lista&registro_id=".$this->registro_id;
         $link.="&session_id=$this->session_id";
