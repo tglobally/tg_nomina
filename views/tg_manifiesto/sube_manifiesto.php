@@ -1,5 +1,5 @@
 <?php /** @var \tglobally\tg_nomina\controllers\controlador_tg_tipo_servicio $controlador */ ?>
-<?php include 'templates/tg_manifiesto/alta/secciones.php'; ?>
+<?php include 'templates/tg_manifiesto/sube_manifiesto/secciones.php'; ?>
 <div class="col-md-9 formulario">
     <div class="col-lg-12">
 
