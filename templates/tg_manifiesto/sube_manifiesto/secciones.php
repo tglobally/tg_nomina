@@ -7,7 +7,9 @@
         </div>
         <div class="col-md-8">
             <h3>Sube Manifiesto</h3>
-            <?php include "templates/tg_manifiesto/_base/buttons/1.azul.alta.php"; ?>
+            <?php include "templates/tg_manifiesto/_base/links/modifica.php"; ?>
+            <hr class="hr-menu-lateral">
+            <?php include "templates/tg_manifiesto/_base/buttons/2.azul.sube_manifiesto.php"; ?>
         </div>
     </div>
 </div>

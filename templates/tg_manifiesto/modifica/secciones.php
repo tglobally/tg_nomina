@@ -8,6 +8,8 @@
         <div class="col-md-8">
             <h3>Modifica Manifiesto</h3>
             <?php include "templates/tg_manifiesto/_base/buttons/1.azul.modifica.php"; ?>
+            <hr class="hr-menu-lateral">
+            <?php include "templates/tg_manifiesto/_base/links/sube_manifiesto.php"; ?>
         </div>
     </div>
 </div>
