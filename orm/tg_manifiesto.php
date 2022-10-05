@@ -12,7 +12,7 @@ class tg_manifiesto extends modelo{
 
     public function __construct(PDO $link){
         $tabla = 'tg_manifiesto';
-        $columnas = array($tabla=>false);
+        $columnas = array($tabla=>false, 'fc_csd'=>$tabla,'tg_tipo_servicio' =>$tabla,'tg_sucursal_alianza'=>$tabla);
         $campos_obligatorios = array('descripcion','codigo','descripcion_select','alias','codigo_bis',
             'fc_csd_id','tg_tipo_servicio_id','fecha_envio','fecha_pago');
 
