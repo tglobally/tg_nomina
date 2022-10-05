@@ -19,6 +19,7 @@ use models\doc_documento;
 use models\tg_manifiesto;
 use PDO;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use stdClass;
 
 class controlador_tg_manifiesto extends system
@@ -186,7 +187,7 @@ class controlador_tg_manifiesto extends system
         if(errores::$error){
             return $this->errores->error(mensaje: 'Error obtener empleados',data:  $empleados_excel);
         }
-        
+
 
         $link = "./index.php?seccion=tg_manifiesto&accion=lista&registro_id=".$this->registro_id;
         $link.="&session_id=$this->session_id";
@@ -217,6 +218,25 @@ class controlador_tg_manifiesto extends system
         }
 
         return $base->template;
+    }
+
+    public function obten_columna_faltas(Spreadsheet $documento){
+        $totalDeHojas = $documento->getSheetCount();
+
+        $columna = -1;
+        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+            $hojaActual = $documento->getSheet($indiceHoja);
+            foreach ($hojaActual->getRowIterator() as $fila) {
+                foreach ($fila->getCellIterator() as $celda) {
+                    $valorRaw = $celda->getValue();
+                    if($valorRaw === 'FALTAS') {
+                        $columna = $celda->getColumn();
+                    }
+                }
+            }
+        }
+
+        return $columna;
     }
 
     public function obten_empleados_excel(string $ruta_absoluta){
