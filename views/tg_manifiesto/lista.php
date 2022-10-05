@@ -23,6 +23,7 @@ $url_icons = (new views())->url_icons;
                                 <th data-breakpoints="xs sm md" data-type="html" >Codigo</th>
                                 <th data-breakpoints="xs sm md" data-type="html" >Codigo bis</th>
                                 <th data-breakpoints="xs sm md" data-type="html" >Descripcion</th>
+                                <th data-breakpoints="xs md" class="control"  data-type="html" data-filterable="false">Sube Manifiesto</th>
                                 <th data-breakpoints="xs md" class="control"  data-type="html" data-filterable="false">Modifica</th>
                                 <th data-breakpoints="xs md" class="control"  data-type="html" data-filterable="false">Elimina</th>
                             </tr>
@@ -34,6 +35,7 @@ $url_icons = (new views())->url_icons;
                                     <td><?php echo $registro->tg_manifiesto_codigo; ?></td>
                                     <td><?php echo $registro->tg_manifiesto_codigo_bis?></td>
                                     <td><?php echo $registro->tg_manifiesto_descripcion; ?></td>
+                                    <td><a class="btn btn-info " href="<?php echo $registro->link_sube_manifiesto; ?>">Sube Manifiesto</a></td>
                                     <td><a class="btn btn-warning " href="<?php echo $registro->link_modifica; ?>">Modifica</a></td>
                                     <td><a class="btn btn-danger " href="<?php echo $registro->link_elimina_bd; ?>">Elimina</a></td>
                                 </tr>

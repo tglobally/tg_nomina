@@ -19,41 +19,43 @@ use models\tg_manifiesto;
 use PDO;
 use stdClass;
 
-class controlador_tg_manifiesto extends system {
+class controlador_tg_manifiesto extends system
+{
 
     public array $keys_selects = array();
 
-    public function __construct(PDO $link, html $html = new \gamboamartin\template_1\html(),
-                                stdClass $paths_conf = new stdClass()){
+    public function __construct(PDO      $link, html $html = new \gamboamartin\template_1\html(),
+                                stdClass $paths_conf = new stdClass())
+    {
         $modelo = new tg_manifiesto(link: $link);
         $html_ = new tg_manifiesto_html(html: $html);
         $obj_link = new links_menu($this->registro_id);
-        parent::__construct(html:$html_, link: $link,modelo:  $modelo, obj_link: $obj_link, paths_conf: $paths_conf);
+        parent::__construct(html: $html_, link: $link, modelo: $modelo, obj_link: $obj_link, paths_conf: $paths_conf);
 
         $this->titulo_lista = 'Manifiesto';
 
-        $this->asignar_propiedad(identificador:'fc_csd_id', propiedades: ["label" => "CSD"]);
+        $this->asignar_propiedad(identificador: 'fc_csd_id', propiedades: ["label" => "CSD"]);
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al asignar propiedad', data: $this);
             print_r($error);
             die('Error');
         }
 
-        $this->asignar_propiedad(identificador:'tg_tipo_servicio_id', propiedades: ["label" => "Tipo Servicio"]);
+        $this->asignar_propiedad(identificador: 'tg_tipo_servicio_id', propiedades: ["label" => "Tipo Servicio"]);
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al asignar propiedad', data: $this);
             print_r($error);
             die('Error');
         }
 
-        $this->asignar_propiedad(identificador:'fecha_envio', propiedades: ["place_holder" => "Fecha Envio"]);
+        $this->asignar_propiedad(identificador: 'fecha_envio', propiedades: ["place_holder" => "Fecha Envio"]);
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al asignar propiedad', data: $this);
             print_r($error);
             die('Error');
         }
 
-        $this->asignar_propiedad(identificador:'fecha_pago', propiedades: ["place_holder" => "Fecha Pago"]);
+        $this->asignar_propiedad(identificador: 'fecha_pago', propiedades: ["place_holder" => "Fecha Pago"]);
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al asignar propiedad', data: $this);
             print_r($error);
@@ -64,33 +66,52 @@ class controlador_tg_manifiesto extends system {
 
     public function asignar_propiedad(string $identificador, mixed $propiedades)
     {
-        if (!array_key_exists($identificador,$this->keys_selects)){
+        if (!array_key_exists($identificador, $this->keys_selects)) {
             $this->keys_selects[$identificador] = new stdClass();
         }
 
-        foreach ($propiedades as $key => $value){
+        foreach ($propiedades as $key => $value) {
             $this->keys_selects[$identificador]->$key = $value;
         }
     }
 
     public function alta(bool $header, bool $ws = false): array|string
     {
-        $r_alta =  parent::alta(header: false);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al generar template',data:  $r_alta, header: $header,ws:$ws);
+        $r_alta = parent::alta(header: false);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al generar template', data: $r_alta, header: $header, ws: $ws);
         }
 
         $this->row_upd->fecha_envio = date('Y-m-d');
         $this->row_upd->fecha_pago = date('Y-m-d');
 
         $inputs = (new tg_manifiesto_html(html: $this->html_base))->genera_inputs(controler: $this,
-            keys_selects:  $this->keys_selects);
-        if(errores::$error){
-            $error = $this->errores->error(mensaje: 'Error al generar inputs',data:  $inputs);
+            keys_selects: $this->keys_selects);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al generar inputs', data: $inputs);
             print_r($error);
             die('Error');
         }
         return $r_alta;
+    }
+
+    private function asigna_link_sube_manifiesto_row(stdClass $row): array|stdClass
+    {
+        $keys = array('tg_manifiesto_id');
+        $valida = $this->validacion->valida_ids(keys: $keys,registro:  $row);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error al validar row',data:  $valida);
+        }
+
+        $link_sube_manifiesto = $this->obj_link->link_con_id(accion:'sube_manifiesto',registro_id:  $row->tg_manifiesto_id,
+            seccion:  $this->tabla);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error al genera link',data:  $link_sube_manifiesto);
+        }
+
+        $row->link_sube_manifiesto = $link_sube_manifiesto;
+
+        return $row;
     }
 
     private function base(): array|stdClass
@@ -127,6 +148,37 @@ class controlador_tg_manifiesto extends system {
         $data->inputs = $inputs;
 
         return $data;
+    }
+
+    public function lista(bool $header, bool $ws = false): array
+    {
+        $r_lista = parent::lista($header, $ws); // TODO: Change the autogenerated stub
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al maquetar datos',data:  $r_lista, header: $header,ws:$ws);
+        }
+
+        $registros = $this->maqueta_registros_lista(registros: $this->registros);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al maquetar registros',data:  $registros, header: $header,ws:$ws);
+        }
+        $this->registros = $registros;
+
+
+
+        return $r_lista;
+    }
+
+    private function maqueta_registros_lista(array $registros): array
+    {
+        foreach ($registros as $indice=> $row){
+            $row = $this->asigna_link_sube_manifiesto_row(row: $row);
+            if(errores::$error){
+                return $this->errores->error(mensaje: 'Error al maquetar row',data:  $row);
+            }
+
+            $registros[$indice] = $row;
+        }
+        return $registros;
     }
 
     public function modifica(bool $header, bool $ws = false, string $breadcrumbs = '', bool $aplica_form = true,
