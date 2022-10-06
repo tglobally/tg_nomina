@@ -56,12 +56,6 @@ class tg_manifiesto extends modelo{
         if(isset($this->registro['tg_cte_alianza_id'])){
             unset($this->registro['tg_cte_alianza_id']);
         }
-        if(isset($this->registro['fecha_inicial_pago'])){
-            unset($this->registro['fecha_inicial_pago']);
-        }
-        if(isset($this->registro['fecha_final_pago'])){
-            unset($this->registro['fecha_final_pago']);
-        }
 
         $r_alta_bd = parent::alta_bd();
         if(errores::$error){
@@ -78,12 +72,6 @@ class tg_manifiesto extends modelo{
         }
         if(isset($registro['tg_cte_alianza_id'])){
             unset($registro['tg_cte_alianza_id']);
-        }
-        if(isset($registro['fecha_inicial_pago'])){
-            unset($registro['fecha_inicial_pago']);
-        }
-        if(isset($registro['fecha_final_pago'])){
-            unset($registro['fecha_final_pago']);
         }
 
         $r_modifica_bd = parent::modifica_bd($registro, $id, $reactiva);
