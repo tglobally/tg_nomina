@@ -15,8 +15,6 @@ use gamboamartin\template\html;
 use html\tg_manifiesto_periodo_html;
 use models\tg_manifiesto_periodo;
 use PDO;
-use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use stdClass;
 
 class controlador_tg_manifiesto_periodo extends system

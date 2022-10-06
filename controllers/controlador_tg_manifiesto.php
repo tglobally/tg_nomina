@@ -8,18 +8,17 @@
  */
 namespace tglobally\tg_nomina\controllers;
 
-use gamboamartin\empleado\models\em_anticipo;
 use gamboamartin\empleado\models\em_empleado;
 use gamboamartin\errores\errores;
 use gamboamartin\system\links_menu;
 use gamboamartin\system\system;
 use gamboamartin\template\html;
-use html\em_anticipo_html;
 use html\tg_manifiesto_html;
 use models\doc_documento;
 use models\im_registro_patronal;
 use models\nom_conf_empleado;
 use models\nom_incidencia;
+use models\nom_nomina;
 use models\nom_periodo;
 use models\tg_manifiesto;
 use models\tg_manifiesto_periodo;
@@ -120,6 +119,25 @@ class controlador_tg_manifiesto extends system
         }
 
         $row->link_sube_manifiesto = $link_sube_manifiesto;
+
+        return $row;
+    }
+
+    private function asigna_link_ve_nominas_row(stdClass $row): array|stdClass
+    {
+        $keys = array('tg_manifiesto_id');
+        $valida = $this->validacion->valida_ids(keys: $keys,registro:  $row);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error al validar row',data:  $valida);
+        }
+
+        $link_ve_nominas = $this->obj_link->link_con_id(accion:'ve_nominas',registro_id:  $row->tg_manifiesto_id,
+            seccion:  $this->tabla);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error al genera link',data:  $link_ve_nominas);
+        }
+
+        $row->link_ve_nominas = $link_ve_nominas;
 
         return $row;
     }
@@ -276,6 +294,14 @@ class controlador_tg_manifiesto extends system
             }
 
             $registros[$indice] = $row;
+
+            $row = $this->asigna_link_ve_nominas_row(row: $row);
+            if(errores::$error){
+                return $this->errores->error(mensaje: 'Error al maquetar row',data:  $row);
+            }
+
+            $registros[$indice] = $row;
+
         }
         return $registros;
     }
@@ -396,5 +422,43 @@ class controlador_tg_manifiesto extends system
 
     return $r_modifica;
 }
+
+    public function ve_nominas(bool $header, bool $ws = false): array|stdClass
+    {
+        $tg_manifiesto = $this->modelo->registro(registro_id: $this->registro_id);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al obtener manifiesto',data:  $tg_manifiesto,
+                header: $header,ws:$ws);
+        }
+
+        $filtro = array();
+        $filtro['tg_manifiesto.id'] = $this->registro_id;
+        $r_tg_manifiesto_periodo = (new tg_manifiesto_periodo(link: $this->link))->filtro_and(filtro: $filtro);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al obtener manifiesto periodo',data:  $r_tg_manifiesto_periodo,
+                header: $header,ws:$ws);
+        }
+
+
+
+        $filtro = array();
+        $filtro['nom_periodo.id'] = $this->registro_id;
+        $nominas = (new nom_nomina($this->link))->filtro_and(filtro: $filtro);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo',data:  $nominas,
+                header: $header,ws:$ws);
+        }
+
+        foreach ($nominas->registros as $indice => $nomina) {
+            $nomina = $this->data_nomina_btn(nomina: $nomina);
+            if (errores::$error) {
+                return $this->retorno_error(mensaje: 'Error al asignar botones', data: $nomina, header: $header, ws: $ws);
+            }
+            $nominas->registros[$indice] = $nomina;
+        }
+        $this->nominas = $nominas;
+
+        return $this->nominas;
+    }
 
 }
