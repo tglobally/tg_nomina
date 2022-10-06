@@ -187,6 +187,29 @@ class controlador_tg_manifiesto extends system
             return $this->errores->error(mensaje: 'Error al generar template',data:  $r_modifica);
         }
 
+        $tg_manifiesto = (new tg_manifiesto($this->link))->registro(registro_id: $this->registro_id);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error obtener registro manifiesto', data: $tg_manifiesto);
+            print_r($error);
+            die('Error');
+        }
+
+        $this->asignar_propiedad(identificador:'com_sucursal_id',
+            propiedades: ["id_selected"=>$tg_manifiesto['com_sucursal_id']]);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al asignar propiedad', data: $this);
+            print_r($error);
+            die('Error');
+        }
+
+        $this->asignar_propiedad(identificador:'tg_cte_alianza_id',
+            propiedades: ["id_selected"=>$tg_manifiesto['tg_cte_alianza_id']]);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al asignar propiedad', data: $this);
+            print_r($error);
+            die('Error');
+        }
+
         $this->asignar_propiedad(identificador:'fc_csd_id',
             propiedades: ["id_selected"=>$this->row_upd->fc_csd_id]);
         if (errores::$error) {
