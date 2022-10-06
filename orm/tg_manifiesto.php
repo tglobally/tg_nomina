@@ -13,7 +13,8 @@ class tg_manifiesto extends modelo{
 
     public function __construct(PDO $link){
         $tabla = 'tg_manifiesto';
-        $columnas = array($tabla=>false, 'fc_csd'=>$tabla,'tg_tipo_servicio' =>$tabla,'tg_sucursal_alianza'=>$tabla);
+        $columnas = array($tabla=>false, 'fc_csd'=>$tabla,'tg_tipo_servicio' =>$tabla,'tg_sucursal_alianza'=>$tabla,
+            'com_sucursal'=>'tg_sucursal_alianza','tg_cte_alianza'=>'tg_sucursal_alianza');
         $campos_obligatorios = array('descripcion','codigo','descripcion_select','alias','codigo_bis',
             'fc_csd_id','tg_tipo_servicio_id','fecha_envio','fecha_pago');
 
@@ -86,6 +87,13 @@ class tg_manifiesto extends modelo{
 
     public function modifica_bd(array $registro, int $id, bool $reactiva = false): array|stdClass
     {
+        $tg_sucursal_alianza = $this->obten_sucursal_alianza(com_sucursal_id: $registro['com_sucursal_id'],
+            tg_cte_alianza_id: $registro['tg_cte_alianza_id']);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener registro empresa',data: $tg_sucursal_alianza);
+        }
+        $this->registro['tg_sucursal_alianza_id'] = $tg_sucursal_alianza['tg_sucursal_alianza_id'];
+
         if(isset($registro['com_sucursal_id'])){
             unset($registro['com_sucursal_id']);
         }
