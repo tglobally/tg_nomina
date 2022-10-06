@@ -11,7 +11,7 @@ class tg_sucursal_alianza extends modelo{
 
     public function __construct(PDO $link){
         $tabla = 'tg_sucursal_alianza';
-        $columnas = array($tabla=>false, 'com_sucursal'=>$tabla,'tg_cte_alianza'=>$tabla);
+        $columnas = array($tabla=>false, 'com_sucursal'=>$tabla,'tg_cte_alianza'=>$tabla,'com_cliente'=>'com_sucursal');
         $campos_obligatorios = array('descripcion','codigo','descripcion_select','alias','codigo_bis');
 
         parent::__construct(link: $link,tabla:  $tabla, campos_obligatorios: $campos_obligatorios,

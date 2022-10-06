@@ -44,14 +44,24 @@ class tg_manifiesto extends modelo{
             return $this->error->error(mensaje: 'Error al obtener registro empresa',data: $fc_csd);
         }
 
-        $com_sucursal = (new com_sucursal($this->link))->registro(registro_id: $this->registro['com_sucursal_id']);
+        $filtro['com_sucursal.id'] = $this->registro['com_sucursal_id'];
+        $filtro['tg_cte_alianza.id'] = $this->registro['tg_cte_alianza_id'];
+        $tg_sucursal_alianza = (new tg_sucursal_alianza($this->link))->filtro_and(filtro: $filtro);
         if(errores::$error){
-            return $this->error->error(mensaje: 'Error al obtener registro cliente',data: $com_sucursal);
+            return $this->error->error(mensaje: 'Error al obtener configuracion tg_sucursal_alianza',
+                data: $tg_sucursal_alianza);
         }
+
+        if($tg_sucursal_alianza->n_registros < 1){
+            return $this->error->error(mensaje: 'Error no existe alianza',
+                data: $tg_sucursal_alianza);
+        }
+
+        $this->registro['tg_sucursal_alianza_id'] = $tg_sucursal_alianza->registros[0]['tg_sucursal_alianza_id'];
 
         if (!isset($this->registro['descripcion_select'])) {
             $this->registro['descripcion_select'] = $this->registro['codigo'].' ';
-            $this->registro['descripcion_select'] .= $com_sucursal['com_cliente_rfc'].' ';
+            $this->registro['descripcion_select'] .= $tg_sucursal_alianza->registros[0]['com_cliente_rfc'].' ';
             $this->registro['descripcion_select'] .= $fc_csd['org_empresa_rfc'];
         }
 
@@ -61,7 +71,7 @@ class tg_manifiesto extends modelo{
 
         if (!isset($this->registro['alias'])) {
             $alias = $this->registro['codigo'].' ';
-            $alias .= $com_sucursal['com_cliente_rfc'].' ';
+            $alias .= $tg_sucursal_alianza->registros[0]['com_cliente_rfc'].' ';
             $alias .= $fc_csd['org_empresa_rfc'];
 
             $this->registro['alias'] = strtoupper($alias);
