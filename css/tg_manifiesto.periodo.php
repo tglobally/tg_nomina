@@ -4,11 +4,20 @@ use config\views;
 
 $ruta_template_base = (new views())->ruta_template_base;
 include $ruta_template_base.'assets/css/_base_css.php';
+
+$url_template = (new views())->url_assets;
+$url_template .= 'css/';
 ?>
-
-
-
 <style>
+
+    @import "<?php echo $url_template; ?>winter-flat.css";
+    .form-control{
+        border-radius: 10px !important;
+    }
+    .color-secondary{
+        background: #f8f8f8 !important;
+    }
+
     .buttons {
         margin-bottom: 2.25rem;
     }
@@ -61,17 +70,5 @@ include $ruta_template_base.'assets/css/_base_css.php';
     .card-title {
         margin-bottom: 0.75rem;
     }
-
-
-
-    .footable.table th, .footable-details.table th {
-        font-family: Helvetica;
-    }
-    .footable.table td, .footable-details.table td {
-        font-family: Helvetica;
-    }
-    .footable .footable-filtering .input-group .form-control:last-child, .footable .footable-filtering .input-group-addon:last-child, .footable .footable-filtering .input-group-btn:last-child > .btn, .footable .footable-filtering .input-group-btn:last-child > .btn-group > .btn, .footable .footable-filtering .input-group-btn:last-child > .dropdown-toggle, .footable .footable-filtering .input-group-btn:first-child > .btn:not(:first-child), .footable .footable-filtering .input-group-btn:first-child > .btn-group:not(:first-child) > .btn {
-        background-color: #0B0595;
-        border: 1px solid #0B0595
-    }
 </style>
+
