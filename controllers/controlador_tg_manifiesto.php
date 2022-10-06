@@ -11,6 +11,7 @@ namespace tglobally\tg_nomina\controllers;
 use gamboamartin\empleado\models\em_anticipo;
 use gamboamartin\empleado\models\em_empleado;
 use gamboamartin\errores\errores;
+use gamboamartin\system\actions;
 use gamboamartin\system\links_menu;
 use gamboamartin\system\system;
 use gamboamartin\template\html;
@@ -32,6 +33,8 @@ class controlador_tg_manifiesto extends system
 {
     public controlador_tg_manifiesto_periodo $controlador_tg_manifiesto_periodo;
     public array $keys_selects = array();
+    public stdClass $periodos;
+    public int $tg_manifiesto_periodo_id = -1;
 
     public function __construct(PDO      $link, html $html = new \gamboamartin\template_1\html(),
                                 stdClass $paths_conf = new stdClass())
@@ -43,6 +46,10 @@ class controlador_tg_manifiesto extends system
 
         $this->titulo_lista = 'Manifiesto';
         $this->controlador_tg_manifiesto_periodo= new controlador_tg_manifiesto_periodo($this->link);
+
+        if (isset($_GET['em_anticipo_id'])){
+            $this->tg_manifiesto_periodo_id = $_GET['tg_manifiesto_periodo_id'];
+        }
 
         $this->asignar_propiedad(identificador: 'fc_csd_id', propiedades: ["label" => "CSD"]);
         if (errores::$error) {
@@ -164,6 +171,27 @@ class controlador_tg_manifiesto extends system
         $data->inputs = $inputs;
 
         return $data;
+    }
+
+    private function data_periodo_btn(array $periodo): array
+    {
+        $params['tg_manifiesto_periodo_id'] = $periodo['tg_manifiesto_periodo_id'];
+
+        $btn_elimina = $this->html_base->button_href(accion: 'abono_elimina_bd', etiqueta: 'Elimina',
+            registro_id: $this->registro_id, seccion: 'tg_manifiesto', style: 'danger',params: $params);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al generar btn', data: $btn_elimina);
+        }
+        $periodo['link_elimina'] = $btn_elimina;
+
+        $btn_modifica = $this->html_base->button_href(accion: 'periodo_modifica', etiqueta: 'Modifica',
+            registro_id: $this->registro_id, seccion: 'tg_manifiesto', style: 'warning',params: $params);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al generar btn', data: $btn_modifica);
+        }
+        $periodo['link_modifica'] = $btn_modifica;
+
+        return $periodo;
     }
 
     public function lista(bool $header, bool $ws = false): array
@@ -383,10 +411,88 @@ class controlador_tg_manifiesto extends system
             return $this->retorno_error(mensaje: 'Error al generar template', data: $alta, header: $header, ws: $ws);
         }
 
+        $this->controlador_tg_manifiesto_periodo->asignar_propiedad(identificador: 'tg_manifiesto_id',
+            propiedades: ["id_selected" => $this->registro_id, "disabled" => true,
+                "filtro" => array('tg_manifiesto.id' => $this->registro_id)]);
+
         $this->inputs = $this->controlador_tg_manifiesto_periodo->genera_inputs(
             keys_selects:  $this->controlador_tg_manifiesto_periodo->keys_selects);
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al generar inputs', data: $this->inputs);
+            print_r($error);
+            die('Error');
+        }
+
+        $periodos = (new tg_manifiesto_periodo($this->link))->get_periodos_manifiesto(tg_manifiesto_id: $this->registro_id);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al obtener periodos',data:  $periodos,header: $header,ws:$ws);
+        }
+
+        foreach ($periodos->registros as $indice => $periodo) {
+            $periodo = $this->data_periodo_btn(periodo: $periodo);
+            if (errores::$error) {
+                return $this->retorno_error(mensaje: 'Error al asignar botones', data: $periodo, header: $header, ws: $ws);
+            }
+            $periodos->registros[$indice] = $periodo;
+        }
+
+        $this->periodos = $periodos;
+
+        return $this->inputs;
+    }
+
+    public function periodo_alta_bd(bool $header, bool $ws = false): array|stdClass
+    {
+        $this->link->beginTransaction();
+
+        $siguiente_view = (new actions())->init_alta_bd();
+        if (errores::$error) {
+            $this->link->rollBack();
+            return $this->retorno_error(mensaje: 'Error al obtener siguiente view', data: $siguiente_view,
+                header: $header, ws: $ws);
+        }
+
+        if (isset($_POST['btn_action_next'])) {
+            unset($_POST['btn_action_next']);
+        }
+        $_POST['tg_manifiesto_id'] = $this->registro_id;
+
+        $alta = (new tg_manifiesto_periodo($this->link))->alta_registro(registro: $_POST);
+        if (errores::$error) {
+            $this->link->rollBack();
+            return $this->retorno_error(mensaje: 'Error al dar de alta periodo', data: $alta,
+                header: $header, ws: $ws);
+        }
+
+        $this->link->commit();
+
+        if ($header) {
+            $this->retorno_base(registro_id:$this->registro_id, result: $alta,
+                siguiente_view: "periodo", ws:  $ws);
+        }
+        if ($ws) {
+            header('Content-Type: application/json');
+            echo json_encode($alta, JSON_THROW_ON_ERROR);
+            exit;
+        }
+        $alta->siguiente_view = "periodo";
+
+        return $alta;
+    }
+
+    public function periodo_modifica(bool $header, bool $ws = false): array|stdClass
+    {
+        $this->controlador_tg_manifiesto_periodo->registro_id = $this->tg_manifiesto_periodo_id;
+
+        $modifica = $this->controlador_tg_manifiesto_periodo->modifica(header: false);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al generar template',data:  $modifica, header: $header,ws:$ws);
+        }
+
+        $this->inputs = $this->controlador_tg_manifiesto_periodo->genera_inputs(
+            keys_selects:  $this->controlador_tg_manifiesto_periodo->keys_selects);
+        if(errores::$error){
+            $error = $this->errores->error(mensaje: 'Error al generar inputs',data:  $this->inputs);
             print_r($error);
             die('Error');
         }
