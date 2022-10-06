@@ -14,6 +14,8 @@ class tg_manifiesto_html extends em_html {
     {
         $controler->inputs->select = new stdClass();
         $controler->inputs->select->fc_csd_id = $inputs['selects']->fc_csd_id;
+        $controler->inputs->select->com_sucursal_id = $inputs['selects']->com_sucursal_id;
+        $controler->inputs->select->tg_cte_alianza_id =  $inputs['selects']->tg_cte_alianza_id;
         $controler->inputs->select->tg_tipo_servicio_id =  $inputs['selects']->tg_tipo_servicio_id;
         $controler->inputs->fecha_envio = $inputs['dates']->fecha_envio;
         $controler->inputs->fecha_pago = $inputs['dates']->fecha_pago;

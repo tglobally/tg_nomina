@@ -95,6 +95,12 @@ class controlador_tg_manifiesto extends system
         $this->row_upd->fecha_envio = date('Y-m-d');
         $this->row_upd->fecha_pago = date('Y-m-d');
 
+        $this->keys_selects['com_sucursal_id'] = new stdClass();
+        $this->keys_selects['com_sucursal_id']->label = 'Sucursal';
+
+        $this->keys_selects['tg_cte_alianza_id'] = new stdClass();
+        $this->keys_selects['tg_cte_alianza_id']->label = 'Alianza';
+
         $inputs = (new tg_manifiesto_html(html: $this->html_base))->genera_inputs(controler: $this,
             keys_selects: $this->keys_selects);
         if (errores::$error) {

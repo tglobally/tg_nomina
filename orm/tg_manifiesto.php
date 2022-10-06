@@ -2,6 +2,7 @@
 namespace models;
 use base\orm\modelo;
 
+use gamboamartin\comercial\models\com_sucursal;
 use gamboamartin\errores\errores;
 
 use gamboamartin\facturacion\models\fc_csd;
@@ -16,6 +17,10 @@ class tg_manifiesto extends modelo{
         $campos_obligatorios = array('descripcion','codigo','descripcion_select','alias','codigo_bis',
             'fc_csd_id','tg_tipo_servicio_id','fecha_envio','fecha_pago');
 
+        $campos_view['com_sucursal_id']['type'] = 'selects';
+        $campos_view['com_sucursal_id']['model'] = (new com_sucursal($link));
+        $campos_view['tg_cte_alianza_id']['type'] = 'selects';
+        $campos_view['tg_cte_alianza_id']['model'] = (new tg_cte_alianza($link));
         $campos_view['fc_csd_id']['type'] = 'selects';
         $campos_view['fc_csd_id']['model'] = (new fc_csd($link));
         $campos_view['tg_tipo_servicio_id']['type'] = 'selects';
