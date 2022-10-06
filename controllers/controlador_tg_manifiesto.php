@@ -9,7 +9,6 @@
 namespace tglobally\tg_nomina\controllers;
 
 use base\orm\inicializacion;
-use base\orm\sql;
 use gamboamartin\empleado\models\em_empleado;
 use gamboamartin\errores\errores;
 use gamboamartin\system\actions;
@@ -21,7 +20,6 @@ use models\doc_documento;
 use models\im_registro_patronal;
 use models\nom_conf_empleado;
 use models\nom_incidencia;
-use models\nom_nomina;
 use models\nom_periodo;
 use models\tg_manifiesto;
 use models\tg_manifiesto_periodo;
@@ -36,6 +34,7 @@ class controlador_tg_manifiesto extends system
     public array $keys_selects = array();
     public stdClass $periodos;
     public int $tg_manifiesto_periodo_id = -1;
+    public array $nominas = array();
 
     public function __construct(PDO      $link, html $html = new \gamboamartin\template_1\html(),
                                 stdClass $paths_conf = new stdClass())
@@ -238,6 +237,25 @@ class controlador_tg_manifiesto extends system
         $data->inputs = $inputs;
 
         return $data;
+    }
+
+    private function data_nomina_btn(array $nomina): array
+    {
+        $btn_elimina = $this->html_base->button_href(accion: 'elimina_nomina_bd', etiqueta: 'Elimina',
+            registro_id: $nomina['nom_nomina_id'], seccion: 'tg_manifiesto', style: 'danger');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al generar btn', data: $btn_elimina);
+        }
+        $nomina['link_elimina'] = $btn_elimina;
+
+        $btn_modifica = $this->html_base->button_href(accion: 'modifica_nomina', etiqueta: 'Modifica',
+            registro_id: $nomina['nom_nomina_id'], seccion: 'tg_manifiesto', style: 'warning');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al generar btn', data: $btn_modifica);
+        }
+        $nomina['link_modifica'] = $btn_modifica;
+
+        return $nomina;
     }
 
     private function data_periodo_btn(array $periodo): array
@@ -588,38 +606,19 @@ class controlador_tg_manifiesto extends system
     {
 
 
-        $r_tg_manifiesto_periodo = (new tg_manifiesto_periodo(link: $this->link))->get_periodos_manifiesto(
-            tg_manifiesto_id:  $this->registro_id);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al obtener manifiesto periodo',data:  $r_tg_manifiesto_periodo,
-                header: $header,ws:$ws);
-        }
 
-
-        $values_in = (new inicializacion())->values_in(key_value: 'nom_periodo_id', rows: $r_tg_manifiesto_periodo->registros);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al obtener values in',data:  $values_in,
-                header: $header,ws:$ws);
-        }
-
-        $in = (new inicializacion())->data_in_sql(llave:'nom_periodo.id', values_in: $values_in);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al integrar in',data:  $in, header: $header,ws:$ws);
-        }
-
-
-        $nominas = (new nom_nomina($this->link))->filtro_and(in: $in);
+        $nominas = (new tg_manifiesto_periodo($this->link))->nominas_by_manifiesto(tg_manifiesto_id: $this->registro_id);
         if(errores::$error){
             return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo',data:  $nominas,
                 header: $header,ws:$ws);
         }
 
-        foreach ($nominas->registros as $indice => $nomina) {
-            /*$nomina = $this->data_nomina_btn(nomina: $nomina);
+        foreach ($nominas as $indice => $nomina) {
+            $nomina = $this->data_nomina_btn(nomina: $nomina);
             if (errores::$error) {
                 return $this->retorno_error(mensaje: 'Error al asignar botones', data: $nomina, header: $header, ws: $ws);
             }
-            $nominas->registros[$indice] = $nomina;*/
+            $nominas[$indice] = $nomina;
         }
         $this->nominas = $nominas;
 

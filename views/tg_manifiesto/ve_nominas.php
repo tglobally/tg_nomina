@@ -29,11 +29,11 @@ $url_icons = (new views())->url_icons;
                                 <th data-breakpoints="xs sm md" data-type="html" >Empleado</th>
                                 <th data-breakpoints="xs sm md" data-type="html" >Empresa</th>
                                 <th data-breakpoints="xs sm md" data-type="html" data-filterable="false">Modifica</th>
-                                <th data-breakpoints="xs sm md" data-type="html" data-filterable="false">Elimina</th>
+
                             </tr>
                             </thead>
                             <tbody>
-                            <?php foreach ($controlador->nominas->registros as $nomina){?>
+                            <?php foreach ($controlador->nominas as $nomina){?>
                                 <tr>
                                     <td><?php echo $nomina['nom_nomina_id']; ?></td>
                                     <td><?php echo $nomina['nom_nomina_codigo']; ?></td>
@@ -43,7 +43,6 @@ $url_icons = (new views())->url_icons;
                                     <td><?php echo $nomina['em_empleado_nombre'].' '.$nomina['em_empleado_ap'].' '.$nomina['em_empleado_am']; ?></td>
                                     <td><?php echo $nomina['org_empresa_id']; ?></td>
                                     <td><?php echo $nomina['link_modifica']; ?></td>
-                                    <td><?php echo $nomina['link_elimina']; ?></td>
                                 </tr>
                             <?php } ?>
 

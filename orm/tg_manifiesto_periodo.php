@@ -1,5 +1,6 @@
 <?php
 namespace models;
+use base\orm\inicializacion;
 use base\orm\modelo;
 
 use gamboamartin\errores\errores;
@@ -69,5 +70,28 @@ class tg_manifiesto_periodo extends modelo{
         }
 
         return $registros;
+    }
+
+    public function nominas_by_manifiesto(int $tg_manifiesto_id): array
+    {
+        $r_tg_manifiesto_periodo = $this->get_periodos_manifiesto(tg_manifiesto_id:  $tg_manifiesto_id);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener manifiesto periodo',data:  $r_tg_manifiesto_periodo);
+        }
+
+
+        $in = (new inicializacion())->genera_data_in(
+            campo:'id', tabla: 'nom_periodo', registros: $r_tg_manifiesto_periodo->registros);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al integrar in',data:  $in);
+        }
+
+
+        $nominas = (new nom_nomina($this->link))->filtro_and(in: $in);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener nominas del periodo',data:  $nominas);
+        }
+
+        return $nominas->registros;
     }
 }
