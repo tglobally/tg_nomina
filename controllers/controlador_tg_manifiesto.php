@@ -8,6 +8,7 @@
  */
 namespace tglobally\tg_nomina\controllers;
 
+use base\orm\inicializacion;
 use gamboamartin\empleado\models\em_empleado;
 use gamboamartin\errores\errores;
 use gamboamartin\system\actions;
@@ -561,26 +562,23 @@ class controlador_tg_manifiesto extends system
 
     public function ve_nominas(bool $header, bool $ws = false): array|stdClass
     {
-        $tg_manifiesto = $this->modelo->registro(registro_id: $this->registro_id);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al obtener manifiesto',data:  $tg_manifiesto,
-                header: $header,ws:$ws);
-        }
 
-        $filtro = array();
-        $filtro['tg_manifiesto.id'] = $this->registro_id;
 
-        $r_tg_manifiesto_periodo = (new tg_manifiesto_periodo(link: $this->link))->filtro_and(filtro: $filtro);
+        $r_tg_manifiesto_periodo = (new tg_manifiesto_periodo(link: $this->link))->get_periodos_manifiesto(
+            tg_manifiesto_id:  $this->registro_id);
         if(errores::$error){
             return $this->retorno_error(mensaje: 'Error al obtener manifiesto periodo',data:  $r_tg_manifiesto_periodo,
                 header: $header,ws:$ws);
         }
 
-        $values_in = array();
-        $tg_manifiestos_periodos = $r_tg_manifiesto_periodo->registros;
-        foreach ($tg_manifiestos_periodos as $tg_manifiesto_periodo){
-            $values_in[] = $tg_manifiesto_periodo['nom_periodo_id'];
+
+        $values_in = (new inicializacion())->values_in(key_value: 'nom_periodo_id', rows: $r_tg_manifiesto_periodo->registros);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al obtener values in',data:  $values_in,
+                header: $header,ws:$ws);
         }
+
+        
 
         $in = array();
         $in['llave'] = 'nom_periodo.id';
