@@ -11,7 +11,8 @@ class tg_manifiesto_periodo extends modelo{
 
     public function __construct(PDO $link){
         $tabla = 'tg_manifiesto_periodo';
-        $columnas = array($tabla=>false, 'tg_manifiesto' =>$tabla,'nom_periodo'=>$tabla);
+        $columnas = array($tabla=>false, 'tg_manifiesto' =>$tabla,'nom_periodo'=>$tabla,
+            'cat_sat_periodicidad_pago_nom'=>'nom_periodo');
         $campos_obligatorios = array('descripcion','codigo','descripcion_select','alias','codigo_bis',
             'tg_manifiesto_id','nom_periodo_id');
 

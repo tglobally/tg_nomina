@@ -223,7 +223,7 @@ class controlador_tg_manifiesto extends system
             $empleados_res = array();
             foreach ($empleados as $empleado) {
                 $filtro_em['em_empleado.id'] = $empleado['em_empleado_id'];
-                $filtro_em['cat_sat_periodicidad_pago_nom.id'] = $nom_periodo['cat_sat_periodicidad_pago_nom_id'];
+                $filtro_em['cat_sat_periodicidad_pago_nom.id'] = $nom_periodo['nom_periodo_cat_sat_periodicidad_pago_nom_id'];
                 $conf_empleado = (new nom_conf_empleado($this->link))->filtro_and(filtro: $filtro_em);
                 if (errores::$error) {
                     return $this->errores->error(mensaje: 'Error al obtener configuracion de empleado',
@@ -237,7 +237,8 @@ class controlador_tg_manifiesto extends system
 
             foreach ($empleados_res as $empleado) {
                 foreach ($empleados_excel as $empleado_excel) {
-                    if ($empleado_excel->codigo === $empleado['em_empleado_codigo']) {
+                    if ((string)$empleado_excel->codigo === (string)$empleado['em_empleado_codigo']
+                     && (int)$empleado_excel->faltas > 0) {
                         $registro_inc['nom_tipo_incidencia_id'] = 1;
                         $registro_inc['em_empleado_id'] = $empleado['em_empleado_id'];
                         $registro_inc['n_dias'] = $empleado_excel->faltas;
@@ -249,6 +250,7 @@ class controlador_tg_manifiesto extends system
                         }
                     }
                 }
+
                 $alta_empleado = (new nom_periodo($this->link))->alta_empleado_periodo(empleado: $empleado,
                     nom_periodo: $nom_periodo);
                 if (errores::$error) {
