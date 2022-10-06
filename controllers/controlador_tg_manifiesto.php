@@ -65,6 +65,34 @@ class controlador_tg_manifiesto extends system
             die('Error');
         }
 
+        $this->asignar_propiedad(identificador: 'com_sucursal_id', propiedades: ["label" => "Sucursal"]);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al asignar propiedad', data: $this);
+            print_r($error);
+            die('Error');
+        }
+
+        $this->asignar_propiedad(identificador: 'tg_cte_alianza_id', propiedades: ["label" => "Alianza"]);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al asignar propiedad', data: $this);
+            print_r($error);
+            die('Error');
+        }
+
+        $this->asignar_propiedad(identificador: 'fecha_inicial_pago', propiedades: ["place_holder" => "Fecha Inicial Pago"]);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al asignar propiedad', data: $this);
+            print_r($error);
+            die('Error');
+        }
+
+        $this->asignar_propiedad(identificador: 'fecha_final_pago', propiedades: ["place_holder" => "Fecha Final Pago"]);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al asignar propiedad', data: $this);
+            print_r($error);
+            die('Error');
+        }
+
         $this->asignar_propiedad(identificador: 'fecha_envio', propiedades: ["place_holder" => "Fecha Envio"]);
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al asignar propiedad', data: $this);
@@ -101,12 +129,8 @@ class controlador_tg_manifiesto extends system
 
         $this->row_upd->fecha_envio = date('Y-m-d');
         $this->row_upd->fecha_pago = date('Y-m-d');
-
-        $this->keys_selects['com_sucursal_id'] = new stdClass();
-        $this->keys_selects['com_sucursal_id']->label = 'Sucursal';
-
-        $this->keys_selects['tg_cte_alianza_id'] = new stdClass();
-        $this->keys_selects['tg_cte_alianza_id']->label = 'Alianza';
+        $this->row_upd->fecha_inicial_pago = date('Y-m-d');
+        $this->row_upd->fecha_final_pago = date('Y-m-d');
 
         $inputs = (new tg_manifiesto_html(html: $this->html_base))->genera_inputs(controler: $this,
             keys_selects: $this->keys_selects);

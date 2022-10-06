@@ -17,6 +17,8 @@
                 <?php echo $controlador->inputs->select->tg_cte_alianza_id; ?>
                 <?php echo $controlador->inputs->select->fc_csd_id; ?>
                 <?php echo $controlador->inputs->select->tg_tipo_servicio_id; ?>
+                <?php echo $controlador->inputs->fecha_inicial_pago; ?>
+                <?php echo $controlador->inputs->fecha_final_pago; ?>
                 <?php echo $controlador->inputs->fecha_envio; ?>
                 <?php echo $controlador->inputs->fecha_pago; ?>
 

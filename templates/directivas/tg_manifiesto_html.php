@@ -19,6 +19,9 @@ class tg_manifiesto_html extends em_html {
         $controler->inputs->select->tg_tipo_servicio_id =  $inputs['selects']->tg_tipo_servicio_id;
         $controler->inputs->fecha_envio = $inputs['dates']->fecha_envio;
         $controler->inputs->fecha_pago = $inputs['dates']->fecha_pago;
+        $controler->inputs->fecha_inicial_pago = $inputs['dates']->fecha_inicial_pago;
+        $controler->inputs->fecha_final_pago = $inputs['dates']->fecha_final_pago;
+
         return $controler->inputs;
     }
 

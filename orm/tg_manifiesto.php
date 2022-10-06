@@ -27,6 +27,8 @@ class tg_manifiesto extends modelo{
         $campos_view['tg_tipo_servicio_id']['model'] = (new tg_tipo_servicio($link));
         $campos_view['fecha_envio']['type'] = 'dates';
         $campos_view['fecha_pago']['type'] = 'dates';
+        $campos_view['fecha_inicial_pago']['type'] = 'dates';
+        $campos_view['fecha_final_pago']['type'] = 'dates';
 
         parent::__construct(link: $link,tabla:  $tabla, campos_obligatorios: $campos_obligatorios,
             columnas: $columnas,campos_view:  $campos_view );
@@ -54,6 +56,12 @@ class tg_manifiesto extends modelo{
         if(isset($this->registro['tg_cte_alianza_id'])){
             unset($this->registro['tg_cte_alianza_id']);
         }
+        if(isset($this->registro['fecha_inicial_pago'])){
+            unset($this->registro['fecha_inicial_pago']);
+        }
+        if(isset($this->registro['fecha_final_pago'])){
+            unset($this->registro['fecha_final_pago']);
+        }
 
         $r_alta_bd = parent::alta_bd();
         if(errores::$error){
@@ -70,6 +78,12 @@ class tg_manifiesto extends modelo{
         }
         if(isset($this->registro['tg_cte_alianza_id'])){
             unset($this->registro['tg_cte_alianza_id']);
+        }
+        if(isset($this->registro['fecha_inicial_pago'])){
+            unset($this->registro['fecha_inicial_pago']);
+        }
+        if(isset($this->registro['fecha_final_pago'])){
+            unset($this->registro['fecha_final_pago']);
         }
 
         $r_modifica_bd = parent::modifica_bd($registro, $id, $reactiva);
