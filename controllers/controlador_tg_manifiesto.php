@@ -569,28 +569,36 @@ class controlador_tg_manifiesto extends system
 
         $filtro = array();
         $filtro['tg_manifiesto.id'] = $this->registro_id;
+
         $r_tg_manifiesto_periodo = (new tg_manifiesto_periodo(link: $this->link))->filtro_and(filtro: $filtro);
         if(errores::$error){
             return $this->retorno_error(mensaje: 'Error al obtener manifiesto periodo',data:  $r_tg_manifiesto_periodo,
                 header: $header,ws:$ws);
         }
 
+        $values_in = array();
+        $tg_manifiestos_periodos = $r_tg_manifiesto_periodo->registros;
+        foreach ($tg_manifiestos_periodos as $tg_manifiesto_periodo){
+            $values_in[] = $tg_manifiesto_periodo['nom_periodo_id'];
+        }
+
+        $in = array();
+        $in['llave'] = 'nom_periodo.id';
+        $in['values'] = $values_in;
 
 
-        $filtro = array();
-        $filtro['nom_periodo.id'] = $this->registro_id;
-        $nominas = (new nom_nomina($this->link))->filtro_and(filtro: $filtro);
+        $nominas = (new nom_nomina($this->link))->filtro_and(in: $in);
         if(errores::$error){
             return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo',data:  $nominas,
                 header: $header,ws:$ws);
         }
 
         foreach ($nominas->registros as $indice => $nomina) {
-            $nomina = $this->data_nomina_btn(nomina: $nomina);
+            /*$nomina = $this->data_nomina_btn(nomina: $nomina);
             if (errores::$error) {
                 return $this->retorno_error(mensaje: 'Error al asignar botones', data: $nomina, header: $header, ws: $ws);
             }
-            $nominas->registros[$indice] = $nomina;
+            $nominas->registros[$indice] = $nomina;*/
         }
         $this->nominas = $nominas;
 
