@@ -10,10 +10,7 @@
 
                 <?php echo $controlador->inputs->id; ?>
                 <?php echo $controlador->inputs->codigo; ?>
-                <?php echo $controlador->inputs->codigo_bis; ?>
                 <?php echo $controlador->inputs->descripcion; ?>
-                <?php echo $controlador->inputs->descripcion_select; ?>
-                <?php echo $controlador->inputs->alias; ?>
                 <?php echo $controlador->inputs->select->com_sucursal_id; ?>
                 <?php echo $controlador->inputs->select->tg_cte_alianza_id; ?>
                 <?php echo $controlador->inputs->select->fc_csd_id; ?>

@@ -9,10 +9,7 @@
             <form method="post" action="./index.php?seccion=tg_manifiesto&accion=alta_bd&session_id=<?php echo $controlador->session_id; ?>" class="form-additional">
 
                 <?php echo $controlador->inputs->codigo; ?>
-                <?php echo $controlador->inputs->codigo_bis; ?>
                 <?php echo $controlador->inputs->descripcion; ?>
-                <?php echo $controlador->inputs->descripcion_select; ?>
-                <?php echo $controlador->inputs->alias; ?>
                 <?php echo $controlador->inputs->select->com_sucursal_id; ?>
                 <?php echo $controlador->inputs->select->tg_cte_alianza_id; ?>
                 <?php echo $controlador->inputs->select->fc_csd_id; ?>
