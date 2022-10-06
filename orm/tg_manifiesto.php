@@ -48,13 +48,35 @@ class tg_manifiesto extends modelo{
             $this->registro['alias'] = $this->registro['codigo'];
             $this->registro['alias'] .= $this->registro['descripcion'];
         }
+        if(isset($this->registro['com_sucursal_id'])){
+            unset($this->registro['com_sucursal_id']);
+        }
+        if(isset($this->registro['tg_cte_alianza_id'])){
+            unset($this->registro['tg_cte_alianza_id']);
+        }
 
         $r_alta_bd = parent::alta_bd();
         if(errores::$error){
-            return $this->error->error(mensaje: 'Error al dar de alta anticipo',data: $r_alta_bd);
+            return $this->error->error(mensaje: 'Error al dar de alta manifiesto',data: $r_alta_bd);
         }
 
         return $r_alta_bd;
     }
 
+    public function modifica_bd(array $registro, int $id, bool $reactiva = false): array|stdClass
+    {
+        if(isset($this->registro['com_sucursal_id'])){
+            unset($this->registro['com_sucursal_id']);
+        }
+        if(isset($this->registro['tg_cte_alianza_id'])){
+            unset($this->registro['tg_cte_alianza_id']);
+        }
+
+        $r_modifica_bd = parent::modifica_bd($registro, $id, $reactiva);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al modificar manifiesto',data: $r_modifica_bd);
+        }
+
+        return $r_modifica_bd;
+    }
 }
