@@ -34,6 +34,7 @@ class controlador_tg_manifiesto extends system
     public controlador_tg_manifiesto_periodo $controlador_tg_manifiesto_periodo;
     public array $keys_selects = array();
     public stdClass $periodos;
+    public int $tg_manifiesto_periodo_id = -1;
 
     public function __construct(PDO      $link, html $html = new \gamboamartin\template_1\html(),
                                 stdClass $paths_conf = new stdClass())
@@ -45,6 +46,10 @@ class controlador_tg_manifiesto extends system
 
         $this->titulo_lista = 'Manifiesto';
         $this->controlador_tg_manifiesto_periodo= new controlador_tg_manifiesto_periodo($this->link);
+
+        if (isset($_GET['em_anticipo_id'])){
+            $this->tg_manifiesto_periodo_id = $_GET['tg_manifiesto_periodo_id'];
+        }
 
         $this->asignar_propiedad(identificador: 'fc_csd_id', propiedades: ["label" => "CSD"]);
         if (errores::$error) {
@@ -167,14 +172,14 @@ class controlador_tg_manifiesto extends system
         $params['tg_manifiesto_periodo_id'] = $periodo['tg_manifiesto_periodo_id'];
 
         $btn_elimina = $this->html_base->button_href(accion: 'abono_elimina_bd', etiqueta: 'Elimina',
-            registro_id: $this->registro_id, seccion: 'em_empleado', style: 'danger',params: $params);
+            registro_id: $this->registro_id, seccion: 'tg_manifiesto', style: 'danger',params: $params);
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al generar btn', data: $btn_elimina);
         }
         $periodo['link_elimina'] = $btn_elimina;
 
-        $btn_modifica = $this->html_base->button_href(accion: 'abono_modifica', etiqueta: 'Modifica',
-            registro_id: $this->registro_id, seccion: 'em_empleado', style: 'warning',params: $params);
+        $btn_modifica = $this->html_base->button_href(accion: 'periodo_modifica', etiqueta: 'Modifica',
+            registro_id: $this->registro_id, seccion: 'tg_manifiesto', style: 'warning',params: $params);
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al generar btn', data: $btn_modifica);
         }
@@ -467,6 +472,26 @@ class controlador_tg_manifiesto extends system
         $alta->siguiente_view = "periodo";
 
         return $alta;
+    }
+
+    public function periodo_modifica(bool $header, bool $ws = false): array|stdClass
+    {
+        $this->controlador_tg_manifiesto_periodo->registro_id = $this->tg_manifiesto_periodo_id;
+
+        $modifica = $this->controlador_tg_manifiesto_periodo->modifica(header: false);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al generar template',data:  $modifica, header: $header,ws:$ws);
+        }
+
+        $this->inputs = $this->controlador_tg_manifiesto_periodo->genera_inputs(
+            keys_selects:  $this->controlador_tg_manifiesto_periodo->keys_selects);
+        if(errores::$error){
+            $error = $this->errores->error(mensaje: 'Error al generar inputs',data:  $this->inputs);
+            print_r($error);
+            die('Error');
+        }
+
+        return $this->inputs;
     }
 
     public function sube_manifiesto(bool $header, bool $ws = false){
