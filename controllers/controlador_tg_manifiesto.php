@@ -9,6 +9,7 @@
 namespace tglobally\tg_nomina\controllers;
 
 use base\orm\inicializacion;
+use base\orm\sql;
 use gamboamartin\empleado\models\em_empleado;
 use gamboamartin\errores\errores;
 use gamboamartin\system\actions;
@@ -601,11 +602,10 @@ class controlador_tg_manifiesto extends system
                 header: $header,ws:$ws);
         }
 
-        
-
-        $in = array();
-        $in['llave'] = 'nom_periodo.id';
-        $in['values'] = $values_in;
+        $in = (new inicializacion())->data_in_sql(llave:'nom_periodo.id', values_in: $values_in);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al integrar in',data:  $in, header: $header,ws:$ws);
+        }
 
 
         $nominas = (new nom_nomina($this->link))->filtro_and(in: $in);
