@@ -38,8 +38,21 @@ class tg_manifiesto extends modelo{
 
     public function alta_bd(): array|stdClass
     {
+
+        $fc_csd = (new fc_csd($this->link))->registro(registro_id: $this->registro['fc_csd_id']);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener registro empresa',data: $fc_csd);
+        }
+
+        $com_sucursal = (new com_sucursal($this->link))->registro(registro_id: $this->registro['com_sucursal_id']);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener registro cliente',data: $com_sucursal);
+        }
+
         if (!isset($this->registro['descripcion_select'])) {
-            $this->registro['descripcion_select'] = $this->registro['descripcion'];
+            $this->registro['descripcion_select'] = $this->registro['codigo'].' ';
+            $this->registro['descripcion_select'] .= $com_sucursal['com_cliente_rfc'].' ';
+            $this->registro['descripcion_select'] .= $fc_csd['org_empresa_rfc'];
         }
 
         if (!isset($this->registro['codigo_bis'])) {
@@ -47,9 +60,13 @@ class tg_manifiesto extends modelo{
         }
 
         if (!isset($this->registro['alias'])) {
-            $this->registro['alias'] = $this->registro['codigo'];
-            $this->registro['alias'] .= $this->registro['descripcion'];
+            $alias = $this->registro['codigo'].' ';
+            $alias .= $com_sucursal['com_cliente_rfc'].' ';
+            $alias .= $fc_csd['org_empresa_rfc'];
+
+            $this->registro['alias'] = strtoupper($alias);
         }
+
         if(isset($this->registro['com_sucursal_id'])){
             unset($this->registro['com_sucursal_id']);
         }
