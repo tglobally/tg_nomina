@@ -73,17 +73,17 @@ class tg_manifiesto extends modelo{
 
     public function modifica_bd(array $registro, int $id, bool $reactiva = false): array|stdClass
     {
-        if(isset($this->registro['com_sucursal_id'])){
-            unset($this->registro['com_sucursal_id']);
+        if(isset($registro['com_sucursal_id'])){
+            unset($registro['com_sucursal_id']);
         }
-        if(isset($this->registro['tg_cte_alianza_id'])){
-            unset($this->registro['tg_cte_alianza_id']);
+        if(isset($registro['tg_cte_alianza_id'])){
+            unset($registro['tg_cte_alianza_id']);
         }
-        if(isset($this->registro['fecha_inicial_pago'])){
-            unset($this->registro['fecha_inicial_pago']);
+        if(isset($registro['fecha_inicial_pago'])){
+            unset($registro['fecha_inicial_pago']);
         }
-        if(isset($this->registro['fecha_final_pago'])){
-            unset($this->registro['fecha_final_pago']);
+        if(isset($registro['fecha_final_pago'])){
+            unset($registro['fecha_final_pago']);
         }
 
         $r_modifica_bd = parent::modifica_bd($registro, $id, $reactiva);
