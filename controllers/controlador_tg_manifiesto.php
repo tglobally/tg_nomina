@@ -21,6 +21,7 @@ use models\doc_documento;
 use models\im_registro_patronal;
 use models\nom_conf_empleado;
 use models\nom_incidencia;
+use models\nom_nomina;
 use models\nom_periodo;
 use models\tg_manifiesto;
 use models\tg_manifiesto_periodo;
@@ -312,25 +313,30 @@ class controlador_tg_manifiesto extends system
         $registros_xls = array();
 
         foreach ($nominas as $nomina){
-            $row = array();
-            foreach ($nomina as $campo=>$value){
-
-                if($campo === 'em_empleado_codigo'){
-                    $row['ID REM'] = $value;
-                }
-                if($campo === 'em_empleado_nss'){
-                    $row['NSS'] = $value;
-                }
+            $row = (new nom_nomina($this->link))->maqueta_registros_excel($nomina['nom_nomina_id']);
+            if(errores::$error){
+                return $this->retorno_error(mensaje: 'Error al maquetar datos de la nomina',data:  $row,
+                    header: $header,ws:$ws);
             }
             $registros_xls[] = $row;
+        }
+
+        $keys = array();
+
+        foreach (array_keys($registros_xls[0]) as $key) {
+            $keys[$key] = strtoupper(str_replace('_', ' ', $key));
+        }
+
+        $registros = array();
+
+        foreach ($registros_xls as $row) {
+            $registros[] = array_combine(preg_replace(array_map(function($s){return "/^$s$/";},
+                array_keys($keys)),$keys, array_keys($row)), $row);
 
         }
 
-        $keys = array_keys($registros_xls[0]);
-
-
         $resultado = $exportador->listado_base_xls(header: $header, name: $this->seccion, keys:  $keys,
-            path_base: $this->path_base,registros:  $registros_xls,totales:  array());
+            path_base: $this->path_base,registros:  $registros,totales:  array());
         if(errores::$error){
             $error =  $this->errores->error('Error al generar xls',$resultado);
             if(!$header){
