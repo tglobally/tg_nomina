@@ -526,7 +526,9 @@ class controlador_tg_manifiesto extends system
                 $reg->nombre = $hojaActual->getCell('B'.$registro->fila)->getValue();
                 $reg->ap = $hojaActual->getCell('C'.$registro->fila)->getValue();
                 $reg->am = $hojaActual->getCell('D'.$registro->fila)->getValue();
-                $reg->faltas = $hojaActual->getCell($columna_faltas.$registro->fila)->getValue();
+                if($columna_faltas !== -1) {
+                    $reg->faltas = $hojaActual->getCell($columna_faltas . $registro->fila)->getValue();
+                }
                 $empleados[] = $reg;
             }
         }
