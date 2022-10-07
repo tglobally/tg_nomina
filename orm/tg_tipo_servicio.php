@@ -11,7 +11,8 @@ class tg_tipo_servicio extends modelo{
 
     public function __construct(PDO $link){
         $tabla = 'tg_tipo_servicio';
-        $columnas = array($tabla=>false);
+        $columnas = array($tabla=>false, 'nom_conf_nomina'=>$tabla,'cat_sat_periodicidad_pago_nom'=>'nom_conf_nomina',
+            'cat_sat_tipo_nomina'=>'nom_conf_nomina');
         $campos_obligatorios = array('descripcion','codigo','descripcion_select','alias','codigo_bis');
 
         parent::__construct(link: $link,tabla:  $tabla, campos_obligatorios: $campos_obligatorios,
