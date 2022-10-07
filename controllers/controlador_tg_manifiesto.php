@@ -309,8 +309,26 @@ class controlador_tg_manifiesto extends system
         }
 
         $exportador = (new exportador());
-        $keys = array();
         $registros_xls = array();
+
+        foreach ($nominas as $nomina){
+            $row = array();
+            foreach ($nomina as $campo=>$value){
+
+                if($campo === 'em_empleado_codigo'){
+                    $row['ID REM'] = $value;
+                }
+                if($campo === 'em_empleado_nss'){
+                    $row['NSS'] = $value;
+                }
+            }
+            $registros_xls[] = $row;
+
+        }
+
+        $keys = array_keys($registros_xls[0]);
+
+
         $resultado = $exportador->listado_base_xls(header: $header, name: $this->seccion, keys:  $keys,
             path_base: $this->path_base,registros:  $registros_xls,totales:  array());
         if(errores::$error){
