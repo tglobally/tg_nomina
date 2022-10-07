@@ -142,6 +142,25 @@ class controlador_tg_manifiesto extends system
         return $r_alta;
     }
 
+    private function asigna_link_descarga_nomina_row(stdClass $row): array|stdClass
+    {
+        $keys = array('tg_manifiesto_id');
+        $valida = $this->validacion->valida_ids(keys: $keys,registro:  $row);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error al validar row',data:  $valida);
+        }
+
+        $link_descarga_nomina = $this->obj_link->link_con_id(accion:'descarga_nomina',registro_id:  $row->tg_manifiesto_id,
+            seccion:  $this->tabla);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error al genera link',data:  $link_descarga_nomina);
+        }
+
+        $row->link_descarga_nomina = $link_descarga_nomina;
+
+        return $row;
+    }
+
     private function asigna_link_sube_manifiesto_row(stdClass $row): array|stdClass
     {
         $keys = array('tg_manifiesto_id');
@@ -397,6 +416,11 @@ class controlador_tg_manifiesto extends system
             $registros[$indice] = $row;
 
             $row = $this->asigna_link_ve_nominas_row(row: $row);
+            if(errores::$error){
+                return $this->errores->error(mensaje: 'Error al maquetar row',data:  $row);
+            }
+
+            $row = $this->asigna_link_descarga_nomina_row(row: $row);
             if(errores::$error){
                 return $this->errores->error(mensaje: 'Error al maquetar row',data:  $row);
             }

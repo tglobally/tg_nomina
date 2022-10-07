@@ -38,6 +38,7 @@ $url_icons = (new views())->url_icons;
                                     <td><?php echo $registro->tg_manifiesto_descripcion; ?></td>
                                     <td><a class="btn btn-info " href="<?php echo $registro->link_sube_manifiesto; ?>">Sube Manifiesto</a></td>
                                     <td><a class="btn btn-info " href="<?php echo $registro->link_ve_nominas; ?>">Ve Nominas</a></td>
+                                    <td><a class="btn btn-info " href="<?php echo $registro->link_descarga_nomina; ?>">Descarga Nomina</a></td>
                                     <td><a class="btn btn-warning " href="<?php echo $registro->link_modifica; ?>">Modifica</a></td>
                                     <td><a class="btn btn-danger " href="<?php echo $registro->link_elimina_bd; ?>">Elimina</a></td>
                                 </tr>
