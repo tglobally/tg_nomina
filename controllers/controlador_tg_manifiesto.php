@@ -11,6 +11,7 @@ namespace tglobally\tg_nomina\controllers;
 use base\orm\inicializacion;
 use gamboamartin\empleado\models\em_empleado;
 use gamboamartin\errores\errores;
+use gamboamartin\plugins\exportador;
 use gamboamartin\system\actions;
 use gamboamartin\system\links_menu;
 use gamboamartin\system\system;
@@ -307,14 +308,21 @@ class controlador_tg_manifiesto extends system
                 header: $header,ws:$ws);
         }
 
-        foreach ($nominas as $indice => $nomina) {
-            $nomina = $this->data_nomina_btn(nomina: $nomina);
-            if (errores::$error) {
-                return $this->retorno_error(mensaje: 'Error al asignar botones', data: $nomina, header: $header, ws: $ws);
+        $exportador = (new exportador());
+        $keys = array();
+        $registros_xls = array();
+        $resultado = $exportador->listado_base_xls(header: $header, name: $this->seccion, keys:  $keys,
+            path_base: $this->path_base,registros:  $registros_xls,totales:  array());
+        if(errores::$error){
+            $error =  $this->errores->error('Error al generar xls',$resultado);
+            if(!$header){
+                return $error;
             }
-            $nominas[$indice] = $nomina;
+            print_r($error);
+            die('Error');
         }
-        $this->nominas = $nominas;
+
+
         exit;
         //return $this->nominas;
     }
