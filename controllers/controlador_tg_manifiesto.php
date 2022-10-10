@@ -283,7 +283,7 @@ class controlador_tg_manifiesto extends system
     {
         $params['tg_manifiesto_periodo_id'] = $periodo['tg_manifiesto_periodo_id'];
 
-        $btn_elimina = $this->html_base->button_href(accion: 'abono_elimina_bd', etiqueta: 'Elimina',
+        $btn_elimina = $this->html_base->button_href(accion: 'periodo_elimina_bd', etiqueta: 'Elimina',
             registro_id: $this->registro_id, seccion: 'tg_manifiesto', style: 'danger',params: $params);
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al generar btn', data: $btn_elimina);
@@ -700,7 +700,7 @@ class controlador_tg_manifiesto extends system
 
         if ($header) {
             $this->retorno_base(registro_id:$this->registro_id, result: $r_modifica,
-                siguiente_view: "periodo", ws:  $ws, params: ['em_anticipo_id'=> 2]);
+                siguiente_view: "periodo", ws:  $ws);
         }
         if ($ws) {
             header('Content-Type: application/json');
@@ -710,6 +710,43 @@ class controlador_tg_manifiesto extends system
         $r_modifica->siguiente_view = "periodo";
 
         return $r_modifica;
+    }
+
+    public function periodo_elimina_bd(bool $header, bool $ws = false): array|stdClass
+    {
+        $this->link->beginTransaction();
+
+        $siguiente_view = (new actions())->init_alta_bd();
+        if (errores::$error) {
+            $this->link->rollBack();
+            return $this->retorno_error(mensaje: 'Error al obtener siguiente view', data: $siguiente_view,
+                header: $header, ws: $ws);
+        }
+
+        if (isset($_POST['btn_action_next'])) {
+            unset($_POST['btn_action_next']);
+        }
+
+        $r_elimina = (new tg_manifiesto_periodo($this->link))->elimina_bd(id: $this->tg_manifiesto_periodo_id);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al eliminar periodo', data: $r_elimina, header: $header,
+                ws: $ws);
+        }
+
+        $this->link->commit();
+
+        if ($header) {
+            $this->retorno_base(registro_id:$this->registro_id, result: $r_elimina,
+                siguiente_view: "periodo", ws:  $ws);
+        }
+        if ($ws) {
+            header('Content-Type: application/json');
+            echo json_encode($r_elimina, JSON_THROW_ON_ERROR);
+            exit;
+        }
+        $r_elimina->siguiente_view = "periodo";
+
+        return $r_elimina;
     }
 
     public function sube_manifiesto(bool $header, bool $ws = false){
