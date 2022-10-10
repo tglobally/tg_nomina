@@ -434,6 +434,7 @@ class controlador_tg_manifiesto extends system
                         $registro_inc['nom_tipo_incidencia_id'] = 1;
                         $registro_inc['em_empleado_id'] = $empleado['em_empleado_id'];
                         $registro_inc['n_dias'] = $empleado_excel->faltas;
+                        $registro_inc['fecha_incidencia'] = $nom_periodo['nom_periodo_fecha_inicial_pago'];
 
                         $nom_incidencia = (new nom_incidencia($this->link))->alta_registro(registro: $registro_inc);
                         if (errores::$error) {
