@@ -49,7 +49,7 @@ class controlador_tg_manifiesto extends system
         $this->titulo_lista = 'Manifiesto';
         $this->controlador_tg_manifiesto_periodo= new controlador_tg_manifiesto_periodo($this->link);
 
-        if (isset($_GET['em_anticipo_id'])){
+        if (isset($_GET['tg_manifiesto_periodo_id'])){
             $this->tg_manifiesto_periodo_id = $_GET['tg_manifiesto_periodo_id'];
         }
 
@@ -671,6 +671,45 @@ class controlador_tg_manifiesto extends system
         }
 
         return $this->inputs;
+    }
+
+    public function periodo_modifica_bd(bool $header, bool $ws = false): array|stdClass
+    {
+        $this->link->beginTransaction();
+
+        $siguiente_view = (new actions())->init_alta_bd();
+        if (errores::$error) {
+            $this->link->rollBack();
+            return $this->retorno_error(mensaje: 'Error al obtener siguiente view', data: $siguiente_view,
+                header: $header, ws: $ws);
+        }
+
+        if (isset($_POST['btn_action_next'])) {
+            unset($_POST['btn_action_next']);
+        }
+
+        $registros = $_POST;
+
+        $r_modifica = (new tg_manifiesto_periodo($this->link))->modifica_bd(registro: $registros,
+            id: $this->tg_manifiesto_periodo_id);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al modificar abono', data: $r_modifica, header: $header, ws: $ws);
+        }
+
+        $this->link->commit();
+
+        if ($header) {
+            $this->retorno_base(registro_id:$this->registro_id, result: $r_modifica,
+                siguiente_view: "periodo", ws:  $ws, params: ['em_anticipo_id'=> 2]);
+        }
+        if ($ws) {
+            header('Content-Type: application/json');
+            echo json_encode($r_modifica, JSON_THROW_ON_ERROR);
+            exit;
+        }
+        $r_modifica->siguiente_view = "periodo";
+
+        return $r_modifica;
     }
 
     public function sube_manifiesto(bool $header, bool $ws = false){
