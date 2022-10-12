@@ -15,7 +15,7 @@
                 <?php echo $controlador->inputs->descripcion_select; ?>
                 <?php echo $controlador->inputs->alias; ?>
                 <?php echo $controlador->inputs->select->tg_row_manifiesto_id; ?>
-                <?php echo $controlador->inputs->select->nom_par_deduccion_id; ?>
+                <?php echo $controlador->inputs->select->nom_par_otro_pago_id; ?>
 
                 <div class="buttons col-md-12">
                     <div class="col-md-6">
