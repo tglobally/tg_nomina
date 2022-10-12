@@ -34,5 +34,4 @@ class tg_manifiesto_percepcion_html extends em_html {
 
         return $inputs_asignados;
     }
-
 }
