@@ -314,29 +314,9 @@ class controlador_tg_manifiesto extends system
         $exportador = (new exportador());
         $registros_xls = array();
 
-        $r_manifiesto = (new tg_manifiesto($this->link))->registro(registro_id: $this->registro_id);
+        $registros_xls = (new tg_manifiesto($this->link))->maqueta_encabezado_excel(registros_xls: $registros_xls);
         if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al manifiesto',data:  $r_manifiesto,
-                header: $header,ws:$ws);
-        }
-
-        $r_fc_csd = (new fc_csd($this->link))->registro(registro_id: $r_manifiesto['tg_manifiesto_fc_csd_id']);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al registro de empresa',data:  $r_fc_csd,
-                header: $header,ws:$ws);
-        }
-
-        $r_tg_sucursal_alianza = (new tg_sucursal_alianza($this->link))->registro(
-            registro_id: $r_manifiesto['tg_manifiesto_tg_sucursal_alianza_id']);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al registro de cliente',data:  $r_tg_sucursal_alianza,
-                header: $header,ws:$ws);
-        }
-
-        $r_tg_manifiesto_periodo = (new tg_manifiesto_periodo($this->link))->get_periodos_manifiesto(
-            tg_manifiesto_id:  $this->registro_id);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al obtener manifiesto periodo',data:  $r_tg_manifiesto_periodo,
+            return $this->retorno_error(mensaje: 'Error al maquetar datos de la nomina',data:  $registros_xls,
                 header: $header,ws:$ws);
         }
 
