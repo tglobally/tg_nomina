@@ -1,5 +1,15 @@
 <?php /** @var \tglobally\tg_nomina\controllers\controlador_tg_tipo_servicio $controlador */ ?>
 <?php include 'templates/tg_tipo_servicio/modifica/secciones.php'; ?>
+
+<style>
+    .form-control{
+        border-radius: 10px !important;
+    }
+    .color-secondary{
+        background: #f8f8f8 !important;
+    }
+</style>
+
 <div class="col-md-9 formulario">
     <div class="col-lg-12">
 

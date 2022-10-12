@@ -1,0 +1,1 @@
+<span class="texto-menu-lateral">Tipo Anticipo</span>
