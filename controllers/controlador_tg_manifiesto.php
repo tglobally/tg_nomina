@@ -11,6 +11,7 @@ namespace tglobally\tg_nomina\controllers;
 use base\orm\inicializacion;
 use gamboamartin\empleado\models\em_empleado;
 use gamboamartin\errores\errores;
+use gamboamartin\facturacion\models\fc_csd;
 use gamboamartin\plugins\exportador;
 use gamboamartin\system\actions;
 use gamboamartin\system\links_menu;
@@ -25,6 +26,7 @@ use models\nom_nomina;
 use models\nom_periodo;
 use models\tg_manifiesto;
 use models\tg_manifiesto_periodo;
+use models\tg_sucursal_alianza;
 use PDO;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -311,6 +313,32 @@ class controlador_tg_manifiesto extends system
 
         $exportador = (new exportador());
         $registros_xls = array();
+
+        $r_manifiesto = (new tg_manifiesto($this->link))->registro(registro_id: $this->registro_id);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al manifiesto',data:  $r_manifiesto,
+                header: $header,ws:$ws);
+        }
+
+        $r_fc_csd = (new fc_csd($this->link))->registro(registro_id: $r_manifiesto['tg_manifiesto_fc_csd_id']);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al registro de empresa',data:  $r_fc_csd,
+                header: $header,ws:$ws);
+        }
+
+        $r_tg_sucursal_alianza = (new tg_sucursal_alianza($this->link))->registro(
+            registro_id: $r_manifiesto['tg_manifiesto_tg_sucursal_alianza_id']);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al registro de cliente',data:  $r_tg_sucursal_alianza,
+                header: $header,ws:$ws);
+        }
+
+        $r_tg_manifiesto_periodo = (new tg_manifiesto_periodo($this->link))->get_periodos_manifiesto(
+            tg_manifiesto_id:  $this->registro_id);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al obtener manifiesto periodo',data:  $r_tg_manifiesto_periodo,
+                header: $header,ws:$ws);
+        }
 
         foreach ($nominas as $nomina){
             $row = (new nom_nomina($this->link))->maqueta_registros_excel($nomina['nom_nomina_id']);
