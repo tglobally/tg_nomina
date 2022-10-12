@@ -1,6 +1,7 @@
 <?php
 namespace html;
 
+use base\controller\controler;
 use gamboamartin\errores\errores;
 use gamboamartin\template\directivas;
 use PDO;
