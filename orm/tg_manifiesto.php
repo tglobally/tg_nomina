@@ -166,4 +166,30 @@ class tg_manifiesto extends modelo{
 
         return $tg_sucursal_alianza->registros[0];
     }
+    
+    public function maqueta_encabezado_excel(array $registros_xls){
+        $r_manifiesto = (new tg_manifiesto($this->link))->registro(registro_id: $this->registro_id);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al manifiesto',data:  $r_manifiesto);
+        }
+
+        $r_fc_csd = (new fc_csd($this->link))->registro(registro_id: $r_manifiesto['tg_manifiesto_fc_csd_id']);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al registro de empresa',data:  $r_fc_csd);
+        }
+
+        $r_tg_sucursal_alianza = (new tg_sucursal_alianza($this->link))->registro(
+            registro_id: $r_manifiesto['tg_manifiesto_tg_sucursal_alianza_id']);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al registro de cliente',data:  $r_tg_sucursal_alianza);
+        }
+
+        $r_tg_manifiesto_periodo = (new tg_manifiesto_periodo($this->link))->get_periodos_manifiesto(
+            tg_manifiesto_id:  $this->registro_id);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener manifiesto periodo',data:  $r_tg_manifiesto_periodo);
+        }
+
+        return $registros_xls;
+    }
 }

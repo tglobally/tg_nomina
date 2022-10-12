@@ -314,12 +314,6 @@ class controlador_tg_manifiesto extends system
         $exportador = (new exportador());
         $registros_xls = array();
 
-        $registros_xls = (new tg_manifiesto($this->link))->maqueta_encabezado_excel(registros_xls: $registros_xls);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al maquetar datos de la nomina',data:  $registros_xls,
-                header: $header,ws:$ws);
-        }
-
         foreach ($nominas as $nomina){
             $row = (new nom_nomina($this->link))->maqueta_registros_excel($nomina['nom_nomina_id']);
             if(errores::$error){
