@@ -45,4 +45,46 @@ class controlador_tg_manifiesto_deduccion extends system {
         }
         return $r_alta;
     }
+
+    private function base(): array|stdClass
+    {
+        $r_modifica =  parent::modifica(header: false,aplica_form:  false);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error al generar template',data:  $r_modifica);
+        }
+
+        if(!array_key_exists(key: 'tg_row_manifiesto_id', array: $this->keys_selects))
+            $this->keys_selects['tg_row_manifiesto_id'] = new stdClass();
+        $this->keys_selects['tg_row_manifiesto_id']->label = 'Manifiesto';
+        $this->keys_selects['tg_row_manifiesto_id']->id_selected = $this->row_upd->tg_row_manifiesto_id;
+
+        if(!array_key_exists(key: 'nom_par_deduccion_id', array: $this->keys_selects))
+            $this->keys_selects['nom_par_deduccion_id'] = new stdClass();
+        $this->keys_selects['nom_par_deduccion_id']->label = 'Deduccion';
+        $this->keys_selects['nom_par_deduccion_id']->id_selected = $this->row_upd->nom_par_deduccion_id;
+
+        $inputs = (new tg_manifiesto_deduccion_html(html: $this->html_base))->genera_inputs(controler: $this,
+            keys_selects: $this->keys_selects);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error al inicializar inputs',data:  $inputs);
+        }
+
+        $data = new stdClass();
+        $data->template = $r_modifica;
+        $data->inputs = $inputs;
+
+        return $data;
+    }
+
+    public function modifica(bool $header, bool $ws = false, string $breadcrumbs = '', bool $aplica_form = true,
+                             bool $muestra_btn = true): array|string
+    {
+        $base = $this->base();
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al maquetar datos',data:  $base,
+                header: $header,ws:$ws);
+        }
+
+        return $base->template;
+    }
 }
