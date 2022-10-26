@@ -38,13 +38,20 @@ class controlador_nom_nomina extends \gamboamartin\nomina\controllers\controlado
         }
 
         foreach ($registros as $indice=>$registro){
+
+            $link_genera_xml = $this->obj_link->link_con_id(accion:'genera_xml',registro_id:  $registro->nom_nomina_id,
+                seccion:  $this->tabla);
+            if(errores::$error){
+                return $this->errores->error(mensaje: 'Error al genera link',data:  $link_genera_xml);
+            }
+            $registro->link_genera_xml = $link_genera_xml;
+
             foreach($links as $link){
 
                 if((int)$registro->nom_nomina_id  === (int)$link->nom_nomina_id){
                     $registro->razon_social = $registro->em_empleado_nombre.' '. $registro->em_empleado_ap.' ';
                     $registro->razon_social .= $registro->em_empleado_am;
-                    $registro->total_cuota_patronal = $link->total_cuota_patronal;
-                    $registro->link_genera_xml = $link->link_genera_xml;
+                    $registro->total_cuota_patronal = $registro->nom_nomina_total_cuota;
                     $registro->link_modifica = $link->link_modifica;
                     $registro->link_elimina_bd = $link->link_elimina_bd;
                 }
