@@ -655,6 +655,22 @@ class controlador_tg_manifiesto extends system
                 $reg->am = $hojaActual->getCell('D'.$registro->fila)->getValue();
                 if($columna_faltas !== -1) {
                     $reg->faltas = $hojaActual->getCell($columna_faltas . $registro->fila)->getValue();
+                } 
+                
+                if($columna_prima_dominical !== -1) {
+                    $reg->prima_dominical = $hojaActual->getCell($columna_prima_dominical . $registro->fila)->getValue();
+                }
+                
+                if($columna_dias_festivos_laborados !== -1) {
+                    $reg->dias_festivos_laborados = $hojaActual->getCell($columna_dias_festivos_laborados . $registro->fila)->getValue();
+                }
+                
+                if($columna_incapacidades !== -1) {
+                    $reg->incapacidades = $hojaActual->getCell($columna_incapacidades . $registro->fila)->getValue();
+                }     
+                
+                if($columna_vacaciones !== -1) {
+                    $reg->vacaciones = $hojaActual->getCell($columna_vacaciones . $registro->fila)->getValue();
                 }
                 $empleados[] = $reg;
             }
