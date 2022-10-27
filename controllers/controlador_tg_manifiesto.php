@@ -444,6 +444,58 @@ class controlador_tg_manifiesto extends system
                                 data: $nom_incidencia);
                         }
                     }
+                    if ((string)$empleado_excel->codigo === (string)$empleado['em_empleado_codigo']
+                     && (int)$empleado_excel->prima_dominical > 0) {
+                        $registro_inc['nom_tipo_incidencia_id'] = 2;
+                        $registro_inc['em_empleado_id'] = $empleado['em_empleado_id'];
+                        $registro_inc['n_dias'] = $empleado_excel->faltas;
+                        $registro_inc['fecha_incidencia'] = $nom_periodo['nom_periodo_fecha_inicial_pago'];
+
+                        $nom_incidencia = (new nom_incidencia($this->link))->alta_registro(registro: $registro_inc);
+                        if (errores::$error) {
+                            return $this->errores->error(mensaje: 'Error al dar de alta incidencias',
+                                data: $nom_incidencia);
+                        }
+                    }
+                    if ((string)$empleado_excel->codigo === (string)$empleado['em_empleado_codigo']
+                     && (int)$empleado_excel->dias_festivos_laborados > 0) {
+                        $registro_inc['nom_tipo_incidencia_id'] = 3;
+                        $registro_inc['em_empleado_id'] = $empleado['em_empleado_id'];
+                        $registro_inc['n_dias'] = $empleado_excel->faltas;
+                        $registro_inc['fecha_incidencia'] = $nom_periodo['nom_periodo_fecha_inicial_pago'];
+
+                        $nom_incidencia = (new nom_incidencia($this->link))->alta_registro(registro: $registro_inc);
+                        if (errores::$error) {
+                            return $this->errores->error(mensaje: 'Error al dar de alta incidencias',
+                                data: $nom_incidencia);
+                        }
+                    }
+                    if ((string)$empleado_excel->codigo === (string)$empleado['em_empleado_codigo']
+                     && (int)$empleado_excel->incapacidades > 0) {
+                        $registro_inc['nom_tipo_incidencia_id'] = 4;
+                        $registro_inc['em_empleado_id'] = $empleado['em_empleado_id'];
+                        $registro_inc['n_dias'] = $empleado_excel->faltas;
+                        $registro_inc['fecha_incidencia'] = $nom_periodo['nom_periodo_fecha_inicial_pago'];
+
+                        $nom_incidencia = (new nom_incidencia($this->link))->alta_registro(registro: $registro_inc);
+                        if (errores::$error) {
+                            return $this->errores->error(mensaje: 'Error al dar de alta incidencias',
+                                data: $nom_incidencia);
+                        }
+                    }
+                    if ((string)$empleado_excel->codigo === (string)$empleado['em_empleado_codigo']
+                     && (int)$empleado_excel->vacaciones > 0) {
+                        $registro_inc['nom_tipo_incidencia_id'] = 5;
+                        $registro_inc['em_empleado_id'] = $empleado['em_empleado_id'];
+                        $registro_inc['n_dias'] = $empleado_excel->faltas;
+                        $registro_inc['fecha_incidencia'] = $nom_periodo['nom_periodo_fecha_inicial_pago'];
+
+                        $nom_incidencia = (new nom_incidencia($this->link))->alta_registro(registro: $registro_inc);
+                        if (errores::$error) {
+                            return $this->errores->error(mensaje: 'Error al dar de alta incidencias',
+                                data: $nom_incidencia);
+                        }
+                    }
                 }
 
                 $alta_empleado = (new nom_periodo($this->link))->alta_empleado_periodo(empleado: $empleado,
