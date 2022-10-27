@@ -518,6 +518,82 @@ class controlador_tg_manifiesto extends system
         return $columna;
     }
 
+    public function obten_columna_prima_dominical(Spreadsheet $documento){
+        $totalDeHojas = $documento->getSheetCount();
+
+        $columna = -1;
+        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+            $hojaActual = $documento->getSheet($indiceHoja);
+            foreach ($hojaActual->getRowIterator() as $fila) {
+                foreach ($fila->getCellIterator() as $celda) {
+                    $valorRaw = $celda->getValue();
+                    if($valorRaw === 'PRIMAS DOMINICALES') {
+                        $columna = $celda->getColumn();
+                    }
+                }
+            }
+        }
+
+        return $columna;
+    }
+
+    public function obten_columna_dias_festivos_laborados(Spreadsheet $documento){
+        $totalDeHojas = $documento->getSheetCount();
+
+        $columna = -1;
+        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+            $hojaActual = $documento->getSheet($indiceHoja);
+            foreach ($hojaActual->getRowIterator() as $fila) {
+                foreach ($fila->getCellIterator() as $celda) {
+                    $valorRaw = $celda->getValue();
+                    if($valorRaw === 'DIAS FESTIVOS LABORADOS') {
+                        $columna = $celda->getColumn();
+                    }
+                }
+            }
+        }
+
+        return $columna;
+    }
+
+    public function obten_columna_incapacidades(Spreadsheet $documento){
+        $totalDeHojas = $documento->getSheetCount();
+
+        $columna = -1;
+        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+            $hojaActual = $documento->getSheet($indiceHoja);
+            foreach ($hojaActual->getRowIterator() as $fila) {
+                foreach ($fila->getCellIterator() as $celda) {
+                    $valorRaw = $celda->getValue();
+                    if($valorRaw === 'INCAPACIDADES') {
+                        $columna = $celda->getColumn();
+                    }
+                }
+            }
+        }
+
+        return $columna;
+    }
+
+    public function obten_columna_vacaciones(Spreadsheet $documento){
+        $totalDeHojas = $documento->getSheetCount();
+
+        $columna = -1;
+        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+            $hojaActual = $documento->getSheet($indiceHoja);
+            foreach ($hojaActual->getRowIterator() as $fila) {
+                foreach ($fila->getCellIterator() as $celda) {
+                    $valorRaw = $celda->getValue();
+                    if($valorRaw === 'VACACIONES') {
+                        $columna = $celda->getColumn();
+                    }
+                }
+            }
+        }
+
+        return $columna;
+    }
+
     public function obten_empleados_excel(string $ruta_absoluta){
         $documento = IOFactory::load($ruta_absoluta);
         $totalDeHojas = $documento->getSheetCount();
@@ -525,6 +601,30 @@ class controlador_tg_manifiesto extends system
         $columna_faltas = $this->obten_columna_faltas(documento: $documento);
         if(errores::$error){
             return $this->errores->error(mensaje: 'Error obtener columna de faltas',data:  $columna_faltas);
+        }
+
+        $columna_prima_dominical = $this->obten_columna_prima_dominical(documento: $documento);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error obtener columna de prima dominical',
+                data:  $columna_prima_dominical);
+        }
+
+        $columna_dias_festivos_laborados = $this->obten_columna_dias_festivos_laborados(documento: $documento);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error obtener columna de dias festivos laborados',
+                data:  $columna_dias_festivos_laborados);
+        }
+
+        $columna_incapacidades = $this->obten_columna_incapacidades(documento: $documento);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error obtener columna de incapacidades',
+                data:  $columna_incapacidades);
+        }
+
+        $columna_vacaciones = $this->obten_columna_vacaciones(documento: $documento);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error obtener columna de vacaciones',
+                data:  $columna_vacaciones);
         }
 
         $empleados = array();
