@@ -527,7 +527,7 @@ class controlador_tg_manifiesto extends system
             foreach ($hojaActual->getRowIterator() as $fila) {
                 foreach ($fila->getCellIterator() as $celda) {
                     $valorRaw = $celda->getValue();
-                    if($valorRaw === 'PRIMAS DOMINICALES') {
+                    if($valorRaw === 'DÍAS DE PRIMA DOMINICAL') {
                         $columna = $celda->getColumn();
                     }
                 }
@@ -546,7 +546,26 @@ class controlador_tg_manifiesto extends system
             foreach ($hojaActual->getRowIterator() as $fila) {
                 foreach ($fila->getCellIterator() as $celda) {
                     $valorRaw = $celda->getValue();
-                    if($valorRaw === 'DIAS FESTIVOS LABORADOS') {
+                    if($valorRaw === 'FESTIVO LABORADO') {
+                        $columna = $celda->getColumn();
+                    }
+                }
+            }
+        }
+
+        return $columna;
+    }
+
+    public function obten_columna_dias_descanso_laborado(Spreadsheet $documento){
+        $totalDeHojas = $documento->getSheetCount();
+
+        $columna = -1;
+        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+            $hojaActual = $documento->getSheet($indiceHoja);
+            foreach ($hojaActual->getRowIterator() as $fila) {
+                foreach ($fila->getCellIterator() as $celda) {
+                    $valorRaw = $celda->getValue();
+                    if($valorRaw === 'DESCANSO LABORADO') {
                         $columna = $celda->getColumn();
                     }
                 }
@@ -565,7 +584,7 @@ class controlador_tg_manifiesto extends system
             foreach ($hojaActual->getRowIterator() as $fila) {
                 foreach ($fila->getCellIterator() as $celda) {
                     $valorRaw = $celda->getValue();
-                    if($valorRaw === 'INCAPACIDADES') {
+                    if($valorRaw === 'INCAPACIDAD') {
                         $columna = $celda->getColumn();
                     }
                 }
@@ -584,7 +603,26 @@ class controlador_tg_manifiesto extends system
             foreach ($hojaActual->getRowIterator() as $fila) {
                 foreach ($fila->getCellIterator() as $celda) {
                     $valorRaw = $celda->getValue();
-                    if($valorRaw === 'VACACIONES') {
+                    if($valorRaw === 'DÍAS DE VACACIONES') {
+                        $columna = $celda->getColumn();
+                    }
+                }
+            }
+        }
+
+        return $columna;
+    }
+
+    public function obten_columna_prima_vacacional(Spreadsheet $documento){
+        $totalDeHojas = $documento->getSheetCount();
+
+        $columna = -1;
+        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+            $hojaActual = $documento->getSheet($indiceHoja);
+            foreach ($hojaActual->getRowIterator() as $fila) {
+                foreach ($fila->getCellIterator() as $celda) {
+                    $valorRaw = $celda->getValue();
+                    if($valorRaw === 'PRIMA VACACIONAL') {
                         $columna = $celda->getColumn();
                     }
                 }
