@@ -380,27 +380,59 @@ class controlador_tg_manifiesto extends system
         $doc_documento_modelo->registro['doc_tipo_documento_id'] = 1;
         $doc_documento = $doc_documento_modelo->alta_bd(file: $_FILES['archivo']);
         if (errores::$error) {
-            return $this->errores->error(mensaje: 'Error al dar de alta el documento', data: $doc_documento);
+            $error =  $this->errores->error(mensaje: 'Error al dar de alta el documento', data: $doc_documento);
+            if(!$header){
+                return $error;
+            }
+            print_r($error);
+            die('Error');
         }
 
         $empleados_excel = $this->obten_empleados_excel(ruta_absoluta: $doc_documento->registro['doc_documento_ruta_absoluta']);
-        if(errores::$error){
-            return $this->errores->error(mensaje: 'Error obtener empleados',data:  $empleados_excel);
+        if (errores::$error) {
+            $error =  $this->errores->error(mensaje: 'Error obtener empleados',data:  $empleados_excel);
+            if(!$header){
+                return $error;
+            }
+            print_r($error);
+            die('Error');
         }
 
         $im_registro_patronal = $this->obten_registro_patronal(tg_manifiesto_id: $this->registro_id);
-        if(errores::$error){
-            return $this->errores->error(mensaje: 'Error obtener registro patronal',data:  $im_registro_patronal);
+        if (errores::$error) {
+            $error =  $this->errores->error(mensaje: 'Error obtener registro patronal',data:  $im_registro_patronal);
+            if(!$header){
+                return $error;
+            }
+            print_r($error);
+            die('Error');
         }
 
         $im_registro_patronal_id = $im_registro_patronal['im_registro_patronal_id'];
         $empleados = array();
         foreach ($empleados_excel as $empleado_excel){
             $filtro['im_registro_patronal.id'] = $im_registro_patronal_id;
-            $filtro['em_empleado.codigo'] = $empleado_excel->codigo;
+            $filtro['em_empleado.nombre'] = $empleado_excel->nombre;
+            $filtro['em_empleado.ap'] = $empleado_excel->ap;
+            $filtro['em_empleado.am'] = $empleado_excel->am;
+
             $registro = (new em_empleado($this->link))->filtro_and(filtro: $filtro);
             if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al al obtener registro de empleado', data: $registro);
+                $error =  $this->errores->error(mensaje: 'Error al al obtener registro de empleado', data: $registro);
+                if(!$header){
+                    return $error;
+                }
+                print_r($error);
+                die('Error');
+            }
+            if ($registro->n_registros === 0) {
+                $error =  $this->errores->error(mensaje: 'Error se encontro el empleado '.$empleado_excel->nombre.' '.
+                    $empleado_excel->ap.' '.$empleado_excel->am, data: $registro);
+                if(!$header){
+                    return $error;
+                }
+                print_r($error);
+                die('Error');
             }
             if($registro->n_registros > 0){
                 $empleados[] = $registro->registros[0];
@@ -410,7 +442,12 @@ class controlador_tg_manifiesto extends system
         $filtro_per['tg_manifiesto.id'] = $this->registro_id;
         $nom_periodos = (new tg_manifiesto_periodo($this->link))->filtro_and(filtro: $filtro_per);
         if (errores::$error) {
-            return $this->errores->error(mensaje: 'Error al al obtener periodos', data: $nom_periodos);
+            $error =  $this->errores->error(mensaje: 'Error al al obtener periodos', data: $nom_periodos);
+            if(!$header){
+                return $error;
+            }
+            print_r($error);
+            die('Error');
         }
 
         foreach ($nom_periodos->registros  as $nom_periodo) {
@@ -420,15 +457,20 @@ class controlador_tg_manifiesto extends system
                 $filtro_em['cat_sat_periodicidad_pago_nom.id'] = $nom_periodo['nom_periodo_cat_sat_periodicidad_pago_nom_id'];
                 $conf_empleado = (new nom_conf_empleado($this->link))->filtro_and(filtro: $filtro_em);
                 if (errores::$error) {
-                    return $this->errores->error(mensaje: 'Error al obtener configuracion de empleado',
+                    $error =  $this->errores->error(mensaje: 'Error al obtener configuracion de empleado',
                         data: $conf_empleado);
+                    if(!$header){
+                        return $error;
+                    }
+                    print_r($error);
+                    die('Error');
                 }
 
                 if (isset($conf_empleado->registros[0])) {
                     $empleados_res[] = $conf_empleado->registros[0];
                 }
             }
-
+            
             foreach ($empleados_res as $empleado) {
                 foreach ($empleados_excel as $empleado_excel) {
                     if ((string)$empleado_excel->codigo === (string)$empleado['em_empleado_codigo']
@@ -440,8 +482,13 @@ class controlador_tg_manifiesto extends system
 
                         $nom_incidencia = (new nom_incidencia($this->link))->alta_registro(registro: $registro_inc);
                         if (errores::$error) {
-                            return $this->errores->error(mensaje: 'Error al dar de alta incidencias',
+                            $error =  $this->errores->error(mensaje: 'Error al dar de alta incidencias',
                                 data: $nom_incidencia);
+                            if(!$header){
+                                return $error;
+                            }
+                            print_r($error);
+                            die('Error');
                         }
                     }
                     if ((string)$empleado_excel->codigo === (string)$empleado['em_empleado_codigo']
@@ -453,8 +500,13 @@ class controlador_tg_manifiesto extends system
 
                         $nom_incidencia = (new nom_incidencia($this->link))->alta_registro(registro: $registro_inc);
                         if (errores::$error) {
-                            return $this->errores->error(mensaje: 'Error al dar de alta incidencias',
+                            $error =  $this->errores->error(mensaje: 'Error al dar de alta incidencias',
                                 data: $nom_incidencia);
+                            if(!$header){
+                                return $error;
+                            }
+                            print_r($error);
+                            die('Error');
                         }
                     }
                     if ((string)$empleado_excel->codigo === (string)$empleado['em_empleado_codigo']
@@ -466,8 +518,13 @@ class controlador_tg_manifiesto extends system
 
                         $nom_incidencia = (new nom_incidencia($this->link))->alta_registro(registro: $registro_inc);
                         if (errores::$error) {
-                            return $this->errores->error(mensaje: 'Error al dar de alta incidencias',
+                            $error =  $this->errores->error(mensaje: 'Error al dar de alta incidencias',
                                 data: $nom_incidencia);
+                            if(!$header){
+                                return $error;
+                            }
+                            print_r($error);
+                            die('Error');
                         }
                     }
                     if ((string)$empleado_excel->codigo === (string)$empleado['em_empleado_codigo']
@@ -479,8 +536,13 @@ class controlador_tg_manifiesto extends system
 
                         $nom_incidencia = (new nom_incidencia($this->link))->alta_registro(registro: $registro_inc);
                         if (errores::$error) {
-                            return $this->errores->error(mensaje: 'Error al dar de alta incidencias',
+                            $error =  $this->errores->error(mensaje: 'Error al dar de alta incidencias',
                                 data: $nom_incidencia);
+                            if(!$header){
+                                return $error;
+                            }
+                            print_r($error);
+                            die('Error');
                         }
                     }
                     if ((string)$empleado_excel->codigo === (string)$empleado['em_empleado_codigo']
@@ -492,8 +554,13 @@ class controlador_tg_manifiesto extends system
 
                         $nom_incidencia = (new nom_incidencia($this->link))->alta_registro(registro: $registro_inc);
                         if (errores::$error) {
-                            return $this->errores->error(mensaje: 'Error al dar de alta incidencias',
+                            $error =  $this->errores->error(mensaje: 'Error al dar de alta incidencias',
                                 data: $nom_incidencia);
+                            if(!$header){
+                                return $error;
+                            }
+                            print_r($error);
+                            die('Error');
                         }
                     }
                 }
@@ -501,8 +568,13 @@ class controlador_tg_manifiesto extends system
                 $alta_empleado = (new nom_periodo($this->link))->alta_empleado_periodo(empleado: $empleado,
                     nom_periodo: $nom_periodo);
                 if (errores::$error) {
-                    return $this->errores->error(mensaje: 'Error al dar de alta la nomina del empleado',
+                    $error =  $this->errores->error(mensaje: 'Error al dar de alta la nomina del empleado',
                         data: $alta_empleado);
+                    if(!$header){
+                        return $error;
+                    }
+                    print_r($error);
+                    die('Error');
                 }
             }
         }
@@ -717,6 +789,12 @@ class controlador_tg_manifiesto extends system
                 data:  $columna_vacaciones);
         }
 
+        $columna_dias_descanso_laborado = $this->obten_columna_dias_descanso_laborado(documento: $documento);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error obtener columna de vacaciones',
+                data:  $columna_dias_descanso_laborado);
+        }
+
         $empleados = array();
         for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
             $hojaActual = $documento->getSheet($indiceHoja);
@@ -745,22 +823,43 @@ class controlador_tg_manifiesto extends system
                 $reg->am = $hojaActual->getCell('D'.$registro->fila)->getValue();
                 if($columna_faltas !== -1) {
                     $reg->faltas = $hojaActual->getCell($columna_faltas . $registro->fila)->getValue();
+                    if(!is_numeric($reg->faltas)){
+                        $reg->faltas = 0;
+                    }
                 } 
                 
                 if($columna_prima_dominical !== -1) {
                     $reg->prima_dominical = $hojaActual->getCell($columna_prima_dominical . $registro->fila)->getValue();
+                    if(!is_numeric($reg->prima_dominical)){
+                        $reg->prima_dominical = 0;
+                    }
                 }
                 
                 if($columna_dias_festivos_laborados !== -1) {
                     $reg->dias_festivos_laborados = $hojaActual->getCell($columna_dias_festivos_laborados . $registro->fila)->getValue();
+                    if(!is_numeric($reg->dias_festivos_laborados)){
+                        $reg->dias_festivos_laborados = 0;
+                    }
                 }
                 
                 if($columna_incapacidades !== -1) {
                     $reg->incapacidades = $hojaActual->getCell($columna_incapacidades . $registro->fila)->getValue();
+                    if(!is_numeric($reg->incapacidades)){
+                        $reg->incapacidades = 0;
+                    }
                 }     
                 
                 if($columna_vacaciones !== -1) {
                     $reg->vacaciones = $hojaActual->getCell($columna_vacaciones . $registro->fila)->getValue();
+                    if(!is_numeric($reg->vacaciones)){
+                        $reg->vacaciones = 0;
+                    }
+                }
+                if($columna_dias_descanso_laborado !== -1) {
+                    $reg->dias_descanso_laborado = $hojaActual->getCell($columna_dias_descanso_laborado . $registro->fila)->getValue();
+                    if(!is_numeric($reg->dias_descanso_laborado)){
+                        $reg->dias_descanso_laborado = 0;
+                    }
                 }
                 $empleados[] = $reg;
             }
