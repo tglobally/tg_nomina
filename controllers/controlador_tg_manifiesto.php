@@ -562,6 +562,23 @@ class controlador_tg_manifiesto extends system
                                 die('Error');
                             }
                         }
+                        if ((int)$empleado_excel->dias_descanso_laborado > 0) {
+                            $registro_inc['nom_tipo_incidencia_id'] = 6;
+                            $registro_inc['em_empleado_id'] = $empleado['em_empleado_id'];
+                            $registro_inc['n_dias'] = $empleado_excel->dias_descanso_laborado;
+                            $registro_inc['fecha_incidencia'] = $nom_periodo['nom_periodo_fecha_inicial_pago'];
+
+                            $nom_incidencia = (new nom_incidencia($this->link))->alta_registro(registro: $registro_inc);
+                            if (errores::$error) {
+                                $error = $this->errores->error(mensaje: 'Error al dar de alta incidencias',
+                                    data: $nom_incidencia);
+                                if (!$header) {
+                                    return $error;
+                                }
+                                print_r($error);
+                                die('Error');
+                            }
+                        }
                     }
                 }
 
