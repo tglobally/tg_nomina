@@ -473,9 +473,9 @@ class controlador_tg_manifiesto extends system
 
             foreach ($empleados_res as $empleado) {
                 foreach ($empleados_excel as $empleado_excel) {
-                    if((string)$empleado_excel->nombre === (string)$empleado['em_empleado_nombre'] &&
-                        (string)$empleado_excel->ap === (string)$empleado['em_empleado_ap'] &&
-                        (string)$empleado_excel->am === (string)$empleado['em_empleado_am']) {
+                    if(trim($empleado_excel->nombre) === trim($empleado['em_empleado_nombre']) &&
+                        trim($empleado_excel->ap) === trim($empleado['em_empleado_ap']) &&
+                        trim($empleado_excel->am) === trim($empleado['em_empleado_am'])) {
 
                         if ((int)$empleado_excel->faltas > 0) {
                             $registro_inc['nom_tipo_incidencia_id'] = 1;
