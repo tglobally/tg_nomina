@@ -597,7 +597,7 @@ class controlador_tg_manifiesto extends system
                 }
 
                 if($empleado_excel->compensacion > 0){
-                    $nom_percepcion = (new nom_percepcion($this->link))->get_aplica_septimo_dia();
+                    $nom_percepcion = (new nom_percepcion($this->link))->get_aplica_compensacion();
                     if (errores::$error) {
                         return $this->errores->error(mensaje: 'Error insertar conceptos', data: $nom_percepcion);
                     }
