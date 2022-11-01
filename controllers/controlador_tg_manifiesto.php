@@ -831,6 +831,12 @@ class controlador_tg_manifiesto extends system
                 data:  $columna_dias_descanso_laborado);
         }
 
+        $columna_compensacion = $this->obten_columna_compensacion(documento: $documento);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error obtener columna de compensacion',
+                data:  $columna_compensacion);
+        }
+
         $empleados = array();
         for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
             $hojaActual = $documento->getSheet($indiceHoja);
