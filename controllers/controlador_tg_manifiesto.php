@@ -716,6 +716,25 @@ class controlador_tg_manifiesto extends system
         return $columna;
     }
 
+    public function obten_columna_compensacion(Spreadsheet $documento){
+        $totalDeHojas = $documento->getSheetCount();
+
+        $columna = -1;
+        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+            $hojaActual = $documento->getSheet($indiceHoja);
+            foreach ($hojaActual->getRowIterator() as $fila) {
+                foreach ($fila->getCellIterator() as $celda) {
+                    $valorRaw = $celda->getValue();
+                    if($valorRaw === 'COMPENSACION') {
+                        $columna = $celda->getColumn();
+                    }
+                }
+            }
+        }
+
+        return $columna;
+    }
+
     public function obten_columna_incapacidades(Spreadsheet $documento){
         $totalDeHojas = $documento->getSheetCount();
 
