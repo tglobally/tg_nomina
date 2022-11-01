@@ -23,6 +23,8 @@ use models\im_registro_patronal;
 use models\nom_conf_empleado;
 use models\nom_incidencia;
 use models\nom_nomina;
+use models\nom_par_percepcion;
+use models\nom_percepcion;
 use models\nom_periodo;
 use models\tg_manifiesto;
 use models\tg_manifiesto_periodo;
@@ -593,6 +595,25 @@ class controlador_tg_manifiesto extends system
                     print_r($error);
                     die('Error');
                 }
+
+                if($empleado_excel->compensacion > 0){
+                    $nom_percepcion = (new nom_percepcion($this->link))->get_aplica_septimo_dia();
+                    if (errores::$error) {
+                        return $this->errores->error(mensaje: 'Error insertar conceptos', data: $nom_percepcion);
+                    }
+
+                    $nom_par_percepcion_sep = array();
+                    $nom_par_percepcion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
+                    $nom_par_percepcion_sep['nom_percepcion_id'] = $nom_percepcion['nom_percepcion_id'];
+                    $nom_par_percepcion_sep['importe_gravado'] = $empleado_excel->compensacion;
+
+                    $r_alta_nom_par_percepcion = (new nom_par_percepcion($this->link))->alta_registro(registro: $nom_par_percepcion_sep);
+                    if (errores::$error) {
+                        return $this->errores->error(mensaje: 'Error al insertar percepcion default', data: $r_alta_nom_par_percepcion);
+                    }
+                }
+
+
             }
         }
 
