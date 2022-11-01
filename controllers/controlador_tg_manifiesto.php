@@ -869,6 +869,7 @@ class controlador_tg_manifiesto extends system
                 $reg->incapacidades = 0;
                 $reg->vacaciones = 0;
                 $reg->dias_descanso_laborado = 0;
+                $reg->compensacion = 0;
 
                 if($columna_faltas !== -1) {
                     $reg->faltas = $hojaActual->getCell($columna_faltas . $registro->fila)->getValue();
@@ -908,6 +909,17 @@ class controlador_tg_manifiesto extends system
                     $reg->dias_descanso_laborado = $hojaActual->getCell($columna_dias_descanso_laborado . $registro->fila)->getValue();
                     if(!is_numeric($reg->dias_descanso_laborado)){
                         $reg->dias_descanso_laborado = 0;
+                    }
+                }
+                if($columna_compensacion !== -1) {
+                    $compensacion = $hojaActual->getCell($columna_compensacion . $registro->fila)->getValue();
+
+                    $compensacion = str_replace("$", "", $compensacion);
+                    $compensacion = str_replace(",", "", $compensacion);
+                    $reg->compensacion = $compensacion;
+
+                    if(!is_numeric($reg->compensacion)){
+                        $reg->compensacion = 0;
                     }
                 }
                 $empleados[] = $reg;
