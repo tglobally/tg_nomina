@@ -378,7 +378,18 @@ class controlador_tg_manifiesto extends system
      */
     public function lee_archivo(bool $header, bool $ws = false)
     {
+        $tg_manifiesto = (new tg_manifiesto($this->link))->registro(registro_id: $this->registro_id);
+        if (errores::$error) {
+            $error =  $this->errores->error(mensaje: 'Error al obtener manifiesto', data: $tg_manifiesto);
+            if(!$header){
+                return $error;
+            }
+            print_r($error);
+            die('Error');
+        }
         $doc_documento_modelo = new doc_documento($this->link);
+        $doc_documento_modelo->registro['descripcion'] = $tg_manifiesto['tg_manifiesto_descripcion'];
+        $doc_documento_modelo->registro['descripcion_select'] = $tg_manifiesto['tg_manifiesto_descripcion'];
         $doc_documento_modelo->registro['doc_tipo_documento_id'] = 1;
         $doc_documento = $doc_documento_modelo->alta_bd(file: $_FILES['archivo']);
         if (errores::$error) {
