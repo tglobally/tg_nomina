@@ -39,8 +39,8 @@ class controlador_nom_nomina extends \gamboamartin\nomina\controllers\controlado
 
         foreach ($registros as $indice=>$registro){
 
-            $link_genera_xml = $this->obj_link->link_con_id(accion:'genera_xml',registro_id:  $registro->nom_nomina_id,
-                seccion:  $this->tabla);
+            $link_genera_xml = $this->obj_link->link_con_id(accion:'genera_xml',link: $this->link,
+                registro_id:  $registro->nom_nomina_id, seccion:  $this->tabla);
             if(errores::$error){
                 return $this->errores->error(mensaje: 'Error al genera link',data:  $link_genera_xml);
             }
