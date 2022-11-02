@@ -595,24 +595,29 @@ class controlador_tg_manifiesto extends system
                     print_r($error);
                     die('Error');
                 }
+                
+                foreach ($empleados_excel as $empleado_excel) {
+                    if (trim($empleado_excel->nombre) === trim($empleado['em_empleado_nombre']) &&
+                        trim($empleado_excel->ap) === trim($empleado['em_empleado_ap']) &&
+                        trim($empleado_excel->am) === trim($empleado['em_empleado_am'])) {
+                        if ($empleado_excel->compensacion > 0) {
+                            $nom_percepcion = (new nom_percepcion($this->link))->get_aplica_compensacion();
+                            if (errores::$error) {
+                                return $this->errores->error(mensaje: 'Error insertar conceptos', data: $nom_percepcion);
+                            }
 
-                if($empleado_excel->compensacion > 0){
-                    $nom_percepcion = (new nom_percepcion($this->link))->get_aplica_compensacion();
-                    if (errores::$error) {
-                        return $this->errores->error(mensaje: 'Error insertar conceptos', data: $nom_percepcion);
-                    }
+                            $nom_par_percepcion_sep = array();
+                            $nom_par_percepcion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
+                            $nom_par_percepcion_sep['nom_percepcion_id'] = $nom_percepcion['nom_percepcion_id'];
+                            $nom_par_percepcion_sep['importe_gravado'] = $empleado_excel->compensacion;
 
-                    $nom_par_percepcion_sep = array();
-                    $nom_par_percepcion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
-                    $nom_par_percepcion_sep['nom_percepcion_id'] = $nom_percepcion['nom_percepcion_id'];
-                    $nom_par_percepcion_sep['importe_gravado'] = $empleado_excel->compensacion;
-
-                    $r_alta_nom_par_percepcion = (new nom_par_percepcion($this->link))->alta_registro(registro: $nom_par_percepcion_sep);
-                    if (errores::$error) {
-                        return $this->errores->error(mensaje: 'Error al insertar percepcion default', data: $r_alta_nom_par_percepcion);
+                            $r_alta_nom_par_percepcion = (new nom_par_percepcion($this->link))->alta_registro(registro: $nom_par_percepcion_sep);
+                            if (errores::$error) {
+                                return $this->errores->error(mensaje: 'Error al insertar percepcion default', data: $r_alta_nom_par_percepcion);
+                            }
+                        }
                     }
                 }
-
 
             }
         }
