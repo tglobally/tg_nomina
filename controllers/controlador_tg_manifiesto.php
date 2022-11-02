@@ -156,8 +156,8 @@ class controlador_tg_manifiesto extends system
             return $this->errores->error(mensaje: 'Error al validar row',data:  $valida);
         }
 
-        $link_descarga_nomina = $this->obj_link->link_con_id(accion:'descarga_nomina',registro_id:  $row->tg_manifiesto_id,
-            seccion:  $this->tabla);
+        $link_descarga_nomina = $this->obj_link->link_con_id(accion:'descarga_nomina',link:$this->link,
+            registro_id:  $row->tg_manifiesto_id, seccion:  $this->tabla);
         if(errores::$error){
             return $this->errores->error(mensaje: 'Error al genera link',data:  $link_descarga_nomina);
         }
@@ -175,8 +175,8 @@ class controlador_tg_manifiesto extends system
             return $this->errores->error(mensaje: 'Error al validar row',data:  $valida);
         }
 
-        $link_sube_manifiesto = $this->obj_link->link_con_id(accion:'sube_manifiesto',registro_id:  $row->tg_manifiesto_id,
-            seccion:  $this->tabla);
+        $link_sube_manifiesto = $this->obj_link->link_con_id(accion:'sube_manifiesto',link: $this->link,
+            registro_id:  $row->tg_manifiesto_id, seccion:  $this->tabla);
         if(errores::$error){
             return $this->errores->error(mensaje: 'Error al genera link',data:  $link_sube_manifiesto);
         }
@@ -194,8 +194,8 @@ class controlador_tg_manifiesto extends system
             return $this->errores->error(mensaje: 'Error al validar row',data:  $valida);
         }
 
-        $link_ve_nominas = $this->obj_link->link_con_id(accion:'ve_nominas',registro_id:  $row->tg_manifiesto_id,
-            seccion:  $this->tabla);
+        $link_ve_nominas = $this->obj_link->link_con_id(accion:'ve_nominas',link: $this->link,
+            registro_id:  $row->tg_manifiesto_id, seccion:  $this->tabla);
         if(errores::$error){
             return $this->errores->error(mensaje: 'Error al genera link',data:  $link_ve_nominas);
         }
