@@ -949,10 +949,8 @@ class controlador_tg_manifiesto extends system
                     }
                 }
                 if($columna_compensacion !== -1) {
-                    $compensacion = $hojaActual->getCell($columna_compensacion . $registro->fila)->getFormattedValue();
-                    $compensacion = str_replace("$", "", $compensacion);
-                    $compensacion = str_replace(",", "", $compensacion);
-                    $reg->compensacion = $compensacion;
+                    $compensacion = $hojaActual->getCell($columna_compensacion . $registro->fila)->getCalculatedValue();
+                    $reg->compensacion = trim((string)$compensacion);
 
                     if(!is_numeric($reg->compensacion)){
                         $reg->compensacion = 0;
