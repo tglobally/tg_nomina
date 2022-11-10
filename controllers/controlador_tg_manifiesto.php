@@ -629,14 +629,9 @@ class controlador_tg_manifiesto extends system
                         }
 
                         if ($empleado_excel->prima_vacacional > 0) {
-                            $nom_percepcion = (new nom_percepcion($this->link))->get_aplica_compensacion();
-                            if (errores::$error) {
-                                return $this->errores->error(mensaje: 'Error insertar conceptos', data: $nom_percepcion);
-                            }
-
                             $nom_par_percepcion_sep = array();
                             $nom_par_percepcion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
-                            $nom_par_percepcion_sep['nom_percepcion_id'] = $nom_percepcion['nom_percepcion_id'];
+                            $nom_par_percepcion_sep['nom_percepcion_id'] = 12;
                             $nom_par_percepcion_sep['importe_gravado'] = $empleado_excel->prima_vacacional;
 
                             $r_alta_nom_par_percepcion = (new nom_par_percepcion($this->link))->alta_registro(registro: $nom_par_percepcion_sep);
@@ -646,14 +641,9 @@ class controlador_tg_manifiesto extends system
                         }
 
                         if ($empleado_excel->despensa > 0) {
-                            $nom_percepcion = (new nom_percepcion($this->link))->get_aplica_compensacion();
-                            if (errores::$error) {
-                                return $this->errores->error(mensaje: 'Error insertar conceptos', data: $nom_percepcion);
-                            }
-
                             $nom_par_percepcion_sep = array();
                             $nom_par_percepcion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
-                            $nom_par_percepcion_sep['nom_percepcion_id'] = $nom_percepcion['nom_percepcion_id'];
+                            $nom_par_percepcion_sep['nom_percepcion_id'] = 4;
                             $nom_par_percepcion_sep['importe_gravado'] = $empleado_excel->despensa;
 
                             $r_alta_nom_par_percepcion = (new nom_par_percepcion($this->link))->alta_registro(registro: $nom_par_percepcion_sep);
@@ -662,14 +652,9 @@ class controlador_tg_manifiesto extends system
                             }
                         }
                         if ($empleado_excel->horas_extras_dobles > 0) {
-                            $nom_percepcion = (new nom_percepcion($this->link))->get_aplica_compensacion();
-                            if (errores::$error) {
-                                return $this->errores->error(mensaje: 'Error insertar conceptos', data: $nom_percepcion);
-                            }
-
                             $nom_par_percepcion_sep = array();
                             $nom_par_percepcion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
-                            $nom_par_percepcion_sep['nom_percepcion_id'] = $nom_percepcion['nom_percepcion_id'];
+                            $nom_par_percepcion_sep['nom_percepcion_id'] = 13;
                             $nom_par_percepcion_sep['importe_gravado'] = $empleado_excel->horas_extras_dobles;
 
                             $r_alta_nom_par_percepcion = (new nom_par_percepcion($this->link))->alta_registro(registro: $nom_par_percepcion_sep);
@@ -678,14 +663,9 @@ class controlador_tg_manifiesto extends system
                             }
                         }
                         if ($empleado_excel->gratificacion_especial > 0) {
-                            $nom_percepcion = (new nom_percepcion($this->link))->get_aplica_compensacion();
-                            if (errores::$error) {
-                                return $this->errores->error(mensaje: 'Error insertar conceptos', data: $nom_percepcion);
-                            }
-
                             $nom_par_percepcion_sep = array();
                             $nom_par_percepcion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
-                            $nom_par_percepcion_sep['nom_percepcion_id'] = $nom_percepcion['nom_percepcion_id'];
+                            $nom_par_percepcion_sep['nom_percepcion_id'] = 14;
                             $nom_par_percepcion_sep['importe_gravado'] = $empleado_excel->gratificacion_especial;
 
                             $r_alta_nom_par_percepcion = (new nom_par_percepcion($this->link))->alta_registro(registro: $nom_par_percepcion_sep);
@@ -694,14 +674,9 @@ class controlador_tg_manifiesto extends system
                             }
                         }
                         if ($empleado_excel->premio_puntualidad > 0) {
-                            $nom_percepcion = (new nom_percepcion($this->link))->get_aplica_compensacion();
-                            if (errores::$error) {
-                                return $this->errores->error(mensaje: 'Error insertar conceptos', data: $nom_percepcion);
-                            }
-
                             $nom_par_percepcion_sep = array();
                             $nom_par_percepcion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
-                            $nom_par_percepcion_sep['nom_percepcion_id'] = $nom_percepcion['nom_percepcion_id'];
+                            $nom_par_percepcion_sep['nom_percepcion_id'] = 15;
                             $nom_par_percepcion_sep['importe_gravado'] = $empleado_excel->premio_puntualidad;
 
                             $r_alta_nom_par_percepcion = (new nom_par_percepcion($this->link))->alta_registro(registro: $nom_par_percepcion_sep);
@@ -710,14 +685,9 @@ class controlador_tg_manifiesto extends system
                             }
                         }
                         if ($empleado_excel->premio_asistencia > 0) {
-                            $nom_percepcion = (new nom_percepcion($this->link))->get_aplica_compensacion();
-                            if (errores::$error) {
-                                return $this->errores->error(mensaje: 'Error insertar conceptos', data: $nom_percepcion);
-                            }
-
                             $nom_par_percepcion_sep = array();
                             $nom_par_percepcion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
-                            $nom_par_percepcion_sep['nom_percepcion_id'] = $nom_percepcion['nom_percepcion_id'];
+                            $nom_par_percepcion_sep['nom_percepcion_id'] = 16;
                             $nom_par_percepcion_sep['importe_gravado'] = $empleado_excel->premio_asistencia;
 
                             $r_alta_nom_par_percepcion = (new nom_par_percepcion($this->link))->alta_registro(registro: $nom_par_percepcion_sep);
@@ -726,14 +696,9 @@ class controlador_tg_manifiesto extends system
                             }
                         }
                         if ($empleado_excel->ayuda_transporte > 0) {
-                            $nom_percepcion = (new nom_percepcion($this->link))->get_aplica_compensacion();
-                            if (errores::$error) {
-                                return $this->errores->error(mensaje: 'Error insertar conceptos', data: $nom_percepcion);
-                            }
-
                             $nom_par_percepcion_sep = array();
                             $nom_par_percepcion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
-                            $nom_par_percepcion_sep['nom_percepcion_id'] = $nom_percepcion['nom_percepcion_id'];
+                            $nom_par_percepcion_sep['nom_percepcion_id'] = 17;
                             $nom_par_percepcion_sep['importe_gravado'] = $empleado_excel->ayuda_transporte;
 
                             $r_alta_nom_par_percepcion = (new nom_par_percepcion($this->link))->alta_registro(registro: $nom_par_percepcion_sep);
@@ -742,14 +707,9 @@ class controlador_tg_manifiesto extends system
                             }
                         }
                         if ($empleado_excel->gratificacion > 0) {
-                            $nom_percepcion = (new nom_percepcion($this->link))->get_aplica_compensacion();
-                            if (errores::$error) {
-                                return $this->errores->error(mensaje: 'Error insertar conceptos', data: $nom_percepcion);
-                            }
-
                             $nom_par_percepcion_sep = array();
                             $nom_par_percepcion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
-                            $nom_par_percepcion_sep['nom_percepcion_id'] = $nom_percepcion['nom_percepcion_id'];
+                            $nom_par_percepcion_sep['nom_percepcion_id'] = 18;
                             $nom_par_percepcion_sep['importe_gravado'] = $empleado_excel->gratificacion;
 
                             $r_alta_nom_par_percepcion = (new nom_par_percepcion($this->link))->alta_registro(registro: $nom_par_percepcion_sep);
