@@ -313,10 +313,15 @@ class controlador_tg_manifiesto extends system
                 header: $header,ws:$ws);
         }
 
+        $conceptos = (new nom_nomina($this->link))->obten_conceptos_nominas(nominas: $nominas);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo',data:  $conceptos,
+                header: $header,ws:$ws);
+        }
+
         $exportador = (new exportador());
         $registros_xls = array();
 
-        $conceptos = new stdClass();
         foreach ($nominas as $nomina){
             $row = (new nom_nomina($this->link))->maqueta_registros_excel(nom_nomina_id: $nomina['nom_nomina_id'],
                 conceptos_nomina: $conceptos);
