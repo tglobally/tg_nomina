@@ -627,6 +627,136 @@ class controlador_tg_manifiesto extends system
                                 return $this->errores->error(mensaje: 'Error al insertar percepcion default', data: $r_alta_nom_par_percepcion);
                             }
                         }
+
+                        if ($empleado_excel->prima_vacacional > 0) {
+                            $nom_percepcion = (new nom_percepcion($this->link))->get_aplica_compensacion();
+                            if (errores::$error) {
+                                return $this->errores->error(mensaje: 'Error insertar conceptos', data: $nom_percepcion);
+                            }
+
+                            $nom_par_percepcion_sep = array();
+                            $nom_par_percepcion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
+                            $nom_par_percepcion_sep['nom_percepcion_id'] = $nom_percepcion['nom_percepcion_id'];
+                            $nom_par_percepcion_sep['importe_gravado'] = $empleado_excel->prima_vacacional;
+
+                            $r_alta_nom_par_percepcion = (new nom_par_percepcion($this->link))->alta_registro(registro: $nom_par_percepcion_sep);
+                            if (errores::$error) {
+                                return $this->errores->error(mensaje: 'Error al insertar percepcion default', data: $r_alta_nom_par_percepcion);
+                            }
+                        }
+
+                        if ($empleado_excel->despensa > 0) {
+                            $nom_percepcion = (new nom_percepcion($this->link))->get_aplica_compensacion();
+                            if (errores::$error) {
+                                return $this->errores->error(mensaje: 'Error insertar conceptos', data: $nom_percepcion);
+                            }
+
+                            $nom_par_percepcion_sep = array();
+                            $nom_par_percepcion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
+                            $nom_par_percepcion_sep['nom_percepcion_id'] = $nom_percepcion['nom_percepcion_id'];
+                            $nom_par_percepcion_sep['importe_gravado'] = $empleado_excel->despensa;
+
+                            $r_alta_nom_par_percepcion = (new nom_par_percepcion($this->link))->alta_registro(registro: $nom_par_percepcion_sep);
+                            if (errores::$error) {
+                                return $this->errores->error(mensaje: 'Error al insertar percepcion default', data: $r_alta_nom_par_percepcion);
+                            }
+                        }
+                        if ($empleado_excel->horas_extras_dobles > 0) {
+                            $nom_percepcion = (new nom_percepcion($this->link))->get_aplica_compensacion();
+                            if (errores::$error) {
+                                return $this->errores->error(mensaje: 'Error insertar conceptos', data: $nom_percepcion);
+                            }
+
+                            $nom_par_percepcion_sep = array();
+                            $nom_par_percepcion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
+                            $nom_par_percepcion_sep['nom_percepcion_id'] = $nom_percepcion['nom_percepcion_id'];
+                            $nom_par_percepcion_sep['importe_gravado'] = $empleado_excel->horas_extras_dobles;
+
+                            $r_alta_nom_par_percepcion = (new nom_par_percepcion($this->link))->alta_registro(registro: $nom_par_percepcion_sep);
+                            if (errores::$error) {
+                                return $this->errores->error(mensaje: 'Error al insertar percepcion default', data: $r_alta_nom_par_percepcion);
+                            }
+                        }
+                        if ($empleado_excel->gratificacion_especial > 0) {
+                            $nom_percepcion = (new nom_percepcion($this->link))->get_aplica_compensacion();
+                            if (errores::$error) {
+                                return $this->errores->error(mensaje: 'Error insertar conceptos', data: $nom_percepcion);
+                            }
+
+                            $nom_par_percepcion_sep = array();
+                            $nom_par_percepcion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
+                            $nom_par_percepcion_sep['nom_percepcion_id'] = $nom_percepcion['nom_percepcion_id'];
+                            $nom_par_percepcion_sep['importe_gravado'] = $empleado_excel->gratificacion_especial;
+
+                            $r_alta_nom_par_percepcion = (new nom_par_percepcion($this->link))->alta_registro(registro: $nom_par_percepcion_sep);
+                            if (errores::$error) {
+                                return $this->errores->error(mensaje: 'Error al insertar percepcion default', data: $r_alta_nom_par_percepcion);
+                            }
+                        }
+                        if ($empleado_excel->premio_puntualidad > 0) {
+                            $nom_percepcion = (new nom_percepcion($this->link))->get_aplica_compensacion();
+                            if (errores::$error) {
+                                return $this->errores->error(mensaje: 'Error insertar conceptos', data: $nom_percepcion);
+                            }
+
+                            $nom_par_percepcion_sep = array();
+                            $nom_par_percepcion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
+                            $nom_par_percepcion_sep['nom_percepcion_id'] = $nom_percepcion['nom_percepcion_id'];
+                            $nom_par_percepcion_sep['importe_gravado'] = $empleado_excel->premio_puntualidad;
+
+                            $r_alta_nom_par_percepcion = (new nom_par_percepcion($this->link))->alta_registro(registro: $nom_par_percepcion_sep);
+                            if (errores::$error) {
+                                return $this->errores->error(mensaje: 'Error al insertar percepcion default', data: $r_alta_nom_par_percepcion);
+                            }
+                        }
+                        if ($empleado_excel->premio_asistencia > 0) {
+                            $nom_percepcion = (new nom_percepcion($this->link))->get_aplica_compensacion();
+                            if (errores::$error) {
+                                return $this->errores->error(mensaje: 'Error insertar conceptos', data: $nom_percepcion);
+                            }
+
+                            $nom_par_percepcion_sep = array();
+                            $nom_par_percepcion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
+                            $nom_par_percepcion_sep['nom_percepcion_id'] = $nom_percepcion['nom_percepcion_id'];
+                            $nom_par_percepcion_sep['importe_gravado'] = $empleado_excel->premio_asistencia;
+
+                            $r_alta_nom_par_percepcion = (new nom_par_percepcion($this->link))->alta_registro(registro: $nom_par_percepcion_sep);
+                            if (errores::$error) {
+                                return $this->errores->error(mensaje: 'Error al insertar percepcion default', data: $r_alta_nom_par_percepcion);
+                            }
+                        }
+                        if ($empleado_excel->ayuda_transporte > 0) {
+                            $nom_percepcion = (new nom_percepcion($this->link))->get_aplica_compensacion();
+                            if (errores::$error) {
+                                return $this->errores->error(mensaje: 'Error insertar conceptos', data: $nom_percepcion);
+                            }
+
+                            $nom_par_percepcion_sep = array();
+                            $nom_par_percepcion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
+                            $nom_par_percepcion_sep['nom_percepcion_id'] = $nom_percepcion['nom_percepcion_id'];
+                            $nom_par_percepcion_sep['importe_gravado'] = $empleado_excel->ayuda_transporte;
+
+                            $r_alta_nom_par_percepcion = (new nom_par_percepcion($this->link))->alta_registro(registro: $nom_par_percepcion_sep);
+                            if (errores::$error) {
+                                return $this->errores->error(mensaje: 'Error al insertar percepcion default', data: $r_alta_nom_par_percepcion);
+                            }
+                        }
+                        if ($empleado_excel->gratificacion > 0) {
+                            $nom_percepcion = (new nom_percepcion($this->link))->get_aplica_compensacion();
+                            if (errores::$error) {
+                                return $this->errores->error(mensaje: 'Error insertar conceptos', data: $nom_percepcion);
+                            }
+
+                            $nom_par_percepcion_sep = array();
+                            $nom_par_percepcion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
+                            $nom_par_percepcion_sep['nom_percepcion_id'] = $nom_percepcion['nom_percepcion_id'];
+                            $nom_par_percepcion_sep['importe_gravado'] = $empleado_excel->gratificacion;
+
+                            $r_alta_nom_par_percepcion = (new nom_par_percepcion($this->link))->alta_registro(registro: $nom_par_percepcion_sep);
+                            if (errores::$error) {
+                                return $this->errores->error(mensaje: 'Error al insertar percepcion default', data: $r_alta_nom_par_percepcion);
+                            }
+                        }
                     }
                 }
 
@@ -772,6 +902,139 @@ class controlador_tg_manifiesto extends system
         return $columna;
     }
 
+    public function obten_columna_despensa(Spreadsheet $documento){
+        $totalDeHojas = $documento->getSheetCount();
+
+        $columna = -1;
+        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+            $hojaActual = $documento->getSheet($indiceHoja);
+            foreach ($hojaActual->getRowIterator() as $fila) {
+                foreach ($fila->getCellIterator() as $celda) {
+                    $valorRaw = $celda->getValue();
+                    if($valorRaw === 'DESPENSA') {
+                        $columna = $celda->getColumn();
+                    }
+                }
+            }
+        }
+
+        return $columna;
+    }
+
+    public function obten_columna_horas_extras_dobles(Spreadsheet $documento){
+        $totalDeHojas = $documento->getSheetCount();
+
+        $columna = -1;
+        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+            $hojaActual = $documento->getSheet($indiceHoja);
+            foreach ($hojaActual->getRowIterator() as $fila) {
+                foreach ($fila->getCellIterator() as $celda) {
+                    $valorRaw = $celda->getValue();
+                    if($valorRaw === 'HORAS EXTRAS DOBLES') {
+                        $columna = $celda->getColumn();
+                    }
+                }
+            }
+        }
+
+        return $columna;
+    }
+
+    public function obten_columna_gratificacion_especial(Spreadsheet $documento){
+        $totalDeHojas = $documento->getSheetCount();
+
+        $columna = -1;
+        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+            $hojaActual = $documento->getSheet($indiceHoja);
+            foreach ($hojaActual->getRowIterator() as $fila) {
+                foreach ($fila->getCellIterator() as $celda) {
+                    $valorRaw = $celda->getValue();
+                    if($valorRaw === 'GRATIFICACION ESPECIAL') {
+                        $columna = $celda->getColumn();
+                    }
+                }
+            }
+        }
+
+        return $columna;
+    }
+
+    public function obten_columna_premio_puntualidad(Spreadsheet $documento){
+        $totalDeHojas = $documento->getSheetCount();
+
+        $columna = -1;
+        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+            $hojaActual = $documento->getSheet($indiceHoja);
+            foreach ($hojaActual->getRowIterator() as $fila) {
+                foreach ($fila->getCellIterator() as $celda) {
+                    $valorRaw = $celda->getValue();
+                    if($valorRaw === 'PREMIO PUNTUALIDAD') {
+                        $columna = $celda->getColumn();
+                    }
+                }
+            }
+        }
+
+        return $columna;
+    }
+
+    public function obten_columna_premio_asistencia(Spreadsheet $documento){
+        $totalDeHojas = $documento->getSheetCount();
+
+        $columna = -1;
+        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+            $hojaActual = $documento->getSheet($indiceHoja);
+            foreach ($hojaActual->getRowIterator() as $fila) {
+                foreach ($fila->getCellIterator() as $celda) {
+                    $valorRaw = $celda->getValue();
+                    if($valorRaw === 'PREMIO ASISTENCIA') {
+                        $columna = $celda->getColumn();
+                    }
+                }
+            }
+        }
+
+        return $columna;
+    }
+
+    public function obten_columna_ayuda_transporte(Spreadsheet $documento){
+        $totalDeHojas = $documento->getSheetCount();
+
+        $columna = -1;
+        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+            $hojaActual = $documento->getSheet($indiceHoja);
+            foreach ($hojaActual->getRowIterator() as $fila) {
+                foreach ($fila->getCellIterator() as $celda) {
+                    $valorRaw = $celda->getValue();
+                    if($valorRaw === 'AYUDA TRANSPORTE') {
+                        $columna = $celda->getColumn();
+                    }
+                }
+            }
+        }
+
+        return $columna;
+    }
+
+    public function obten_columna_gratificacion(Spreadsheet $documento){
+        $totalDeHojas = $documento->getSheetCount();
+
+        $columna = -1;
+        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+            $hojaActual = $documento->getSheet($indiceHoja);
+            foreach ($hojaActual->getRowIterator() as $fila) {
+                foreach ($fila->getCellIterator() as $celda) {
+                    $valorRaw = $celda->getValue();
+                    if($valorRaw === 'GRATIFICACION') {
+                        $columna = $celda->getColumn();
+                    }
+                }
+            }
+        }
+
+        return $columna;
+    }
+
     public function obten_columna_incapacidades(Spreadsheet $documento){
         $totalDeHojas = $documento->getSheetCount();
 
@@ -874,6 +1137,54 @@ class controlador_tg_manifiesto extends system
                 data:  $columna_compensacion);
         }
 
+        $columna_prima_vacacional = $this->obten_columna_prima_vacacional(documento: $documento);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error obtener columna de prima vacacional',
+                data:  $columna_prima_vacacional);
+        }
+
+        $columna_despensa = $this->obten_columna_despensa(documento: $documento);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error obtener columna de despensa',
+                data:  $columna_despensa);
+        }
+
+        $columna_horas_extras_dobles = $this->obten_columna_horas_extras_dobles(documento: $documento);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error obtener columna de horas_extras_dobles',
+                data:  $columna_horas_extras_dobles);
+        }
+
+        $columna_gratificacion_especial = $this->obten_columna_gratificacion_especial(documento: $documento);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error obtener columna de gratificacion_especial',
+                data:  $columna_gratificacion_especial);
+        }
+
+        $columna_premio_puntualidad = $this->obten_columna_premio_puntualidad(documento: $documento);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error obtener columna de premio puntualidad',
+                data:  $columna_premio_puntualidad);
+        }
+
+        $columna_premio_asistencia = $this->obten_columna_premio_asistencia(documento: $documento);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error obtener columna de premio_asistencia',
+                data:  $columna_premio_asistencia);
+        }
+
+        $columna_ayuda_transporte = $this->obten_columna_ayuda_transporte(documento: $documento);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error obtener columna de ayuda transporte',
+                data:  $columna_ayuda_transporte);
+        }
+
+        $columna_gratificacion = $this->obten_columna_gratificacion(documento: $documento);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error obtener columna de gratificacion',
+                data:  $columna_gratificacion);
+        }
+
         $empleados = array();
         for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
             $hojaActual = $documento->getSheet($indiceHoja);
@@ -907,6 +1218,15 @@ class controlador_tg_manifiesto extends system
                 $reg->vacaciones = 0;
                 $reg->dias_descanso_laborado = 0;
                 $reg->compensacion = 0;
+
+                $reg->prima_vacacional = 0;
+                $reg->despensa = 0;
+                $reg->horas_extras_dobles = 0;
+                $reg->gratificacion_especial = 0;
+                $reg->premio_puntualidad = 0;
+                $reg->premio_asistencia = 0;
+                $reg->ayuda_transporte = 0;
+                $reg->gratificacion = 0;
 
                 if($columna_faltas !== -1) {
                     $reg->faltas = $hojaActual->getCell($columna_faltas . $registro->fila)->getValue();
@@ -954,6 +1274,71 @@ class controlador_tg_manifiesto extends system
 
                     if(!is_numeric($reg->compensacion)){
                         $reg->compensacion = 0;
+                    }
+                }
+
+                if($columna_prima_vacacional !== -1) {
+                    $prima_vacacional = $hojaActual->getCell($columna_prima_vacacional . $registro->fila)->getCalculatedValue();
+                    $reg->prima_vacacional = trim((string)$prima_vacacional);
+
+                    if(!is_numeric($reg->prima_vacacional)){
+                        $reg->prima_vacacional = 0;
+                    }
+                }
+                if($columna_despensa !== -1) {
+                    $despensa = $hojaActual->getCell($columna_despensa. $registro->fila)->getCalculatedValue();
+                    $reg->despensa = trim((string)$despensa);
+
+                    if(!is_numeric($reg->despensa)){
+                        $reg->despensa = 0;
+                    }
+                }
+                if($columna_horas_extras_dobles !== -1) {
+                    $horas_extras_dobles = $hojaActual->getCell($columna_horas_extras_dobles . $registro->fila)->getCalculatedValue();
+                    $reg->horas_extras_dobles = trim((string)$horas_extras_dobles);
+
+                    if(!is_numeric($reg->horas_extras_dobles)){
+                        $reg->horas_extras_dobles = 0;
+                    }
+                }
+                if($columna_gratificacion_especial !== -1) {
+                    $gratificacion_especial = $hojaActual->getCell($columna_gratificacion_especial . $registro->fila)->getCalculatedValue();
+                    $reg->gratificacion_especial = trim((string)$gratificacion_especial);
+
+                    if(!is_numeric($reg->gratificacion_especial)){
+                        $reg->gratificacion_especial = 0;
+                    }
+                }
+                if($columna_premio_puntualidad !== -1) {
+                    $premio_puntualidad = $hojaActual->getCell($columna_premio_puntualidad. $registro->fila)->getCalculatedValue();
+                    $reg->premio_puntualidad = trim((string)$premio_puntualidad);
+
+                    if(!is_numeric($reg->premio_puntualidad)){
+                        $reg->premio_puntualidad = 0;
+                    }
+                }
+                if($columna_premio_asistencia !== -1) {
+                    $premio_asistencia = $hojaActual->getCell($columna_premio_asistencia . $registro->fila)->getCalculatedValue();
+                    $reg->premio_asistencia = trim((string)$premio_asistencia);
+
+                    if(!is_numeric($reg->premio_asistencia)){
+                        $reg->premio_asistencia = 0;
+                    }
+                }
+                if($columna_ayuda_transporte !== -1) {
+                    $ayuda_transporte = $hojaActual->getCell($columna_ayuda_transporte . $registro->fila)->getCalculatedValue();
+                    $reg->ayuda_transporte = trim((string)$ayuda_transporte);
+
+                    if(!is_numeric($reg->ayuda_transporte)){
+                        $reg->ayuda_transporte = 0;
+                    }
+                }
+                if($columna_gratificacion !== -1) {
+                    $gratificacion = $hojaActual->getCell($columna_gratificacion . $registro->fila)->getCalculatedValue();
+                    $reg->gratificacion = trim((string)$gratificacion);
+
+                    if(!is_numeric($reg->ayuda_transporte)){
+                        $reg->gratificacion = 0;
                     }
                 }
                 $empleados[] = $reg;
