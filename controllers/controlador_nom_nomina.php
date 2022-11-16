@@ -46,6 +46,14 @@ class controlador_nom_nomina extends \gamboamartin\nomina\controllers\controlado
             }
             $registro->link_genera_xml = $link_genera_xml;
 
+            $link_descarga_recibo_nomina = $this->obj_link->link_con_id(accion:'descarga_recibo_nomina',link: $this->link,
+                registro_id:  $registro->nom_nomina_id, seccion:  $this->tabla);
+            if(errores::$error){
+                return $this->errores->error(mensaje: 'Error al genera link',data:  $link_descarga_recibo_nomina);
+            }
+
+            $registro->link_descarga_recibo_nomina = $link_descarga_recibo_nomina;
+
             foreach($links as $link){
 
                 if((int)$registro->nom_nomina_id  === (int)$link->nom_nomina_id){

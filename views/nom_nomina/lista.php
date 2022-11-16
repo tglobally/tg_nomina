@@ -44,6 +44,7 @@ $url_icons = (new views())->url_icons;
                     <th data-breakpoints="xs sm md" data-type="html" >Empleado</th>
                     <th data-breakpoints="xs sm md" data-type="html" >Empresa</th>
                     <th data-breakpoints="xs sm md" data-type="html" >Cuota Patronal</th>
+                    <th data-breakpoints="xs md" class="control"  data-type="html" data-filterable="false">Descarga Recibo</th>
                     <th data-breakpoints="xs md" class="control"  data-type="html" data-filterable="false">Genera XML</th>
                     <th data-breakpoints="xs md" class="control"  data-type="html" data-filterable="false">Modifica</th>
                     <th data-breakpoints="xs md" class="control"  data-type="html" data-filterable="false">Elimina</th>
@@ -61,6 +62,7 @@ $url_icons = (new views())->url_icons;
                         <td><?php echo $registro->em_empleado_nombre.' '.$registro->em_empleado_ap.' '.$registro->em_empleado_am; ?></td>
                         <td><?php echo $registro->org_empresa_id; ?></td>
                         <td><?php echo $registro->total_cuota_patronal; ?></td>
+                        <td><a class="btn btn-warning " href="<?php echo $registro->link_descarga_recibo_nomina; ?>">Descarga Recibo</a></td>
                         <td><a class="btn btn-warning " href="<?php echo $registro->link_genera_xml; ?>">Genera XML</a></td>
                         <td><a class="btn btn-warning " href="<?php echo $registro->link_modifica; ?>">Modifica</a></td>
                         <td><a class="btn btn-danger " href="<?php echo $registro->link_elimina_bd; ?>">Elimina</a></td>
