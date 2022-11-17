@@ -27,7 +27,7 @@ class tg_manifiesto_html extends em_html {
 
     public function genera_inputs(controlador_tg_manifiesto $controler, array $keys_selects = array()): array|stdClass
     {
-        $inputs = $this->init_alta2(row_upd: $controler->row_upd, modelo: $controler->modelo, link: $controler->link,
+        $inputs = $this->init_alta2(row_upd: $controler->row_upd, modelo: $controler->modelo,
             keys_selects:$keys_selects);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al generar inputs',data:  $inputs);
