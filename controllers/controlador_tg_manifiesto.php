@@ -23,6 +23,7 @@ use models\im_registro_patronal;
 use models\nom_conf_empleado;
 use models\nom_incidencia;
 use models\nom_nomina;
+use models\nom_par_deduccion;
 use models\nom_par_percepcion;
 use models\nom_percepcion;
 use models\nom_periodo;
@@ -722,6 +723,17 @@ class controlador_tg_manifiesto extends system
                             $r_alta_nom_par_percepcion = (new nom_par_percepcion($this->link))->alta_registro(registro: $nom_par_percepcion_sep);
                             if (errores::$error) {
                                 return $this->errores->error(mensaje: 'Error al insertar percepcion default', data: $r_alta_nom_par_percepcion);
+                            }
+                        }
+                        if ($empleado_excel->seguro_vida > 0) {
+                            $nom_par_deduccion_sep = array();
+                            $nom_par_deduccion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
+                            $nom_par_deduccion_sep['nom_deduccion_id'] = 5;
+                            $nom_par_deduccion_sep['importe_gravado'] = $empleado_excel->seguro_vida;
+
+                            $r_alta_nom_par_deduccion = (new nom_par_deduccion($this->link))->alta_registro(registro: $nom_par_deduccion_sep);
+                            if (errores::$error) {
+                                return $this->errores->error(mensaje: 'Error al insertar deduccion default', data: $r_alta_nom_par_deduccion);
                             }
                         }
                     }
