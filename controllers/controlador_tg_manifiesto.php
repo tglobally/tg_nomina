@@ -1000,6 +1000,25 @@ class controlador_tg_manifiesto extends system
 
         return $columna;
     }
+    
+    public function obten_columna_seguro_vida(Spreadsheet $documento){
+        $totalDeHojas = $documento->getSheetCount();
+
+        $columna = -1;
+        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+            $hojaActual = $documento->getSheet($indiceHoja);
+            foreach ($hojaActual->getRowIterator() as $fila) {
+                foreach ($fila->getCellIterator() as $celda) {
+                    $valorRaw = $celda->getValue();
+                    if($valorRaw === 'SEGURO DE VIDA') {
+                        $columna = $celda->getColumn();
+                    }
+                }
+            }
+        }
+
+        return $columna;
+    }
 
     public function obten_columna_incapacidades(Spreadsheet $documento){
         $totalDeHojas = $documento->getSheetCount();
@@ -1151,6 +1170,12 @@ class controlador_tg_manifiesto extends system
                 data:  $columna_gratificacion);
         }
 
+        $columna_seguro_vida = $this->obten_columna_seguro_vida(documento: $documento);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error obtener columna de seguro_vida',
+                data:  $columna_seguro_vida);
+        }
+
         $empleados = array();
         for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
             $hojaActual = $documento->getSheet($indiceHoja);
@@ -1187,6 +1212,7 @@ class controlador_tg_manifiesto extends system
 
                 $reg->prima_vacacional = 0;
                 $reg->despensa = 0;
+                $reg->seguro_vida = 0;
                 $reg->horas_extras_dobles = 0;
                 $reg->gratificacion_especial = 0;
                 $reg->premio_puntualidad = 0;
@@ -1257,6 +1283,14 @@ class controlador_tg_manifiesto extends system
 
                     if(!is_numeric($reg->despensa)){
                         $reg->despensa = 0;
+                    }
+                }
+                if($columna_seguro_vida !== -1) {
+                    $seguro_vida = $hojaActual->getCell($columna_seguro_vida. $registro->fila)->getCalculatedValue();
+                    $reg->seguro_vida = trim((string)$seguro_vida);
+
+                    if(!is_numeric($reg->seguro_vida)){
+                        $reg->seguro_vida = 0;
                     }
                 }
                 if($columna_horas_extras_dobles !== -1) {
