@@ -8,10 +8,30 @@ use tglobally\template_tg\html;
 
 class controlador_nom_nomina extends \gamboamartin\nomina\controllers\controlador_nom_nomina {
 
+    public string $link_crea_nomina = '';
+    public array $sidebar = array();
     public function __construct(PDO $link, stdClass $paths_conf = new stdClass()){
         $html_base = new html();
         parent::__construct( link: $link, html: $html_base);
         $this->titulo_lista = 'Nominas';
+
+        $hd = "index.php?seccion=nom_nomina&accion=crea_nomina&session_id=$this->session_id";
+        $this->link_crea_nomina = $hd;
+
+        $this->sidebar['lista']['titulo'] = "Nomina";
+        $this->sidebar['lista']['menu'] = array(
+            $this->menu_item(menu_item_titulo: "Crea nomina", link: $this->link_crea_nomina,menu_seccion_active: true,
+                menu_lateral_active: true));
+
+        $this->sidebar['crea_nomina']['titulo'] = "Alta Nomina";
+        $this->sidebar['crea_nomina']['stepper_active'] = true;
+        $this->sidebar['crea_nomina']['menu'] = array(
+            $this->menu_item(menu_item_titulo: "Crea Nomina", link: $this->link_crea_nomina,menu_lateral_active: true));
+
+        $this->sidebar['modifica']['titulo'] = "Modifica Nomina";
+        $this->sidebar['modifica']['stepper_active'] = true;
+        $this->sidebar['modifica']['menu'] = array(
+            $this->menu_item(menu_item_titulo: "Modifica", link: $this->link_modifica,menu_lateral_active: true));
 
         $this->params_actions = new stdClass();
         $this->params_actions->modifica = new stdClass();
@@ -73,5 +93,15 @@ class controlador_nom_nomina extends \gamboamartin\nomina\controllers\controlado
         return $r_lista;
     }
 
+    public function menu_item(string $menu_item_titulo, string $link, bool $menu_seccion_active = false,bool $menu_lateral_active = false): array
+    {
+        $menu_item = array();
+        $menu_item['menu_item'] = $menu_item_titulo;
+        $menu_item['menu_seccion_active'] = $menu_seccion_active;
+        $menu_item['link'] = $link;
+        $menu_item['menu_lateral_active'] = $menu_lateral_active;
+
+        return $menu_item;
+    }
 
 }
