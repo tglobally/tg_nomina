@@ -49,5 +49,6 @@ composer.lock
 config/database.php
 config/generales.php
 config/views.php
+config/pac.php
 vendor
 archivos
