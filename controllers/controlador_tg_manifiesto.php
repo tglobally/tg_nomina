@@ -18,7 +18,7 @@ use gamboamartin\system\links_menu;
 use gamboamartin\system\system;
 use gamboamartin\template\html;
 use html\tg_manifiesto_html;
-use models\doc_documento;
+use gamboamartin\documento\models\doc_documento;
 use models\im_registro_patronal;
 use models\nom_conf_empleado;
 use models\nom_incidencia;
