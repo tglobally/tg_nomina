@@ -120,6 +120,30 @@ $url_assets = (new views())->url_assets;
                 </a>
             </div>
 
+            <div class="col-sm-2">
+                <a href="<?php echo $controlador->link_lista_tg_provision; ?>">
+                    <div class="cont_imagen_accion">
+                        <img src="<?php echo $url_assets; ?>img/inicio/imagen_2.jpg">
+                    </div>
+                    <div class="cont_text_accion">
+                        <h4 class="text_seccion">Provisión</h4>
+                        <h4 class="text_accion">Catalogo</h4>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-sm-2">
+                <a href="<?php echo $controlador->link_lista_tg_conf_provision; ?>">
+                    <div class="cont_imagen_accion">
+                        <img src="<?php echo $url_assets; ?>img/inicio/imagen_2.jpg">
+                    </div>
+                    <div class="cont_text_accion">
+                        <h4 class="text_seccion">Conf. Provisión</h4>
+                        <h4 class="text_accion">Catalogo</h4>
+                    </div>
+                </a>
+            </div>
+
 
         </div>
     </div>

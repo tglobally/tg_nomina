@@ -5,16 +5,15 @@ namespace tglobally\tg_nomina\controllers;
 use gamboamartin\errores\errores;
 use gamboamartin\system\_ctl_base;
 use gamboamartin\system\links_menu;
-use gamboamartin\system\system;
+
 use gamboamartin\template\html;
-use html\tg_tipo_provision_html;
-use html\tg_tipo_servicio_html;
-use models\tg_tipo_provision;
-use models\tg_tipo_servicio;
+
+use html\tg_provision_html;
+use models\tg_provision;
 use PDO;
 use stdClass;
 
-class controlador_tg_tipo_provision extends _ctl_base
+class controlador_tg_provision extends _ctl_base
 {
 
     public array $sidebar = array();
@@ -22,8 +21,8 @@ class controlador_tg_tipo_provision extends _ctl_base
     public function __construct(PDO      $link, html $html = new \gamboamartin\template_1\html(),
                                 stdClass $paths_conf = new stdClass())
     {
-        $modelo = new tg_tipo_provision(link: $link);
-        $html_ = new tg_tipo_provision_html(html: $html);
+        $modelo = new tg_provision(link: $link);
+        $html_ = new tg_provision_html(html: $html);
         $obj_link = new links_menu(link: $link, registro_id: $this->registro_id);
 
         $datatables = $this->init_datatable();
@@ -36,19 +35,18 @@ class controlador_tg_tipo_provision extends _ctl_base
         parent::__construct(html: $html_, link: $link, modelo: $modelo, obj_link: $obj_link, datatables: $datatables,
             paths_conf: $paths_conf);
 
-        $this->titulo_lista = 'Tipo Servicio';
 
-        $this->sidebar['lista']['titulo'] = "Tipo de Provisión";
+        $this->sidebar['lista']['titulo'] = "Provisión";
         $this->sidebar['lista']['menu'] = array(
             $this->menu_item(menu_item_titulo: "Alta", link: $this->link_alta, menu_seccion_active: true,
                 menu_lateral_active: true));
 
-        $this->sidebar['alta']['titulo'] = "Alta Tipo de Provisión";
+        $this->sidebar['alta']['titulo'] = "Alta Provisión";
         $this->sidebar['alta']['stepper_active'] = true;
         $this->sidebar['alta']['menu'] = array(
             $this->menu_item(menu_item_titulo: "Alta", link: $this->link_alta, menu_lateral_active: true));
 
-        $this->sidebar['modifica']['titulo'] = "Modifica Tipo de Provisión";
+        $this->sidebar['modifica']['titulo'] = "Modifica Provisión";
         $this->sidebar['modifica']['stepper_active'] = true;
         $this->sidebar['modifica']['menu'] = array(
             $this->menu_item(menu_item_titulo: "Modifica", link: $this->link_alta, menu_lateral_active: true));
@@ -79,7 +77,7 @@ class controlador_tg_tipo_provision extends _ctl_base
     protected function campos_view(): array
     {
         $keys = new stdClass();
-        $keys->inputs = array('codigo', 'descripcion');
+        $keys->inputs = array('codigo', 'descripcion', 'monto');
         $keys->selects = array();
 
         $init_data = array();
@@ -95,13 +93,14 @@ class controlador_tg_tipo_provision extends _ctl_base
 
     private function init_datatable(): stdClass
     {
-        $columns["tg_tipo_provision_id"]["titulo"] = "Id";
-        $columns["tg_tipo_provision_codigo"]["titulo"] = "Código";
+        $columns["tg_provision_id"]["titulo"] = "Id";
+        $columns["tg_provision_codigo"]["titulo"] = "Código";
         $columns["tg_tipo_provision_descripcion"]["titulo"] = "Tipo de Provisión";
-        $columns["nom_percepcion_descripcion"]["titulo"] = "Percepción";
+        $columns["tg_provision_monto"]["titulo"] = "Monto";
+        $columns["nom_nomina_descripcion"]["titulo"] = "Nómina";
 
         $filtro = array("tg_tipo_provision.id", "tg_tipo_provision.codigo", "tg_tipo_provision.descripcion",
-            "nom_percepcion.descripcion");
+            "nom_nomina.descripcion");
 
         $datatables = new stdClass();
         $datatables->columns = $columns;
@@ -124,8 +123,11 @@ class controlador_tg_tipo_provision extends _ctl_base
 
     public function init_selects_inputs(): array
     {
-        return $this->init_selects(keys_selects: array(), key: "nom_percepcion_id", label: "Percepción",
-            cols: 12);
+        $keys_selects = $this->init_selects(keys_selects: array(), key: "tg_tipo_provision_id", label: "Tipo de Provisión",
+            cols: 6);
+
+        return $this->init_selects(keys_selects: $keys_selects, key: "nom_nomina_id", label: "Nómina",
+            cols: 6);
     }
 
     protected function key_selects_txt(array $keys_selects): array
@@ -137,7 +139,13 @@ class controlador_tg_tipo_provision extends _ctl_base
         }
 
         $keys_selects = (new \base\controller\init())->key_select_txt(cols: 8, key: 'descripcion',
-            keys_selects: $keys_selects, place_holder: 'Tipo de Provisión');
+            keys_selects: $keys_selects, place_holder: 'Descripción');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'monto',
+            keys_selects: $keys_selects, place_holder: 'Monto');
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
         }
@@ -170,7 +178,8 @@ class controlador_tg_tipo_provision extends _ctl_base
                 ws: $ws);
         }
 
-        $keys_selects['nom_percepcion_id']->id_selected = $this->registro['nom_percepcion_id'];
+        $keys_selects['tg_tipo_provision_id']->id_selected = $this->registro['tg_tipo_provision_id'];
+        $keys_selects['nom_nomina_id']->id_selected = $this->registro['nom_nomina_id'];
 
         $base = $this->base_upd(keys_selects: $keys_selects, not_actions: array(), params: array(), params_ajustados: array());
         if (errores::$error) {
