@@ -1,4 +1,4 @@
-<?php /** @var \tglobally\tg_cat_sat\controllers\controlador_cat_sat_uso_cfdi $controlador */ ?>
+<?php /** @var \tglobally\tg_nomina\controllers\controlador_tg_tipo_provision $controlador */ ?>
 
 <?php (new \tglobally\template_tg\template())->sidebar($controlador); ?>
 
@@ -10,6 +10,7 @@
         <div class="  form-main" id="form">
             <form method="post" action="<?php echo $controlador->link_modifica_bd;?>" class="form-additional">
 
+                <?php echo $controlador->inputs->nom_percepcion_id; ?>
                 <?php echo $controlador->inputs->codigo; ?>
                 <?php echo $controlador->inputs->descripcion; ?>
 
