@@ -85,7 +85,7 @@ class controlador_tg_conf_provision extends _ctl_base
 
         $init_data = array();
         $init_data['nom_conf_empleado'] = "gamboamartin\\nomina";
-        //$init_data['tg_tipo_provision'] = "tg_nomina";
+        $init_data['tg_tipo_provision'] = "tglobally\\tg_nomina";
 
         $campos_view = $this->campos_view_base(init_data: $init_data, keys: $keys);
         if (errores::$error) {
@@ -100,7 +100,7 @@ class controlador_tg_conf_provision extends _ctl_base
         $columns["tg_conf_provision_id"]["titulo"] = "Id";
         $columns["nom_conf_empleado_codigo"]["titulo"] = "Empleado";
         $columns["tg_tipo_provision_descripcion"]["titulo"] = "Tipo de Provisión";
-        $columns["tg_provision_monto"]["titulo"] = "Monto";
+        $columns["tg_conf_provision_monto"]["titulo"] = "Monto";
         $columns["tg_conf_provision_fecha_inicio"]["titulo"] = "Fecha Inicio";
         $columns["tg_conf_provision_fecha_fin"]["titulo"] = "Fecha Fin";
 
