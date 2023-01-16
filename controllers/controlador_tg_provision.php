@@ -81,7 +81,8 @@ class controlador_tg_provision extends _ctl_base
         $keys->selects = array();
 
         $init_data = array();
-        //$init_data['nom_percepcion'] = "\\";
+        $init_data['tg_tipo_provision'] = "tglobally\\tg_nomina";
+        $init_data['nom_nomina'] = "gamboamartin\\nomina";
 
         $campos_view = $this->campos_view_base(init_data: $init_data, keys: $keys);
         if (errores::$error) {
