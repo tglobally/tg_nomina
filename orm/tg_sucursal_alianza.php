@@ -1,5 +1,6 @@
 <?php
-namespace models;
+namespace tglobally\tg_nomina\models;
+
 use base\orm\modelo;
 
 use gamboamartin\errores\errores;

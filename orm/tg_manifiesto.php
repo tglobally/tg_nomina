@@ -1,11 +1,14 @@
 <?php
-namespace models;
+namespace tglobally\tg_nomina\models;
+
 use base\orm\modelo;
 
 use gamboamartin\comercial\models\com_sucursal;
 use gamboamartin\errores\errores;
 
 use gamboamartin\facturacion\models\fc_csd;
+use gamboamartin\nomina\models\nom_periodo;
+use models\im_registro_patronal;
 use PDO;
 use stdClass;
 

@@ -13,7 +13,7 @@ use gamboamartin\system\links_menu;
 use gamboamartin\system\system;
 use gamboamartin\template\html;
 use html\tg_manifiesto_periodo_html;
-use models\tg_manifiesto_periodo;
+use tglobally\tg_nomina\models\tg_manifiesto_periodo;
 use PDO;
 use stdClass;
 

@@ -6,7 +6,7 @@ use gamboamartin\system\links_menu;
 use gamboamartin\system\system;
 use gamboamartin\template\html;
 use html\tg_row_manifiesto_html;
-use models\tg_row_manifiesto;
+use tglobally\tg_nomina\models\tg_row_manifiesto;
 use PDO;
 use stdClass;
 

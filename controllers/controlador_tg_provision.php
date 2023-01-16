@@ -9,7 +9,7 @@ use gamboamartin\system\links_menu;
 use gamboamartin\template\html;
 
 use html\tg_provision_html;
-use models\tg_provision;
+use tglobally\tg_nomina\models\tg_provision;
 use PDO;
 use stdClass;
 

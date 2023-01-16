@@ -1,7 +1,9 @@
 <?php
-namespace models;
+namespace tglobally\tg_nomina\models;
+
 use base\orm\modelo;
 use gamboamartin\errores\errores;
+use gamboamartin\nomina\models\nom_par_percepcion;
 use PDO;
 use stdClass;
 

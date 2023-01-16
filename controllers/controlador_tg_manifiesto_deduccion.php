@@ -7,8 +7,8 @@ use gamboamartin\system\system;
 use gamboamartin\template\html;
 use html\tg_manifiesto_deduccion_html;
 use html\tg_row_manifiesto_html;
-use models\tg_manifiesto_deduccion;
-use models\tg_row_manifiesto;
+use tglobally\tg_nomina\models\tg_manifiesto_deduccion;
+use tglobally\tg_nomina\models\tg_row_manifiesto;
 use PDO;
 use stdClass;
 

@@ -5,7 +5,7 @@ use gamboamartin\system\links_menu;
 use gamboamartin\system\system;
 use gamboamartin\template\html;
 use html\tg_tipo_servicio_html;
-use models\tg_tipo_servicio;
+use tglobally\tg_nomina\models\tg_tipo_servicio;
 use PDO;
 use stdClass;
 

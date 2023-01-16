@@ -6,8 +6,8 @@ use gamboamartin\system\system;
 use gamboamartin\template\html;
 use html\tg_cte_alianza_html;
 use html\tg_tipo_servicio_html;
-use models\tg_cte_alianza;
-use models\tg_tipo_servicio;
+use tglobally\tg_nomina\models\tg_cte_alianza;
+use tglobally\tg_nomina\models\tg_tipo_servicio;
 use PDO;
 use stdClass;
 

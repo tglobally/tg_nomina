@@ -1,10 +1,13 @@
 <?php
-namespace models;
+namespace tglobally\tg_nomina\models;
+
 use base\orm\inicializacion;
 use base\orm\modelo;
 
 use gamboamartin\errores\errores;
 
+use gamboamartin\nomina\models\nom_nomina;
+use gamboamartin\nomina\models\nom_periodo;
 use PDO;
 use stdClass;
 

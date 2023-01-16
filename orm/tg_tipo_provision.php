@@ -1,5 +1,6 @@
 <?php
-namespace models;
+namespace tglobally\tg_nomina\models;
+
 use base\orm\_modelo_parent;
 use PDO;
 
