@@ -5,6 +5,7 @@ use gamboamartin\errores\errores;
 use PDO;
 use stdClass;
 use tglobally\template_tg\html;
+use tglobally\tg_nomina\models\nom_nomina;
 
 class controlador_nom_nomina extends \gamboamartin\nomina\controllers\controlador_nom_nomina {
 
@@ -13,6 +14,10 @@ class controlador_nom_nomina extends \gamboamartin\nomina\controllers\controlado
     public function __construct(PDO $link, stdClass $paths_conf = new stdClass()){
         $html_base = new html();
         parent::__construct( link: $link, html: $html_base);
+
+
+        $this->modelo = new nom_nomina($this->link);
+
         $this->titulo_lista = 'Nominas';
 
         $hd = "index.php?seccion=nom_nomina&accion=crea_nomina&session_id=$this->session_id";
