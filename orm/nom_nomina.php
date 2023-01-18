@@ -14,7 +14,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina {
         }
 
         $acciones = $this->conf_provisiones_acciones(em_empleado_id: $this->registro['em_empleado_id'],
-            nom_nomina_id: $alta->registro_id);
+            nom_nomina_id: $alta->registro_id, fecha: $this->registro['fecha_pago']);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al ejecutar acciones de conf. de provisiones', data: $acciones);
         }
@@ -22,9 +22,9 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina {
         return $alta;
     }
 
-    public function conf_provisiones_acciones(int $em_empleado_id, int $nom_nomina_id): array|stdClass
+    public function conf_provisiones_acciones(int $em_empleado_id, int $nom_nomina_id, string $fecha): array|stdClass
     {
-        $data = $this->get_tg_conf_provisiones(em_empleado_id: $em_empleado_id);
+        $data = $this->get_tg_conf_provisiones(em_empleado_id: $em_empleado_id, fecha: $fecha);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener conf. de provisiones del empleado', data: $data);
         }
@@ -48,14 +48,24 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina {
         return $data;
     }
 
-    public function get_tg_conf_provisiones(int $em_empleado_id): array|stdClass
+    public function get_tg_conf_provisiones(int $em_empleado_id, string $fecha): array|stdClass
     {
         if($em_empleado_id <= 0){
             return $this->error->error(mensaje: 'Error $em_empleado_id debe ser mayor a 0', data: $em_empleado_id);
         }
 
         $filtro['em_empleado.id'] = $this->registro['em_empleado_id'];
-        $conf = (new tg_conf_provision($this->link))->filtro_and(filtro: $filtro);
+        $filtro_especial[0][$fecha]['operador'] = '>=';
+        $filtro_especial[0][$fecha]['valor'] = 'tg_conf_provision.fecha_inicio';
+        $filtro_especial[0][$fecha]['comparacion'] = 'AND';
+        $filtro_especial[0][$fecha]['valor_es_campo'] = true;
+
+        $filtro_especial[1][$fecha]['operador'] = '<=';
+        $filtro_especial[1][$fecha]['valor'] = 'tg_conf_provision.fecha_fin';
+        $filtro_especial[1][$fecha]['comparacion'] = 'AND';
+        $filtro_especial[1][$fecha]['valor_es_campo'] = true;
+
+        $conf = (new tg_conf_provision($this->link))->filtro_and(filtro: $filtro, filtro_especial: $filtro_especial);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al filtrar conf. de provisiones del empleado', data: $conf);
         }
