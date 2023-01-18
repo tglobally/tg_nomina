@@ -32,6 +32,7 @@ class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_
     public string $link_lista_tg_conf_provision = '';
     public string $link_lista_tg_layout = '';
     public string $link_lista_tg_tipo_column = '';
+    public string $link_lista_tg_column = '';
     /**
      * Funcion de controlador donde se ejecutaran siempre que haya un acceso denegado
      * @param bool $header Si header es true cualquier error se mostrara en el html y cortara la ejecucion del sistema
@@ -104,6 +105,9 @@ class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_
 
         $hd = "index.php?seccion=tg_tipo_column&accion=lista&session_id=$this->session_id";
         $this->link_lista_tg_tipo_column = $hd;
+
+        $hd = "index.php?seccion=tg_column&accion=lista&session_id=$this->session_id";
+        $this->link_lista_tg_column = $hd;
 
         $this->include_menu = (new generales())->path_base;
         $this->include_menu .= 'templates/inicio.php';

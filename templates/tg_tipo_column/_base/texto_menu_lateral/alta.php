@@ -1,1 +1,1 @@
-<span class="texto-menu-lateral">Alta Tipo Columna</span>
+<span class="texto-menu-lateral">Alta Tipo Column</span>

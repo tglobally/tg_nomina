@@ -1,1 +1,1 @@
-<span class="texto-menu-lateral">Modifica Tipo Columna</span>
+<span class="texto-menu-lateral">Modifica Tipo Column</span>
