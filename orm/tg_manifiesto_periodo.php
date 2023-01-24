@@ -89,11 +89,11 @@ class tg_manifiesto_periodo extends modelo{
             return $this->error->error(mensaje: 'Error al integrar in',data:  $in);
         }
 
-
         $nominas = (new nom_nomina($this->link))->filtro_and(in: $in);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener nominas del periodo',data:  $nominas);
         }
+
 
         return $nominas->registros;
     }
