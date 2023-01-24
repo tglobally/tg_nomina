@@ -262,7 +262,7 @@ class controlador_tg_manifiesto extends system
 
         $data = new stdClass();
         $data->template = $r_modifica;
-        $data->inputs = $inputs;
+        $data->inputs = $inputs; 
 
         return $data;
     }
