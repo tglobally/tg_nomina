@@ -125,9 +125,13 @@ class exportador_eliminar
         }
 
         $libro = new Spreadsheet();
-        $libro->createSheet();
+
 
         foreach ($nombre_hojas as $index => $nombre_hoja) {
+
+            if ($index < $this->num_hojas -1){
+                $libro->createSheet();
+            }
 
             if (!array_key_exists($nombre_hoja, $keys_hojas)) {
                 $error = $this->error->error("Error ($nombre_hoja) no es un objeto", $keys_hojas);
@@ -173,7 +177,6 @@ class exportador_eliminar
                 print_r($error);
                 die('Error');
             }
-
 
 
             $libro = (new datos())->genera_datos_libro(dato: $nombre_hoja, libro: $libro);

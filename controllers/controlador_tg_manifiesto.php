@@ -19,6 +19,7 @@ use gamboamartin\system\system;
 use gamboamartin\template\html;
 use html\tg_manifiesto_html;
 use gamboamartin\documento\models\doc_documento;
+use tglobally\tg_nomina\models\em_cuenta_bancaria;
 use tglobally\tg_nomina\models\im_registro_patronal;
 use tglobally\tg_nomina\models\nom_conf_empleado;
 use tglobally\tg_nomina\models\nom_incidencia;
@@ -320,7 +321,7 @@ class controlador_tg_manifiesto extends system
                 header: $header,ws:$ws);
         }
 
-        $exportador = (new exportador_eliminar(num_hojas: 2));
+        $exportador = (new exportador_eliminar(num_hojas: 3));
         $registros_xls = array();
         $registros_provisiones = array();
 
@@ -339,12 +340,20 @@ class controlador_tg_manifiesto extends system
                     header: $header,ws:$ws);
             }
 
+            $pagos = (new em_cuenta_bancaria($this->link))->maqueta_excel_pagos(data_general: $row);
+            if(errores::$error){
+                return $this->retorno_error(mensaje: 'Error al maquetar pagos de la nomina',data:  $pagos,
+                    header: $header,ws:$ws);
+            }
+
             $registros_xls[] = $row;
             $registros_provisiones[] = $provisiones;
+            $registros_pagos[] = $pagos;
         }
 
         $keys = array();
         $keys_provisiones = array();
+        $keys_pagos = array();
 
         foreach (array_keys($registros_xls[0]) as $key) {
             $keys[$key] = strtoupper(str_replace('_', ' ', $key));
@@ -354,8 +363,13 @@ class controlador_tg_manifiesto extends system
             $keys_provisiones[$key] = strtoupper(str_replace('_', ' ', $key));
         }
 
+        foreach (array_keys($registros_pagos[0]) as $key) {
+            $keys_pagos[$key] = strtoupper(str_replace('_', ' ', $key));
+        }
+
         $registros = array();
         $registros_provisiones_excel = array();
+        $registros_pagos_excel = array();
 
         foreach ($registros_xls as $row) {
             $registros[] = array_combine(preg_replace(array_map(function($s){return "/^$s$/";},
@@ -367,6 +381,11 @@ class controlador_tg_manifiesto extends system
                 array_keys($keys_provisiones)),$keys_provisiones, array_keys($row)), $row);
         }
 
+        foreach ($registros_pagos as $row) {
+            $registros_pagos_excel[] = array_combine(preg_replace(array_map(function($s){return "/^$s$/";},
+                array_keys($keys_pagos)),$keys_pagos, array_keys($row)), $row);
+        }
+
         $keys_hojas =  array();
         $keys_hojas['nominas'] = new stdClass();
         $keys_hojas['nominas']->keys = $keys;
@@ -374,9 +393,12 @@ class controlador_tg_manifiesto extends system
         $keys_hojas['provisionado'] = new stdClass();
         $keys_hojas['provisionado']->keys = $keys_provisiones;
         $keys_hojas['provisionado']->registros = $registros_provisiones_excel;
+        $keys_hojas['pagos'] = new stdClass();
+        $keys_hojas['pagos']->keys = $keys_pagos;
+        $keys_hojas['pagos']->registros = $registros_pagos_excel;
 
-        $xls = $exportador->genera_xls(header: $header,name: "reporte nomina",nombre_hojas: array("nominas", "provisionado"),
-            keys_hojas: $keys_hojas, path_base: $this->path_base);
+        $xls = $exportador->genera_xls(header: $header,name: "reporte nomina",nombre_hojas: array("nominas",
+            "provisionado", "pagos"), keys_hojas: $keys_hojas, path_base: $this->path_base);
         if(errores::$error){
             return $this->retorno_error(mensaje: 'Error al generar xls',data:  $xls, header: $header,
                 ws:$ws);
