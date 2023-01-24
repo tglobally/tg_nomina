@@ -45,6 +45,8 @@ class controlador_nom_nomina extends \gamboamartin\nomina\controllers\controlado
 
         $this->params_actions->modifica->em_empleado_id = new stdClass();
         $this->params_actions->modifica->em_empleado_id->cols = 12;
+
+        $this->lista_get_data = true;
     }
 
     public function lista(bool $header, bool $ws = false): array

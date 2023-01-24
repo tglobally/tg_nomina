@@ -276,8 +276,8 @@ class controlador_tg_manifiesto extends system
         }
         $nomina['link_elimina'] = $btn_elimina;
 
-        $btn_modifica = $this->html_base->button_href(accion: 'modifica_nomina', etiqueta: 'Modifica',
-            registro_id: $nomina['nom_nomina_id'], seccion: 'tg_manifiesto', style: 'warning');
+        $btn_modifica = $this->html_base->button_href(accion: 'modifica', etiqueta: 'Modifica',
+            registro_id: $nomina['nom_nomina_id'], seccion: 'nom_nomina', style: 'warning');
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al generar btn', data: $btn_modifica);
         }
@@ -831,7 +831,7 @@ class controlador_tg_manifiesto extends system
         return $registros;
     }
 
-    public function modifica(bool $header, bool $ws = false): array|stdClass
+    public function modifica(bool $header, bool $ws = false, string $breadcrumbs= ''): array|stdClass
     {
         $base = $this->base();
         if(errores::$error){
