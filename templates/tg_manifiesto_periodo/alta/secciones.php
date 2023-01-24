@@ -7,7 +7,7 @@
         </div>
         <div class="col-md-8">
             <h3>Alta Manifiesto</h3>
-            <?php include "templates/tg_manifiesto/_base/buttons/1.azul.alta.php"; ?>
+            <?php include "templates/tg_manifiesto_periodo/_base/buttons/1.azul.alta.php"; ?>
         </div>
     </div>
 </div>
