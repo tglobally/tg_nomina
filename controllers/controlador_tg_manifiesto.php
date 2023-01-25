@@ -25,9 +25,13 @@ use gamboamartin\template\html;
 use html\tg_manifiesto_html;
 use gamboamartin\documento\models\doc_documento;
 use models\im_registro_patronal;
+use tglobally\tg_nomina\models\em_cuenta_bancaria;
 use tglobally\tg_nomina\models\nom_nomina;
 use tglobally\tg_nomina\models\tg_manifiesto;
 use tglobally\tg_nomina\models\tg_manifiesto_periodo;
+use tglobally\tg_nomina\models\tg_provision;
+use tglobally\tg_nomina\models\tg_sucursal_alianza;
+
 use PDO;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -258,7 +262,7 @@ class controlador_tg_manifiesto extends system
 
         $data = new stdClass();
         $data->template = $r_modifica;
-        $data->inputs = $inputs;
+        $data->inputs = $inputs; 
 
         return $data;
     }
@@ -272,8 +276,8 @@ class controlador_tg_manifiesto extends system
         }
         $nomina['link_elimina'] = $btn_elimina;
 
-        $btn_modifica = $this->html_base->button_href(accion: 'modifica_nomina', etiqueta: 'Modifica',
-            registro_id: $nomina['nom_nomina_id'], seccion: 'tg_manifiesto', style: 'warning');
+        $btn_modifica = $this->html_base->button_href(accion: 'modifica', etiqueta: 'Modifica',
+            registro_id: $nomina['nom_nomina_id'], seccion: 'nom_nomina', style: 'warning');
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al generar btn', data: $btn_modifica);
         }
@@ -305,7 +309,6 @@ class controlador_tg_manifiesto extends system
 
     public function descarga_nomina(bool $header, bool $ws = false): array|stdClass
     {
-
         $nominas = (new tg_manifiesto_periodo($this->link))->nominas_by_manifiesto(tg_manifiesto_id: $this->registro_id);
         if(errores::$error){
             return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo',data:  $nominas,
@@ -318,8 +321,9 @@ class controlador_tg_manifiesto extends system
                 header: $header,ws:$ws);
         }
 
-        $exportador = (new exportador());
+        $exportador = (new exportador_eliminar(num_hojas: 3));
         $registros_xls = array();
+        $registros_provisiones = array();
 
         foreach ($nominas as $nomina){
             $row = (new nom_nomina($this->link))->maqueta_registros_excel(nom_nomina_id: $nomina['nom_nomina_id'],
@@ -328,24 +332,79 @@ class controlador_tg_manifiesto extends system
                 return $this->retorno_error(mensaje: 'Error al maquetar datos de la nomina',data:  $row,
                     header: $header,ws:$ws);
             }
+
+            $provisiones = (new tg_provision($this->link))->maqueta_excel_provisiones(
+                nom_nomina_id: $nomina['nom_nomina_id']);
+            if(errores::$error){
+                return $this->retorno_error(mensaje: 'Error al maquetar provisiones de la nomina',data:  $provisiones,
+                    header: $header,ws:$ws);
+            }
+
+            $pagos = (new em_cuenta_bancaria($this->link))->maqueta_excel_pagos(data_general: $row);
+            if(errores::$error){
+                return $this->retorno_error(mensaje: 'Error al maquetar pagos de la nomina',data:  $pagos,
+                    header: $header,ws:$ws);
+            }
+
             $registros_xls[] = $row;
+            $registros_provisiones[] = $provisiones;
+            $registros_pagos[] = $pagos;
         }
 
         $keys = array();
+        $keys_provisiones = array();
+        $keys_pagos = array();
 
         foreach (array_keys($registros_xls[0]) as $key) {
             $keys[$key] = strtoupper(str_replace('_', ' ', $key));
         }
 
+        foreach (array_keys($registros_provisiones[0]) as $key) {
+            $keys_provisiones[$key] = strtoupper(str_replace('_', ' ', $key));
+        }
+
+        foreach (array_keys($registros_pagos[0]) as $key) {
+            $keys_pagos[$key] = strtoupper(str_replace('_', ' ', $key));
+        }
+
         $registros = array();
+        $registros_provisiones_excel = array();
+        $registros_pagos_excel = array();
 
         foreach ($registros_xls as $row) {
             $registros[] = array_combine(preg_replace(array_map(function($s){return "/^$s$/";},
                 array_keys($keys)),$keys, array_keys($row)), $row);
-
         }
 
-        $resultado = $exportador->listado_base_xls(header: $header, name: $this->seccion, keys:  $keys,
+        foreach ($registros_provisiones as $row) {
+            $registros_provisiones_excel[] = array_combine(preg_replace(array_map(function($s){return "/^$s$/";},
+                array_keys($keys_provisiones)),$keys_provisiones, array_keys($row)), $row);
+        }
+
+        foreach ($registros_pagos as $row) {
+            $registros_pagos_excel[] = array_combine(preg_replace(array_map(function($s){return "/^$s$/";},
+                array_keys($keys_pagos)),$keys_pagos, array_keys($row)), $row);
+        }
+
+        $keys_hojas =  array();
+        $keys_hojas['nominas'] = new stdClass();
+        $keys_hojas['nominas']->keys = $keys;
+        $keys_hojas['nominas']->registros = $registros;
+        $keys_hojas['provisionado'] = new stdClass();
+        $keys_hojas['provisionado']->keys = $keys_provisiones;
+        $keys_hojas['provisionado']->registros = $registros_provisiones_excel;
+        $keys_hojas['pagos'] = new stdClass();
+        $keys_hojas['pagos']->keys = $keys_pagos;
+        $keys_hojas['pagos']->registros = $registros_pagos_excel;
+
+        $xls = $exportador->genera_xls(header: $header,name: "reporte nomina",nombre_hojas: array("nominas",
+            "provisionado", "pagos"), keys_hojas: $keys_hojas, path_base: $this->path_base);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al generar xls',data:  $xls, header: $header,
+                ws:$ws);
+        }
+
+       /* $resultado = $exportador->listado_base_xls(header: $header, name: $this->seccion, keys:  $keys,
             path_base: $this->path_base,registros:  $registros,totales:  array());
         if(errores::$error){
             $error =  $this->errores->error('Error al generar xls',$resultado);
@@ -354,7 +413,7 @@ class controlador_tg_manifiesto extends system
             }
             print_r($error);
             die('Error');
-        }
+        }*/
 
 
         exit;
@@ -772,7 +831,7 @@ class controlador_tg_manifiesto extends system
         return $registros;
     }
 
-    public function modifica(bool $header, bool $ws = false): array|stdClass
+    public function modifica(bool $header, bool $ws = false, string $breadcrumbs= ''): array|stdClass
     {
         $base = $this->base();
         if(errores::$error){

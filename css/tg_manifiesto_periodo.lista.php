@@ -6,6 +6,33 @@ $ruta_template_base = (new views())->ruta_template_base;
 include $ruta_template_base.'assets/css/_base_css.php';
 ?>
 <style>
+
+
+    .card{
+        border-radius: 0.5rem !important;
+        box-shadow: 1px 1px 5px #191919;
+    }
+
+    .table thead{
+        background-color: #000098;
+        color: white;
+        font-weight: bold;
+    }
+
+    .dataTables_filter input{
+        border-bottom: 1px solid gray;
+        box-shadow: 0 4px 3px -3px gray;
+        border-radius: 0;
+        height: 34px;
+    }
+
+    .dataTables_filter input:focus{
+        border-bottom: 1px solid gray;
+        box-shadow: 0 4px 3px -3px gray;
+        border-radius: 0;
+    }
+
+
     .buttons {
         margin-bottom: 2.25rem;
     }

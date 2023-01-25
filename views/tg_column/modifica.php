@@ -1,5 +1,5 @@
 <?php /** @var \tglobally\tg_nomina\controllers\controlador_tg_column $controlador */ ?>
-<?php include 'templates/tg_tipo_column/modifica/secciones.php'; ?>
+<?php include 'templates/tg_column/modifica/secciones.php'; ?>
 
 <style>
     .form-control{

@@ -62,7 +62,7 @@
     "gamboa.martin/facturacion": "^2.0.0",
     "gamboa.martin/nomina": "dev-master",
     "gamboa.martin/organigrama": "^3.0.0",
-    "tglobally/template_tg": "dev-main",
+    "tglobally/template_tg": "^1.0.0",
     "gamboa.martin/banco": "^1.0.0",
     "gamboa.martin/xml_cfdi_4": "^1.0.0"
   },
