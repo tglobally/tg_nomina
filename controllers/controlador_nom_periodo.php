@@ -2,6 +2,7 @@
 namespace tglobally\tg_nomina\controllers;
 
 use gamboamartin\errores\errores;
+use gamboamartin\nomina\models\nom_nomina;
 use PDO;
 use stdClass;
 use tglobally\template_tg\html;
@@ -35,6 +36,11 @@ class controlador_nom_periodo extends \gamboamartin\nomina\controllers\controlad
         $this->sidebar['nominas']['menu'] = array(
             $this->menu_item(menu_item_titulo: "nominas", link: $this->link_alta, menu_lateral_active: true));
 
+        $this->sidebar['reportes']['titulo'] = "Reportes";
+        $this->sidebar['reportes']['stepper_active'] = true;
+        $this->sidebar['reportes']['menu'] = array(
+            $this->menu_item(menu_item_titulo: "periodo", link: $this->link_alta, menu_lateral_active: true));
+
     }
 
     public function menu_item(string $menu_item_titulo, string $link, bool $menu_seccion_active = false, bool $menu_lateral_active = false): array
@@ -46,5 +52,12 @@ class controlador_nom_periodo extends \gamboamartin\nomina\controllers\controlad
         $menu_item['menu_lateral_active'] = $menu_lateral_active;
 
         return $menu_item;
+    }
+
+    public function reportes(bool $header, bool $ws = false): array|stdClass
+    {
+
+
+        return array();
     }
 }
