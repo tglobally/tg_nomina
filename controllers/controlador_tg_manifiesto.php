@@ -27,6 +27,8 @@ use gamboamartin\documento\models\doc_documento;
 use models\im_registro_patronal;
 use tglobally\tg_nomina\models\em_cuenta_bancaria;
 use tglobally\tg_nomina\models\nom_nomina;
+use tglobally\tg_nomina\models\tg_column;
+use tglobally\tg_nomina\models\tg_layout;
 use tglobally\tg_nomina\models\tg_manifiesto;
 use tglobally\tg_nomina\models\tg_manifiesto_periodo;
 use tglobally\tg_nomina\models\tg_provision;
@@ -1149,6 +1151,23 @@ class controlador_tg_manifiesto extends system
     public function obten_empleados_excel(string $ruta_absoluta){
         $documento = IOFactory::load($ruta_absoluta);
         $totalDeHojas = $documento->getSheetCount();
+
+        $filtro_lay['tg_layout.descripcion'] = 'manifiesto_nomina';
+        $tg_layout = (new tg_layout(link: $this->link))->filtro_and(filtro: $filtro_lay);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error obtener clasificacor layout',data:  $tg_layout);
+        }
+
+        if($tg_layout->n_registros <= 0){
+            return $this->errores->error(mensaje: 'Error no existe configuracion layout',data:  $tg_layout);
+        }
+
+        $tg_layout_id = $tg_layout->registros[0]['tg_layout_id'];
+
+        $tg_columnas = (new tg_column(link: $this->link))->registro(registro_id: $tg_layout_id);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error no existe configuracion layout',data:  $tg_columnas);
+        }
 
         $columna_faltas = $this->obten_columna_faltas(documento: $documento);
         if(errores::$error){
