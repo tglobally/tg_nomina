@@ -1,11 +1,7 @@
 <?php /** @var \tglobally\tg_nomina\controllers\controlador_nom_periodo $controlador */ ?>
-<?php
 
-use config\views;
-$url_icons = (new views())->url_icons;
-?>
+<?php (new \tglobally\template_tg\template())->sidebar($controlador); ?>
 
-<?php include 'templates/nom_periodo/nominas/secciones.php'; ?>
 <div class="col-md-9 formulario">
     <div class="col-lg-12">
 
