@@ -1169,6 +1169,24 @@ class controlador_tg_manifiesto extends system
             return $this->errores->error(mensaje: 'Error no existe configuracion layout',data:  $tg_columnas);
         }
 
+        $ubicacion_columnas = array();
+        foreach ($tg_columnas->registros as $columna){
+            $totalDeHojas = $documento->getSheetCount();
+
+            $cord_x = 0;
+            for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+                $hojaActual = $documento->getSheet($indiceHoja);
+                foreach ($hojaActual->getRowIterator() as $fila) {
+                    foreach ($fila->getCellIterator() as $celda) {
+                        $valorRaw = $celda->getValue();
+                        if($valorRaw === $columna['tg_column_descripcion']) {
+                            $ubicacion_columnas[$columna['tg_column_descripcion']] = $celda->getColumn();
+                        }
+                    }
+                }
+            }
+        }
+
         $columna_faltas = $this->obten_columna_faltas(documento: $documento);
         if(errores::$error){
             return $this->errores->error(mensaje: 'Error obtener columna de faltas',data:  $columna_faltas);
