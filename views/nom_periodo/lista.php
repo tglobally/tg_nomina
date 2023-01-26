@@ -1,11 +1,6 @@
 <?php /** @var \tglobally\tg_nomina\controllers\controlador_nom_periodo $controlador */ ?>
-<?php
 
-use config\views;
-$url_icons = (new views())->url_icons;
-?>
-
-<?php include 'templates/nom_periodo/lista/secciones.php'; ?>
+<?php (new \tglobally\template_tg\template())->sidebar($controlador); ?>
 
 <div class="col-md-9 info-lista">
     <div class="col-lg-12 content">
