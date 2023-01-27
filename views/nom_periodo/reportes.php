@@ -13,7 +13,7 @@
                 <div class="card-body">
                     <div class="cont_tabla_sucursal  col-md-12">
                         <div class="botones" style="display: flex; justify-content: flex-end; align-items: center">
-                            <form method="post" action="<?php echo $controlador->link_em_empleado_exportar; ?> "
+                            <form method="post" action="<?php echo $controlador->link_nom_periodo_exportar; ?> "
                                   class="form-additional" id="form_export" style="width: 100%">
                                 <?php echo $controlador->inputs->filtro_fecha_inicio; ?>
                                 <?php echo $controlador->inputs->filtro_fecha_final; ?>
