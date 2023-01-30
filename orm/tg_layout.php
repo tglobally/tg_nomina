@@ -44,4 +44,17 @@ class tg_layout extends modelo{
         return $r_alta_bd;
     }
 
+    public function obten_tg_layout_id(string $layout){
+        $filtro_lay['tg_layout.descripcion'] = $layout;
+        $tg_layout = (new tg_layout(link: $this->link))->filtro_and(filtro: $filtro_lay);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error obtener clasificacor layout',data:  $tg_layout);
+        }
+
+        if($tg_layout->n_registros <= 0){
+            return $this->error->error(mensaje: 'Error no existe configuracion layout',data:  $tg_layout);
+        }
+
+        return $tg_layout->registros[0]['tg_layout_id'];
+    }
 }

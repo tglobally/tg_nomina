@@ -25,6 +25,7 @@ use gamboamartin\template\html;
 use html\tg_manifiesto_html;
 use gamboamartin\documento\models\doc_documento;
 use models\im_registro_patronal;
+use PhpOffice\PhpSpreadsheet\Exception;
 use tglobally\tg_nomina\models\em_cuenta_bancaria;
 use tglobally\tg_nomina\models\nom_nomina;
 use tglobally\tg_nomina\models\tg_column;
@@ -1148,21 +1149,18 @@ class controlador_tg_manifiesto extends system
         return $columna;
     }
 
+    /**
+     * @throws Exception
+     * @throws \PhpOffice\PhpSpreadsheet\Calculation\Exception
+     */
     public function obten_empleados_excel(string $ruta_absoluta){
         $documento = IOFactory::load($ruta_absoluta);
         $totalDeHojas = $documento->getSheetCount();
 
-        $filtro_lay['tg_layout.descripcion'] = 'manifiesto_nomina';
-        $tg_layout = (new tg_layout(link: $this->link))->filtro_and(filtro: $filtro_lay);
+        $tg_layout_id = (new tg_layout(link: $this->link))->obten_tg_layout_id(layout: 'manifiesto_nomina');
         if(errores::$error){
-            return $this->errores->error(mensaje: 'Error obtener clasificacor layout',data:  $tg_layout);
+            return $this->errores->error(mensaje: 'Error obtener tg_layout_id',data:  $tg_layout_id);
         }
-
-        if($tg_layout->n_registros <= 0){
-            return $this->errores->error(mensaje: 'Error no existe configuracion layout',data:  $tg_layout);
-        }
-
-        $tg_layout_id = $tg_layout->registros[0]['tg_layout_id'];
 
         $tg_columnas = (new tg_column(link: $this->link))->registro(registro_id: $tg_layout_id);
         if(errores::$error){
@@ -1173,13 +1171,15 @@ class controlador_tg_manifiesto extends system
         foreach ($tg_columnas->registros as $columna){
             $totalDeHojas = $documento->getSheetCount();
 
-            $cord_x = 0;
+            $columna_base = $columna['tg_column_descripcion'];
+            $columna_cal = $columna['tg_column_alias'].'.'.$columna_base;
+
             for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
                 $hojaActual = $documento->getSheet($indiceHoja);
                 foreach ($hojaActual->getRowIterator() as $fila) {
                     foreach ($fila->getCellIterator() as $celda) {
                         $valorRaw = $celda->getValue();
-                        if($valorRaw === $columna['tg_column_descripcion']) {
+                        if($valorRaw === $columna_base || $valorRaw === $columna_cal) {
                             $ubicacion_columnas[$columna['tg_column_descripcion']] = $celda->getColumn();
                         }
                     }
