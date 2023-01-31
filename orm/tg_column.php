@@ -12,7 +12,7 @@ class tg_column extends modelo{
 
     public function __construct(PDO $link){
         $tabla = 'tg_column';
-        $columnas = array($tabla=>false);
+        $columnas = array($tabla=>false, 'tg_layout'=>$tabla);
         $campos_obligatorios = array('descripcion','codigo','descripcion_select','alias','codigo_bis');
 
         parent::__construct(link: $link,tabla:  $tabla, campos_obligatorios: $campos_obligatorios,
