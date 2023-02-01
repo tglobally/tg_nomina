@@ -1181,50 +1181,63 @@ class controlador_tg_manifiesto extends system
                         $valorRaw = $celda->getValue();
                         if($valorRaw === $columna_base || $valorRaw === $columna_cal) {
                             $ubicacion_columnas[$columna_cal] = $celda->getColumn();
-                            $fila_inicio = $celda->getRow()+1;
+                            $fila_inicio = $celda->getRow();
                         }
                     }
                 }
             }
         }
 
-        $keys = array('ID.ID Trabajador','NOM.Nombre','APAT.Paterno','AMAT.Materno');
+        $keys = array('IDTR.ID Trabajador','NOMB.Nombre','APAT.Paterno','AMAT.Materno');
 
+        $filas = array();
         foreach ($ubicacion_columnas as $columna => $valor){
-            $filas = array();
             foreach ($keys as $key){
                 $fila_init = $fila_inicio;
                 if($columna === $key){
                     $salida = false;
                     while(!$salida){
                         for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+                            $fila_init++;
+
                             $hojaActual = $documento->getSheet($indiceHoja);
                             $coordenadas = $valor.$fila_init;
                             $celda = $hojaActual->getCell($coordenadas);
 
                             $valor_celda = (string)$celda->getCalculatedValue();
-                            if($valor_celda === ''){
+                            if($valor_celda !== ''){
+                                $filas[] = $fila_init;
+                            }else{
                                 $salida = true;
                             }
-                            $filas[$key] = $fila_init;
-                            $fila_init++;
-                            print_r($filas);
                         }
                     }
                 }
             }
         }
 
-print_r($filas);exit;
-        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
-            $hojaActual = $documento->getSheet($indiceHoja);
+        $filas_exist = array_unique($filas);
 
-            $salida = false;
-            while(!$salida){
-                $fila_inicio++;
-                $celda = $hojaActual->getCell($coordenadas);
+        $prefijos =  array('DIA.','P.','D.','OP.','M.');
+        $empleados = array();
+        foreach ($filas_exist as $fila_exist){
+            $reg = new stdClass();
+            foreach ($ubicacion_columnas as $columna => $valor){
+                for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+                    $hojaActual = $documento->getSheet($indiceHoja);
+                    $reg->$columna = $hojaActual->getCell($valor.$fila_exist)->getCalculatedValue();
 
+                    foreach ($prefijos as $prefijo){
+                        if (stristr($columna, $prefijo)) {
+                            $reg->$columna = trim((string)$reg->$columna);
+                            if(!is_numeric($reg->$columna) || $reg->$columna === ''){
+                                $reg->$columna = 0;
+                            }
+                        }
+                    }
+                }
             }
+            $empleados[] = $reg;
         }*/
 
         $columna_faltas = $this->obten_columna_faltas(documento: $documento);
