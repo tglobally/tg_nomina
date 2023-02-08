@@ -12,6 +12,7 @@ use base\orm\inicializacion;
 use gamboamartin\empleado\models\em_empleado;
 use gamboamartin\errores\errores;
 use gamboamartin\im_registro_patronal\models\im_registro_patronal;
+use gamboamartin\nomina\models\calcula_nomina;
 use gamboamartin\nomina\models\nom_conf_empleado;
 use gamboamartin\nomina\models\nom_incidencia;
 use gamboamartin\nomina\models\nom_par_deduccion;
@@ -796,6 +797,43 @@ class controlador_tg_manifiesto extends system
                                 return $this->errores->error(mensaje: 'Error al insertar deduccion default', data: $r_alta_nom_par_deduccion);
                             }
                         }
+
+                        if ($empleado_excel->monto_neto > 0) {
+
+                            $nom_nomina = (new nom_nomina($this->link))->registro(registro_id: $alta_empleado->registro_id);
+                            if (errores::$error) {
+                                return $this->errores->error(mensaje: 'Error obtener nomina',
+                                    data: $nom_nomina);
+                            }
+
+                            $cat_sat_periodicidad_pago_nom_id = $empleado['cat_sat_periodicidad_pago_nom_id'];
+                            $em_salario_diario = $empleado['em_empleado_salario_diario'];
+                            $em_empleado_salario_diario_integrado = $empleado['em_empleado_salario_diario_integrado'];
+                            $nom_nomina_fecha_final_pago = $nom_periodo['nom_periodo_fecha_final_pago'];
+                            $nom_nomina_num_dias_pagados = $alta_empleado->registro['cat_sat_periodicidad_pago_nom_n_dias'];
+                            $total_gravado = $empleado_excel->monto_neto;
+                            $resultado = (new calcula_nomina())->nomina_neto(
+                                cat_sat_periodicidad_pago_nom_id: $cat_sat_periodicidad_pago_nom_id,
+                                em_salario_diario: $em_salario_diario,
+                                em_empleado_salario_diario_integrado: $em_empleado_salario_diario_integrado,
+                                link: $this->link, nom_nomina_fecha_final_pago: $nom_nomina_fecha_final_pago,
+                                nom_nomina_num_dias_pagados: $nom_nomina_num_dias_pagados,
+                                total_neto: $total_gravado);
+
+                            $resultado_calculado = $resultado - $nom_nomina['nom_nomina_total_percepcion_gravado'];
+
+
+                            $nom_par_percepcion_sep = array();
+                            $nom_par_percepcion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
+                            $nom_par_percepcion_sep['nom_percepcion_id'] = 10;
+                            $nom_par_percepcion_sep['importe_gravado'] = $resultado_calculado;
+
+                            $r_alta_nom_par_percepcion = (new nom_par_percepcion($this->link))->alta_registro(registro: $nom_par_percepcion_sep);
+                            if (errores::$error) {
+                                return $this->errores->error(mensaje: 'Error al insertar percepcion default', data: $r_alta_nom_par_percepcion);
+                            }
+
+                        }
                     }
                 }
 
@@ -931,6 +969,24 @@ class controlador_tg_manifiesto extends system
                 foreach ($fila->getCellIterator() as $celda) {
                     $valorRaw = $celda->getValue();
                     if($valorRaw === 'COMPENSACION') {
+                        $columna = $celda->getColumn();
+                    }
+                }
+            }
+        }
+
+        return $columna;
+    }
+    public function obten_columna_monto_neto(Spreadsheet $documento){
+        $totalDeHojas = $documento->getSheetCount();
+
+        $columna = -1;
+        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+            $hojaActual = $documento->getSheet($indiceHoja);
+            foreach ($hojaActual->getRowIterator() as $fila) {
+                foreach ($fila->getCellIterator() as $celda) {
+                    $valorRaw = $celda->getValue();
+                    if($valorRaw === 'MONTO NETO') {
                         $columna = $celda->getColumn();
                     }
                 }
@@ -1281,6 +1337,12 @@ class controlador_tg_manifiesto extends system
                 data:  $columna_compensacion);
         }
 
+        $columna_monto_neto = $this->obten_columna_monto_neto(documento: $documento);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error obtener columna de monto neto',
+                data:  $columna_monto_neto);
+        }
+
         $columna_prima_vacacional = $this->obten_columna_prima_vacacional(documento: $documento);
         if(errores::$error){
             return $this->errores->error(mensaje: 'Error obtener columna de prima vacacional',
@@ -1378,6 +1440,7 @@ class controlador_tg_manifiesto extends system
                 $reg->premio_asistencia = 0;
                 $reg->ayuda_transporte = 0;
                 $reg->gratificacion = 0;
+                $reg->monto_neto = 0;
 
                 if ($columna_faltas !== -1) {
                     $reg->faltas = $hojaActual->getCell($columna_faltas . $registro->fila)->getValue();
@@ -1425,6 +1488,14 @@ class controlador_tg_manifiesto extends system
 
                     if (!is_numeric($reg->compensacion)) {
                         $reg->compensacion = 0;
+                    }
+                }
+                if ($columna_monto_neto !== -1) {
+                    $monto_neto = $hojaActual->getCell($columna_monto_neto . $registro->fila)->getCalculatedValue();
+                    $reg->monto_neto = trim((string)$monto_neto);
+
+                    if (!is_numeric($reg->monto_neto)) {
+                        $reg->monto_neto = 0;
                     }
                 }
 
