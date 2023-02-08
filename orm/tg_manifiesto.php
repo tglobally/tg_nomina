@@ -7,8 +7,8 @@ use gamboamartin\comercial\models\com_sucursal;
 use gamboamartin\errores\errores;
 
 use gamboamartin\facturacion\models\fc_csd;
+use gamboamartin\im_registro_patronal\models\im_registro_patronal;
 use gamboamartin\nomina\models\nom_periodo;
-use models\im_registro_patronal;
 use PDO;
 use stdClass;
 
