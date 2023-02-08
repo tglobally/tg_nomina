@@ -11,6 +11,7 @@ namespace tglobally\tg_nomina\controllers;
 use base\orm\inicializacion;
 use gamboamartin\empleado\models\em_empleado;
 use gamboamartin\errores\errores;
+use gamboamartin\im_registro_patronal\models\im_registro_patronal;
 use gamboamartin\nomina\models\nom_conf_empleado;
 use gamboamartin\nomina\models\nom_incidencia;
 use gamboamartin\nomina\models\nom_par_deduccion;
@@ -24,7 +25,6 @@ use gamboamartin\system\system;
 use gamboamartin\template\html;
 use html\tg_manifiesto_html;
 use gamboamartin\documento\models\doc_documento;
-use models\im_registro_patronal;
 use PhpOffice\PhpSpreadsheet\Exception;
 use tglobally\tg_nomina\models\em_cuenta_bancaria;
 use tglobally\tg_nomina\models\nom_nomina;
@@ -674,7 +674,7 @@ class controlador_tg_manifiesto extends system
                     print_r($error);
                     die('Error');
                 }
-                
+
                 foreach ($empleados_excel as $empleado_excel) {
                     if (trim($empleado_excel->nombre) === trim($empleado['em_empleado_nombre']) &&
                         trim($empleado_excel->ap) === trim($empleado['em_empleado_ap']) &&
@@ -1221,17 +1221,17 @@ class controlador_tg_manifiesto extends system
         $prefijos =  array('DIA.','P.','D.','OP.','M.');
         $empleados = array();
         foreach ($filas_exist as $fila_exist){
-            $reg = new stdClass();
+            $reg = array();
             foreach ($ubicacion_columnas as $columna => $valor){
                 for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
                     $hojaActual = $documento->getSheet($indiceHoja);
-                    $reg->$columna = $hojaActual->getCell($valor.$fila_exist)->getCalculatedValue();
+                    $reg[$columna] = $hojaActual->getCell($valor.$fila_exist)->getCalculatedValue();
 
                     foreach ($prefijos as $prefijo){
                         if (stristr($columna, $prefijo)) {
-                            $reg->$columna = trim((string)$reg->$columna);
-                            if(!is_numeric($reg->$columna) || $reg->$columna === ''){
-                                $reg->$columna = 0;
+                            $reg[$columna] = trim((string)$reg[$columna]);
+                            if(!is_numeric($reg[$columna]) || $reg[$columna] === ''){
+                                $reg[$columna] = 0;
                             }
                         }
                     }
@@ -1345,8 +1345,8 @@ class controlador_tg_manifiesto extends system
                     $valorRaw = $celda->getValue();
                     $columna = $celda->getColumn();
 
-                    if($fila >= 7){
-                        if($columna === "A" && is_numeric($valorRaw)){
+                    if ($fila >= 7) {
+                        if ($columna === "A" && is_numeric($valorRaw)) {
                             $reg = new stdClass();
                             $reg->fila = $fila;
                             $registros[] = $reg;
@@ -1355,12 +1355,12 @@ class controlador_tg_manifiesto extends system
                 }
             }
 
-            foreach ($registros as $registro){
+            foreach ($registros as $registro) {
                 $reg = new stdClass();
-                $reg->codigo = $hojaActual->getCell('A'.$registro->fila)->getValue();
-                $reg->nombre = $hojaActual->getCell('B'.$registro->fila)->getValue();
-                $reg->ap = $hojaActual->getCell('C'.$registro->fila)->getValue();
-                $reg->am = $hojaActual->getCell('D'.$registro->fila)->getValue();
+                $reg->codigo = $hojaActual->getCell('A' . $registro->fila)->getValue();
+                $reg->nombre = $hojaActual->getCell('B' . $registro->fila)->getValue();
+                $reg->ap = $hojaActual->getCell('C' . $registro->fila)->getValue();
+                $reg->am = $hojaActual->getCell('D' . $registro->fila)->getValue();
                 $reg->faltas = 0;
                 $reg->prima_dominical = 0;
                 $reg->dias_festivos_laborados = 0;
@@ -1379,124 +1379,124 @@ class controlador_tg_manifiesto extends system
                 $reg->ayuda_transporte = 0;
                 $reg->gratificacion = 0;
 
-                if($columna_faltas !== -1) {
+                if ($columna_faltas !== -1) {
                     $reg->faltas = $hojaActual->getCell($columna_faltas . $registro->fila)->getValue();
-                    if(!is_numeric($reg->faltas)){
+                    if (!is_numeric($reg->faltas)) {
                         $reg->faltas = 0;
                     }
-                } 
-                
-                if($columna_prima_dominical !== -1) {
+                }
+
+                if ($columna_prima_dominical !== -1) {
                     $reg->prima_dominical = $hojaActual->getCell($columna_prima_dominical . $registro->fila)->getValue();
-                    if(!is_numeric($reg->prima_dominical)){
+                    if (!is_numeric($reg->prima_dominical)) {
                         $reg->prima_dominical = 0;
                     }
                 }
-                
-                if($columna_dias_festivos_laborados !== -1) {
+
+                if ($columna_dias_festivos_laborados !== -1) {
                     $reg->dias_festivos_laborados = $hojaActual->getCell($columna_dias_festivos_laborados . $registro->fila)->getValue();
-                    if(!is_numeric($reg->dias_festivos_laborados)){
+                    if (!is_numeric($reg->dias_festivos_laborados)) {
                         $reg->dias_festivos_laborados = 0;
                     }
                 }
-                
-                if($columna_incapacidades !== -1) {
+
+                if ($columna_incapacidades !== -1) {
                     $reg->incapacidades = $hojaActual->getCell($columna_incapacidades . $registro->fila)->getValue();
-                    if(!is_numeric($reg->incapacidades)){
+                    if (!is_numeric($reg->incapacidades)) {
                         $reg->incapacidades = 0;
                     }
-                }     
-                
-                if($columna_vacaciones !== -1) {
+                }
+
+                if ($columna_vacaciones !== -1) {
                     $reg->vacaciones = $hojaActual->getCell($columna_vacaciones . $registro->fila)->getValue();
-                    if(!is_numeric($reg->vacaciones)){
+                    if (!is_numeric($reg->vacaciones)) {
                         $reg->vacaciones = 0;
                     }
                 }
-                if($columna_dias_descanso_laborado !== -1) {
+                if ($columna_dias_descanso_laborado !== -1) {
                     $reg->dias_descanso_laborado = $hojaActual->getCell($columna_dias_descanso_laborado . $registro->fila)->getValue();
-                    if(!is_numeric($reg->dias_descanso_laborado)){
+                    if (!is_numeric($reg->dias_descanso_laborado)) {
                         $reg->dias_descanso_laborado = 0;
                     }
                 }
-                if($columna_compensacion !== -1) {
+                if ($columna_compensacion !== -1) {
                     $compensacion = $hojaActual->getCell($columna_compensacion . $registro->fila)->getCalculatedValue();
                     $reg->compensacion = trim((string)$compensacion);
 
-                    if(!is_numeric($reg->compensacion)){
+                    if (!is_numeric($reg->compensacion)) {
                         $reg->compensacion = 0;
                     }
                 }
 
-                if($columna_prima_vacacional !== -1) {
+                if ($columna_prima_vacacional !== -1) {
                     $prima_vacacional = $hojaActual->getCell($columna_prima_vacacional . $registro->fila)->getCalculatedValue();
                     $reg->prima_vacacional = trim((string)$prima_vacacional);
 
-                    if(!is_numeric($reg->prima_vacacional)){
+                    if (!is_numeric($reg->prima_vacacional)) {
                         $reg->prima_vacacional = 0;
                     }
                 }
-                if($columna_despensa !== -1) {
-                    $despensa = $hojaActual->getCell($columna_despensa. $registro->fila)->getCalculatedValue();
+                if ($columna_despensa !== -1) {
+                    $despensa = $hojaActual->getCell($columna_despensa . $registro->fila)->getCalculatedValue();
                     $reg->despensa = trim((string)$despensa);
 
-                    if(!is_numeric($reg->despensa)){
+                    if (!is_numeric($reg->despensa)) {
                         $reg->despensa = 0;
                     }
                 }
-                if($columna_seguro_vida !== -1) {
-                    $seguro_vida = $hojaActual->getCell($columna_seguro_vida. $registro->fila)->getCalculatedValue();
+                if ($columna_seguro_vida !== -1) {
+                    $seguro_vida = $hojaActual->getCell($columna_seguro_vida . $registro->fila)->getCalculatedValue();
                     $reg->seguro_vida = trim((string)$seguro_vida);
 
-                    if(!is_numeric($reg->seguro_vida)){
+                    if (!is_numeric($reg->seguro_vida)) {
                         $reg->seguro_vida = 0;
                     }
                 }
-                if($columna_horas_extras_dobles !== -1) {
+                if ($columna_horas_extras_dobles !== -1) {
                     $horas_extras_dobles = $hojaActual->getCell($columna_horas_extras_dobles . $registro->fila)->getCalculatedValue();
                     $reg->horas_extras_dobles = trim((string)$horas_extras_dobles);
 
-                    if(!is_numeric($reg->horas_extras_dobles)){
+                    if (!is_numeric($reg->horas_extras_dobles)) {
                         $reg->horas_extras_dobles = 0;
                     }
                 }
-                if($columna_gratificacion_especial !== -1) {
+                if ($columna_gratificacion_especial !== -1) {
                     $gratificacion_especial = $hojaActual->getCell($columna_gratificacion_especial . $registro->fila)->getCalculatedValue();
                     $reg->gratificacion_especial = trim((string)$gratificacion_especial);
 
-                    if(!is_numeric($reg->gratificacion_especial)){
+                    if (!is_numeric($reg->gratificacion_especial)) {
                         $reg->gratificacion_especial = 0;
                     }
                 }
-                if($columna_premio_puntualidad !== -1) {
-                    $premio_puntualidad = $hojaActual->getCell($columna_premio_puntualidad. $registro->fila)->getCalculatedValue();
+                if ($columna_premio_puntualidad !== -1) {
+                    $premio_puntualidad = $hojaActual->getCell($columna_premio_puntualidad . $registro->fila)->getCalculatedValue();
                     $reg->premio_puntualidad = trim((string)$premio_puntualidad);
 
-                    if(!is_numeric($reg->premio_puntualidad)){
+                    if (!is_numeric($reg->premio_puntualidad)) {
                         $reg->premio_puntualidad = 0;
                     }
                 }
-                if($columna_premio_asistencia !== -1) {
+                if ($columna_premio_asistencia !== -1) {
                     $premio_asistencia = $hojaActual->getCell($columna_premio_asistencia . $registro->fila)->getCalculatedValue();
                     $reg->premio_asistencia = trim((string)$premio_asistencia);
 
-                    if(!is_numeric($reg->premio_asistencia)){
+                    if (!is_numeric($reg->premio_asistencia)) {
                         $reg->premio_asistencia = 0;
                     }
                 }
-                if($columna_ayuda_transporte !== -1) {
+                if ($columna_ayuda_transporte !== -1) {
                     $ayuda_transporte = $hojaActual->getCell($columna_ayuda_transporte . $registro->fila)->getCalculatedValue();
                     $reg->ayuda_transporte = trim((string)$ayuda_transporte);
 
-                    if(!is_numeric($reg->ayuda_transporte)){
+                    if (!is_numeric($reg->ayuda_transporte)) {
                         $reg->ayuda_transporte = 0;
                     }
                 }
-                if($columna_gratificacion !== -1) {
+                if ($columna_gratificacion !== -1) {
                     $gratificacion = $hojaActual->getCell($columna_gratificacion . $registro->fila)->getCalculatedValue();
                     $reg->gratificacion = trim((string)$gratificacion);
 
-                    if(!is_numeric($reg->ayuda_transporte)){
+                    if (!is_numeric($reg->ayuda_transporte)) {
                         $reg->gratificacion = 0;
                     }
                 }
