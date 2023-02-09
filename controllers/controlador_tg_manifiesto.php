@@ -1746,6 +1746,22 @@ class controlador_tg_manifiesto extends _ctl_base
 
     public function ve_nominas(bool $header, bool $ws = false): array|stdClass
     {
+        $columns = array();
+        $columns["nom_nomina_id"]["titulo"] = "Id";
+        $columns["em_empleado_nombre"]["titulo"] = "Nombre";
+        $columns["em_empleado_nombre"]["campos"] = array("em_empleado_ap","em_empleado_am");
+        $columns["em_empleado_rfc"]["titulo"] = "Rfc";
+        $columns["nom_nomina_fecha_inicial_pago"]["titulo"] = "Fecha Inicial Pago";
+        $columns["nom_nomina_fecha_final_pago"]["titulo"] = "Fecha Final Pago";
+        $columns["org_empresa_descripcion"]["titulo"] = "Empresa";
+        $filtro = array();
+
+        $datatables = $this->datatable_init(columns: $columns,filtro: $filtro,identificador: "#nom_nomina",
+            multi_selects: true);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al inicializar datatable',data:  $datatables,
+                header: $header,ws:$ws);
+        }
 
 
 
