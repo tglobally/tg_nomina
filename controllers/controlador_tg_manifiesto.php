@@ -8,6 +8,7 @@
  */
 namespace tglobally\tg_nomina\controllers;
 
+use base\controller\controler;
 use base\orm\inicializacion;
 use gamboamartin\empleado\models\em_empleado;
 use gamboamartin\errores\errores;
@@ -20,6 +21,7 @@ use gamboamartin\nomina\models\nom_par_percepcion;
 use gamboamartin\nomina\models\nom_percepcion;
 use gamboamartin\nomina\models\nom_periodo;
 use gamboamartin\plugins\exportador;
+use gamboamartin\system\_ctl_base;
 use gamboamartin\system\actions;
 use gamboamartin\system\links_menu;
 use gamboamartin\system\system;
@@ -41,13 +43,11 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use stdClass;
 
-class controlador_tg_manifiesto extends system
+class controlador_tg_manifiesto extends _ctl_base
 {
     public controlador_tg_manifiesto_periodo $controlador_tg_manifiesto_periodo;
-    public array $keys_selects = array();
-    public stdClass $periodos;
-    public int $tg_manifiesto_periodo_id = -1;
-    public array $nominas = array();
+
+    public string $link_tg_manifiesto_periodo_alta_bd = '';
 
     public function __construct(PDO      $link, html $html = new \gamboamartin\template_1\html(),
                                 stdClass $paths_conf = new stdClass())
@@ -55,89 +55,50 @@ class controlador_tg_manifiesto extends system
         $modelo = new tg_manifiesto(link: $link);
         $html_ = new tg_manifiesto_html(html: $html);
         $obj_link = new links_menu(link: $link, registro_id: $this->registro_id);
-        parent::__construct(html: $html_, link: $link, modelo: $modelo, obj_link: $obj_link, paths_conf: $paths_conf);
 
-        $this->titulo_lista = 'Manifiesto';
-        $this->controlador_tg_manifiesto_periodo= new controlador_tg_manifiesto_periodo($this->link);
-
-        if (isset($_GET['tg_manifiesto_periodo_id'])){
-            $this->tg_manifiesto_periodo_id = $_GET['tg_manifiesto_periodo_id'];
-        }
-
-        $this->asignar_propiedad(identificador: 'fc_csd_id', propiedades: ["label" => "CSD"]);
+        $datatables = $this->init_datatable();
         if (errores::$error) {
-            $error = $this->errores->error(mensaje: 'Error al asignar propiedad', data: $this);
+            $error = $this->errores->error(mensaje: 'Error al inicializar datatable', data: $datatables);
             print_r($error);
             die('Error');
         }
 
-        $this->asignar_propiedad(identificador: 'tg_tipo_servicio_id', propiedades: ["label" => "Tipo Servicio"]);
+        parent::__construct(html: $html_, link: $link, modelo: $modelo, obj_link: $obj_link, datatables: $datatables,
+            paths_conf: $paths_conf);
+
+        $configuraciones = $this->init_configuraciones();
         if (errores::$error) {
-            $error = $this->errores->error(mensaje: 'Error al asignar propiedad', data: $this);
+            $error = $this->errores->error(mensaje: 'Error al inicializar configuraciones', data: $configuraciones);
             print_r($error);
             die('Error');
         }
 
-        $this->asignar_propiedad(identificador: 'com_sucursal_id', propiedades: ["label" => "Sucursal"]);
+        $init_controladores = $this->init_controladores(paths_conf: $paths_conf);
         if (errores::$error) {
-            $error = $this->errores->error(mensaje: 'Error al asignar propiedad', data: $this);
+            $error = $this->errores->error(mensaje: 'Error al inicializar controladores', data: $init_controladores);
             print_r($error);
             die('Error');
         }
 
-        $this->asignar_propiedad(identificador: 'tg_cte_alianza_id', propiedades: ["label" => "Alianza"]);
+        $init_links = $this->init_links();
         if (errores::$error) {
-            $error = $this->errores->error(mensaje: 'Error al asignar propiedad', data: $this);
+            $error = $this->errores->error(mensaje: 'Error al inicializar links', data: $init_links);
             print_r($error);
             die('Error');
-        }
-
-        $this->asignar_propiedad(identificador: 'fecha_inicial_pago', propiedades: ["place_holder" => "Fecha Inicial Pago"]);
-        if (errores::$error) {
-            $error = $this->errores->error(mensaje: 'Error al asignar propiedad', data: $this);
-            print_r($error);
-            die('Error');
-        }
-
-        $this->asignar_propiedad(identificador: 'fecha_final_pago', propiedades: ["place_holder" => "Fecha Final Pago"]);
-        if (errores::$error) {
-            $error = $this->errores->error(mensaje: 'Error al asignar propiedad', data: $this);
-            print_r($error);
-            die('Error');
-        }
-
-        $this->asignar_propiedad(identificador: 'fecha_envio', propiedades: ["place_holder" => "Fecha Envio"]);
-        if (errores::$error) {
-            $error = $this->errores->error(mensaje: 'Error al asignar propiedad', data: $this);
-            print_r($error);
-            die('Error');
-        }
-
-        $this->asignar_propiedad(identificador: 'fecha_pago', propiedades: ["place_holder" => "Fecha Pago"]);
-        if (errores::$error) {
-            $error = $this->errores->error(mensaje: 'Error al asignar propiedad', data: $this);
-            print_r($error);
-            die('Error');
-        }
-
-    }
-
-    public function asignar_propiedad(string $identificador, mixed $propiedades)
-    {
-        if (!array_key_exists($identificador, $this->keys_selects)) {
-            $this->keys_selects[$identificador] = new stdClass();
-        }
-
-        foreach ($propiedades as $key => $value) {
-            $this->keys_selects[$identificador]->$key = $value;
         }
     }
 
     public function alta(bool $header, bool $ws = false): array|string
     {
-        $r_alta = parent::alta(header: false);
+        $r_alta = $this->init_alta();
         if (errores::$error) {
-            return $this->retorno_error(mensaje: 'Error al generar template', data: $r_alta, header: $header, ws: $ws);
+            return $this->retorno_error(mensaje: 'Error al inicializar alta', data: $r_alta, header: $header, ws: $ws);
+        }
+
+        $keys_selects = $this->init_selects_inputs();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar selects', data: $keys_selects, header: $header,
+                ws: $ws);
         }
 
         $this->row_upd->fecha_envio = date('Y-m-d');
@@ -145,131 +106,191 @@ class controlador_tg_manifiesto extends system
         $this->row_upd->fecha_inicial_pago = date('Y-m-d');
         $this->row_upd->fecha_final_pago = date('Y-m-d');
 
-        $inputs = (new tg_manifiesto_html(html: $this->html_base))->genera_inputs(controler: $this,
-            keys_selects: $this->keys_selects);
+        $inputs = $this->inputs(keys_selects: $keys_selects);
         if (errores::$error) {
-            $error = $this->errores->error(mensaje: 'Error al generar inputs', data: $inputs);
-            print_r($error);
-            die('Error');
+            return $this->retorno_error(
+                mensaje: 'Error al obtener inputs', data: $inputs, header: $header, ws: $ws);
         }
+
         return $r_alta;
     }
 
-    private function asigna_link_descarga_nomina_row(stdClass $row): array|stdClass
+    protected function campos_view(): array
     {
-        $keys = array('tg_manifiesto_id');
-        $valida = $this->validacion->valida_ids(keys: $keys,registro:  $row);
-        if(errores::$error){
-            return $this->errores->error(mensaje: 'Error al validar row',data:  $valida);
+        $keys = new stdClass();
+        $keys->inputs = array('codigo', 'descripcion');
+        $keys->fechas = array('fecha_envio', 'fecha_pago', 'fecha_inicial_pago', 'fecha_final_pago');
+        $keys->selects = array();
+
+        $init_data = array();
+        $init_data['com_sucursal'] = "gamboamartin\\comercial";
+        $init_data['tg_cte_alianza'] = "tglobally\\tg_nomina";
+        $init_data['fc_csd'] = "gamboamartin\\facturacion";
+        $init_data['tg_tipo_servicio'] = "tglobally\\tg_nomina";
+
+        $campos_view = $this->campos_view_base(init_data: $init_data, keys: $keys);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al inicializar campo view', data: $campos_view);
         }
 
-        $link_descarga_nomina = $this->obj_link->link_con_id(accion:'descarga_nomina',link:$this->link,
-            registro_id:  $row->tg_manifiesto_id, seccion:  $this->tabla);
-        if(errores::$error){
-            return $this->errores->error(mensaje: 'Error al genera link',data:  $link_descarga_nomina);
-        }
-
-        $row->link_descarga_nomina = $link_descarga_nomina;
-
-        return $row;
+        return $campos_view;
     }
 
-    private function asigna_link_sube_manifiesto_row(stdClass $row): array|stdClass
+    private function init_configuraciones(): controler
     {
-        $keys = array('tg_manifiesto_id');
-        $valida = $this->validacion->valida_ids(keys: $keys,registro:  $row);
-        if(errores::$error){
-            return $this->errores->error(mensaje: 'Error al validar row',data:  $valida);
-        }
+        $this->seccion_titulo = 'Manifiestos';
+        $this->titulo_lista = 'Registro de Manifiestos';
 
-        $link_sube_manifiesto = $this->obj_link->link_con_id(accion:'sube_manifiesto',link: $this->link,
-            registro_id:  $row->tg_manifiesto_id, seccion:  $this->tabla);
-        if(errores::$error){
-            return $this->errores->error(mensaje: 'Error al genera link',data:  $link_sube_manifiesto);
-        }
+        $this->lista_get_data = true;
 
-        $row->link_sube_manifiesto = $link_sube_manifiesto;
-
-        return $row;
+        return $this;
     }
 
-    private function asigna_link_ve_nominas_row(stdClass $row): array|stdClass
+    private function init_controladores(stdClass $paths_conf): controler
     {
-        $keys = array('tg_manifiesto_id');
-        $valida = $this->validacion->valida_ids(keys: $keys,registro:  $row);
-        if(errores::$error){
-            return $this->errores->error(mensaje: 'Error al validar row',data:  $valida);
-        }
+        $this->controlador_tg_manifiesto_periodo = new controlador_tg_manifiesto_periodo(link: $this->link,
+            paths_conf: $paths_conf);
 
-        $link_ve_nominas = $this->obj_link->link_con_id(accion:'ve_nominas',link: $this->link,
-            registro_id:  $row->tg_manifiesto_id, seccion:  $this->tabla);
-        if(errores::$error){
-            return $this->errores->error(mensaje: 'Error al genera link',data:  $link_ve_nominas);
-        }
-
-        $row->link_ve_nominas = $link_ve_nominas;
-
-        return $row;
+        return $this;
     }
 
-    private function base(): array|stdClass
+    private function init_links(): array|string
     {
-        $r_modifica =  parent::modifica(header: false,ws:  false);
-        if(errores::$error){
-            return $this->errores->error(mensaje: 'Error al generar template',data:  $r_modifica);
-        }
-
-        $tg_manifiesto = (new tg_manifiesto($this->link))->registro(registro_id: $this->registro_id);
+        $this->link_tg_manifiesto_periodo_alta_bd = $this->obj_link->link_alta_bd(link: $this->link,
+            seccion: 'tg_manifiesto_periodo');
         if (errores::$error) {
-            $error = $this->errores->error(mensaje: 'Error obtener registro manifiesto', data: $tg_manifiesto);
+            $error = $this->errores->error(mensaje: 'Error al obtener link',
+                data: $this->link_tg_manifiesto_periodo_alta_bd);
             print_r($error);
-            die('Error');
+            exit;
         }
 
-        $this->asignar_propiedad(identificador:'com_sucursal_id',
-            propiedades: ["id_selected"=>$tg_manifiesto['com_sucursal_id']]);
-        if (errores::$error) {
-            $error = $this->errores->error(mensaje: 'Error al asignar propiedad', data: $this);
-            print_r($error);
-            die('Error');
-        }
 
-        $this->asignar_propiedad(identificador:'tg_cte_alianza_id',
-            propiedades: ["id_selected"=>$tg_manifiesto['tg_cte_alianza_id']]);
-        if (errores::$error) {
-            $error = $this->errores->error(mensaje: 'Error al asignar propiedad', data: $this);
-            print_r($error);
-            die('Error');
-        }
-
-        $this->asignar_propiedad(identificador:'fc_csd_id',
-            propiedades: ["id_selected"=>$this->row_upd->fc_csd_id]);
-        if (errores::$error) {
-            $error = $this->errores->error(mensaje: 'Error al asignar propiedad', data: $this);
-            print_r($error);
-            die('Error');
-        }
-
-        $this->asignar_propiedad(identificador:'tg_tipo_servicio_id',
-            propiedades: ["id_selected"=>$this->row_upd->tg_tipo_servicio_id]);
-        if (errores::$error) {
-            $error = $this->errores->error(mensaje: 'Error al asignar propiedad', data: $this);
-            print_r($error);
-            die('Error');
-        }
-
-        $inputs = (new tg_manifiesto_html(html: $this->html_base))->genera_inputs(controler: $this,
-            keys_selects: $this->keys_selects);
-        if(errores::$error){
-            return $this->errores->error(mensaje: 'Error al inicializar inputs',data:  $inputs);
-        }
-
-        $data = new stdClass();
-        $data->template = $r_modifica;
-        $data->inputs = $inputs; 
-
-        return $data;
+        return $this->link_tg_manifiesto_periodo_alta_bd;
     }
+
+    private function init_datatable(): stdClass
+    {
+        $columns["tg_manifiesto_id"]["titulo"] = "Id";
+        $columns["com_sucursal_descripcion"]["titulo"] = "Sucursal";
+        $columns["tg_manifiesto_fecha_envio"]["titulo"] = "Fecha Envío";
+        $columns["tg_manifiesto_fecha_pago"]["titulo"] = "Fecha Pago";
+        $columns["tg_manifiesto_fecha_inicial_pago"]["titulo"] = "Fecha Incial Pago";
+        $columns["tg_manifiesto_fecha_final_pago"]["titulo"] = "Fecha Final Pago";
+        $columns["tg_manifiesto_n_nominas"]["titulo"] = "Nóminas ";
+
+        $filtro = array("tg_manifiesto.id","com_sucursal.descripcion","tg_manifiesto.fecha_envio",
+            "tg_manifiesto.fecha_pago", "tg_manifiesto.fecha_inicial_pago","tg_manifiesto.fecha_final_pago");
+
+        $datatables = new stdClass();
+        $datatables->columns = $columns;
+        $datatables->filtro = $filtro;
+        $datatables->multi_selects = true;
+        return $datatables;
+    }
+
+    /**
+     * Integra los selects
+     * @param array $keys_selects Key de selcta integrar
+     * @param string $key key a validar
+     * @param string $label Etiqueta a mostrar
+     * @param int $id_selected  selected
+     * @param int $cols cols css
+     * @param bool $con_registros Intrega valores
+     * @param array $filtro Filtro de datos
+     * @return array
+     */
+    private function init_selects(array $keys_selects, string $key, string $label, int $id_selected = -1, int $cols = 6,
+                                  bool  $con_registros = true, array $filtro = array()): array
+    {
+        $keys_selects = $this->key_select(cols: $cols, con_registros: $con_registros, filtro: $filtro, key: $key,
+            keys_selects: $keys_selects, id_selected: $id_selected, label: $label);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        return $keys_selects;
+    }
+
+    public function init_selects_inputs(): array
+    {
+        $keys_selects = $this->init_selects(keys_selects: array(), key: "tg_cte_alianza_id", label: "Alianza");
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "com_sucursal_id", label: "Sucursal");
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "fc_csd_id", label: "CSD", cols: 12);
+        return $this->init_selects(keys_selects: $keys_selects, key: "tg_tipo_servicio_id", label: "Tipo Servicio");
+    }
+
+    protected function key_selects_txt(array $keys_selects): array
+    {
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 12, key: 'descripcion',
+            keys_selects: $keys_selects, place_holder: 'Descripción');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'fecha_envio',
+            keys_selects: $keys_selects, place_holder: 'Fecha Envío');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'fecha_pago',
+            keys_selects: $keys_selects, place_holder: 'Fecha Pago');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'fecha_inicial_pago',
+            keys_selects: $keys_selects, place_holder: 'Fecha Incial Pago');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'fecha_final_pago',
+            keys_selects: $keys_selects, place_holder: 'Fecha Final');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+
+        return $keys_selects;
+    }
+
+    public function modifica(bool $header, bool $ws = false): array|stdClass
+    {
+        $r_modifica = $this->init_modifica();
+        if (errores::$error) {
+            return $this->retorno_error(
+                mensaje: 'Error al generar salida de template', data: $r_modifica, header: $header, ws: $ws);
+        }
+
+        $keys_selects = $this->init_selects_inputs();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar selects', data: $keys_selects, header: $header,
+                ws: $ws);
+        }
+
+        $keys_selects['fc_csd_id']->id_selected = $this->registro['fc_csd_id'];
+        $keys_selects['tg_tipo_servicio_id']->id_selected = $this->registro['tg_tipo_servicio_id'];
+
+        $base = $this->base_upd(keys_selects: $keys_selects, params: array(), params_ajustados: array());
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al integrar base', data: $base, header: $header, ws: $ws);
+        }
+
+        return $r_modifica;
+    }
+
+
+
+
+
+
+    public stdClass $periodos;
+    public int $tg_manifiesto_periodo_id = -1;
+    public array $nominas = array();
+
+
 
     private function data_nomina_btn(array $nomina): array
     {
@@ -424,23 +445,7 @@ class controlador_tg_manifiesto extends system
         //return $this->nominas;
     }
 
-    public function lista(bool $header, bool $ws = false): array
-    {
-        $r_lista = parent::lista($header, $ws); // TODO: Change the autogenerated stub
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al maquetar datos',data:  $r_lista, header: $header,ws:$ws);
-        }
 
-        $registros = $this->maqueta_registros_lista(registros: $this->registros);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al maquetar registros',data:  $registros, header: $header,ws:$ws);
-        }
-        $this->registros = $registros;
-
-
-
-        return $r_lista;
-    }
 
     /**
      * @throws \JsonException
@@ -846,42 +851,7 @@ class controlador_tg_manifiesto extends system
         exit;
     }
 
-    private function maqueta_registros_lista(array $registros): array
-    {
-        foreach ($registros as $indice=> $row){
-            $row = $this->asigna_link_sube_manifiesto_row(row: $row);
-            if(errores::$error){
-                return $this->errores->error(mensaje: 'Error al maquetar row',data:  $row);
-            }
 
-            $registros[$indice] = $row;
-
-            $row = $this->asigna_link_ve_nominas_row(row: $row);
-            if(errores::$error){
-                return $this->errores->error(mensaje: 'Error al maquetar row',data:  $row);
-            }
-
-            $row = $this->asigna_link_descarga_nomina_row(row: $row);
-            if(errores::$error){
-                return $this->errores->error(mensaje: 'Error al maquetar row',data:  $row);
-            }
-
-            $registros[$indice] = $row;
-
-        }
-        return $registros;
-    }
-
-    public function modifica(bool $header, bool $ws = false, string $breadcrumbs= ''): array|stdClass
-    {
-        $base = $this->base();
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al maquetar datos',data:  $base,
-                header: $header,ws:$ws);
-        }
-
-        return $base->template;
-    }
 
     public function obten_columna_faltas(Spreadsheet $documento){
         $totalDeHojas = $documento->getSheetCount();
@@ -1577,7 +1547,6 @@ class controlador_tg_manifiesto extends system
 
         return $empleados;
     }
-
 
     public function obten_registro_patronal(int $tg_manifiesto_id){
         $tg_manifiesto = (new tg_manifiesto($this->link))->registro(registro_id: $tg_manifiesto_id);

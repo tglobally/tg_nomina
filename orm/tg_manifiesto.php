@@ -1,6 +1,7 @@
 <?php
 namespace tglobally\tg_nomina\models;
 
+use base\orm\_modelo_parent;
 use base\orm\modelo;
 
 use gamboamartin\comercial\models\com_sucursal;
@@ -12,7 +13,7 @@ use gamboamartin\nomina\models\nom_periodo;
 use PDO;
 use stdClass;
 
-class tg_manifiesto extends modelo{
+class tg_manifiesto extends _modelo_parent{
 
     public function __construct(PDO $link){
         $tabla = 'tg_manifiesto';
@@ -34,13 +35,15 @@ class tg_manifiesto extends modelo{
         $campos_view['fecha_inicial_pago']['type'] = 'dates';
         $campos_view['fecha_final_pago']['type'] = 'dates';
 
+        $columnas_extra['tg_manifiesto_n_nominas'] = "(SELECT COUNT(*) FROM nom_nomina )";
+
         parent::__construct(link: $link,tabla:  $tabla, campos_obligatorios: $campos_obligatorios,
-            columnas: $columnas,campos_view:  $campos_view );
+            columnas: $columnas,campos_view:  $campos_view ,columnas_extra: $columnas_extra);
 
         $this->NAMESPACE = __NAMESPACE__;
     }
 
-    public function alta_bd(): array|stdClass
+    public function alta_bd(array $keys_integra_ds = array('codigo', 'descripcion')): array|stdClass
     {
         $fc_csd = (new fc_csd($this->link))->registro(registro_id: $this->registro['fc_csd_id']);
         if(errores::$error){
@@ -50,7 +53,7 @@ class tg_manifiesto extends modelo{
         $tg_sucursal_alianza = $this->obten_sucursal_alianza(com_sucursal_id: $this->registro['com_sucursal_id'],
             tg_cte_alianza_id: $this->registro['tg_cte_alianza_id']);
         if(errores::$error){
-            return $this->error->error(mensaje: 'Error al obtener registro empresa',data: $tg_sucursal_alianza);
+            return $this->error->error(mensaje: 'Error al obtener registro sucursal alianza',data: $tg_sucursal_alianza);
         }
 
         $this->registro['tg_sucursal_alianza_id'] = $tg_sucursal_alianza['tg_sucursal_alianza_id'];
@@ -80,7 +83,7 @@ class tg_manifiesto extends modelo{
             unset($this->registro['tg_cte_alianza_id']);
         }
 
-        $r_alta_bd = parent::alta_bd();
+        $r_alta_bd = parent::alta_bd(keys_integra_ds: $keys_integra_ds);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al dar de alta manifiesto',data: $r_alta_bd);
         }
@@ -129,29 +132,6 @@ class tg_manifiesto extends modelo{
         return $r_alta_bd;
     }
 
-    public function modifica_bd(array $registro, int $id, bool $reactiva = false): array|stdClass
-    {
-        $tg_sucursal_alianza = $this->obten_sucursal_alianza(com_sucursal_id: $registro['com_sucursal_id'],
-            tg_cte_alianza_id: $registro['tg_cte_alianza_id']);
-        if(errores::$error){
-            return $this->error->error(mensaje: 'Error al obtener registro empresa',data: $tg_sucursal_alianza);
-        }
-        $this->registro['tg_sucursal_alianza_id'] = $tg_sucursal_alianza['tg_sucursal_alianza_id'];
-
-        if(isset($registro['com_sucursal_id'])){
-            unset($registro['com_sucursal_id']);
-        }
-        if(isset($registro['tg_cte_alianza_id'])){
-            unset($registro['tg_cte_alianza_id']);
-        }
-
-        $r_modifica_bd = parent::modifica_bd($registro, $id, $reactiva);
-        if(errores::$error){
-            return $this->error->error(mensaje: 'Error al modificar manifiesto',data: $r_modifica_bd);
-        }
-
-        return $r_modifica_bd;
-    }
 
     public function obten_sucursal_alianza(int $com_sucursal_id, int $tg_cte_alianza_id){
         $filtro['com_sucursal.id'] = $com_sucursal_id;
@@ -169,7 +149,31 @@ class tg_manifiesto extends modelo{
 
         return $tg_sucursal_alianza->registros[0];
     }
-    
+
+    public function modifica_bd(array $registro, int $id, bool $reactiva = false, array $keys_integra_ds = array('codigo', 'descripcion')): array|stdClass
+    {
+        $tg_sucursal_alianza = $this->obten_sucursal_alianza(com_sucursal_id: $registro['com_sucursal_id'],
+            tg_cte_alianza_id: $registro['tg_cte_alianza_id']);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener registro empresa',data: $tg_sucursal_alianza);
+        }
+        $this->registro['tg_sucursal_alianza_id'] = $tg_sucursal_alianza['tg_sucursal_alianza_id'];
+
+        if(isset($registro['com_sucursal_id'])){
+            unset($registro['com_sucursal_id']);
+        }
+        if(isset($registro['tg_cte_alianza_id'])){
+            unset($registro['tg_cte_alianza_id']);
+        }
+
+        $r_modifica_bd = parent::modifica_bd($registro, $id, $reactiva, $keys_integra_ds);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al modificar manifiesto',data: $r_modifica_bd);
+        }
+
+        return $r_modifica_bd;
+    }
+
     public function maqueta_encabezado_excel(array $registros_xls){
         $r_manifiesto = (new tg_manifiesto($this->link))->registro(registro_id: $this->registro_id);
         if(errores::$error){
