@@ -185,7 +185,7 @@ class controlador_tg_manifiesto extends _ctl_base
         $datatables = new stdClass();
         $datatables->columns = $columns;
         $datatables->filtro = $filtro;
-        $datatables->multi_selects = true;
+
         return $datatables;
     }
 
@@ -1756,8 +1756,8 @@ class controlador_tg_manifiesto extends _ctl_base
         $columns["org_empresa_descripcion"]["titulo"] = "Empresa";
         $filtro = array();
 
-        $datatables = $this->datatable_init(columns: $columns,filtro: $filtro,identificador: "#nom_nomina",
-            multi_selects: true);
+        $datatables = $this->datatable_init(columns: $columns, filtro: $filtro, identificador: "#nom_nomina",
+            data: array("nom_periodo_id" => 4), multi_selects: true);
         if(errores::$error){
             return $this->retorno_error(mensaje: 'Error al inicializar datatable',data:  $datatables,
                 header: $header,ws:$ws);
