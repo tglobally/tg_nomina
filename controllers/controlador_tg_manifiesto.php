@@ -564,6 +564,35 @@ class controlador_tg_manifiesto extends _ctl_base
                         trim($empleado_excel->ap) === trim($empleado['em_empleado_ap']) &&
                         trim($empleado_excel->am) === trim($empleado['em_empleado_am'])) {
 
+                        if((float)$empleado_excel->monto_sueldo > 0) {
+
+                            $dias_asistidos = $empleado_excel->monto_sueldo / $empleado['em_empleado_salario_diario'];
+
+                            $dias_restantes = $empleado['cat_sat_periodicidad_pago_nom_n_dias'];
+                            if($empleado['nom_conf_nomina_aplica_septimo_dia'] === 'activo'){
+                                $res = $empleado['cat_sat_periodicidad_pago_nom_n_dias'] / 7;
+                                $dias_restantes -= round($res);
+                            }
+
+                            $dias_faltas = $dias_restantes - $dias_asistidos;
+
+                            $registro_inc['nom_tipo_incidencia_id'] = 1;
+                            $registro_inc['em_empleado_id'] = $empleado['em_empleado_id'];
+                            $registro_inc['n_dias'] = $dias_faltas;
+                            $registro_inc['fecha_incidencia'] = $nom_periodo['nom_periodo_fecha_inicial_pago'];
+
+                            $nom_incidencia = (new nom_incidencia($this->link))->alta_registro(registro: $registro_inc);
+                            if (errores::$error) {
+                                $error = $this->errores->error(mensaje: 'Error al dar de alta incidencias',
+                                    data: $nom_incidencia);
+                                if (!$header) {
+                                    return $error;
+                                }
+                                print_r($error);
+                                die('Error');
+                            }
+                        }
+
                         if ((int)$empleado_excel->faltas > 0) {
                             $registro_inc['nom_tipo_incidencia_id'] = 1;
                             $registro_inc['em_empleado_id'] = $empleado['em_empleado_id'];
@@ -964,6 +993,25 @@ class controlador_tg_manifiesto extends _ctl_base
         }
 
         return $columna;
+    }    
+    
+    public function obten_columna_monto_sueldo(Spreadsheet $documento){
+        $totalDeHojas = $documento->getSheetCount();
+
+        $columna = -1;
+        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+            $hojaActual = $documento->getSheet($indiceHoja);
+            foreach ($hojaActual->getRowIterator() as $fila) {
+                foreach ($fila->getCellIterator() as $celda) {
+                    $valorRaw = $celda->getValue();
+                    if($valorRaw === 'MONTO SUELDO') {
+                        $columna = $celda->getColumn();
+                    }
+                }
+            }
+        }
+
+        return $columna;
     }
 
     public function obten_columna_despensa(Spreadsheet $documento){
@@ -1312,6 +1360,12 @@ class controlador_tg_manifiesto extends _ctl_base
             return $this->errores->error(mensaje: 'Error obtener columna de monto neto',
                 data:  $columna_monto_neto);
         }
+        
+        $columna_monto_sueldo = $this->obten_columna_monto_sueldo(documento: $documento);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error obtener columna de monto neto',
+                data:  $columna_monto_sueldo);
+        }
 
         $columna_prima_vacacional = $this->obten_columna_prima_vacacional(documento: $documento);
         if(errores::$error){
@@ -1411,6 +1465,7 @@ class controlador_tg_manifiesto extends _ctl_base
                 $reg->ayuda_transporte = 0;
                 $reg->gratificacion = 0;
                 $reg->monto_neto = 0;
+                $reg->monto_sueldo = 0;
 
                 if ($columna_faltas !== -1) {
                     $reg->faltas = $hojaActual->getCell($columna_faltas . $registro->fila)->getValue();
@@ -1466,6 +1521,15 @@ class controlador_tg_manifiesto extends _ctl_base
 
                     if (!is_numeric($reg->monto_neto)) {
                         $reg->monto_neto = 0;
+                    }
+                }
+                
+                if ($columna_monto_sueldo !== -1) {
+                    $monto_sueldo = $hojaActual->getCell($columna_monto_sueldo . $registro->fila)->getCalculatedValue();
+                    $reg->monto_sueldo = trim((string)$monto_sueldo);
+
+                    if (!is_numeric($reg->monto_sueldo)) {
+                        $reg->monto_sueldo = 0;
                     }
                 }
 
