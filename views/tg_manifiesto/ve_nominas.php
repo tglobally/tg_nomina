@@ -26,6 +26,12 @@ $url_icons = (new views())->url_icons;
                         </a>
                     </div>
                     <div class="col-sm-2">
+                        <a id="agregar_percepcion" href="<?php echo $controlador->link_tg_manifiesto_agregar_percepcion; ?>"
+                           class="btn btn-info btn-guarda col-md-12"><i class="icon-edit"></i>Agregar Percepción
+                        </a>
+                    </div>
+
+                    <div class="col-sm-2">
                         <div class="col-sm-2">
                             <form method="post" action="<?php echo $controlador->link_tg_manifiesto_elimina_percepciones; ?> "
                                   class="form-additional" id="form_export">

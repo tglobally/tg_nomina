@@ -33,6 +33,12 @@ $(document).ready(function(){
         },
     } );
 
+    $('#agregar_percepcion').click(function(event) {
+        if (lista_nominas.length == 0){
+            event.preventDefault();
+            alert("Seleccione una nómina");
+        }
+    });
 
 
 

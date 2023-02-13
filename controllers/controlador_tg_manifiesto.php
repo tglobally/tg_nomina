@@ -20,23 +20,18 @@ use gamboamartin\nomina\models\nom_par_deduccion;
 use gamboamartin\nomina\models\nom_par_percepcion;
 use gamboamartin\nomina\models\nom_percepcion;
 use gamboamartin\nomina\models\nom_periodo;
-use gamboamartin\plugins\exportador;
 use gamboamartin\system\_ctl_base;
 use gamboamartin\system\actions;
 use gamboamartin\system\links_menu;
-use gamboamartin\system\system;
 use gamboamartin\template\html;
 use html\tg_manifiesto_html;
 use gamboamartin\documento\models\doc_documento;
 use PhpOffice\PhpSpreadsheet\Exception;
 use tglobally\tg_nomina\models\em_cuenta_bancaria;
 use tglobally\tg_nomina\models\nom_nomina;
-use tglobally\tg_nomina\models\tg_column;
-use tglobally\tg_nomina\models\tg_layout;
 use tglobally\tg_nomina\models\tg_manifiesto;
 use tglobally\tg_nomina\models\tg_manifiesto_periodo;
 use tglobally\tg_nomina\models\tg_provision;
-use tglobally\tg_nomina\models\tg_sucursal_alianza;
 
 use PDO;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -48,6 +43,10 @@ class controlador_tg_manifiesto extends _ctl_base
     public controlador_tg_manifiesto_periodo $controlador_tg_manifiesto_periodo;
 
     public string $link_tg_manifiesto_periodo_alta_bd = '';
+
+    public string $link_tg_manifiesto_ver_nominas = '';
+    public string $link_tg_manifiesto_agregar_percepcion = '';
+    public string $link_tg_manifiesto_agregar_percepcion_bd = '';
     public string $link_tg_manifiesto_elimina_percepciones = '';
 
     public function __construct(PDO      $link, html $html = new \gamboamartin\template_1\html(),
@@ -89,6 +88,36 @@ class controlador_tg_manifiesto extends _ctl_base
         }
     }
 
+    public function agregar_percepcion(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
+    {
+        $r_alta = $this->init_alta();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar alta', data: $r_alta, header: $header, ws: $ws);
+        }
+
+        $keys_selects = $this->init_selects_inputs();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar selects', data: $keys_selects, header: $header,
+                ws: $ws);
+        }
+
+
+        $inputs = $this->inputs(keys_selects: $keys_selects);
+        if (errores::$error) {
+            return $this->retorno_error(
+                mensaje: 'Error al obtener inputs', data: $inputs, header: $header, ws: $ws);
+        }
+
+        return $r_alta;
+    }
+
+    public function agregar_percepcion_bd(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
+    {
+
+
+        return array();
+    }
+
     public function alta(bool $header, bool $ws = false): array|string
     {
         $r_alta = $this->init_alta();
@@ -119,7 +148,7 @@ class controlador_tg_manifiesto extends _ctl_base
     protected function campos_view(): array
     {
         $keys = new stdClass();
-        $keys->inputs = array('codigo', 'descripcion');
+        $keys->inputs = array('codigo', 'descripcion', 'importe_gravado', 'importe_exento');
         $keys->fechas = array('fecha_envio', 'fecha_pago', 'fecha_inicial_pago', 'fecha_final_pago');
         $keys->selects = array();
 
@@ -128,6 +157,8 @@ class controlador_tg_manifiesto extends _ctl_base
         $init_data['tg_cte_alianza'] = "tglobally\\tg_nomina";
         $init_data['fc_csd'] = "gamboamartin\\facturacion";
         $init_data['tg_tipo_servicio'] = "tglobally\\tg_nomina";
+        $init_data['nom_nomina'] = "gamboamartin\\nomina";
+        $init_data['nom_percepcion'] = "gamboamartin\\nomina";
 
         $campos_view = $this->campos_view_base(init_data: $init_data, keys: $keys);
         if (errores::$error) {
@@ -193,6 +224,33 @@ class controlador_tg_manifiesto extends _ctl_base
             exit;
         }
 
+        $this->link_tg_manifiesto_ver_nominas = $this->obj_link->link_con_id(accion: "ver_nominas",
+            link: $this->link, registro_id: $this->registro_id, seccion: $this->seccion);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener link',
+                data: $this->link_tg_manifiesto_ver_nominas);
+            print_r($error);
+            exit;
+        }
+
+        $this->link_tg_manifiesto_agregar_percepcion = $this->obj_link->link_con_id(accion: "agregar_percepcion",
+            link: $this->link, registro_id: $this->registro_id, seccion: $this->seccion);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener link',
+                data: $this->link_tg_manifiesto_agregar_percepcion);
+            print_r($error);
+            exit;
+        }
+
+        $this->link_tg_manifiesto_agregar_percepcion_bd = $this->obj_link->link_con_id(accion: "agregar_percepcion_bd",
+            link: $this->link, registro_id: $this->registro_id, seccion: $this->seccion);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener link',
+                data: $this->link_tg_manifiesto_agregar_percepcion_bd);
+            print_r($error);
+            exit;
+        }
+
         $this->link_tg_manifiesto_elimina_percepciones = $this->obj_link->link_con_id(accion: "elimina_percepciones",
             link: $this->link, registro_id: $this->registro_id, seccion: $this->seccion);
         if (errores::$error) {
@@ -253,6 +311,7 @@ class controlador_tg_manifiesto extends _ctl_base
         $keys_selects = $this->init_selects(keys_selects: array(), key: "tg_cte_alianza_id", label: "Alianza");
         $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "com_sucursal_id", label: "Sucursal");
         $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "fc_csd_id", label: "CSD", cols: 12);
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "nom_percepcion_id", label: "Percepción ", cols: 12);
         return $this->init_selects(keys_selects: $keys_selects, key: "tg_tipo_servicio_id", label: "Tipo Servicio");
     }
 
@@ -284,6 +343,18 @@ class controlador_tg_manifiesto extends _ctl_base
 
         $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'fecha_final_pago',
             keys_selects: $keys_selects, place_holder: 'Fecha Final');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'importe_gravado',
+            keys_selects: $keys_selects, place_holder: 'Importe Gravado');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'importe_exento',
+            keys_selects: $keys_selects, place_holder: 'Importe Exento');
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
         }
