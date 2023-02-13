@@ -6,6 +6,33 @@ $ruta_template_base = (new views())->ruta_template_base;
 include $ruta_template_base.'assets/css/_base_css.php';
 ?>
 <style>
+    tr.group,
+    tr.group:hover {
+        background-color: #ddd !important;
+    }
+
+    .tablas_nominas{
+        padding: 0 !important;
+    }
+
+    .tablas_nominas  .col-md-12{
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+
+    .tabla_titulo{
+        padding: 0.75rem 1.25rem;
+        margin-bottom: 0;
+        background-color: rgba(113, 107, 107, 0.12);
+    }
+
+    #nominas_percepciones{
+        width: auto !important;
+    }
+
+
+
+
     .buttons {
         margin-bottom: 2.25rem;
     }

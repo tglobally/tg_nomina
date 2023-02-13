@@ -29,6 +29,92 @@ $url_icons = (new views())->url_icons;
             </div>
         </div>
 
+        <div class="lista">
+            <div class="card">
+                <div class="card-header">
+                    <span class="text-header">Nominas Seleccionadas</span>
+                </div>
+                <div class="card-body tablas_nominas ">
+                    <div class="col-md-12">
+                        <div class="tabla_titulo">
+                            <span class="text-header">Percepciones</span>
+                        </div>
+                        <table id="nominas_percepciones" class="datatables table table-striped ">
+                            <thead>
+                            <tr>
+                                <th>Nomina</th>
+                                <th>Código</th>
+                                <th>Descripción</th>
+                                <th>Importe Gravado</th>
+                                <th>Importe Exento</th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <!--<div class="col-md-12">
+                        <div class="tabla_titulo">
+                            <span class="text-header">Deducciones</span>
+                        </div>
+                        <table id="nominas_deducciones" class="datatables table table-striped ">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Position</th>
+                                <th>Office</th>
+                                <th>Age</th>
+                                <th>Start date</th>
+                                <th>Salary</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>Tiger Nixon</td>
+                                <td>System Architect</td>
+                                <td>Edinburgh</td>
+                                <td>61</td>
+                                <td>2011-04-25</td>
+                                <td>$320,800</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="tabla_titulo">
+                            <span class="text-header">Otros pagos</span>
+                        </div>
+                        <table id="nominas_otros_pagos" class="datatables table table-striped ">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Position</th>
+                                <th>Office</th>
+                                <th>Age</th>
+                                <th>Start date</th>
+                                <th>Salary</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>Tiger Nixon</td>
+                                <td>System Architect</td>
+                                <td>Edinburgh</td>
+                                <td>61</td>
+                                <td>2011-04-25</td>
+                                <td>$320,800</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>-->
+                    <div class="col-sm-3">
+                        <a href="<?php echo $controlador->link_lista; ?>"
+                           class="btn btn-info btn-guarda col-md-12"><i class="icon-edit"></i>Eliminar Percepciones
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
     </div>
 </div>
