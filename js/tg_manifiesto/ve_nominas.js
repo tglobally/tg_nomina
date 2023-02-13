@@ -3,6 +3,7 @@ $(document).ready(function(){
     var tables = $.fn.dataTable.tables(true);
     var datatable = $(tables).DataTable().search('nom_nomina')
 
+    var lista_nominas = [];
     var groupColumn = 0;
 
     var nominas_percepciones = $("#nominas_percepciones").DataTable({
@@ -37,25 +38,31 @@ $(document).ready(function(){
 
     $('#nom_nomina').on('click', 'tbody td:first-child', function () {
 
-        var selected = $( this ).parent().hasClass( "selected" );
+        var data = datatable.row( this ).data();
 
-        if (!selected){
-            var data = datatable.row( this ).data();
+        if (!lista_nominas.includes(data.nom_nomina_id)) {
+            lista_nominas.push(data.nom_nomina_id);
+        } else {
+            lista_nominas = lista_nominas.filter((item) => item !== data.nom_nomina_id)
+        }
 
-            var nomina = `<b> NOMINA: </b> ${data.nom_nomina_id} - ${data.em_empleado_descripcion}`
+        $('#percepciones_eliminar').val(lista_nominas)
 
-            let url = get_url("nom_par_percepcion","get_percepciones", {nom_nomina_id: data.nom_nomina_id});
+        nominas_percepciones.clear();
+
+        lista_nominas.forEach( function(value,i,a) {
+            let url = get_url("nom_par_percepcion","get_percepciones", {nom_nomina_id: value});
 
             get_data(url, function (rows) {
                 var registros = rows.registros;
                 registros.forEach( function(valor, indice, array) {
+                    var nomina = `<b> NOMINA: </b> ${valor.nom_nomina_id} - ${valor.em_empleado_descripcion}`;
                     nominas_percepciones.row.add([nomina, valor.nom_percepcion_codigo,
                         valor.nom_percepcion_descripcion, valor.nom_par_percepcion_importe_gravado,
-                        valor.nom_par_percepcion_importe_exento]).draw(false);;
+                        valor.nom_par_percepcion_importe_exento]).draw(false);
                 });
             });
-
-        }
+        });
 
     });
 

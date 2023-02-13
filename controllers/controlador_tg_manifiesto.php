@@ -48,6 +48,7 @@ class controlador_tg_manifiesto extends _ctl_base
     public controlador_tg_manifiesto_periodo $controlador_tg_manifiesto_periodo;
 
     public string $link_tg_manifiesto_periodo_alta_bd = '';
+    public string $link_tg_manifiesto_elimina_percepciones = '';
 
     public function __construct(PDO      $link, html $html = new \gamboamartin\template_1\html(),
                                 stdClass $paths_conf = new stdClass())
@@ -136,6 +137,33 @@ class controlador_tg_manifiesto extends _ctl_base
         return $campos_view;
     }
 
+    public function elimina_percepciones(bool $header, bool $ws = false): array|stdClass
+    {
+        if (!isset($_POST['percepciones_eliminar'])){
+            return $this->retorno_error(mensaje: 'Error no existe percepciones_eliminar', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        $nominas_seleccionadas = explode(",",$_POST['percepciones_eliminar']);
+
+        foreach ($nominas_seleccionadas as $nomina){
+
+            $filtro["nom_nomina_id"] = $nomina;
+            $resultado = (new nom_par_percepcion($this->link))->elimina_con_filtro_and(filtro: $filtro);
+            if (errores::$error) {
+                return $this->retorno_error(mensaje: 'Error al eliminar percepcion de la nomina', data: $resultado,
+                    header: $header, ws: $ws);
+            }
+        }
+
+        $link = "./index.php?seccion=tg_manifiesto&accion=ve_nominas&registro_id=".$this->registro_id;
+        $link.="&session_id=$this->session_id";
+        header('Location:' . $link);
+        exit;
+    }
+
+
+
     private function init_configuraciones(): controler
     {
         $this->seccion_titulo = 'Manifiestos';
@@ -165,6 +193,14 @@ class controlador_tg_manifiesto extends _ctl_base
             exit;
         }
 
+        $this->link_tg_manifiesto_elimina_percepciones = $this->obj_link->link_con_id(accion: "elimina_percepciones",
+            link: $this->link, registro_id: $this->registro_id, seccion: $this->seccion);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener link',
+                data: $this->link_tg_manifiesto_elimina_percepciones);
+            print_r($error);
+            exit;
+        }
 
         return $this->link_tg_manifiesto_periodo_alta_bd;
     }

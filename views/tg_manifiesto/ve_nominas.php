@@ -20,11 +20,43 @@ $url_icons = (new views())->url_icons;
                     <div class="cont_tabla_sucursal  col-md-12">
                         <table id="nom_nomina" class="datatables table table-striped "></table>
                     </div>
-                    <div class="col-sm-3">
+                    <div class="col-sm-2">
                         <a href="<?php echo $controlador->link_lista; ?>"
                            class="btn btn-info btn-guarda col-md-12"><i class="icon-edit"></i>Regresar
                         </a>
                     </div>
+                    <div class="col-sm-2">
+                        <div class="col-sm-2">
+                            <form method="post" action="<?php echo $controlador->link_tg_manifiesto_elimina_percepciones; ?> "
+                                  class="form-additional" id="form_export">
+                                <input id="percepciones_eliminar" name="percepciones_eliminar" type="hidden">
+                                <div class="botones">
+                                    <button type="submit" class="btn btn-info" name="btn_action_next"
+                                            value="exportar" form="form_export">
+                                        Eliminar Percepciones
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-sm-2">
+                        <a href="<?php echo $controlador->link_lista; ?>"
+                           class="btn btn-info btn-guarda col-md-12"><i class="icon-edit"></i>Eliminar Deducciones
+                        </a>
+                    </div>
+                    <div class="col-sm-2">
+                        <form method="post" action="<?php echo $controlador->link_tg_manifiesto_elimina_percepciones; ?> "
+                              class="form-additional" id="form_export">
+
+                            <div class="botones">
+                                <button type="submit" class="btn btn-info" name="btn_action_next"
+                                       value="exportar" form="form_export">
+                                    Eliminar Otros Pagos
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -106,11 +138,6 @@ $url_icons = (new views())->url_icons;
                             </tbody>
                         </table>
                     </div>-->
-                    <div class="col-sm-3">
-                        <a href="<?php echo $controlador->link_lista; ?>"
-                           class="btn btn-info btn-guarda col-md-12"><i class="icon-edit"></i>Eliminar Percepciones
-                        </a>
-                    </div>
                 </div>
             </div>
         </div>
