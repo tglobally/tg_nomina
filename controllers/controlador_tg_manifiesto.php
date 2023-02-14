@@ -49,6 +49,8 @@ class controlador_tg_manifiesto extends _ctl_base
     public string $link_tg_manifiesto_agregar_percepcion_bd = '';
     public string $link_tg_manifiesto_elimina_percepciones = '';
 
+    public array $nominas_seleccionadas = array();
+
     public function __construct(PDO      $link, html $html = new \gamboamartin\template_1\html(),
                                 stdClass $paths_conf = new stdClass())
     {
@@ -90,6 +92,18 @@ class controlador_tg_manifiesto extends _ctl_base
 
     public function agregar_percepcion(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
     {
+        if (!isset($_POST['agregar_percepcion'])){
+            return $this->retorno_error(mensaje: 'Error no existe agregar_percepcion', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        $this->nominas_seleccionadas = explode(",",$_POST['agregar_percepcion']);
+
+        if (count($this->nominas_seleccionadas) === 0){
+            return $this->retorno_error(mensaje: 'Error no ha seleccionado una nomina', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
         $r_alta = $this->init_alta();
         if (errores::$error) {
             return $this->retorno_error(mensaje: 'Error al inicializar alta', data: $r_alta, header: $header, ws: $ws);
@@ -100,7 +114,6 @@ class controlador_tg_manifiesto extends _ctl_base
             return $this->retorno_error(mensaje: 'Error al inicializar selects', data: $keys_selects, header: $header,
                 ws: $ws);
         }
-
 
         $inputs = $this->inputs(keys_selects: $keys_selects);
         if (errores::$error) {
@@ -113,9 +126,36 @@ class controlador_tg_manifiesto extends _ctl_base
 
     public function agregar_percepcion_bd(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
     {
+        if (!isset($_POST['agregar_percepcion'])){
+            return $this->retorno_error(mensaje: 'Error no existe agregar_percepcion', data: $_POST, header: $header,
+                ws: $ws);
+        }
 
+        $this->nominas_seleccionadas = explode(",",$_POST['agregar_percepcion']);
 
-        return array();
+        if (count($this->nominas_seleccionadas) === 0){
+            return $this->retorno_error(mensaje: 'Error no ha seleccionado una nomina', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        foreach ($this->nominas_seleccionadas as $nomina){
+
+            $registro['nom_nomina_id'] = $nomina;
+            $registro['nom_percepcion_id'] = $_POST['nom_percepcion_id'];
+            $registro['importe_gravado'] = $_POST['importe_gravado'];
+            $registro['importe_exento'] = $_POST['importe_exento'];
+            $registro['descripcion'] = $_POST['descripcion'];
+            $resultado = (new nom_par_percepcion($this->link))->alta_registro(registro: $registro);
+            if (errores::$error) {
+                return $this->retorno_error(mensaje: 'Error al ingresar percepcion para la nomina', data: $resultado,
+                    header: $header, ws: $ws);
+            }
+        }
+
+        $link = "./index.php?seccion=tg_manifiesto&accion=ve_nominas&registro_id=".$this->registro_id;
+        $link.="&session_id=$this->session_id";
+        header('Location:' . $link);
+        exit;
     }
 
     public function alta(bool $header, bool $ws = false): array|string
@@ -178,7 +218,6 @@ class controlador_tg_manifiesto extends _ctl_base
         $nominas_seleccionadas = explode(",",$_POST['percepciones_eliminar']);
 
         foreach ($nominas_seleccionadas as $nomina){
-
             $filtro["nom_nomina_id"] = $nomina;
             $resultado = (new nom_par_percepcion($this->link))->elimina_con_filtro_and(filtro: $filtro);
             if (errores::$error) {

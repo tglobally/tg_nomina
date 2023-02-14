@@ -33,12 +33,13 @@ $(document).ready(function(){
         },
     } );
 
-    $('#agregar_percepcion').click(function(event) {
-        if (lista_nominas.length == 0){
-            event.preventDefault();
+    $('.form_nominas').on('submit', function(e){
+        if(lista_nominas.length === 0) {
+            e.preventDefault();
             alert("Seleccione una nómina");
         }
     });
+
 
 
 
@@ -52,6 +53,7 @@ $(document).ready(function(){
             lista_nominas = lista_nominas.filter((item) => item !== data.nom_nomina_id)
         }
 
+        $('#agregar_percepcion').val(lista_nominas)
         $('#percepciones_eliminar').val(lista_nominas)
 
         nominas_percepciones.clear();

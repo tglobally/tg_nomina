@@ -13,6 +13,8 @@ $url_icons = (new views())->url_icons;
 
         <div class="  form-main" id="form">
             <form method="post" action="<?php echo $controlador->link_tg_manifiesto_agregar_percepcion_bd; ?>" class="form-additional">
+
+                <input id="agregar_percepcion" name="agregar_percepcion" type="hidden" value="<?php echo  implode(",", $controlador->nominas_seleccionadas); ?>">
                 <?php echo $controlador->inputs->nom_percepcion_id; ?>
                 <?php echo $controlador->inputs->importe_gravado; ?>
                 <?php echo $controlador->inputs->importe_exento; ?>
