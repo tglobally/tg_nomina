@@ -90,6 +90,7 @@ $url_icons = (new views())->url_icons;
                                 <th>Descripción</th>
                                 <th>Importe Gravado</th>
                                 <th>Importe Exento</th>
+                                <th>Acciones</th>
                             </tr>
                             </thead>
                             <tbody></tbody>
