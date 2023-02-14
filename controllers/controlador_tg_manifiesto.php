@@ -17,6 +17,7 @@ use gamboamartin\nomina\models\calcula_nomina;
 use gamboamartin\nomina\models\nom_conf_empleado;
 use gamboamartin\nomina\models\nom_incidencia;
 use gamboamartin\nomina\models\nom_par_deduccion;
+use gamboamartin\nomina\models\nom_par_otro_pago;
 use gamboamartin\nomina\models\nom_par_percepcion;
 use gamboamartin\nomina\models\nom_percepcion;
 use gamboamartin\nomina\models\nom_periodo;
@@ -127,6 +128,40 @@ class controlador_tg_manifiesto extends _ctl_base
         return $r_alta;
     }
 
+    public function agregar_deduccion_bd(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
+    {
+        if (!isset($_POST['agregar_deduccion'])){
+            return $this->retorno_error(mensaje: 'Error no existe agregar_deduccion', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        $this->nominas_seleccionadas = explode(",",$_POST['agregar_deduccion']);
+
+        if (count($this->nominas_seleccionadas) === 0){
+            return $this->retorno_error(mensaje: 'Error no ha seleccionado una nomina', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        foreach ($this->nominas_seleccionadas as $nomina){
+
+            $registro['nom_nomina_id'] = $nomina;
+            $registro['nom_deduccion_id'] = $_POST['nom_deduccion_id'];
+            $registro['importe_gravado'] = $_POST['importe_gravado'];
+            $registro['importe_exento'] = $_POST['importe_exento'];
+            $registro['descripcion'] = $_POST['descripcion'];
+            $resultado = (new nom_par_deduccion($this->link))->alta_registro(registro: $registro);
+            if (errores::$error) {
+                return $this->retorno_error(mensaje: 'Error al ingresar deduccion para la nomina', data: $resultado,
+                    header: $header, ws: $ws);
+            }
+        }
+
+        $link = "./index.php?seccion=tg_manifiesto&accion=ve_nominas&registro_id=".$this->registro_id;
+        $link.="&session_id=$this->session_id";
+        header('Location:' . $link);
+        exit;
+    }
+
     public function agregar_otro_pago(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
     {
         if (!isset($_POST['agregar_otro_pago'])){
@@ -159,6 +194,40 @@ class controlador_tg_manifiesto extends _ctl_base
         }
 
         return $r_alta;
+    }
+
+    public function agregar_otro_pago_bd(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
+    {
+        if (!isset($_POST['agregar_otro_pago'])){
+            return $this->retorno_error(mensaje: 'Error no existe agregar_otro_pago', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        $this->nominas_seleccionadas = explode(",",$_POST['agregar_otro_pago']);
+
+        if (count($this->nominas_seleccionadas) === 0){
+            return $this->retorno_error(mensaje: 'Error no ha seleccionado una nomina', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        foreach ($this->nominas_seleccionadas as $nomina){
+
+            $registro['nom_nomina_id'] = $nomina;
+            $registro['nom_otro_pago_id'] = $_POST['nom_otro_pago_id'];
+            $registro['importe_gravado'] = $_POST['importe_gravado'];
+            $registro['importe_exento'] = $_POST['importe_exento'];
+            $registro['descripcion'] = $_POST['descripcion'];
+            $resultado = (new nom_par_otro_pago($this->link))->alta_registro(registro: $registro);
+            if (errores::$error) {
+                return $this->retorno_error(mensaje: 'Error al ingresar otro pago para la nomina', data: $resultado,
+                    header: $header, ws: $ws);
+            }
+        }
+
+        $link = "./index.php?seccion=tg_manifiesto&accion=ve_nominas&registro_id=".$this->registro_id;
+        $link.="&session_id=$this->session_id";
+        header('Location:' . $link);
+        exit;
     }
 
     public function agregar_percepcion(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
