@@ -43,10 +43,13 @@ class controlador_tg_manifiesto extends _ctl_base
     public controlador_tg_manifiesto_periodo $controlador_tg_manifiesto_periodo;
 
     public string $link_tg_manifiesto_periodo_alta_bd = '';
-
     public string $link_tg_manifiesto_ver_nominas = '';
     public string $link_tg_manifiesto_agregar_percepcion = '';
     public string $link_tg_manifiesto_agregar_percepcion_bd = '';
+    public string $link_tg_manifiesto_agregar_deduccion = '';
+    public string $link_tg_manifiesto_agregar_deduccion_bd = '';
+    public string $link_tg_manifiesto_agregar_otro_pago = '';
+    public string $link_tg_manifiesto_agregar_otro_pago_bd = '';
     public string $link_tg_manifiesto_elimina_percepciones = '';
 
     public array $nominas_seleccionadas = array();
@@ -88,6 +91,74 @@ class controlador_tg_manifiesto extends _ctl_base
             print_r($error);
             die('Error');
         }
+    }
+
+    public function agregar_deduccion(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
+    {
+        if (!isset($_POST['agregar_deduccion'])){
+            return $this->retorno_error(mensaje: 'Error no existe agregar_deduccion', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        if ($_POST['agregar_deduccion'] === ""){
+            return $this->retorno_error(mensaje: 'Error no ha seleccionado una nomina', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        $this->nominas_seleccionadas = explode(",",$_POST['agregar_deduccion']);
+
+        $r_alta = $this->init_alta();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar alta', data: $r_alta, header: $header, ws: $ws);
+        }
+
+        $keys_selects = $this->init_selects_inputs();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar selects', data: $keys_selects, header: $header,
+                ws: $ws);
+        }
+
+        $inputs = $this->inputs(keys_selects: $keys_selects);
+        if (errores::$error) {
+            return $this->retorno_error(
+                mensaje: 'Error al obtener inputs', data: $inputs, header: $header, ws: $ws);
+        }
+
+        return $r_alta;
+    }
+
+    public function agregar_otro_pago(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
+    {
+        if (!isset($_POST['agregar_otro_pago'])){
+            return $this->retorno_error(mensaje: 'Error no existe agregar_otro_pago', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        if ($_POST['agregar_otro_pago'] === ""){
+            return $this->retorno_error(mensaje: 'Error no ha seleccionado una nomina', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        $this->nominas_seleccionadas = explode(",",$_POST['agregar_otro_pago']);
+
+        $r_alta = $this->init_alta();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar alta', data: $r_alta, header: $header, ws: $ws);
+        }
+
+        $keys_selects = $this->init_selects_inputs();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar selects', data: $keys_selects, header: $header,
+                ws: $ws);
+        }
+
+        $inputs = $this->inputs(keys_selects: $keys_selects);
+        if (errores::$error) {
+            return $this->retorno_error(
+                mensaje: 'Error al obtener inputs', data: $inputs, header: $header, ws: $ws);
+        }
+
+        return $r_alta;
     }
 
     public function agregar_percepcion(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
@@ -201,6 +272,8 @@ class controlador_tg_manifiesto extends _ctl_base
         $init_data['tg_tipo_servicio'] = "tglobally\\tg_nomina";
         $init_data['nom_nomina'] = "gamboamartin\\nomina";
         $init_data['nom_percepcion'] = "gamboamartin\\nomina";
+        $init_data['nom_deduccion'] = "gamboamartin\\nomina";
+        $init_data['nom_otro_pago'] = "gamboamartin\\nomina";
 
         $campos_view = $this->campos_view_base(init_data: $init_data, keys: $keys);
         if (errores::$error) {
@@ -292,6 +365,42 @@ class controlador_tg_manifiesto extends _ctl_base
             exit;
         }
 
+        $this->link_tg_manifiesto_agregar_deduccion = $this->obj_link->link_con_id(accion: "agregar_deduccion",
+            link: $this->link, registro_id: $this->registro_id, seccion: $this->seccion);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener link',
+                data: $this->link_tg_manifiesto_agregar_deduccion);
+            print_r($error);
+            exit;
+        }
+
+        $this->link_tg_manifiesto_agregar_deduccion_bd = $this->obj_link->link_con_id(accion: "agregar_deduccion_bd",
+            link: $this->link, registro_id: $this->registro_id, seccion: $this->seccion);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener link',
+                data: $this->link_tg_manifiesto_agregar_deduccion_bd);
+            print_r($error);
+            exit;
+        }
+
+        $this->link_tg_manifiesto_agregar_otro_pago = $this->obj_link->link_con_id(accion: "agregar_otro_pago",
+            link: $this->link, registro_id: $this->registro_id, seccion: $this->seccion);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener link',
+                data: $this->link_tg_manifiesto_agregar_otro_pago);
+            print_r($error);
+            exit;
+        }
+
+        $this->link_tg_manifiesto_agregar_otro_pago_bd = $this->obj_link->link_con_id(accion: "agregar_otro_pago_bd",
+            link: $this->link, registro_id: $this->registro_id, seccion: $this->seccion);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener link',
+                data: $this->link_tg_manifiesto_agregar_otro_pago_bd);
+            print_r($error);
+            exit;
+        }
+
         $this->link_tg_manifiesto_elimina_percepciones = $this->obj_link->link_con_id(accion: "elimina_percepciones",
             link: $this->link, registro_id: $this->registro_id, seccion: $this->seccion);
         if (errores::$error) {
@@ -353,6 +462,8 @@ class controlador_tg_manifiesto extends _ctl_base
         $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "com_sucursal_id", label: "Sucursal");
         $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "fc_csd_id", label: "CSD", cols: 12);
         $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "nom_percepcion_id", label: "Percepción ", cols: 12);
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "nom_deduccion_id", label: "Deducción  ", cols: 12);
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "nom_otro_pago_id", label: "Otro Pago ", cols: 12);
         return $this->init_selects(keys_selects: $keys_selects, key: "tg_tipo_servicio_id", label: "Tipo Servicio");
     }
 

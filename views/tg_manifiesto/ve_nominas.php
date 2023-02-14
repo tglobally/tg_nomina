@@ -15,6 +15,30 @@ $url_icons = (new views())->url_icons;
             <div class="card">
                 <div class="card-header">
                     <span class="text-header">Nominas</span>
+
+                    <div class="dropdown ">
+                        <button class="btn btn-lg btn-icon-only btn-text-dark" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <button type="submit" class="dropdown-item" name="btn_action_next"
+                                    value="ve_nominas" form="form_agregar_percepcion">
+                                Agregar Percepción
+                            </button>
+                            <button type="submit" class="dropdown-item" name="btn_action_next"
+                                    value="ve_nominas" form="form_agregar_deduccion">
+                                Agregar Deducción
+                            </button>
+                            <button type="submit" class="dropdown-item" name="btn_action_next"
+                                    value="ve_nominas" form="form_agregar_otro_pago">
+                                Agregar Otro Pago
+                            </button>
+
+                            <!--<a class="dropdown-item" href="#">Something else here</a>-->
+                        </div>
+                    </div>
+
+
                 </div>
                 <div class="card-body">
                     <div class="cont_tabla_sucursal  col-md-12">
@@ -27,12 +51,38 @@ $url_icons = (new views())->url_icons;
                     </div>
                     <div class="col-sm-2">
                         <form method="post" action="<?php echo $controlador->link_tg_manifiesto_agregar_percepcion; ?> "
-                              class="form-additional form_nominas " id="form_export">
+                              class="form-additional form_nominas " id="form_agregar_percepcion">
                             <input id="agregar_percepcion" name="agregar_percepcion" type="hidden">
                             <div class="botones">
                                 <button type="submit" class="btn btn-info" name="btn_action_next"
-                                        value="exportar" form="form_export">
+                                        value="exportar" form="form_agregar_percepcion">
                                     Agregar Percepción
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="col-sm-2">
+                        <form method="post" action="<?php echo $controlador->link_tg_manifiesto_agregar_deduccion; ?> "
+                              class="form-additional form_nominas " id="form_agregar_deduccion">
+                            <input id="agregar_deduccion" name="agregar_deduccion" type="hidden">
+                            <div class="botones">
+                                <button type="submit" class="btn btn-info" name="btn_action_next"
+                                        value="exportar" form="form_agregar_deduccion">
+                                    Agregar Deducción
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="col-sm-2">
+                        <form method="post" action="<?php echo $controlador->link_tg_manifiesto_agregar_otro_pago; ?> "
+                              class="form-additional form_nominas " id="form_agregar_otro_pago">
+                            <input id="agregar_otro_pago" name="agregar_otro_pago" type="hidden">
+                            <div class="botones">
+                                <button type="submit" class="btn btn-info" name="btn_action_next"
+                                        value="exportar" form="form_agregar_otro_pago">
+                                    Agregar Otro Pago
                                 </button>
                             </div>
                         </form>
