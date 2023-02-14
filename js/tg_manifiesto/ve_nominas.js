@@ -1,128 +1,148 @@
-$(document).ready(function(){
-
+$(document).ready(function () {
     var tables = $.fn.dataTable.tables(true);
-    var datatable = $(tables).DataTable().search('nom_nomina')
+    var table_nom_nomina = $(tables).DataTable().search('nom_nomina');
 
-    var lista_nominas = [];
-    var groupColumn = 0;
+    var nominas_seleccionadas = [];
+    var percepciones_seleccionadas = [];
+    var deducciones_seleccionadas = [];
+    var otros_pagos_seleccionadas = [];
 
-    var nominas_percepciones = $("#nominas_percepciones").DataTable({
-        searching: false,
-        paging: false,
-        ordering: false,
-        info: false,
-        columnDefs: [
-            { targets: groupColumn, visible: false },
-            { targets: 5,
-                render: function (data, type, row, meta) {
-                    return `<a role='button' title='Elimina' data-id='${data}' class='btn btn-danger btn-sm delete-btn' 
-                               style='margin-left: 2px; margin-bottom: 2px; '>Elimina</a>`;
-                }
-            }
-        ],
-        order: [[groupColumn, 'asc']],
-        displayLength: 10,
-        drawCallback: function (settings) {
-            var api = this.api();
-            var rows = api.rows({ page: 'current' }).nodes();
-            var last = null;
+    let inicializa_datatable = (identificador , columns, entidad) => {
 
-            api
-                .column(groupColumn, { page: 'current' })
-                .data()
-                .each(function (group, i) {
-                    if (last !== group) {
-                        $(rows)
-                            .eq(i)
-                            .before('<tr class="group"><td colspan="5">' + group + '</td></tr>');
-                        last = group;
+        return $(identificador).DataTable({
+            searching: false,
+            paging: false,
+            ordering: false,
+            info: false,
+            columns: columns,
+            columnDefs: [
+                {targets: 0, visible: false},
+                {
+                    targets: 5,
+                    render: function (data, type, row, meta) {
+                        return `<a role='button' title='Elimina' data-id='${data[entidad]}' 
+                               class='btn btn-danger btn-sm delete-btn' style='margin-left: 2px; margin-bottom: 2px; '>Elimina</a>`;
                     }
-                });
-        },
-    } );
+                }
+            ],
+            order: [[0, 'asc']],
+            displayLength: 'All',
+            drawCallback: function (settings) {
+                var api = this.api();
+                var rows = api.rows({page: 'current'}).nodes();
+                var last = null;
 
-    $('.form_nominas').on('submit', function(e){
-        if(lista_nominas.length === 0) {
-            e.preventDefault();
-            alert("Seleccione una nómina");
-        }
-    });
+                api
+                    .column(0, {page: 'current'})
+                    .data()
+                    .each(function (group, i) {
+                        if (last !== group.nom_nomina_id) {
+                            var salida = `<b> NOMINA: </b> ${group.nom_nomina_id} - ${group.em_empleado_descripcion}`;
+                            $(rows)
+                                .eq(i)
+                                .before('<tr class="group"><td colspan="5">' + salida + '</td></tr>');
+                            last = group.nom_nomina_id;
+                        }
+                    });
+            },
+        });
+    };
 
-    $(document).on('click', '.delete-btn', function(e){
-        const id = $(e.currentTarget).data('id');
+    let carga_tabla = (identificador, entidad, accion, tabla) => {
+        $(document).on('click', `${identificador} .delete-btn`, function(e){
+            const id = $(e.currentTarget).data('id');
+            let url = get_url(entidad,"elimina_bd", {registro_id: id}, 0);
 
-        $.ajax({
-            url: `http://localhost/tg_nomina/index.php?seccion=nom_par_percepcion&accion=elimina_bd&session_id=7358996659&registro_id=${id}`,
-            type: 'DELETE',
-            DataType: 'json',
-            success: function (response) {
-                nominas_percepciones.clear();
+            $.ajax({
+                url: url,
+                type: 'DELETE',
+                DataType: 'json',
+                success: function (response) {
+                    nominas_seleccionadas.forEach( function(valor, indice, array) {
+                        let url_data = get_url(entidad,accion, {nom_nomina_id: valor});
 
-                lista_nominas.forEach( function(value,i,a) {
-                    let url = get_url("nom_par_percepcion","get_percepciones", {nom_nomina_id: value});
-
-                    get_data(url, function (rows) {
-                        var registros = rows.registros;
-                        registros.forEach( function(valor, indice, array) {
-                            let button = get_url("nom_par_percepcion","elimina_bd", {registro_id: valor.nom_par_percepcion_id});
-                            button = `http://localhost/tg_nomina/index.php?seccion=nom_par_percepcion&accion=elimina_bd&session_id=7358996659&registro_id=${valor.nom_par_percepcion_id}`;
-
-                            var nomina = `<b> NOMINA: </b> ${valor.nom_nomina_id} - ${valor.em_empleado_descripcion}`;
-                            nominas_percepciones.row.add([nomina, valor.nom_percepcion_codigo,
-                                valor.nom_percepcion_descripcion, valor.nom_par_percepcion_importe_gravado,
-                                valor.nom_par_percepcion_importe_exento, valor.nom_par_percepcion_id]).draw(false);
+                        get_data(url_data, function (rows) {
+                            var registros = rows.registros;
+                            tabla.clear();
+                            tabla.rows.add( registros ).draw();
                         });
                     });
-                });
-            }
-
+                }
+            });
         });
-    });
+    };
 
+    var table_percepciones = inicializa_datatable("#nominas_percepciones", [
+        { data: null, title: "Nomina" },
+        { data: 'nom_percepcion_codigo', title: "Código" },
+        { data: 'nom_percepcion_descripcion', title: "Descripción" },
+        { data: 'nom_par_percepcion_importe_gravado', title: "Importe Gravado" },
+        { data: 'nom_par_percepcion_importe_exento', title: "Importe Exento" },
+        { data: null, title: "Acciones" },
+    ], "nom_par_percepcion_id");
 
+    var table_deducciones = inicializa_datatable("#nominas_deducciones", [
+        { data: null, title: "Nomina" },
+        { data: 'nom_deduccion_codigo', title: "Código" },
+        { data: 'nom_deduccion_descripcion', title: "Descripción" },
+        { data: 'nom_par_deduccion_importe_gravado', title: "Importe Gravado" },
+        { data: 'nom_par_deduccion_importe_exento', title: "Importe Exento" },
+        { data: null, title: "Acciones" },
+    ], "nom_par_deduccion_id");
+
+    var table_otros_pagos = inicializa_datatable("#nominas_otros_pagos", [
+        { data: null, title: "Nomina" },
+        { data: 'nom_otro_pago_codigo', title: "Código" },
+        { data: 'nom_otro_pago_descripcion', title: "Descripción" },
+        { data: 'nom_par_otro_pago_importe_gravado', title: "Importe Gravado" },
+        { data: 'nom_par_otro_pago_importe_exento', title: "Importe Exento" },
+        { data: null, title: "Acciones" },
+    ], "nom_par_otro_pago_id");
 
 
     $('#nom_nomina').on('click', 'tbody td:first-child', function () {
 
-        var data = datatable.row( this ).data();
+        setTimeout(function () {
+            var seleccionadas = $('.selected').map(function () {
+                return this;
+            }).get();
 
-        if (!lista_nominas.includes(data.nom_nomina_id)) {
-            lista_nominas.push(data.nom_nomina_id);
-        } else {
-            lista_nominas = lista_nominas.filter((item) => item !== data.nom_nomina_id)
-        }
+            nominas_seleccionadas = [];
 
-        $('#agregar_percepcion').val(lista_nominas)
-        $('#percepciones_eliminar').val(lista_nominas)
+            seleccionadas.forEach( function(valor, indice, array) {
+                var data = table_nom_nomina.row( valor ).data();
+                nominas_seleccionadas.push(data.nom_nomina_id);
+            });
 
-        nominas_percepciones.clear();
+            nominas_seleccionadas.forEach( function(valor, indice, array) {
+                let url_percepcion = get_url("nom_par_percepcion","get_percepciones", {nom_nomina_id: valor});
+                let url_deduccion = get_url("nom_par_deduccion","get_deducciones", {nom_nomina_id: valor});
+                let url_otro_pago = get_url("nom_par_otro_pago","get_otros_pagos", {nom_nomina_id: valor});
 
-        lista_nominas.forEach( function(value,i,a) {
-            let url = get_url("nom_par_percepcion","get_percepciones", {nom_nomina_id: value});
+                get_data(url_percepcion, function (rows) {
+                    var registros = rows.registros;
+                    table_percepciones.clear();
+                    table_percepciones.rows.add( registros ).draw();
+                });
 
-            get_data(url, function (rows) {
-                var registros = rows.registros;
-                registros.forEach( function(valor, indice, array) {
-                    let button = get_url("nom_par_percepcion","elimina_bd", {registro_id: valor.nom_par_percepcion_id});
-                    button = `http://localhost/tg_nomina/index.php?seccion=nom_par_percepcion&accion=elimina_bd&session_id=7358996659&registro_id=${valor.nom_par_percepcion_id}`;
+                get_data(url_deduccion, function (rows) {
+                    var registros = rows.registros;
+                    table_deducciones.clear();
+                    table_deducciones.rows.add( registros ).draw();
+                });
 
-                    var nomina = `<b> NOMINA: </b> ${valor.nom_nomina_id} - ${valor.em_empleado_descripcion}`;
-                    nominas_percepciones.row.add([nomina, valor.nom_percepcion_codigo,
-                        valor.nom_percepcion_descripcion, valor.nom_par_percepcion_importe_gravado,
-                        valor.nom_par_percepcion_importe_exento, valor.nom_par_percepcion_id]).draw(false);
+                get_data(url_otro_pago, function (rows) {
+                    var registros = rows.registros;
+                    table_otros_pagos.clear();
+                    table_otros_pagos.rows.add( registros ).draw();
                 });
             });
-        });
 
+        }, 500);
     });
 
+    carga_tabla('#nominas_percepciones', "nom_par_percepcion", "get_percepciones", table_percepciones);
+    carga_tabla('#nominas_deducciones', "nom_par_deduccion", "get_deducciones", table_deducciones);
+    carga_tabla('#nominas_otros_pagos', "nom_par_otro_pago", "get_otros_pagos", table_otros_pagos);
+
 });
-
-
-
-
-
-
-
-
-

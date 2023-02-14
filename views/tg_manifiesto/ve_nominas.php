@@ -96,30 +96,22 @@ $url_icons = (new views())->url_icons;
                             <tbody></tbody>
                         </table>
                     </div>
-                    <!--<div class="col-md-12">
+                    <div class="col-md-12">
                         <div class="tabla_titulo">
                             <span class="text-header">Deducciones</span>
                         </div>
                         <table id="nominas_deducciones" class="datatables table table-striped ">
                             <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Position</th>
-                                <th>Office</th>
-                                <th>Age</th>
-                                <th>Start date</th>
-                                <th>Salary</th>
+                                <th>Nomina</th>
+                                <th>Código</th>
+                                <th>Descripción</th>
+                                <th>Importe Gravado</th>
+                                <th>Importe Exento</th>
+                                <th>Acciones</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td>Tiger Nixon</td>
-                                <td>System Architect</td>
-                                <td>Edinburgh</td>
-                                <td>61</td>
-                                <td>2011-04-25</td>
-                                <td>$320,800</td>
-                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -139,17 +131,9 @@ $url_icons = (new views())->url_icons;
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td>Tiger Nixon</td>
-                                <td>System Architect</td>
-                                <td>Edinburgh</td>
-                                <td>61</td>
-                                <td>2011-04-25</td>
-                                <td>$320,800</td>
-                            </tr>
                             </tbody>
                         </table>
-                    </div>-->
+                    </div>
                 </div>
             </div>
         </div>
