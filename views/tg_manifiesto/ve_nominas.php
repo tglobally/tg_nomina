@@ -82,62 +82,23 @@ $url_icons = (new views())->url_icons;
                         <div class="tabla_titulo">
                             <span class="text-header">Percepciones</span>
                         </div>
-                        <table id="nominas_percepciones" class="datatables table table-striped ">
-                            <thead>
-                            <tr>
-                                <th>Nomina</th>
-                                <th>Código</th>
-                                <th>Descripción</th>
-                                <th>Importe Gravado</th>
-                                <th>Importe Exento</th>
-                                <th>Acciones</th>
-                            </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
+                        <table id="nominas_percepciones" class="datatables table table-striped "></table>
                     </div>
                     <div class="col-md-12">
                         <div class="tabla_titulo">
                             <span class="text-header">Deducciones</span>
                         </div>
-                        <table id="nominas_deducciones" class="datatables table table-striped ">
-                            <thead>
-                            <tr>
-                                <th>Nomina</th>
-                                <th>Código</th>
-                                <th>Descripción</th>
-                                <th>Importe Gravado</th>
-                                <th>Importe Exento</th>
-                                <th>Acciones</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
+                        <table id="nominas_deducciones" class="datatables table table-striped "></table>
                     </div>
                     <div class="col-md-12">
                         <div class="tabla_titulo">
                             <span class="text-header">Otros pagos</span>
                         </div>
-                        <table id="nominas_otros_pagos" class="datatables table table-striped ">
-                            <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Position</th>
-                                <th>Office</th>
-                                <th>Age</th>
-                                <th>Start date</th>
-                                <th>Salary</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
+                        <table id="nominas_otros_pagos" class="datatables table table-striped "></table>
                     </div>
                 </div>
             </div>
         </div>
-
 
     </div>
 </div>

@@ -97,12 +97,12 @@ class controlador_tg_manifiesto extends _ctl_base
                 ws: $ws);
         }
 
-        $this->nominas_seleccionadas = explode(",",$_POST['agregar_percepcion']);
-
-        if (count($this->nominas_seleccionadas) === 0){
+        if ($_POST['agregar_percepcion'] === ""){
             return $this->retorno_error(mensaje: 'Error no ha seleccionado una nomina', data: $_POST, header: $header,
                 ws: $ws);
         }
+
+        $this->nominas_seleccionadas = explode(",",$_POST['agregar_percepcion']);
 
         $r_alta = $this->init_alta();
         if (errores::$error) {
@@ -130,6 +130,8 @@ class controlador_tg_manifiesto extends _ctl_base
             return $this->retorno_error(mensaje: 'Error no existe agregar_percepcion', data: $_POST, header: $header,
                 ws: $ws);
         }
+
+
 
         $this->nominas_seleccionadas = explode(",",$_POST['agregar_percepcion']);
 
