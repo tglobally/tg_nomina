@@ -18,9 +18,23 @@ $(document).ready(function () {
             columnDefs: [
                 {targets: 0, visible: false},
                 {
+                    targets: 3,
+                    render: function (data, type, row, meta) {
+                        return `<input type="text" class="input-accion" id="row-1-age" name="row-1-age" 
+                                       value="${ data[entidad + "_importe_gravado"] }">`;
+                    }
+                },
+                {
+                    targets: 4,
+                    render: function (data, type, row, meta) {
+                        return `<input type="text" class="" id="row-1-age" name="row-1-age" 
+                                       value="${ data[entidad + "_importe_exento"] }">`;
+                    }
+                },
+                {
                     targets: 5,
                     render: function (data, type, row, meta) {
-                        return `<a role='button' title='Elimina' data-id='${data[entidad]}' 
+                        return `<a role='button' title='Elimina' data-id='${ data[entidad + "_id"] }' 
                                class='btn btn-danger btn-sm delete-btn' style='margin-left: 2px; margin-bottom: 2px; '>Elimina</a>`;
                     }
                 }
@@ -76,28 +90,28 @@ $(document).ready(function () {
         { data: null, title: "Nomina" },
         { data: 'nom_percepcion_codigo', title: "Código" },
         { data: 'nom_percepcion_descripcion', title: "Descripción" },
-        { data: 'nom_par_percepcion_importe_gravado', title: "Importe Gravado" },
-        { data: 'nom_par_percepcion_importe_exento', title: "Importe Exento" },
+        { data: null, title: "Importe Gravado" },
+        { data: null, title: "Importe Exento" },
         { data: null, title: "Acciones" },
-    ], "nom_par_percepcion_id");
+    ], "nom_par_percepcion");
 
     var table_deducciones = inicializa_datatable("#nominas_deducciones", [
         { data: null, title: "Nomina" },
         { data: 'nom_deduccion_codigo', title: "Código" },
         { data: 'nom_deduccion_descripcion', title: "Descripción" },
-        { data: 'nom_par_deduccion_importe_gravado', title: "Importe Gravado" },
-        { data: 'nom_par_deduccion_importe_exento', title: "Importe Exento" },
+        { data: null, title: "Importe Gravado" },
+        { data: null, title: "Importe Exento" },
         { data: null, title: "Acciones" },
-    ], "nom_par_deduccion_id");
+    ], "nom_par_deduccion");
 
     var table_otros_pagos = inicializa_datatable("#nominas_otros_pagos", [
         { data: null, title: "Nomina" },
         { data: 'nom_otro_pago_codigo', title: "Código" },
         { data: 'nom_otro_pago_descripcion', title: "Descripción" },
-        { data: 'nom_par_otro_pago_importe_gravado', title: "Importe Gravado" },
-        { data: 'nom_par_otro_pago_importe_exento', title: "Importe Exento" },
+        { data: null, title: "Importe Gravado" },
+        { data: null, title: "Importe Exento" },
         { data: null, title: "Acciones" },
-    ], "nom_par_otro_pago_id");
+    ], "nom_par_otro_pago");
 
 
     $('#nom_nomina').on('click', 'tbody td:first-child', function () {
@@ -155,5 +169,17 @@ $(document).ready(function () {
             alert("Seleccione una nómina");
         }
     });
+
+    $(".input-accion").on('keyup', function (e) {
+        console.log($( this))
+    });
+
+    $(document).keyup(function (e) {
+        if ($(".input-accion:focus") && (e.keyCode === 13)) {
+            console.log($(".input-accion:focus").parent().parent())
+        }
+    });
+
+
 
 });
