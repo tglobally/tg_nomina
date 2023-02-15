@@ -20,14 +20,14 @@ $(document).ready(function () {
                 {
                     targets: 3,
                     render: function (data, type, row, meta) {
-                        return `<input type="text" class="input-accion" id="row-1-age" name="row-1-age" 
+                        return `<input type="text" class="input-accion" name="importe_gravado" 
                                        value="${ data[entidad + "_importe_gravado"] }">`;
                     }
                 },
                 {
                     targets: 4,
                     render: function (data, type, row, meta) {
-                        return `<input type="text" class="" id="row-1-age" name="row-1-age" 
+                        return `<input type="text" class="input-accion" name="importe_exento" 
                                        value="${ data[entidad + "_importe_exento"] }">`;
                     }
                 },
@@ -81,6 +81,39 @@ $(document).ready(function () {
                             tabla.rows.add( registros ).draw();
                         });
                     });
+                }
+            });
+        });
+    };
+
+    let update_registro = (identificador, entidad, accion, tabla) => {
+        $(`${identificador} tbody`).on('click', 'tr', function () {
+
+            let rowData = tabla.row( this ).data();
+
+            $(document).keyup(function (e) {
+                if ($(".input-accion:focus") && (e.keyCode === 13)) {
+                    var data = tabla.$('input').serializeArray();
+
+                    let url = get_url(entidad,"modifica_ajax", {registro_id: rowData[entidad + "_id"]});
+
+                    const params = {
+                        importe_gravado: data[0].value,
+                        importe_exento: data[1].value,
+                    };
+
+                    $.post( url, params , function(e) {
+                        nominas_seleccionadas.forEach( function(valor, indice, array) {
+                            let url_data = get_url(entidad,accion, {nom_nomina_id: rowData.nom_nomina_id});
+
+                            get_data(url_data, function (rows) {
+                                var registros = rows.registros;
+                                tabla.clear();
+                                tabla.rows.add( registros ).draw();
+                            });
+                        });
+                    }).done(function(e) {
+                    }).fail(function(error) { alert( error )});
                 }
             });
         });
@@ -170,16 +203,8 @@ $(document).ready(function () {
         }
     });
 
-    $(".input-accion").on('keyup', function (e) {
-        console.log($( this))
-    });
-
-    $(document).keyup(function (e) {
-        if ($(".input-accion:focus") && (e.keyCode === 13)) {
-            console.log($(".input-accion:focus").parent().parent())
-        }
-    });
-
-
+    update_registro('#nominas_percepciones', "nom_par_percepcion", "get_percepciones", table_percepciones);
+    update_registro('#nominas_deducciones', "nom_par_deduccion", "get_deducciones", table_deducciones);
+    update_registro('#nominas_otros_pagos', "nom_par_otro_pago", "get_otros_pagos", table_otros_pagos);
 
 });
