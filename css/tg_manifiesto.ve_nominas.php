@@ -7,6 +7,10 @@ include $ruta_template_base.'assets/css/_base_css.php';
 ?>
 <style>
 
+    .btn-icon-only, .btn-icon-only:hover, .btn-icon-only:focus{
+        background-color: transparent;
+    }
+
     .card-header{
         display: flex;
         justify-content: space-between;

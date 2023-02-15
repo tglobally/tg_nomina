@@ -17,8 +17,8 @@ $url_icons = (new views())->url_icons;
                     <span class="text-header">Nominas</span>
 
                     <div class="dropdown ">
-                        <button class="btn btn-lg btn-icon-only btn-text-dark" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                        <button class="btn btn-icon-only " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="bi bi-three-dots-vertical"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-right">
                             <button type="submit" class="dropdown-item" name="btn_action_next"
@@ -88,8 +88,8 @@ $url_icons = (new views())->url_icons;
                         </form>
                     </div>
 
-                    <div class="col-sm-2">
-                        <form method="post" action="<?php echo $controlador->link_tg_manifiesto_elimina_percepciones; ?> "
+                   <!-- <div class="col-sm-2">
+                        <form method="post" action="<?php /*echo $controlador->link_tg_manifiesto_elimina_percepciones; */?> "
                               class="form-additional" id="form_export">
                             <input id="percepciones_eliminar" name="percepciones_eliminar" type="hidden">
                             <div class="botones">
@@ -99,24 +99,7 @@ $url_icons = (new views())->url_icons;
                                 </button>
                             </div>
                         </form>
-                    </div>
-                    <div class="col-sm-2">
-                        <a href="<?php echo $controlador->link_lista; ?>"
-                           class="btn btn-info btn-guarda col-md-12"><i class="icon-edit"></i>Eliminar Deducciones
-                        </a>
-                    </div>
-                    <div class="col-sm-2">
-                        <form method="post" action="<?php echo $controlador->link_tg_manifiesto_elimina_percepciones; ?> "
-                              class="form-additional" id="form_export">
-
-                            <div class="botones">
-                                <button type="submit" class="btn btn-info" name="btn_action_next"
-                                       value="exportar" form="form_export">
-                                    Eliminar Otros Pagos
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+                    </div>-->
 
                 </div>
             </div>
