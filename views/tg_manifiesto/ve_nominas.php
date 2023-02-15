@@ -15,123 +15,49 @@ $url_icons = (new views())->url_icons;
             <div class="card">
                 <div class="card-header">
                     <span class="text-header">Nominas</span>
-
-                    <div class="dropdown ">
-                        <button class="btn btn-icon-only " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="bi bi-three-dots-vertical"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <button type="submit" class="dropdown-item" name="btn_action_next"
-                                    value="ve_nominas" form="form_agregar_percepcion">
-                                Agregar Percepción
-                            </button>
-                            <button type="submit" class="dropdown-item" name="btn_action_next"
-                                    value="ve_nominas" form="form_agregar_deduccion">
-                                Agregar Deducción
-                            </button>
-                            <button type="submit" class="dropdown-item" name="btn_action_next"
-                                    value="ve_nominas" form="form_agregar_otro_pago">
-                                Agregar Otro Pago
-                            </button>
-
-                            <!--<a class="dropdown-item" href="#">Something else here</a>-->
-                        </div>
-                    </div>
-
-
                 </div>
                 <div class="card-body">
                     <div class="cont_tabla_sucursal  col-md-12">
-                        <table id="nom_nomina" class="datatables table table-striped "></table>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th data-breakpoints="xs sm md" data-type="html" >Id</th>
+                                <th data-breakpoints="xs sm md" data-type="html" >Codigo</th>
+                                <th data-breakpoints="xs sm md" data-type="html" >Fecha inicial pago</th>
+                                <th data-breakpoints="xs sm md" data-type="html" >Fecha final pago</th>
+                                <th data-breakpoints="xs sm md" data-type="html" >Codigo empleado</th>
+                                <th data-breakpoints="xs sm md" data-type="html" >Empleado</th>
+                                <th data-breakpoints="xs sm md" data-type="html" >Empresa</th>
+                                <th data-breakpoints="xs sm md" data-type="html" data-filterable="false">Modifica</th>
+
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php foreach ($controlador->nominas as $nomina){?>
+                                <tr>
+                                    <td><?php echo $nomina['nom_nomina_id']; ?></td>
+                                    <td><?php echo $nomina['nom_nomina_codigo']; ?></td>
+                                    <td><?php echo $nomina['nom_nomina_fecha_inicial_pago']; ?></td>
+                                    <td><?php echo $nomina['nom_nomina_fecha_final_pago']; ?></td>
+                                    <td><?php echo $nomina['em_empleado_codigo']; ?></td>
+                                    <td><?php echo $nomina['em_empleado_nombre'].' '.$nomina['em_empleado_ap'].' '.$nomina['em_empleado_am']; ?></td>
+                                    <td><?php echo $nomina['org_empresa_id']; ?></td>
+                                    <td><?php echo $nomina['link_modifica']; ?></td>
+                                </tr>
+                            <?php } ?>
+
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="col-sm-2">
-                        <a href="<?php echo $controlador->link_lista; ?>"
+                    <div class="col-sm-3">
+                        <a href="index.php?seccion=nom_periodo&accion=lista&session_id=<?php echo $controlador->session_id; ?>"
                            class="btn btn-info btn-guarda col-md-12"><i class="icon-edit"></i>Regresar
                         </a>
                     </div>
-                    <div class="col-sm-2">
-                        <form method="post" action="<?php echo $controlador->link_tg_manifiesto_agregar_percepcion; ?> "
-                              class="form-additional form_nominas " id="form_agregar_percepcion">
-                            <input id="agregar_percepcion" name="agregar_percepcion" type="hidden">
-                            <div class="botones">
-                                <button type="submit" class="btn btn-info" name="btn_action_next"
-                                        value="exportar" form="form_agregar_percepcion">
-                                    Agregar Percepción
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="col-sm-2">
-                        <form method="post" action="<?php echo $controlador->link_tg_manifiesto_agregar_deduccion; ?> "
-                              class="form-additional form_nominas " id="form_agregar_deduccion">
-                            <input id="agregar_deduccion" name="agregar_deduccion" type="hidden">
-                            <div class="botones">
-                                <button type="submit" class="btn btn-info" name="btn_action_next"
-                                        value="exportar" form="form_agregar_deduccion">
-                                    Agregar Deducción
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="col-sm-2">
-                        <form method="post" action="<?php echo $controlador->link_tg_manifiesto_agregar_otro_pago; ?> "
-                              class="form-additional form_nominas " id="form_agregar_otro_pago">
-                            <input id="agregar_otro_pago" name="agregar_otro_pago" type="hidden">
-                            <div class="botones">
-                                <button type="submit" class="btn btn-info" name="btn_action_next"
-                                        value="exportar" form="form_agregar_otro_pago">
-                                    Agregar Otro Pago
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                   <!-- <div class="col-sm-2">
-                        <form method="post" action="<?php /*echo $controlador->link_tg_manifiesto_elimina_percepciones; */?> "
-                              class="form-additional" id="form_export">
-                            <input id="percepciones_eliminar" name="percepciones_eliminar" type="hidden">
-                            <div class="botones">
-                                <button type="submit" class="btn btn-info" name="btn_action_next"
-                                        value="exportar" form="form_export">
-                                    Eliminar Percepciones
-                                </button>
-                            </div>
-                        </form>
-                    </div>-->
-
                 </div>
             </div>
         </div>
 
-        <div class="lista">
-            <div class="card">
-                <div class="card-header">
-                    <span class="text-header">Nominas Seleccionadas</span>
-                </div>
-                <div class="card-body tablas_nominas ">
-                    <div class="col-md-12">
-                        <div class="tabla_titulo">
-                            <span class="text-header">Percepciones</span>
-                        </div>
-                        <table id="nominas_percepciones" class="datatables table table-striped "></table>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="tabla_titulo">
-                            <span class="text-header">Deducciones</span>
-                        </div>
-                        <table id="nominas_deducciones" class="datatables table table-striped "></table>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="tabla_titulo">
-                            <span class="text-header">Otros pagos</span>
-                        </div>
-                        <table id="nominas_otros_pagos" class="datatables table table-striped "></table>
-                    </div>
-                </div>
-            </div>
-        </div>
 
     </div>
 </div>
