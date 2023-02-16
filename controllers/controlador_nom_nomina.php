@@ -40,8 +40,8 @@ class controlador_nom_nomina extends \gamboamartin\nomina\controllers\controlado
 
         $this->params_actions = new stdClass();
         $this->params_actions->modifica = new stdClass();
-        $this->params_actions->modifica->im_registro_patronal_id = new stdClass();
-        $this->params_actions->modifica->im_registro_patronal_id->cols = 8;
+        $this->params_actions->modifica->em_registro_patronal_id = new stdClass();
+        $this->params_actions->modifica->em_registro_patronal_id->cols = 8;
 
         $this->params_actions->modifica->em_empleado_id = new stdClass();
         $this->params_actions->modifica->em_empleado_id->cols = 12;
