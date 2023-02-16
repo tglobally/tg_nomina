@@ -11,6 +11,7 @@ namespace tglobally\tg_nomina\controllers;
 use base\controller\controler;
 use base\orm\inicializacion;
 use gamboamartin\empleado\models\em_empleado;
+use gamboamartin\empleado\models\em_registro_patronal;
 use gamboamartin\errores\errores;
 use gamboamartin\im_registro_patronal\models\im_registro_patronal;
 use gamboamartin\nomina\models\calcula_nomina;
@@ -813,9 +814,9 @@ class controlador_tg_manifiesto extends _ctl_base
             die('Error');
         }
 
-        $im_registro_patronal = $this->obten_registro_patronal(tg_manifiesto_id: $this->registro_id);
+        $em_registro_patronal = $this->obten_registro_patronal(tg_manifiesto_id: $this->registro_id);
         if (errores::$error) {
-            $error =  $this->errores->error(mensaje: 'Error obtener registro patronal',data:  $im_registro_patronal);
+            $error =  $this->errores->error(mensaje: 'Error obtener registro patronal',data:  $em_registro_patronal);
             if(!$header){
                 return $error;
             }
@@ -823,10 +824,10 @@ class controlador_tg_manifiesto extends _ctl_base
             die('Error');
         }
 
-        $im_registro_patronal_id = $im_registro_patronal['im_registro_patronal_id'];
+        $em_registro_patronal_id = $em_registro_patronal['im_registro_patronal_id'];
         $empleados = array();
         foreach ($empleados_excel as $empleado_excel){
-            $filtro['im_registro_patronal.id'] = $im_registro_patronal_id;
+            $filtro['em_registro_patronal.id'] = $em_registro_patronal_id;
             $filtro['em_empleado.nombre'] = $empleado_excel->nombre;
             $filtro['em_empleado.ap'] = $empleado_excel->ap;
             $filtro['em_empleado.am'] = $empleado_excel->am;
@@ -1992,7 +1993,7 @@ class controlador_tg_manifiesto extends _ctl_base
         }
 
         $filtro_im['fc_csd.id'] = $tg_manifiesto['tg_manifiesto_fc_csd_id'];
-        $im_registro_patronal = (new im_registro_patronal($this->link))->filtro_and(filtro: $filtro_im);
+        $im_registro_patronal = (new em_registro_patronal($this->link))->filtro_and(filtro: $filtro_im);
         if(errores::$error){
             return $this->errores->error(mensaje: 'Error obtener registro patronal',data:  $im_registro_patronal);
         }
