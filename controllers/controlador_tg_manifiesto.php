@@ -1159,6 +1159,17 @@ class controlador_tg_manifiesto extends _ctl_base
                                 return $this->errores->error(mensaje: 'Error al insertar deduccion default', data: $r_alta_nom_par_deduccion);
                             }
                         }
+                        if ($empleado_excel->descuentos > 0) {
+                            $nom_par_deduccion_sep = array();
+                            $nom_par_deduccion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
+                            $nom_par_deduccion_sep['nom_deduccion_id'] = 6;
+                            $nom_par_deduccion_sep['importe_gravado'] = $empleado_excel->descuentos;
+
+                            $r_alta_nom_par_deduccion = (new nom_par_deduccion($this->link))->alta_registro(registro: $nom_par_deduccion_sep);
+                            if (errores::$error) {
+                                return $this->errores->error(mensaje: 'Error al insertar deduccion default', data: $r_alta_nom_par_deduccion);
+                            }
+                        }
 
                         if ($empleado_excel->monto_neto > 0) {
 
@@ -1493,6 +1504,25 @@ class controlador_tg_manifiesto extends _ctl_base
 
         return $columna;
     }
+    
+    public function obten_columna_descuentos(Spreadsheet $documento){
+        $totalDeHojas = $documento->getSheetCount();
+
+        $columna = -1;
+        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+            $hojaActual = $documento->getSheet($indiceHoja);
+            foreach ($hojaActual->getRowIterator() as $fila) {
+                foreach ($fila->getCellIterator() as $celda) {
+                    $valorRaw = $celda->getValue();
+                    if($valorRaw === 'DESCUENTO') {
+                        $columna = $celda->getColumn();
+                    }
+                }
+            }
+        }
+
+        return $columna;
+    }
 
     public function obten_columna_incapacidades(Spreadsheet $documento){
         $totalDeHojas = $documento->getSheetCount();
@@ -1749,6 +1779,12 @@ class controlador_tg_manifiesto extends _ctl_base
                 data:  $columna_seguro_vida);
         }
 
+        $columna_descuentos = $this->obten_columna_descuentos(documento: $documento);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error obtener columna de descuentos',
+                data:  $columna_descuentos);
+        }
+
         $empleados = array();
         for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
             $hojaActual = $documento->getSheet($indiceHoja);
@@ -1786,6 +1822,7 @@ class controlador_tg_manifiesto extends _ctl_base
                 $reg->prima_vacacional = 0;
                 $reg->despensa = 0;
                 $reg->seguro_vida = 0;
+                $reg->descuentos = 0;
                 $reg->horas_extras_dobles = 0;
                 $reg->gratificacion_especial = 0;
                 $reg->premio_puntualidad = 0;
@@ -1883,6 +1920,14 @@ class controlador_tg_manifiesto extends _ctl_base
 
                     if (!is_numeric($reg->seguro_vida)) {
                         $reg->seguro_vida = 0;
+                    }
+                }
+                if ($columna_descuentos !== -1) {
+                    $descuentos = $hojaActual->getCell($columna_descuentos . $registro->fila)->getCalculatedValue();
+                    $reg->descuentos = trim((string)$descuentos);
+
+                    if (!is_numeric($reg->descuentos)) {
+                        $reg->descuentos = 0;
                     }
                 }
                 if ($columna_horas_extras_dobles !== -1) {
