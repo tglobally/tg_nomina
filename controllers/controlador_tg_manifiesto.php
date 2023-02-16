@@ -824,7 +824,7 @@ class controlador_tg_manifiesto extends _ctl_base
             die('Error');
         }
 
-        $em_registro_patronal_id = $em_registro_patronal['im_registro_patronal_id'];
+        $em_registro_patronal_id = $em_registro_patronal['em_registro_patronal_id'];
         $empleados = array();
         foreach ($empleados_excel as $empleado_excel){
             $filtro['em_registro_patronal.id'] = $em_registro_patronal_id;
