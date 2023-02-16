@@ -1514,7 +1514,7 @@ class controlador_tg_manifiesto extends _ctl_base
             foreach ($hojaActual->getRowIterator() as $fila) {
                 foreach ($fila->getCellIterator() as $celda) {
                     $valorRaw = $celda->getValue();
-                    if($valorRaw === 'DESCUENTO') {
+                    if($valorRaw === 'DESCUENTOS') {
                         $columna = $celda->getColumn();
                     }
                 }
