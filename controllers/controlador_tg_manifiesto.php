@@ -2181,7 +2181,7 @@ class controlador_tg_manifiesto extends _ctl_base
     return $r_modifica;
 }
 
-    public function ve_nominas(bool $header, bool $ws = false): array|stdClass
+    public function nominas(bool $header, bool $ws = false): array|stdClass
     {
         $r_tg_manifiesto_periodo = (new tg_manifiesto_periodo($this->link))
             ->get_periodos_manifiesto(tg_manifiesto_id:  $this->registro_id);
@@ -2218,6 +2218,26 @@ class controlador_tg_manifiesto extends _ctl_base
 
 
 
+        $nominas = (new tg_manifiesto_periodo($this->link))->nominas_by_manifiesto(tg_manifiesto_id: $this->registro_id);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo',data:  $nominas,
+                header: $header,ws:$ws);
+        }
+
+        foreach ($nominas as $indice => $nomina) {
+            $nomina = $this->data_nomina_btn(nomina: $nomina);
+            if (errores::$error) {
+                return $this->retorno_error(mensaje: 'Error al asignar botones', data: $nomina, header: $header, ws: $ws);
+            }
+            $nominas[$indice] = $nomina;
+        }
+        $this->nominas = $nominas;
+
+        return $this->nominas;
+    }
+
+    public function ve_nominas(bool $header, bool $ws = false): array|stdClass
+    {
         $nominas = (new tg_manifiesto_periodo($this->link))->nominas_by_manifiesto(tg_manifiesto_id: $this->registro_id);
         if(errores::$error){
             return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo',data:  $nominas,

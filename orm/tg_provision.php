@@ -53,10 +53,28 @@ class tg_provision extends _modelo_parent {
             return $this->error->error(mensaje: 'Error al obtener provisiones de nomina',data:  $registro_aguinaldo);
         }
 
+        $filtro = array();
+        $filtro['nom_nomina.id'] = $nom_nomina_id;
+        $filtro['nom_nomina.em_empleado_id'] = "Codigo";
+        $registro_codigo= $this->filtro_and(filtro: $filtro,limit: 1);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener codigo de empleado',data:  $registro_codigo);
+        }
+
+        $filtro = array();
+        $filtro['nom_nomina.id']  = $nom_nomina_id;
+        $filtro['nom_nomina.em_empleado_id'] = "Nombre Completo";
+        $registro_nombre_completo = $this->filtro_and(filtro: $filtro,limit: 1);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener provisiones de nomina',data:  $registro_nombre_completo);
+        }
+
         $prima_vacacional = "";
         $vacaciones = "";
         $aguinaldo = "";
         $prima_antiguedad = "";
+        $nombre_completo = "";
+        $codigo = "";
 
         if ($registro_prima_vacacional->n_registros > 0){
             $prima_vacacional = $registro_prima_vacacional->registros[0]['tg_provision_monto'];
@@ -77,6 +95,8 @@ class tg_provision extends _modelo_parent {
         $total_provisionado = (int)$prima_vacacional + (int)$vacaciones + (int)$aguinaldo + (int)$prima_antiguedad;
 
         $datos = array();
+        $datos['codigo'] = $codigo;
+        $datos['nombre_completo'] = $nombre_completo;
         $datos['prima_vacacional'] = $prima_vacacional;
         $datos['vacaciones'] = $vacaciones;
         $datos['aguinaldo'] = $aguinaldo;

@@ -67,22 +67,22 @@ $(document).ready(function () {
             const id = $(e.currentTarget).data('id');
             let url = get_url(entidad,"elimina_bd", {registro_id: id}, 0);
 
-            $.ajax({
-                url: url,
-                type: 'DELETE',
-                DataType: 'json',
-                success: function (response) {
-                    nominas_seleccionadas.forEach( function(valor, indice, array) {
-                        let url_data = get_url(entidad,accion, {nom_nomina_id: valor});
+            fetch(url, { method: 'DELETE' })
+                .then(function(response) {
+                    if(response.ok) {
+                        nominas_seleccionadas.forEach( function(valor, indice, array) {
+                            let url_data = get_url(entidad,accion, {nom_nomina_id: valor});
 
-                        get_data(url_data, function (rows) {
-                            var registros = rows.registros;
-                            tabla.clear();
-                            tabla.rows.add( registros ).draw();
+                            get_data(url_data, function (rows) {
+                                var registros = rows.registros;
+                                tabla.clear();
+                                tabla.rows.add( registros ).draw();
+                            });
                         });
-                    });
-                }
-            });
+                    } else {
+                        alert('Ocurrio un error con la transaccion');
+                    }
+                })
         });
     };
 
@@ -113,6 +113,7 @@ $(document).ready(function () {
                             });
                         });
                     }).done(function(e) {
+                        alert(e);
                     }).fail(function(error) { alert( error )});
                 }
             });
