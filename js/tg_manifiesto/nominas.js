@@ -225,6 +225,8 @@ $(document).ready(function () {
             table_deducciones.clear();
             table_otros_pagos.clear();
 
+            nominas_seleccionadas = [];
+
             selectedData.each(function (value, row, data) {
                 nominas_seleccionadas.push(value);
 
