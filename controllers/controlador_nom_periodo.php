@@ -12,7 +12,7 @@ use tglobally\template_tg\html;
 class controlador_nom_periodo extends \gamboamartin\nomina\controllers\controlador_nom_periodo {
 
     public array $sidebar = array();
-    public array $keys_selects = array();
+    public stdClass|array $keys_selects = array();
     public string $link_nom_periodo_reportes = '';
     public string $link_nom_periodo_exportar = '';
     public function __construct(PDO $link, stdClass $paths_conf = new stdClass()){
@@ -201,7 +201,7 @@ class controlador_nom_periodo extends \gamboamartin\nomina\controllers\controlad
         exit;
     }
 
-    public function asignar_propiedad(string $identificador, mixed $propiedades)
+    public function asignar_propiedad(string $identificador, mixed $propiedades): array|stdClass
     {
         if (!array_key_exists($identificador,$this->keys_selects)){
             $this->keys_selects[$identificador] = new stdClass();
@@ -210,5 +210,7 @@ class controlador_nom_periodo extends \gamboamartin\nomina\controllers\controlad
         foreach ($propiedades as $key => $value){
             $this->keys_selects[$identificador]->$key = $value;
         }
+
+        return $this->keys_selects;
     }
 }

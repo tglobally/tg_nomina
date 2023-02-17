@@ -14,7 +14,7 @@ $url_icons = (new views())->url_icons;
         <div class="  form-main" id="form">
             <form method="post" action="<?php echo $controlador->link_nom_nomina_modifica_bd; ?>" class="form-additional">
                 <?php echo $controlador->inputs->id; ?>
-                <?php echo $controlador->inputs->select->im_registro_patronal_id; ?>
+                <?php echo $controlador->inputs->select->em_registro_patronal_id; ?>
                 <?php echo $controlador->inputs->select->em_empleado_id; ?>
                 <?php echo $controlador->inputs->select->em_cuenta_bancaria_id; ?>
                 <?php echo $controlador->inputs->rfc; ?>
