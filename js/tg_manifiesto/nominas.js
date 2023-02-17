@@ -259,4 +259,7 @@ $(document).ready(function () {
     });
 
     update_registro('#nominas_percepciones', "nom_par_percepcion", "get_percepciones", table_percepciones);
+    update_registro('#nominas_deducciones', "nom_par_deduccion", "get_deducciones", table_deducciones);
+    update_registro('#nominas_otros_pagos', "nom_par_otro_pago", "get_otros_pagos", table_otros_pagos);
+
 });

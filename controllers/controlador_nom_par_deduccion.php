@@ -7,16 +7,25 @@ class controlador_nom_par_deduccion extends \gamboamartin\nomina\controllers\con
 
     public function modifica_ajax(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
     {
-        $registro['importe_gravado'] = $_POST['importe_gravado'];
-        $registro['importe_exento'] = $_POST['importe_exento'];
-
-        $respuesta = (new nom_par_deduccion($this->link))->modifica_bd(registro: $registro,id: $this->registro_id);
-        if (errores::$error) {
-            return $this->retorno_error(mensaje: 'Error al modificar deduccion', data: $respuesta, header: $header,
+        if (!isset($_POST['datos'])){
+            return $this->retorno_error(mensaje: 'Error no existe el parametro datos', data: $_POST, header: $header,
                 ws: $ws);
         }
 
-        print_r($respuesta->mensaje);
+        $respuesta = array();
+
+        foreach ($_POST['datos'] as $key => $valor){
+            $registro['importe_gravado'] = $valor['importe_gravado'];
+            $registro['importe_exento'] = $valor['importe_exento'];
+
+            $respuesta = (new nom_par_deduccion($this->link))->modifica_bd(registro: $registro,id: $key);
+            if (errores::$error) {
+                return $this->retorno_error(mensaje: 'Error al modificar deduccion', data: $respuesta, header: $header,
+                    ws: $ws);
+            }
+        }
+
+        echo json_encode($respuesta, JSON_PRETTY_PRINT);
         exit();
     }
 }
