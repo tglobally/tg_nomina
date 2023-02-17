@@ -115,6 +115,9 @@ class controlador_tg_manifiesto extends _ctl_base
             return $this->retorno_error(mensaje: 'Error al inicializar alta', data: $r_alta, header: $header, ws: $ws);
         }
 
+        $this->row_upd->importe_gravado = 0;
+        $this->row_upd->importe_exento = 0;
+
         $keys_selects = $this->init_selects_inputs();
         if (errores::$error) {
             return $this->retorno_error(mensaje: 'Error al inicializar selects', data: $keys_selects, header: $header,
@@ -158,9 +161,7 @@ class controlador_tg_manifiesto extends _ctl_base
             }
         }
 
-        $link = "./index.php?seccion=tg_manifiesto&accion=ve_nominas&registro_id=".$this->registro_id;
-        $link.="&session_id=$this->session_id";
-        header('Location:' . $link);
+        header('Location:' . $this->link_tg_manifiesto_nominas);
         exit;
     }
 
@@ -182,6 +183,9 @@ class controlador_tg_manifiesto extends _ctl_base
         if (errores::$error) {
             return $this->retorno_error(mensaje: 'Error al inicializar alta', data: $r_alta, header: $header, ws: $ws);
         }
+
+        $this->row_upd->importe_gravado = 0;
+        $this->row_upd->importe_exento = 0;
 
         $keys_selects = $this->init_selects_inputs();
         if (errores::$error) {
@@ -226,9 +230,7 @@ class controlador_tg_manifiesto extends _ctl_base
             }
         }
 
-        $link = "./index.php?seccion=tg_manifiesto&accion=ve_nominas&registro_id=".$this->registro_id;
-        $link.="&session_id=$this->session_id";
-        header('Location:' . $link);
+        header('Location:' . $this->link_tg_manifiesto_nominas);
         exit;
     }
 

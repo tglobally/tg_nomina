@@ -25,7 +25,7 @@ $url_icons = (new views())->url_icons;
                         <button type="submit" class="btn btn-info btn-guarda col-md-12 " > Alta</button>
                     </div>
                     <div class="col-md-6 btn-ancho">
-                        <a href="<?php echo $controlador->link_tg_manifiesto_ver_nominas; ?>"  class="btn btn-info btn-guarda col-md-12 ">Regresar</a>
+                        <a href="<?php echo $controlador->link_tg_manifiesto_nominas; ?>"  class="btn btn-info btn-guarda col-md-12 ">Regresar</a>
                     </div>
 
                 </div>
