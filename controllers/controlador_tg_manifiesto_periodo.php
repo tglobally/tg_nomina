@@ -52,7 +52,7 @@ class controlador_tg_manifiesto_periodo extends system
         return $r_alta;
     }
 
-    public function asignar_propiedad(string $identificador, mixed $propiedades)
+    public function asignar_propiedad(string $identificador, array $propiedades): array|stdClass
     {
         if (!array_key_exists($identificador, $this->keys_selects)) {
             $this->keys_selects[$identificador] = new stdClass();
@@ -61,6 +61,8 @@ class controlador_tg_manifiesto_periodo extends system
         foreach ($propiedades as $key => $value) {
             $this->keys_selects[$identificador]->$key = $value;
         }
+
+        return $this->keys_selects;
     }
 
     private function base(): array|stdClass

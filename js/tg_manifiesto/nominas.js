@@ -262,4 +262,11 @@ $(document).ready(function () {
     update_registro('#nominas_deducciones', "nom_par_deduccion", "get_deducciones", table_deducciones);
     update_registro('#nominas_otros_pagos', "nom_par_otro_pago", "get_otros_pagos", table_otros_pagos);
 
+    $('.form_nominas').on('submit', function(e){
+        if(nominas_seleccionadas.length === 0) {
+            e.preventDefault();
+            alert("Seleccione una nómina");
+        }
+    });
+
 });
