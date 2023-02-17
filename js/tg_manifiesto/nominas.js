@@ -5,7 +5,6 @@ $(document).ready(function () {
     var nominas_seleccionadas = [];
     var elementos_seleccionados = new Map();
 
-
     let inicializa_datatable = (identificador, columns, entidad, clase) => {
 
         return $(identificador).DataTable({
@@ -70,34 +69,48 @@ $(document).ready(function () {
         });
     };
 
-    function buscarValor(objeto, valor) {
-        for (var propiedad in objeto) {
-            if (typeof objeto[propiedad] == "object") {
-                if (buscarValor(objeto[propiedad], valor)) {
-                    return true;
-                }
-            } else {
-                if (objeto[propiedad] === valor) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+    let delete_registro = (identificador, entidad, accion, tabla) => {
+        $(document).on('click', `${identificador} .delete-btn`, function(e){
+            const id = $(e.currentTarget).data('id');
+            let url = get_url(entidad,"elimina_bd", {registro_id: id}, 0);
 
-    function buscarKey(objeto, clave) {
-        if (objeto.hasOwnProperty(clave)) {
-            return true;
-        }
-        for (var propiedad in objeto) {
-            if (typeof objeto[propiedad] == "object") {
-                if (buscarKey(objeto[propiedad], clave)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+            fetch(url, { method: 'DELETE' })
+                .then(function(response) {
+                    if(response.ok) {
+                        table_percepciones.clear();
+                        table_deducciones.clear();
+                        table_otros_pagos.clear();
+
+                        nominas_seleccionadas.forEach(function (valor, indice, array) {
+                            let url_percepcion = get_url("nom_par_percepcion", "get_percepciones", {nom_nomina_id: valor});
+                            let url_deduccion = get_url("nom_par_deduccion", "get_deducciones", {nom_nomina_id: valor});
+                            let url_otro_pago = get_url("nom_par_otro_pago", "get_otros_pagos", {nom_nomina_id: valor});
+
+                            get_data(url_percepcion, function (rows) {
+                                var registros = rows.registros;
+                                table_percepciones.rows.add(registros).draw();
+                            });
+
+                            get_data(url_deduccion, function (rows) {
+                                var registros = rows.registros;
+                                table_deducciones.rows.add(registros).draw();
+                            });
+
+                            get_data(url_otro_pago, function (rows) {
+                                var registros = rows.registros;
+                                table_otros_pagos.rows.add(registros).draw();
+                            });
+                        });
+
+                        table_percepciones.columns.adjust().draw();
+                        table_deducciones.columns.adjust().draw();
+                        table_otros_pagos.columns.adjust().draw();
+                    } else {
+                        alert('Ocurrio un error con la transaccion');
+                    }
+                })
+        });
+    };
 
     let update_registro = (identificador, entidad, accion, tabla) => {
 
@@ -263,6 +276,10 @@ $(document).ready(function () {
     update_registro('#nominas_percepciones', "nom_par_percepcion", "get_percepciones", table_percepciones);
     update_registro('#nominas_deducciones', "nom_par_deduccion", "get_deducciones", table_deducciones);
     update_registro('#nominas_otros_pagos', "nom_par_otro_pago", "get_otros_pagos", table_otros_pagos);
+
+    delete_registro('#nominas_percepciones', "nom_par_percepcion", "get_percepciones", table_percepciones);
+    delete_registro('#nominas_deducciones', "nom_par_deduccion", "get_deducciones", table_deducciones);
+    delete_registro('#nominas_otros_pagos', "nom_par_otro_pago", "get_otros_pagos", table_otros_pagos);
 
     $('.form_nominas').on('submit', function(e){
         if(nominas_seleccionadas.length === 0) {
