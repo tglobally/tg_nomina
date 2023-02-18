@@ -36,7 +36,7 @@ class tg_manifiesto extends _modelo_parent{
         $campos_view['fecha_inicial_pago']['type'] = 'dates';
         $campos_view['fecha_final_pago']['type'] = 'dates';
 
-        $columnas_extra['tg_manifiesto_n_nominas'] = "(SELECT COUNT(*) FROM nom_nomina )";
+        $columnas_extra['tg_manifiesto_n_nominas'] = "(SELECT COUNT(*) FROM nom_nomina WHERE nom_periodo_id = tg_manifiesto_id)";
 
         parent::__construct(link: $link,tabla:  $tabla, campos_obligatorios: $campos_obligatorios,
             columnas: $columnas,campos_view:  $campos_view ,columnas_extra: $columnas_extra);
