@@ -1,6 +1,8 @@
 $(document).ready(function () {
     var tables = $.fn.dataTable.tables(true);
     var table_nom_nomina = $(tables).DataTable().search('nom_nomina');
+    table_nom_nomina.search('').columns().search('').draw();
+
 
     var nominas_seleccionadas = [];
     var elementos_seleccionados = new Map();

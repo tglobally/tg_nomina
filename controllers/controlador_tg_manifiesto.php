@@ -2210,9 +2210,6 @@ class controlador_tg_manifiesto extends _ctl_base
             return $this->retorno_error(mensaje: 'Error al integrar in',data:  $in, header: $header,ws:$ws);
         }
 
-
-
-
         $columns = array();
         $columns["nom_nomina_id"]["titulo"] = "Id";
         $columns["em_empleado_nombre"]["titulo"] = "Nombre";
@@ -2221,7 +2218,7 @@ class controlador_tg_manifiesto extends _ctl_base
         $columns["nom_nomina_fecha_inicial_pago"]["titulo"] = "Fecha Inicial Pago";
         $columns["nom_nomina_fecha_final_pago"]["titulo"] = "Fecha Final Pago";
         $columns["org_empresa_descripcion"]["titulo"] = "Empresa";
-        $filtro = array();
+        $filtro = array("nom_nomina_id",  "em_empleado_nombre",    );
 
         $datatables = $this->datatable_init(columns: $columns, filtro: $filtro, identificador: "#nom_nomina",
             in: $in,  multi_selects: true);
@@ -2230,24 +2227,7 @@ class controlador_tg_manifiesto extends _ctl_base
                 header: $header,ws:$ws);
         }
 
-
-
-        $nominas = (new tg_manifiesto_periodo($this->link))->nominas_by_manifiesto(tg_manifiesto_id: $this->registro_id);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo',data:  $nominas,
-                header: $header,ws:$ws);
-        }
-
-        foreach ($nominas as $indice => $nomina) {
-            $nomina = $this->data_nomina_btn(nomina: $nomina);
-            if (errores::$error) {
-                return $this->retorno_error(mensaje: 'Error al asignar botones', data: $nomina, header: $header, ws: $ws);
-            }
-            $nominas[$indice] = $nomina;
-        }
-        $this->nominas = $nominas;
-
-        return $this->nominas;
+        return $datatables;
     }
 
     public function ve_nominas(bool $header, bool $ws = false): array|stdClass
