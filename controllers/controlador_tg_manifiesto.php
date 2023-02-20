@@ -335,7 +335,7 @@ class controlador_tg_manifiesto extends _ctl_base
     protected function campos_view(): array
     {
         $keys = new stdClass();
-        $keys->inputs = array('codigo', 'descripcion', 'importe_gravado', 'importe_exento');
+        $keys->inputs = array('codigo', 'descripcion', 'importe_gravado', 'importe_exento','razón social ');
         $keys->fechas = array('fecha_envio', 'fecha_pago', 'fecha_inicial_pago', 'fecha_final_pago');
         $keys->selects = array();
 
@@ -348,6 +348,7 @@ class controlador_tg_manifiesto extends _ctl_base
         $init_data['nom_percepcion'] = "gamboamartin\\nomina";
         $init_data['nom_deduccion'] = "gamboamartin\\nomina";
         $init_data['nom_otro_pago'] = "gamboamartin\\nomina";
+        $init_data['org_empresa'] = "gamboamartin\\organigrama";
 
         $campos_view = $this->campos_view_base(init_data: $init_data, keys: $keys);
         if (errores::$error) {
