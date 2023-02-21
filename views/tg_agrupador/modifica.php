@@ -1,4 +1,4 @@
-<?php /** @var \tglobally\tg_nomina\controllers\controlador_tg_provision $controlador */ ?>
+<?php /** @var \tglobally\tg_nomina\controllers\controlador_tg_agrupador $controlador */ ?>
 
 <?php (new \tglobally\template_tg\template())->sidebar($controlador); ?>
 
@@ -10,11 +10,8 @@
         <div class="  form-main" id="form">
             <form method="post" action="<?php echo $controlador->link_modifica_bd;?>" class="form-additional">
 
-                <?php echo $controlador->inputs->tg_tipo_provision_id; ?>
-                <?php echo $controlador->inputs->nom_nomina_id; ?>
                 <?php echo $controlador->inputs->codigo; ?>
                 <?php echo $controlador->inputs->descripcion; ?>
-                <?php echo $controlador->inputs->monto; ?>
 
                 <div class="buttons col-md-12">
                     <div class="col-md-6">
