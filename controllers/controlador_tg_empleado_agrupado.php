@@ -16,11 +16,12 @@ use gamboamartin\template\html;
 
 use gamboamartin\tg_nomina\html\tg_empleado_agrupado_html;
 use gamboamartin\tg_nomina\models\tg_empleado_agrupado;
+use html\tg_agrupador_html;
 use PDO;
 use stdClass;
 
 class controlador_tg_empleado_agrupado extends _ctl_base {
-    
+
     public function __construct(PDO $link, html $html = new \gamboamartin\template_1\html(),
                                 stdClass $paths_conf = new stdClass()){
 
@@ -91,7 +92,7 @@ class controlador_tg_empleado_agrupado extends _ctl_base {
 
         $init_data = array();
         $init_data['tg_agrupador'] = "gamboamartin\\tg_nomina";
-        $init_data['tg_empleado'] = "gamboamartin\\tg_nomina";
+        $init_data['tg_empleado'] = "gamboamartin\\tg_empleado";
         $campos_view = $this->campos_view_base(init_data: $init_data,keys:  $keys);
 
         if(errores::$error){
@@ -102,56 +103,25 @@ class controlador_tg_empleado_agrupado extends _ctl_base {
 
     protected function inputs_children(stdClass $registro): stdClass|array
     {
-        $select_cob_tipo_concepto_id = (new cob_tipo_concepto_html(html: $this->html_base))->select_cob_tipo_concepto_id(
+        $select_tg_agrupador_id = (new tg_agrupador_html(html: $this->html_base))->select_tg_agrupador_id(
             cols:6,con_registros: true,id_selected:  -1,link:  $this->link);
 
         if(errores::$error){
             return $this->errores->error(
-                mensaje: 'Error al obtener select_cob_tipo_concepto_id',data:  $select_cob_tipo_concepto_id);
+                mensaje: 'Error al obtener select_cob_tipo_concepto_id',data:  $select_tg_agrupador_id);
         }
-        $select_cob_cliente_id = (new cob_cliente_html(html: $this->html_base))->select_cob_cliente_id(
+        $select_tg_empleado_id = (new tg_empleado_html(html: $this->html_base))->select_tg_empleado_id(
             cols:12,con_registros: true,id_selected:  -1,link:  $this->link);
 
         if(errores::$error){
             return $this->errores->error(
-                mensaje: 'Error al obtener select_cob_cliente_id',data:  $select_cob_cliente_id);
+                mensaje: 'Error al obtener select_cob_cliente_id',data:  $select_tg_empleado_id);
         }
-
-
-        $cob_deuda_monto = (new cob_deuda_html(html: $this->html_base))->input_monto(
-            cols:12,row_upd:  new stdClass(),value_vacio:  false);
-        if(errores::$error){
-            return $this->errores->error(
-                mensaje: 'Error al obtener cob_deuda_monto',data:  $cob_deuda_monto);
-        }
-
-        $fecha_vencimiento = (new cob_deuda_html(html: $this->html_base))->input_fecha_vencimiento(
-            cols:12,row_upd:  new stdClass(),value_vacio:  false,place_holder: 'Fecha de vencimiento',
-            value: date('Y-m-d'));
-        if(errores::$error){
-            return $this->errores->error(
-                mensaje: 'Error al obtener cob_deuda_fecha_vencimiento',data:  $fecha_vencimiento);
-        }
-
-        $cob_concepto_id = (new cob_concepto_html(html: $this->html_base))->select_cob_concepto_id(
-            cols:12,con_registros: true,id_selected:  -1,link:  $this->link);
-        if(errores::$error){
-            return $this->errores->error(
-                mensaje: 'Error al obtener cob_concepto_id',data:  $cob_concepto_id);
-        }
-
-
-
 
         $this->inputs = new stdClass();
         $this->inputs->select = new stdClass();
-        $this->inputs->select->cob_tipo_concepto_id = $select_cob_tipo_concepto_id;
-        $this->inputs->cob_cliente_id = $select_cob_cliente_id;
-        $this->inputs->cob_deuda_monto = $cob_deuda_monto;
-        $this->inputs->fecha_vencimiento = $fecha_vencimiento;
-        $this->inputs->cob_concepto_id = $cob_concepto_id;
-
-
+        $this->inputs->select->cob_tg_agrupador_id = $select_tg_agrupador_id;
+        $this->inputs->select->tg_empleado_id = $select_tg_empleado_id;
 
         return $this->inputs;
     }
@@ -184,12 +154,17 @@ class controlador_tg_empleado_agrupado extends _ctl_base {
         }
 
 
-        $keys_selects = $this->key_select(cols:12, con_registros: true,filtro:  array(), key: 'cob_tipo_concepto_id',
-            keys_selects: array(), id_selected: $this->registro['cob_tipo_concepto_id'], label: 'Concepto');
+        $keys_selects = $this->key_select(cols:12, con_registros: true,filtro:  array(), key: 'tg_agrupador_id',
+            keys_selects: array(), id_selected: $this->registro['tg_agrupador_id'], label: 'Agrupador');
         if(errores::$error){
             return $this->retorno_error(mensaje: 'Error al maquetar key_selects',data:  $keys_selects, header: $header,ws:  $ws);
         }
 
+        $keys_selects = $this->key_select(cols:12, con_registros: true,filtro:  array(), key: 'tg_empleado_id',
+            keys_selects: $keys_selects, id_selected: $this->registro['tg_empleado_id'], label: 'Empleado');
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al maquetar key_selects',data:  $keys_selects, header: $header,ws:  $ws);
+        }
 
 
 
@@ -209,33 +184,5 @@ class controlador_tg_empleado_agrupado extends _ctl_base {
 
         return $r_modifica;
     }
-
-    public function deudas(bool $header = true, bool $ws = false): array|string
-    {
-
-
-        $data_view = new stdClass();
-        $data_view->names = array('Id','Monto','N pagos','Monto pagado','Saldo','Fecha de vencimiento','Concepto','Cliente');
-        $data_view->keys_data = array('cob_deuda_id','cob_deuda_monto','cob_deuda_n_pagos','cob_deuda_pagado','cob_deuda_saldo','cob_deuda_fecha_vencimiento',
-            'cob_concepto_descripcion','cob_cliente_razon_social');
-        $data_view->key_actions = 'acciones';
-        $data_view->namespace_model = 'gamboamartin\\cobranza\\models';
-        $data_view->name_model_children = 'cob_deuda';
-
-
-        $contenido_table = $this->contenido_children(data_view: $data_view, next_accion: __FUNCTION__,not_actions: $this->not_actions);
-        if(errores::$error){
-            return $this->retorno_error(
-                mensaje: 'Error al obtener tbody',data:  $contenido_table, header: $header,ws:  $ws);
-        }
-
-
-        return $contenido_table;
-
-
-    }
-
-
-
 
 }

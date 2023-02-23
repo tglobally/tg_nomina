@@ -85,32 +85,9 @@ class tg_empleado_agrupado_html extends html_controler {
         return $alta_inputs;
     }
 
-    public function input_fecha_vencimiento(int $cols, stdClass $row_upd, bool $value_vacio, bool $disabled = false,
-                                            string $place_holder = 'Fecha Vencimiento', mixed $value = null): array|string
-    {
 
-        if($cols<=0){
-            return $this->error->error(mensaje: 'Error cold debe ser mayor a 0', data: $cols);
-        }
-        if($cols>=13){
-            return $this->error->error(mensaje: 'Error cold debe ser menor o igual a  12', data: $cols);
-        }
 
-        $html =$this->directivas->input_fecha_required(disabled: $disabled,name: 'fecha_vencimiento',place_holder: $place_holder,
-            row_upd: $row_upd, value_vacio: $value_vacio, value: $value);
-        if(errores::$error){
-            return $this->error->error(mensaje: 'Error al generar input', data: $html);
-        }
-
-        $div = $this->directivas->html->div_group(cols: $cols,html:  $html);
-        if(errores::$error){
-            return $this->error->error(mensaje: 'Error al integrar div', data: $div);
-        }
-
-        return $div;
-    }
-
-    public function inputs_cob_deuda(controlador_tg_empleado_agrupado $controlador,
+    public function inputs_tg_empleado_agrupado(controlador_tg_empleado_agrupado $controlador,
                                      stdClass $params = new stdClass()): array|stdClass
     {
         $inputs = $this->genera_inputs_modifica(controler: $controlador,
@@ -133,12 +110,12 @@ class tg_empleado_agrupado_html extends html_controler {
         return $selects;
     }
 
-    public function select_cob_deuda_id(int $cols, bool $con_registros, int $id_selected, PDO $link): array|string
+    public function select_tg_empleado_agrupado_id(int $cols, bool $con_registros, int $id_selected, PDO $link): array|string
     {
-        $modelo = new cob_deuda(link: $link);
+        $modelo = new tg_empleado_agrupado(link: $link);
 
         $select = $this->select_catalogo(cols:$cols,con_registros:$con_registros,id_selected:$id_selected,
-            modelo: $modelo,label: 'Deuda',required: true);
+            modelo: $modelo,label: 'Empleado Agrupado',required: true);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al generar select', data: $select);
         }
