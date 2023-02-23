@@ -141,6 +141,40 @@ class tg_manifiesto extends _modelo_parent{
             return $this->error->error(mensaje: 'Error al dar de alta manifiesto_periodo',data:  $r_tg_manifiesto_periodo);
         }
 
+        if(isset($this->registro['com_sucursal_id']) && $this->registro['com_sucursal_id']!==''){
+            $filtro_emp_bis['com_sucursal.id'] = $this->registro['com_sucursal_id'];
+            $em_registro_patronal_bis = (new em_registro_patronal($this->link))->filtro_and(filtro: $filtro_emp_bis);
+            if(errores::$error){
+                return $this->error->error(mensaje: 'Error al obtener registro patronal bis',
+                    data:  $em_registro_patronal_bis);
+            }
+
+            $registro_periodo_bis['codigo'] = $this->registro['codigo'].'_bis';
+            $registro_periodo_bis['descripcion'] = $this->registro['descripcion'].'_bis';
+            $registro_periodo_bis['fecha_pago'] = $this->registro['fecha_pago'];
+            $registro_periodo_bis['fecha_inicial_pago'] = $this->registro['fecha_inicial_pago'];
+            $registro_periodo_bis['fecha_final_pago'] = $this->registro['fecha_final_pago'];
+            $registro_periodo_bis['cat_sat_periodicidad_pago_nom_id'] = $tg_tipo_servicio['cat_sat_periodicidad_pago_nom_id'];
+            $registro_periodo_bis['im_registro_patronal_id'] = $em_registro_patronal_bis->registros[0]['em_registro_patronal_id'];
+            $registro_periodo_bis['em_registro_patronal_id'] = $em_registro_patronal_bis->registros[0]['em_registro_patronal_id'];
+            $registro_periodo_bis['nom_tipo_periodo_id'] = 1;
+            $registro_periodo_bis['cat_sat_tipo_nomina_id'] = $tg_tipo_servicio['cat_sat_tipo_nomina_id'];
+
+            $r_nom_periodo_bis = (new nom_periodo($this->link))->alta_registro(registro: $registro_periodo_bis);
+            if(errores::$error){
+                return $this->error->error(mensaje: 'Error al dar de alta periodo',data:  $r_nom_periodo);
+            }
+
+            $registro_man['codigo'] =$this->registro['codigo'].'_bis';
+            $registro_man['descripcion'] = $this->registro['descripcion'].'_bis';
+            $registro_man['tg_manifiesto_id'] = $r_alta_bd->registro_id;
+            $registro_man['nom_periodo_id'] = $r_nom_periodo_bis->registro_id;
+            $r_tg_manifiesto_periodo = (new tg_manifiesto_periodo($this->link))->alta_registro(registro:$registro_man);
+            if(errores::$error){
+                return $this->error->error(mensaje: 'Error al dar de alta manifiesto_periodo',data:  $r_tg_manifiesto_periodo);
+            }
+        }
+
         return $r_alta_bd;
     }
 
