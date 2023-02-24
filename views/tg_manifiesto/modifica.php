@@ -18,7 +18,7 @@
                 <?php echo $controlador->inputs->fecha_final_pago; ?>
                 <?php echo $controlador->inputs->fecha_envio; ?>
                 <?php echo $controlador->inputs->fecha_pago; ?>
-                <?php echo $controlador->inputs->razon_social; ?>
+                <?php echo $controlador->inputs->org_sucursal_id; ?>
 
                 <div class="buttons col-md-12">
                     <div class="col-md-6">

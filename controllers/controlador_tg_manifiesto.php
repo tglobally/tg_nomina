@@ -349,6 +349,7 @@ class controlador_tg_manifiesto extends _ctl_base
         $init_data['nom_deduccion'] = "gamboamartin\\nomina";
         $init_data['nom_otro_pago'] = "gamboamartin\\nomina";
         $init_data['org_empresa'] = "gamboamartin\\organigrama";
+        $init_data['org_sucursal'] = "gamboamartin\\organigrama";
 
         $campos_view = $this->campos_view_base(init_data: $init_data, keys: $keys);
         if (errores::$error) {
@@ -548,6 +549,7 @@ class controlador_tg_manifiesto extends _ctl_base
         $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "nom_percepcion_id", label: "Percepción ", cols: 12);
         $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "nom_deduccion_id", label: "Deducción  ", cols: 12);
         $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "nom_otro_pago_id", label: "Otro Pago ", cols: 12);
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "org_sucursal_id", label: "Empresa Bis", cols: 12);
         return $this->init_selects(keys_selects: $keys_selects, key: "tg_tipo_servicio_id", label: "Tipo Servicio");
     }
 

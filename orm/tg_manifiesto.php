@@ -11,6 +11,7 @@ use gamboamartin\errores\errores;
 use gamboamartin\facturacion\models\fc_csd;
 use gamboamartin\im_registro_patronal\models\im_registro_patronal;
 use gamboamartin\nomina\models\nom_periodo;
+use gamboamartin\organigrama\models\org_sucursal;
 use PDO;
 use stdClass;
 
@@ -19,7 +20,7 @@ class tg_manifiesto extends _modelo_parent{
     public function __construct(PDO $link){
         $tabla = 'tg_manifiesto';
         $columnas = array($tabla=>false, 'fc_csd'=>$tabla,'tg_tipo_servicio' =>$tabla,'tg_sucursal_alianza'=>$tabla,
-            'com_sucursal'=>'tg_sucursal_alianza','tg_cte_alianza'=>'tg_sucursal_alianza');
+            'org_sucursal'=>$tabla, 'com_sucursal'=>'tg_sucursal_alianza','tg_cte_alianza'=>'tg_sucursal_alianza');
         $campos_obligatorios = array('descripcion','codigo','descripcion_select','alias','codigo_bis',
             'fc_csd_id','tg_tipo_servicio_id','fecha_envio','fecha_pago');
 
@@ -31,15 +32,17 @@ class tg_manifiesto extends _modelo_parent{
         $campos_view['fc_csd_id']['model'] = (new fc_csd($link));
         $campos_view['tg_tipo_servicio_id']['type'] = 'selects';
         $campos_view['tg_tipo_servicio_id']['model'] = (new tg_tipo_servicio($link));
+        $campos_view['org_sucursal_id']['type'] = 'selects';
+        $campos_view['org_sucursal_id']['model'] = (new org_sucursal($link));
         $campos_view['fecha_envio']['type'] = 'dates';
         $campos_view['fecha_pago']['type'] = 'dates';
         $campos_view['fecha_inicial_pago']['type'] = 'dates';
         $campos_view['fecha_final_pago']['type'] = 'dates';
 
-        $columnas_extra['tg_manifiesto_n_nominas'] = "(SELECT COUNT(*) FROM nom_nomina WHERE nom_periodo_id = tg_manifiesto_id)";
+        //$columnas_extra['tg_manifiesto_n_nominas'] = "(SELECT COUNT(*) FROM nom_nomina WHERE nom_periodo_id = tg_manifiesto_id)";
 
         parent::__construct(link: $link,tabla:  $tabla, campos_obligatorios: $campos_obligatorios,
-            columnas: $columnas,campos_view:  $campos_view ,columnas_extra: $columnas_extra);
+            columnas: $columnas,campos_view:  $campos_view /*,columnas_extra: $columnas_extra*/);
 
         $this->NAMESPACE = __NAMESPACE__;
     }
