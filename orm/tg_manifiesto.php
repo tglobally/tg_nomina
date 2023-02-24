@@ -39,10 +39,15 @@ class tg_manifiesto extends _modelo_parent{
         $campos_view['fecha_inicial_pago']['type'] = 'dates';
         $campos_view['fecha_final_pago']['type'] = 'dates';
 
-        //$columnas_extra['tg_manifiesto_n_nominas'] = "(SELECT COUNT(*) FROM nom_nomina WHERE nom_periodo_id = tg_manifiesto_id)";
+
+        $columnas_extra['tg_manifiesto_n_nominas'] =
+            "IFNULL ((SELECT COUNT(*) FROM  nom_nomina 
+            INNER JOIN tg_manifiesto_periodo ON tg_manifiesto_periodo.tg_manifiesto_id = tg_manifiesto.id
+            INNER JOIN nom_periodo ON nom_nomina.nom_periodo_id = tg_manifiesto_periodo.nom_periodo_id
+            AND nom_nomina.nom_periodo_id = nom_periodo.id), 0)";
 
         parent::__construct(link: $link,tabla:  $tabla, campos_obligatorios: $campos_obligatorios,
-            columnas: $columnas,campos_view:  $campos_view /*,columnas_extra: $columnas_extra*/);
+            columnas: $columnas,campos_view:  $campos_view,columnas_extra: $columnas_extra);
 
         $this->NAMESPACE = __NAMESPACE__;
     }
@@ -144,8 +149,8 @@ class tg_manifiesto extends _modelo_parent{
             return $this->error->error(mensaje: 'Error al dar de alta manifiesto_periodo',data:  $r_tg_manifiesto_periodo);
         }
 
-        if(isset($this->registro['com_sucursal_id']) && $this->registro['com_sucursal_id']!==''){
-            $filtro_emp_bis['com_sucursal.id'] = $this->registro['com_sucursal_id'];
+        if(isset($this->registro['org_sucursal_id']) && $this->registro['org_sucursal_id']!==''){
+            $filtro_emp_bis['org_sucursal.id'] = $this->registro['org_sucursal_id'];
             $em_registro_patronal_bis = (new em_registro_patronal($this->link))->filtro_and(filtro: $filtro_emp_bis);
             if(errores::$error){
                 return $this->error->error(mensaje: 'Error al obtener registro patronal bis',

@@ -317,7 +317,7 @@ class controlador_tg_manifiesto extends _ctl_base
             return $this->retorno_error(mensaje: 'Error al inicializar selects', data: $keys_selects, header: $header,
                 ws: $ws);
         }
-
+        $keys_selects['org_sucursal_id']->required = false;
         $this->row_upd->fecha_envio = date('Y-m-d');
         $this->row_upd->fecha_pago = date('Y-m-d');
         $this->row_upd->fecha_inicial_pago = date('Y-m-d');
