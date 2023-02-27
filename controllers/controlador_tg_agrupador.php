@@ -76,13 +76,6 @@ class controlador_tg_agrupador extends _ctl_base {
         $keys_selects['descripcion'] = new stdClass();
         $keys_selects['descripcion']->cols = 6;
 
-        $keys_selects['fecha de pago'] = new stdClass();
-        $keys_selects['fecha de pago']->cols = 12;
-
-        $keys_selects['Monto'] = new stdClass();
-        $keys_selects['Monto']->cols = 6;
-
-
 
         $inputs = $this->inputs(keys_selects: $keys_selects);
         if(errores::$error){
@@ -157,11 +150,6 @@ class controlador_tg_agrupador extends _ctl_base {
         $keys_selects['codigo'] = new stdClass();
         $keys_selects['codigo']->disabled = true;
 
-        $keys_selects['Fecha de Pago'] = new stdClass();
-        $keys_selects['Fecha de Pago']->cols = 6;
-
-        $keys_selects['Monto'] = new stdClass();
-        $keys_selects['Monto']->cols = 6;
 
         $base = $this->base_upd(keys_selects: $keys_selects, params: array(),params_ajustados: array());
         if(errores::$error){
