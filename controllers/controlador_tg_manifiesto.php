@@ -886,7 +886,7 @@ class controlador_tg_manifiesto extends _ctl_base
             $empleados_res = array();
             foreach ($empleados as $empleado) {
                 $filtro_em['em_empleado.id'] = $empleado['em_empleado_id'];
-                $filtro_em['cat_sat_periodicidad_pago_nom.id'] = $nom_periodo['nom_periodo_cat_sat_periodicidad_pago_nom_id'];
+                $filtro_em['nom_conf_nomina.id'] = $tg_manifiesto['nom_conf_nomina_id'];
                 $conf_empleado = (new nom_conf_empleado($this->link))->filtro_and(filtro: $filtro_em);
                 if (errores::$error) {
                     $error =  $this->errores->error(mensaje: 'Error al obtener configuracion de empleado',

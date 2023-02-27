@@ -6,19 +6,20 @@
  * @final En proceso
  *
  */
-namespace gamboamartin\tg_nomina\controllers;
+namespace tglobally\tg_nomina\controllers;
 use gamboamartin\errores\errores;
 use gamboamartin\system\_ctl_base;
 use gamboamartin\system\links_menu;
 
 use gamboamartin\template\html;
-use gamboamartin\tg_nomina\models\tg_agrupador;
 use html\bn_cuenta_html;
 use html\tg_agrupador_html;
 use PDO;
 use stdClass;
+use tglobally\tg_nomina\models\tg_agrupador;
 
 class controlador_tg_agrupador extends _ctl_base {
+    public array $sidebar = array();
 
     public function __construct(PDO $link, html $html = new \gamboamartin\template_1\html(),
                                 stdClass $paths_conf = new stdClass()){
@@ -46,6 +47,21 @@ class controlador_tg_agrupador extends _ctl_base {
         $this->titulo_lista = 'Clasificacion';
 
         $this->lista_get_data = true;
+
+        $this->sidebar['lista']['titulo'] = "Agrupador";
+        $this->sidebar['lista']['menu'] = array(
+            $this->menu_item(menu_item_titulo: "Alta", link: $this->link_alta, menu_seccion_active: true,
+                menu_lateral_active: true));
+
+        $this->sidebar['alta']['titulo'] = "Alta Agrupador";
+        $this->sidebar['alta']['stepper_active'] = true;
+        $this->sidebar['alta']['menu'] = array(
+            $this->menu_item(menu_item_titulo: "Alta", link: $this->link_alta, menu_lateral_active: true));
+
+        $this->sidebar['modifica']['titulo'] = "Modifica Agrupador";
+        $this->sidebar['modifica']['stepper_active'] = true;
+        $this->sidebar['modifica']['menu'] = array(
+            $this->menu_item(menu_item_titulo: "Modifica", link: $this->link_modifica, menu_lateral_active: true));
     }
 
     public function alta(bool $header, bool $ws = false): array|string
@@ -155,6 +171,16 @@ class controlador_tg_agrupador extends _ctl_base {
         return $r_modifica;
     }
 
+    public function menu_item(string $menu_item_titulo, string $link, bool $menu_seccion_active = false, bool $menu_lateral_active = false): array
+    {
+        $menu_item = array();
+        $menu_item['menu_item'] = $menu_item_titulo;
+        $menu_item['menu_seccion_active'] = $menu_seccion_active;
+        $menu_item['link'] = $link;
+        $menu_item['menu_lateral_active'] = $menu_lateral_active;
+
+        return $menu_item;
+    }
 
 
 
