@@ -1,22 +1,23 @@
 <?php
 namespace gamboamartin\tg_nomina\html;
 
-use gamboamartin\tg_nomina\controllers\controlador_tg_conf_manifiesto;
-use gamboamartin\tg_nomina\models\tg_conf_manifiesto;
+use gamboamartin\tg_nomina\controllers\controlador_tg_empleado_agrupado;
+
+use gamboamartin\tg_nomina\models\tg_empleado_agrupado;
 use gamboamartin\errores\errores;
 use gamboamartin\system\html_controler;
 use PDO;
 use stdClass;
 
-class tg_conf_manifiesto_html extends html_controler {
+class tg_empleado_agrupado_html extends html_controler {
 
-    private function asigna_inputs(controlador_tg_conf_manifiesto $controler, stdClass $inputs): array|stdClass
+    private function asigna_inputs(controlador_tg_empleado_agrupado $controler, stdClass $inputs): array|stdClass
     {
         $controler->inputs->select = new stdClass();
         return $controler->inputs;
     }
 
-    public function genera_inputs_alta(controlador_tg_conf_manifiesto $controler, PDO $link): array|stdClass
+    public function genera_inputs_alta(controlador_tg_empleado_agrupado $controler, PDO $link): array|stdClass
     {
         $inputs = $this->init_alta(keys_selects: array(), link: $link);
         if(errores::$error){
@@ -31,7 +32,7 @@ class tg_conf_manifiesto_html extends html_controler {
         return $inputs_asignados;
     }
 
-    private function genera_inputs_modifica(controlador_tg_conf_manifiesto $controler,PDO $link,
+    private function genera_inputs_modifica(controlador_tg_empleado_agrupado $controler,PDO $link,
                                             stdClass $params = new stdClass()): array|stdClass
     {
         $inputs = $this->init_modifica(link: $link, row_upd: $controler->row_upd, params: $params);
@@ -84,8 +85,10 @@ class tg_conf_manifiesto_html extends html_controler {
         return $alta_inputs;
     }
 
-    public function inputs_tg_conf_manifiesto(controlador_tg_conf_manifiesto $controlador,
-                                        stdClass $params = new stdClass()): array|stdClass
+
+
+    public function inputs_tg_empleado_agrupado(controlador_tg_empleado_agrupado $controlador,
+                                     stdClass $params = new stdClass()): array|stdClass
     {
         $inputs = $this->genera_inputs_modifica(controler: $controlador,
             link: $controlador->link, params: $params);
@@ -107,12 +110,12 @@ class tg_conf_manifiesto_html extends html_controler {
         return $selects;
     }
 
-    public function select_tg_conf_manifiesto_id(int $cols, bool $con_registros, int $id_selected, PDO $link): array|string
+    public function select_tg_empleado_agrupado_id(int $cols, bool $con_registros, int $id_selected, PDO $link): array|string
     {
-        $modelo = new tg_conf_manifiesto(link: $link);
+        $modelo = new tg_empleado_agrupado(link: $link);
 
         $select = $this->select_catalogo(cols:$cols,con_registros:$con_registros,id_selected:$id_selected,
-            modelo: $modelo,label: 'Manifiesto',required: true);
+            modelo: $modelo,label: 'Empleado Agrupado',required: true);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al generar select', data: $select);
         }
