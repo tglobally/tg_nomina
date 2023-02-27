@@ -36,6 +36,7 @@ class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_
     public string $link_lista_nom_clasificacion = '';
 
     public string $link_lista_tg_agrupador = '';
+    public string $link_lista_tg_conf_manifiesto = '';
     /**
      * Funcion de controlador donde se ejecutaran siempre que haya un acceso denegado
      * @param bool $header Si header es true cualquier error se mostrara en el html y cortara la ejecucion del sistema
@@ -117,6 +118,9 @@ class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_
 
         $hd = "index.php?seccion=tg_agrupador&accion=lista&session_id=$this->session_id";
         $this->link_lista_tg_agrupador = $hd;
+
+        $hd = "index.php?seccion=tg_conf_manifiesto&accion=lista&session_id=$this->session_id";
+        $this->link_lista_tg_conf_manifiesto = $hd;
 
         $this->include_menu = (new generales())->path_base;
         $this->include_menu .= 'templates/inicio.php';
