@@ -83,13 +83,7 @@ class controlador_tg_agrupador extends _ctl_base {
                 mensaje: 'Error al generar salida de template', data: $r_modifica, header: $header, ws: $ws);
         }
 
-        $keys_selects = $this->init_selects_inputs();
-        if (errores::$error) {
-            return $this->retorno_error(mensaje: 'Error al inicializar selects', data: $keys_selects, header: $header,
-                ws: $ws);
-        }
-
-        $base = $this->base_upd(keys_selects: $keys_selects, params: array(), params_ajustados: array());
+        $base = $this->base_upd(keys_selects: array(), params: array(), params_ajustados: array());
         if (errores::$error) {
             return $this->retorno_error(mensaje: 'Error al integrar base', data: $base, header: $header, ws: $ws);
         }
