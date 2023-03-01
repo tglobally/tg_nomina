@@ -50,18 +50,15 @@ class controlador_tg_agrupador extends _ctl_base {
 
         $this->sidebar['lista']['titulo'] = "Agrupador";
         $this->sidebar['lista']['menu'] = array(
-            $this->menu_item(menu_item_titulo: "Alta", link: $this->link_alta, menu_seccion_active: true,
+            $this->menu_item(menu_item_titulo: "Alta Agrupador", link: $this->link_alta, menu_seccion_active: true,
                 menu_lateral_active: true));
 
-        $this->sidebar['alta']['titulo'] = "Alta Agrupador";
-        $this->sidebar['alta']['stepper_active'] = true;
-        $this->sidebar['alta']['menu'] = array(
-            $this->menu_item(menu_item_titulo: "Alta", link: $this->link_alta, menu_lateral_active: true));
 
         $this->sidebar['modifica']['titulo'] = "Modifica Agrupador";
         $this->sidebar['modifica']['stepper_active'] = true;
         $this->sidebar['modifica']['menu'] = array(
-            $this->menu_item(menu_item_titulo: "Modifica", link: $this->link_modifica, menu_lateral_active: true));
+            $this->menu_item(menu_item_titulo: "Modifica Agrupador", link: $this->link_modifica, menu_lateral_active: true));
+
     }
 
     public function alta(bool $header, bool $ws = false): array|string

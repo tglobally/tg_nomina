@@ -1,1 +1,1 @@
-<span class="texto-menu-lateral">Alta Manifiesto</span>
+<span class="texto-menu-lateral">Alta Agrupador</span>
