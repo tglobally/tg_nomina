@@ -14,10 +14,10 @@ use gamboamartin\system\links_menu;
 use gamboamartin\template\html;
 
 
+use gamboamartin\tg_nomina\html\tg_agrupador_html;
 use gamboamartin\tg_nomina\html\tg_empleado_agrupado_html;
 use gamboamartin\tg_nomina\models\tg_empleado_agrupado;
 use html\em_empleado_html;
-use html\tg_agrupador_html;
 use PDO;
 use stdClass;
 
