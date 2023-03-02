@@ -23,7 +23,7 @@ class controlador_nom_par_percepcion extends \gamboamartin\nomina\controllers\co
                 return $this->retorno_error(mensaje: 'Error al modificar percepcion', data: $respuesta, header: $header,
                     ws: $ws);
             }
-            
+
         }
 
         echo json_encode($respuesta, JSON_PRETTY_PRINT);

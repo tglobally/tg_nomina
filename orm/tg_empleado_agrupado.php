@@ -7,7 +7,7 @@ class tg_empleado_agrupado extends _modelo_parent {
 
     public function __construct(PDO $link){
         $tabla = 'tg_empleado_agrupado';
-        $columnas = array($tabla=>false,'tg_agrupador'=>$tabla,'tg_empleado'=>$tabla);
+        $columnas = array($tabla=>false,'tg_agrupador'=>$tabla,'em_empleado'=>$tabla);
         $campos_obligatorios[] = 'descripcion';
         $campos_obligatorios[] = 'descripcion_select';
 

@@ -6,7 +6,7 @@
  * @final En proceso
  *
  */
-namespace gamboamartin\tg_nomina\controllers;
+namespace tglobally\tg_nomina\controllers;
 use gamboamartin\errores\errores;
 use gamboamartin\system\_ctl_base;
 use gamboamartin\system\links_menu;
@@ -16,6 +16,7 @@ use gamboamartin\template\html;
 
 use gamboamartin\tg_nomina\html\tg_empleado_agrupado_html;
 use gamboamartin\tg_nomina\models\tg_empleado_agrupado;
+use html\em_empleado_html;
 use html\tg_agrupador_html;
 use PDO;
 use stdClass;
@@ -64,7 +65,7 @@ class controlador_tg_empleado_agrupado extends _ctl_base {
         if(errores::$error){
             return $this->retorno_error(mensaje: 'Error al maquetar key_selects',data:  $keys_selects, header: $header,ws:  $ws);
         }
-        $keys_selects = $this->key_select(cols:12, con_registros: true,filtro:  array(), key: 'tg_empleado_id',
+        $keys_selects = $this->key_select(cols:12, con_registros: true,filtro:  array(), key: 'em_empleado_id',
             keys_selects: array(), id_selected: -1, label: 'Empleado');
         if(errores::$error){
             return $this->retorno_error(mensaje: 'Error al maquetar key_selects',data:  $keys_selects, header: $header,ws:  $ws);
@@ -92,7 +93,7 @@ class controlador_tg_empleado_agrupado extends _ctl_base {
 
         $init_data = array();
         $init_data['tg_agrupador'] = "gamboamartin\\tg_nomina";
-        $init_data['tg_empleado'] = "gamboamartin\\tg_empleado";
+        $init_data['em_empleado'] = "gamboamartin\\em_empleado";
         $campos_view = $this->campos_view_base(init_data: $init_data,keys:  $keys);
 
         if(errores::$error){
@@ -110,18 +111,18 @@ class controlador_tg_empleado_agrupado extends _ctl_base {
             return $this->errores->error(
                 mensaje: 'Error al obtener select_cob_tipo_concepto_id',data:  $select_tg_agrupador_id);
         }
-        $select_tg_empleado_id = (new tg_empleado_html(html: $this->html_base))->select_tg_empleado_id(
+        $select_em_empleado_id = (new em_empleado_html(html: $this->html_base))->select_em_empleado_id(
             cols:12,con_registros: true,id_selected:  -1,link:  $this->link);
 
         if(errores::$error){
             return $this->errores->error(
-                mensaje: 'Error al obtener select_cob_cliente_id',data:  $select_tg_empleado_id);
+                mensaje: 'Error al obtener select_em_empleado_id',data:  $select_em_empleado_id);
         }
 
         $this->inputs = new stdClass();
         $this->inputs->select = new stdClass();
         $this->inputs->select->cob_tg_agrupador_id = $select_tg_agrupador_id;
-        $this->inputs->select->tg_empleado_id = $select_tg_empleado_id;
+        $this->inputs->select->em_empleado_id = $select_em_empleado_id;
 
         return $this->inputs;
     }
@@ -160,8 +161,8 @@ class controlador_tg_empleado_agrupado extends _ctl_base {
             return $this->retorno_error(mensaje: 'Error al maquetar key_selects',data:  $keys_selects, header: $header,ws:  $ws);
         }
 
-        $keys_selects = $this->key_select(cols:12, con_registros: true,filtro:  array(), key: 'tg_empleado_id',
-            keys_selects: $keys_selects, id_selected: $this->registro['tg_empleado_id'], label: 'Empleado');
+        $keys_selects = $this->key_select(cols:12, con_registros: true,filtro:  array(), key: 'em_empleado_id',
+            keys_selects: $keys_selects, id_selected: $this->registro['em_empleado_id'], label: 'Empleado');
         if(errores::$error){
             return $this->retorno_error(mensaje: 'Error al maquetar key_selects',data:  $keys_selects, header: $header,ws:  $ws);
         }
