@@ -1,12 +1,6 @@
 <?php
 namespace html;
+use gamboamartin\system\html_controler;
 
-
-use gamboamartin\errores\errores;
-use gamboamartin\template\directivas;
-use PDO;
-
-class tg_agrupador_html extends em_html {
-
-
+class tg_agrupador_html extends html_controler {
 }
