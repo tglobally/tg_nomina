@@ -1,4 +1,4 @@
-<?php /** @var \tglobally\tg_nomina\controllers\controlador_tg_agrupador $controlador */ ?>
+<?php /** @var \tglobally\tg_nomina\controllers\controlador_tg_empleado_agrupado $controlador */ ?>
 
 <?php (new \tglobally\template_tg\template())->sidebar($controlador); ?>
 
@@ -13,7 +13,6 @@
 
                 <?php echo $controlador->inputs->codigo; ?>
                 <?php echo $controlador->inputs->descripcion; ?>
-                <?php echo $controlador->inputs->monto; ?>
 
                 <div class="buttons col-md-12">
                     <div class="col-md-6">

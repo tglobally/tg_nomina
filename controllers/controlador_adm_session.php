@@ -17,7 +17,6 @@ class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_
     public bool $existe_msj = false;
     public string $include_menu = '';
     public string $mensaje_html = '';
-
     public string $link_alta_org_sucursal = '';
     public string $link_lista_org_sucursal = '';
     public string $link_lista_nom_nomina = '';
@@ -34,9 +33,9 @@ class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_
     public string $link_lista_tg_tipo_column = '';
     public string $link_lista_tg_column = '';
     public string $link_lista_nom_clasificacion = '';
-
     public string $link_lista_tg_agrupador = '';
     public string $link_lista_tg_conf_manifiesto = '';
+    public string $link_lista_tg_empleado_agrupado = '';
     /**
      * Funcion de controlador donde se ejecutaran siempre que haya un acceso denegado
      * @param bool $header Si header es true cualquier error se mostrara en el html y cortara la ejecucion del sistema
@@ -121,6 +120,9 @@ class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_
 
         $hd = "index.php?seccion=tg_conf_manifiesto&accion=lista&session_id=$this->session_id";
         $this->link_lista_tg_conf_manifiesto = $hd;
+
+        $hd = "index.php?seccion=tg_empleado_agrupado&accion=lista&session_id=$this->session_id";
+        $this->link_lista_tg_empleado_agrupado = $hd;
 
         $this->include_menu = (new generales())->path_base;
         $this->include_menu .= 'templates/inicio.php';

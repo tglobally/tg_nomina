@@ -1,4 +1,4 @@
-<?php /** @var \tglobally\tg_nomina\controllers\controlador_tg_agrupador $controlador */ ?>
+<?php /** @var \tglobally\tg_nomina\controllers\controlador_tg_empleado_agrupado $controlador */ ?>
 
 <?php (new \tglobally\template_tg\template())->sidebar($controlador); ?>
 
