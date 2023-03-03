@@ -1,8 +1,8 @@
 <?php
-namespace gamboamartin\tg_nomina\html;
+namespace html;
 
-use gamboamartin\tg_nomina\controllers\controlador_tg_conf_manifiesto;
-use gamboamartin\tg_nomina\models\tg_conf_manifiesto;
+use tglobally\tg_nomina\controllers\controlador_tg_conf_manifiesto;
+use tglobally\tg_nomina\models\tg_conf_manifiesto;
 use gamboamartin\errores\errores;
 use gamboamartin\system\html_controler;
 use PDO;

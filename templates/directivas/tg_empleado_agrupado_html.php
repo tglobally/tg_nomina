@@ -3,7 +3,7 @@ namespace gamboamartin\tg_nomina\html;
 
 use tglobally\tg_nomina\controllers\controlador_tg_empleado_agrupado;
 
-use gamboamartin\tg_nomina\models\tg_empleado_agrupado;
+use tglobally\tg_nomina\models\tg_empleado_agrupado;
 use gamboamartin\errores\errores;
 use gamboamartin\system\html_controler;
 use PDO;

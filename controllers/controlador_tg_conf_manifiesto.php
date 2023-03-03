@@ -6,14 +6,12 @@
  * @final En proceso
  *
  */
-namespace gamboamartin\tg_nomina\controllers;
+namespace tglobally\tg_nomina\controllers;
 
 use gamboamartin\nomina\html\nom_clasificacion_html;
-use html\cob_cliente_html;
-use html\cob_concepto_html;
-use html\cob_deuda_html;
-use html\cob_pago_html;
-use gamboamartin\tg_nomina\models\cob_deuda;
+use html\tg_conf_manifiesto_html;
+use tglobally\tg_nomina\models\tg_conf_manifiesto;
+
 use gamboamartin\errores\errores;
 use gamboamartin\system\_ctl_base;
 use gamboamartin\system\links_menu;
@@ -40,8 +38,8 @@ class controlador_tg_conf_manifiesto extends _ctl_base {
         $datatables->columns = array();
         $datatables->columns['tg_conf_manifiesto_id']['titulo'] = 'Id';
         $datatables->columns['tg_conf_manifiesto_codigo']['titulo'] = 'Cod';
-        $datatables->columns['tg_conf_manifiesto_descripcion']['titulo'] = 'Deuda';
-        $datatables->columns['tg_conf_manifiesto_n_pagos']['titulo'] = 'N Pagos';
+        $datatables->columns['tg_conf_manifiesto_descripcion']['titulo'] = 'conf manifiesto';
+
 
         $datatables->filtro = array();
         $datatables->filtro[] = 'tg_conf_manifiesto.id';
@@ -91,9 +89,6 @@ class controlador_tg_conf_manifiesto extends _ctl_base {
         $keys_selects['descripcion'] = new stdClass();
         $keys_selects['descripcion']->cols = 6;
 
-        $keys_selects['fecha_vencimiento'] = new stdClass();
-        $keys_selects['fecha_vencimiento']->cols = 6;
-
 
         $inputs = $this->inputs(keys_selects: $keys_selects);
         if(errores::$error){
@@ -136,12 +131,12 @@ class controlador_tg_conf_manifiesto extends _ctl_base {
             return $this->errores->error(
                 mensaje: 'Error al obtener select_tg_agrupador_id',data:  $select_tg_agrupador_id);
         }
-        $select_nom_clasificación_id = (new nom_clasificacion_html(html: $this->html_base))->select_nom_clasificacion_id(
+        $select_nom_clasificacion_id = (new nom_clasificacion_html(html: $this->html_base))->select_nom_clasificacion_id(
             cols:12,con_registros: true,id_selected:  -1,link:  $this->link);
 
         if(errores::$error){
             return $this->errores->error(
-                mensaje: 'Error al obtener $elect_nom_clasificación_id',data:  $select_nom_clasificación_id);
+                mensaje: 'Error al obtener $elect_nom_clasificacion_id',data:  $select_nom_clasificacion_id);
         }
 
         $select_fc_csd_id = (new fc_csd_html(html: $this->html_base))->select_fc_csd_id(
@@ -156,7 +151,7 @@ class controlador_tg_conf_manifiesto extends _ctl_base {
         $this->inputs = new stdClass();
         $this->inputs->select = new stdClass();
         $this->inputs->select->tg_agrupador_id = $select_tg_agrupador_id;
-        $this->inputs->select->nom_clasificación_id = $select_nom_clasificación_id;
+        $this->inputs->select->nom_clasificacion_id = $select_nom_clasificacion_id;
         $this->inputs->select->fc_csd_id = $select_fc_csd_id;
 
 

@@ -16,7 +16,7 @@ use gamboamartin\template\html;
 
 use html\tg_agrupador_html;
 use html\tg_empleado_agrupado_html;
-use gamboamartin\tg_nomina\models\tg_empleado_agrupado;
+use tglobally\tg_nomina\models\tg_empleado_agrupado;
 use html\em_empleado_html;
 use PDO;
 use stdClass;
