@@ -9,10 +9,10 @@
 namespace gamboamartin\tg_nomina\controllers;
 
 use gamboamartin\nomina\html\nom_clasificacion_html;
-use gamboamartin\tg_nomina\html\cob_cliente_html;
-use gamboamartin\tg_nomina\html\cob_concepto_html;
-use gamboamartin\tg_nomina\html\cob_deuda_html;
-use gamboamartin\tg_nomina\html\cob_pago_html;
+use html\cob_cliente_html;
+use html\cob_concepto_html;
+use html\cob_deuda_html;
+use html\cob_pago_html;
 use gamboamartin\tg_nomina\models\cob_deuda;
 use gamboamartin\errores\errores;
 use gamboamartin\system\_ctl_base;

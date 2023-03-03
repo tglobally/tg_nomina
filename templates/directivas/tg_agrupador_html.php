@@ -1,5 +1,5 @@
 <?php
-namespace gamboamartin\tg_nomina\html;
+namespace html;
 
 use tglobally\tg_nomina\controllers\controlador_tg_agrupador;
 use gamboamartin\errores\errores;
