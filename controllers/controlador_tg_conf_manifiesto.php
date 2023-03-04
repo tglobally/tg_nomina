@@ -7,24 +7,18 @@
  *
  */
 namespace tglobally\tg_nomina\controllers;
-
-use gamboamartin\nomina\html\nom_clasificacion_html;
-use html\tg_conf_manifiesto_html;
-use tglobally\tg_nomina\models\tg_conf_manifiesto;
-
 use gamboamartin\errores\errores;
 use gamboamartin\system\_ctl_base;
 use gamboamartin\system\links_menu;
 
 use gamboamartin\template\html;
-
-use html\bn_cuenta_html;
-use html\fc_csd_html;
-use html\tg_agrupador_html;
+use html\tg_conf_manifiesto_html;
 use PDO;
 use stdClass;
+use tglobally\tg_nomina\models\tg_conf_manifiesto;
 
 class controlador_tg_conf_manifiesto extends _ctl_base {
+    public array $sidebar = array();
 
     public function __construct(PDO $link, html $html = new \gamboamartin\template_1\html(),
                                 stdClass $paths_conf = new stdClass()){
@@ -38,8 +32,7 @@ class controlador_tg_conf_manifiesto extends _ctl_base {
         $datatables->columns = array();
         $datatables->columns['tg_conf_manifiesto_id']['titulo'] = 'Id';
         $datatables->columns['tg_conf_manifiesto_codigo']['titulo'] = 'Cod';
-        $datatables->columns['tg_conf_manifiesto_descripcion']['titulo'] = 'conf manifiesto';
-
+        $datatables->columns['tg_conf_manifiesto_descripcion']['titulo'] = 'Observaciones';
 
         $datatables->filtro = array();
         $datatables->filtro[] = 'tg_conf_manifiesto.id';
@@ -47,15 +40,28 @@ class controlador_tg_conf_manifiesto extends _ctl_base {
         $datatables->filtro[] = 'tg_conf_manifiesto.descripcion';
 
 
-
         parent::__construct(html:$html_, link: $link,modelo:  $modelo, obj_link: $obj_link,
             datatables: $datatables, paths_conf: $paths_conf);
 
-        $this->titulo_lista = 'Conf manifiesto';
+        $this->titulo_lista = 'Clasificacion';
 
         $this->lista_get_data = true;
-    }
 
+        $this->sidebar['lista']['titulo'] = "Conf Manifiesto";
+        $this->sidebar['lista']['menu'] = array(
+            $this->menu_item(menu_item_titulo: "Alta", link: $this->link_alta, menu_seccion_active: true,
+                menu_lateral_active: true));
+
+        $this->sidebar['alta']['titulo'] = "Alta Conf Manifiesto";
+        $this->sidebar['alta']['stepper_active'] = true;
+        $this->sidebar['alta']['menu'] = array(
+            $this->menu_item(menu_item_titulo: "Alta", link: $this->link_alta, menu_lateral_active: true));
+
+        $this->sidebar['modifica']['titulo'] = "Modifica Conf Manifiesto";
+        $this->sidebar['modifica']['stepper_active'] = true;
+        $this->sidebar['modifica']['menu'] = array(
+            $this->menu_item(menu_item_titulo: "Modifica", link: $this->link_modifica, menu_lateral_active: true));
+    }
 
     public function alta(bool $header, bool $ws = false): array|string
     {
@@ -66,29 +72,8 @@ class controlador_tg_conf_manifiesto extends _ctl_base {
                 mensaje: 'Error al inicializar alta',data:  $r_alta, header: $header,ws:  $ws);
         }
 
-        $keys_selects = $this->key_select(cols:12, con_registros: true,filtro:  array(), key: 'tg_agrupador_id',
-            keys_selects: array(), id_selected: -1, label: 'Agrupador');
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al maquetar key_selects',data:  $keys_selects, header: $header,ws:  $ws);
-        }
-
-
-        $keys_selects = $this->key_select(cols:12, con_registros: true,filtro:  array(), key: 'nom_clasificación_id',
-            keys_selects: $keys_selects, id_selected: -1, label: 'Clasificacion');
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al maquetar key_selects',data:  $keys_selects, header: $header,ws:  $ws);
-        }
-
-        $keys_selects = $this->key_select(cols:12, con_registros: true,filtro:  array(), key: 'fc_csd_id',
-            keys_selects: $keys_selects, id_selected: -1, label: 'CSD');
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al maquetar key_selects',data:  $keys_selects, header: $header,ws:  $ws);
-        }
-
-
         $keys_selects['descripcion'] = new stdClass();
         $keys_selects['descripcion']->cols = 6;
-
 
         $inputs = $this->inputs(keys_selects: $keys_selects);
         if(errores::$error){
@@ -96,22 +81,17 @@ class controlador_tg_conf_manifiesto extends _ctl_base {
                 mensaje: 'Error al obtener inputs',data:  $inputs, header: $header,ws:  $ws);
         }
 
-
-
         return $r_alta;
     }
 
     protected function campos_view(): array
     {
         $keys = new stdClass();
-        $keys->inputs = array('codigo','descripcion','monto');
+        $keys->inputs = array('id','codigo','descripcion');
         $keys->selects = array();
         $keys->fechas = array();
 
         $init_data = array();
-        $init_data['tg_agrupador'] = "gamboamartin\\tg_nomina";
-        $init_data['nom_clasificación'] = "gamboamartin\\nomina";
-        $init_data['fc_csd'] = "gamboamartin\\facturacion";
         $campos_view = $this->campos_view_base(init_data: $init_data,keys:  $keys);
 
         if(errores::$error){
@@ -124,37 +104,8 @@ class controlador_tg_conf_manifiesto extends _ctl_base {
 
     protected function inputs_children(stdClass $registro): stdClass|array
     {
-        $select_tg_agrupador_id = (new tg_agrupador_html(html: $this->html_base))->select_tg_agrupador_id(
-            cols:6,con_registros: true,id_selected:  -1,link:  $this->link);
-
-        if(errores::$error){
-            return $this->errores->error(
-                mensaje: 'Error al obtener select_tg_agrupador_id',data:  $select_tg_agrupador_id);
-        }
-        $select_nom_clasificacion_id = (new nom_clasificacion_html(html: $this->html_base))->select_nom_clasificacion_id(
-            cols:12,con_registros: true,id_selected:  -1,link:  $this->link);
-
-        if(errores::$error){
-            return $this->errores->error(
-                mensaje: 'Error al obtener $elect_nom_clasificacion_id',data:  $select_nom_clasificacion_id);
-        }
-
-        $select_fc_csd_id = (new fc_csd_html(html: $this->html_base))->select_fc_csd_id(
-            cols:6,con_registros: true,id_selected:  -1,link:  $this->link);
-
-        if(errores::$error){
-            return $this->errores->error(
-                mensaje: 'Error al obtener select_cob_concepto_id',data:  $select_fc_csd_id);
-        }
-
-
         $this->inputs = new stdClass();
         $this->inputs->select = new stdClass();
-        $this->inputs->select->tg_agrupador_id = $select_tg_agrupador_id;
-        $this->inputs->select->nom_clasificacion_id = $select_nom_clasificacion_id;
-        $this->inputs->select->fc_csd_id = $select_fc_csd_id;
-
-
         return $this->inputs;
     }
 
@@ -162,13 +113,21 @@ class controlador_tg_conf_manifiesto extends _ctl_base {
     protected function key_selects_txt(array $keys_selects): array
     {
 
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 12,key: 'id', keys_selects:$keys_selects, place_holder: 'Id');
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects',data:  $keys_selects);
+        }
+
         $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'codigo', keys_selects: $keys_selects, place_holder: 'Cod');
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
         }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6,key: 'descripcion', keys_selects:$keys_selects, place_holder: 'Observaciones');
         if(errores::$error){
             return $this->errores->error(mensaje: 'Error al maquetar key_selects',data:  $keys_selects);
         }
+
         return $keys_selects;
     }
 
@@ -181,39 +140,32 @@ class controlador_tg_conf_manifiesto extends _ctl_base {
                 mensaje: 'Error al generar salida de template',data:  $r_modifica,header: $header,ws: $ws);
         }
 
-        $keys_selects = $this->key_select(cols:12, con_registros: true,filtro:  array(), key: 'tg_agrupador_id',
-            keys_selects: array(), id_selected: $this->registro['tg_agrupador_id'], label: 'Agrupador');
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al maquetar key_selects',data:  $keys_selects, header: $header,ws:  $ws);
-        }
-
-        $keys_selects = $this->key_select(cols:12, con_registros: true,filtro:  array(), key: 'nom_clasificación_id',
-            keys_selects: $keys_selects, id_selected: $this->registro['nom_clasificación_id'], label: 'Clasificacion');
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al maquetar key_selects',data:  $keys_selects, header: $header,ws:  $ws);
-        }
-
-        $keys_selects = $this->key_select(cols:12, con_registros: true,filtro:  array(), key: 'fc_csd_id',
-            keys_selects: $keys_selects, id_selected: $this->registro['fc_csd_id'], label: 'Facturacion');
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al maquetar key_selects',data:  $keys_selects, header: $header,ws:  $ws);
-        }
-
         $keys_selects['descripcion'] = new stdClass();
         $keys_selects['descripcion']->cols = 6;
 
         $keys_selects['codigo'] = new stdClass();
         $keys_selects['codigo']->disabled = true;
 
+
         $base = $this->base_upd(keys_selects: $keys_selects, params: array(),params_ajustados: array());
         if(errores::$error){
             return $this->retorno_error(mensaje: 'Error al integrar base',data:  $base, header: $header,ws:  $ws);
         }
 
-
-
-
         return $r_modifica;
     }
+
+    public function menu_item(string $menu_item_titulo, string $link, bool $menu_seccion_active = false, bool $menu_lateral_active = false): array
+    {
+        $menu_item = array();
+        $menu_item['menu_item'] = $menu_item_titulo;
+        $menu_item['menu_seccion_active'] = $menu_seccion_active;
+        $menu_item['link'] = $link;
+        $menu_item['menu_lateral_active'] = $menu_lateral_active;
+
+        return $menu_item;
+    }
+
+
 
 }

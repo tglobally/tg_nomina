@@ -1,4 +1,4 @@
-<?php /** @var \tglobally\tg_nomina\controllers\controlador_tg_conf_provision $controlador */ ?>
+<?php /** @var \tglobally\tg_nomina\controllers\controlador_tg_conf_manifiesto $controlador */ ?>
 
 <?php (new \tglobally\template_tg\template())->sidebar($controlador); ?>
 
