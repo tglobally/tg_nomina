@@ -10,13 +10,11 @@
         <div class="  form-main" id="form">
             <form method="post" action="<?php echo $controlador->link_modifica_bd;?>" class="form-additional">
 
-                <?php echo $controlador->inputs->nom_conf_empleado_id; ?>
-                <?php echo $controlador->inputs->tg_tipo_provision_id; ?>
                 <?php echo $controlador->inputs->codigo; ?>
                 <?php echo $controlador->inputs->descripcion; ?>
-                <?php echo $controlador->inputs->monto; ?>
-                <?php echo $controlador->inputs->fecha_inicio; ?>
-                <?php echo $controlador->inputs->fecha_fin; ?>
+                <?php echo $controlador->inputs->fc_csd_id; ?>
+                <?php echo $controlador->inputs->tg_agrupador_id; ?>
+                <?php echo $controlador->inputs->nom_clasificación_id; ?>
 
                 <div class="buttons col-md-12">
                     <div class="col-md-6">

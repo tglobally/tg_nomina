@@ -10,9 +10,11 @@
         <div class="  form-main" id="form">
             <form method="post" action="<?php echo $controlador->link_alta_bd;?>" class="form-additional">
 
-                <?php echo $controlador->inputs->fc_csd_id; ?>
                 <?php echo $controlador->inputs->codigo; ?>
                 <?php echo $controlador->inputs->descripcion; ?>
+                <?php echo $controlador->inputs->fc_csd_id; ?>
+                <?php echo $controlador->inputs->tg_agrupador_id; ?>
+                <?php echo $controlador->inputs->nom_clasificación_id; ?>
 
                 <div class="buttons col-md-12">
                     <div class="col-md-6">
