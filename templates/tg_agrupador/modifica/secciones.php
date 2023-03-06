@@ -6,12 +6,8 @@
             <img src="<?php echo (new views())->url_assets.'img/stepper/1.svg'?>" class="img-seccion">
         </div>
         <div class="col-md-8">
-            <h3>Modifica Manifiesto</h3>
+            <h3>Modifica Layout</h3>
             <?php include "templates/tg_agrupador/_base/buttons/1.azul.modifica.php"; ?>
-            <hr class="hr-menu-lateral">
-            <?php include "templates/tg_agrupador/_base/links/sube_manifiesto.php"; ?>
-            <hr class="hr-menu-lateral">
-            <?php include "templates/tg_agrupador/_base/links/periodo.php"; ?>
         </div>
     </div>
 </div>

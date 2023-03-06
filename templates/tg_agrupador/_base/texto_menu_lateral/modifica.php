@@ -1,1 +1,1 @@
-<span class="texto-menu-lateral">Modifica Manifiesto</span>
+<span class="texto-menu-lateral">Modifica Agrupador</span>
