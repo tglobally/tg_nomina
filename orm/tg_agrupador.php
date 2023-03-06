@@ -44,17 +44,17 @@ class tg_agrupador extends modelo{
         return $r_alta_bd;
     }
 
-    public function obten_tg_agrupador_id(string $layout){
-        $filtro_lay['tg_agrupador.descripcion'] = $layout;
-        $tg_layout = (new tg_layout(link: $this->link))->filtro_and(filtro: $filtro_lay);
+    public function obten_tg_agrupador_id(string $agrupador){
+        $filtro_agr['tg_agrupador.descripcion'] = $agrupador;
+        $tg_agrupador = (new tg_agrupador(link: $this->link))->filtro_and(filtro: $filtro_agr);
         if(errores::$error){
-            return $this->error->error(mensaje: 'Error obtener clasificacor layout',data:  $tg_layout);
+            return $this->error->error(mensaje: 'Error obtener clasificacor agrupador',data:  $tg_agrupador);
         }
 
-        if($tg_layout->n_registros <= 0){
-            return $this->error->error(mensaje: 'Error no existe configuracion layout',data:  $tg_layout);
+        if($tg_agrupador->n_registros <= 0){
+            return $this->error->error(mensaje: 'Error no existe configuracion agrupador',data:  $tg_agrupador);
         }
 
-        return $tg_layout->registros[0]['tg_agrupador_id'];
+        return $tg_agrupador->registros[0]['tg_agrupador_id'];
     }
 }
