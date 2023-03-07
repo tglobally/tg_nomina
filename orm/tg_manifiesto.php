@@ -19,7 +19,7 @@ class tg_manifiesto extends _modelo_parent{
 
     public function __construct(PDO $link){
         $tabla = 'tg_manifiesto';
-        $columnas = array($tabla=>false, 'fc_csd'=>$tabla,'tg_tipo_servicio' =>$tabla,'tg_sucursal_alianza'=>$tabla,
+        $columnas = array($tabla=>false, 'tg_tipo_servicio' =>$tabla,'tg_sucursal_alianza'=>$tabla,
             'org_sucursal'=>$tabla, 'com_sucursal'=>'tg_sucursal_alianza','tg_cte_alianza'=>'tg_sucursal_alianza',
             'nom_conf_nomina'=>'tg_tipo_servicio');
         $campos_obligatorios = array('descripcion','codigo','descripcion_select','alias','codigo_bis',
@@ -29,8 +29,8 @@ class tg_manifiesto extends _modelo_parent{
         $campos_view['com_sucursal_id']['model'] = (new com_sucursal($link));
         $campos_view['tg_cte_alianza_id']['type'] = 'selects';
         $campos_view['tg_cte_alianza_id']['model'] = (new tg_cte_alianza($link));
-        $campos_view['fc_csd_id']['type'] = 'selects';
-        $campos_view['fc_csd_id']['model'] = (new fc_csd($link));
+        $campos_view['org_sucursal_id']['type'] = 'selects';
+        $campos_view['org_sucursal_id']['model'] = (new org_sucursal($link));
         $campos_view['tg_tipo_servicio_id']['type'] = 'selects';
         $campos_view['tg_tipo_servicio_id']['model'] = (new tg_tipo_servicio($link));
         $campos_view['org_sucursal_id']['type'] = 'selects';
@@ -55,7 +55,7 @@ class tg_manifiesto extends _modelo_parent{
 
     public function alta_bd(array $keys_integra_ds = array('codigo', 'descripcion')): array|stdClass
     {
-        $fc_csd = (new fc_csd($this->link))->registro(registro_id: $this->registro['fc_csd_id']);
+        $fc_csd = (new org_sucursal($this->link))->registro(registro_id: $this->registro['org_sucursal_id']);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener registro empresa',data: $fc_csd);
         }
@@ -110,8 +110,8 @@ class tg_manifiesto extends _modelo_parent{
             return $this->error->error(mensaje: 'Error obtener registro patronal',data:  $im_registro_patronal);
         }
 
-        $filtro_im['fc_csd.id'] = $this->registro['fc_csd_id'];
-        $em_registro_patronal = (new em_registro_patronal($this->link))->filtro_and(filtro: $filtro_im);
+        $filtro_im['org_sucursal.id'] = $this->registro['org_sucursal_id'];
+        $em_registro_patronal = (new org_sucursal($this->link))->filtro_and(filtro: $filtro_im);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error obtener registro patronal',data:  $em_registro_patronal);
         }
