@@ -335,7 +335,7 @@ class controlador_tg_manifiesto extends _ctl_base
     protected function campos_view(): array
     {
         $keys = new stdClass();
-        $keys->inputs = array('codigo', 'descripcion', 'importe_gravado', 'importe_exento','razón social ');
+        $keys->inputs = array('descripcion', 'importe_gravado', 'importe_exento','razón social ');
         $keys->fechas = array('fecha_envio', 'fecha_pago', 'fecha_inicial_pago', 'fecha_final_pago');
         $keys->selects = array();
 
@@ -545,7 +545,7 @@ class controlador_tg_manifiesto extends _ctl_base
     {
         $keys_selects = $this->init_selects(keys_selects: array(), key: "tg_cte_alianza_id", label: "Alianza");
         $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "com_sucursal_id", label: "Sucursal");
-        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "fc_csd_id", label: "CSD", cols: 12);
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "org_sucursal", label: "Sucursal Empresa", cols: 12);
         $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "nom_percepcion_id", label: "Percepción ", cols: 12);
         $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "nom_deduccion_id", label: "Deducción  ", cols: 12);
         $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "nom_otro_pago_id", label: "Otro Pago ", cols: 12);
@@ -615,7 +615,7 @@ class controlador_tg_manifiesto extends _ctl_base
                 ws: $ws);
         }
 
-        $keys_selects['fc_csd_id']->id_selected = $this->registro['fc_csd_id'];
+        $keys_selects['org_sucursal']->id_selected = $this->registro['org_sucursal'];
         $keys_selects['tg_tipo_servicio_id']->id_selected = $this->registro['tg_tipo_servicio_id'];
 
         $base = $this->base_upd(keys_selects: $keys_selects, params: array(), params_ajustados: array());
@@ -2008,8 +2008,8 @@ class controlador_tg_manifiesto extends _ctl_base
             return $this->errores->error(mensaje: 'Error obtener manifiesto',data:  $tg_manifiesto);
         }
 
-        $filtro_im['fc_csd.id'] = $tg_manifiesto['tg_manifiesto_fc_csd_id'];
-        $im_registro_patronal = (new em_registro_patronal($this->link))->filtro_and(filtro: $filtro_im);
+        $filtro_org['org_sucursal.id'] = $tg_manifiesto['org_sucursal_id'];
+        $im_registro_patronal = (new em_registro_patronal($this->link))->filtro_and(filtro: $filtro_org);
         if(errores::$error){
             return $this->errores->error(mensaje: 'Error obtener registro patronal',data:  $im_registro_patronal);
         }
