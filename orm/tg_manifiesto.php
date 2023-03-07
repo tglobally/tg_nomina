@@ -190,6 +190,7 @@ class tg_manifiesto extends _modelo_parent{
 
     public function obten_sucursal_alianza(int $com_sucursal_id, int $tg_cte_alianza_id){
         $filtro['com_sucursal.id'] = $com_sucursal_id;
+        
         $filtro['tg_cte_alianza.id'] = $tg_cte_alianza_id;
         $tg_sucursal_alianza = (new tg_sucursal_alianza($this->link))->filtro_and(filtro: $filtro);
         if(errores::$error){
