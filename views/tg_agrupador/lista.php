@@ -1,6 +1,11 @@
-<?php /** @var \tglobally\tg_nomina\controllers\controlador_tg_agrupador $controlador */ ?>
+<?php /** @var \tglobally\tg_nomina\controllers\controlador_tg_agrupador  $controlador */ ?>
+<?php
 
-<?php (new \tglobally\template_tg\template())->sidebar($controlador); ?>
+use config\views;
+$url_icons = (new views())->url_icons;
+?>
+
+<?php include 'templates/tg_agrupador/lista/secciones.php'; ?>
 
 <div class="col-md-9 info-lista">
     <div class="col-lg-12 content">
@@ -20,4 +25,3 @@
 
     </div>
 </div>
-
