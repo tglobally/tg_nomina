@@ -68,6 +68,10 @@ class tg_manifiesto extends _modelo_parent{
 
         $this->registro['tg_sucursal_alianza_id'] = $tg_sucursal_alianza['tg_sucursal_alianza_id'];
 
+        if (!isset($this->registro['codigo'])) {
+            $this->registro['codigo'] = rand();
+        }
+
         if (!isset($this->registro['descripcion_select'])) {
             $this->registro['descripcion_select'] = $this->registro['codigo'].' ';
             $this->registro['descripcion_select'] .= $tg_sucursal_alianza['com_cliente_rfc'].' ';
