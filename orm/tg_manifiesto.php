@@ -29,8 +29,6 @@ class tg_manifiesto extends _modelo_parent{
         $campos_view['com_sucursal_id']['model'] = (new com_sucursal($link));
         $campos_view['tg_cte_alianza_id']['type'] = 'selects';
         $campos_view['tg_cte_alianza_id']['model'] = (new tg_cte_alianza($link));
-        $campos_view['org_sucursal_id']['type'] = 'selects';
-        $campos_view['org_sucursal_id']['model'] = (new org_sucursal($link));
         $campos_view['tg_tipo_servicio_id']['type'] = 'selects';
         $campos_view['tg_tipo_servicio_id']['model'] = (new tg_tipo_servicio($link));
         $campos_view['org_sucursal_id']['type'] = 'selects';
