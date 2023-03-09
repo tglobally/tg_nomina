@@ -8,7 +8,6 @@
         <div class="  form-main" id="form">
             <form method="post" action="./index.php?seccion=tg_manifiesto&accion=alta_bd&session_id=<?php echo $controlador->session_id; ?>" class="form-additional">
 
-                <?php echo $controlador->inputs->codigo; ?>
                 <?php echo $controlador->inputs->descripcion; ?>
                 <?php echo $controlador->inputs->com_sucursal_id; ?>
                 <?php echo $controlador->inputs->tg_cte_alianza_id; ?>
@@ -18,8 +17,6 @@
                 <?php echo $controlador->inputs->fecha_final_pago; ?>
                 <?php echo $controlador->inputs->fecha_envio; ?>
                 <?php echo $controlador->inputs->fecha_pago; ?>
-                <?php echo $controlador->inputs->org_sucursal_id; ?>
-
                 <div class="buttons col-md-12">
                     <div class="col-md-6">
                         <button type="submit" class="btn btn-info btn-guarda col-md-12 " name="btn_action_next" value="modifica">Guarda</button>

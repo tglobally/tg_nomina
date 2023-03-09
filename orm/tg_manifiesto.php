@@ -55,7 +55,7 @@ class tg_manifiesto extends _modelo_parent{
 
     public function alta_bd(array $keys_integra_ds = array('codigo', 'descripcion')): array|stdClass
     {
-        $fc_csd = (new org_sucursal($this->link))->registro(registro_id: $this->registro['org_sucursal_id']);
+        $fc_csd = (new fc_csd($this->link))->registro(registro_id: $this->registro['fc_csd_id']);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener registro empresa',data: $fc_csd);
         }
@@ -109,21 +109,11 @@ class tg_manifiesto extends _modelo_parent{
         }
 
         $filtro_im['fc_csd.id'] = $this->registro['fc_csd_id'];
-        $im_registro_patronal = (new im_registro_patronal($this->link))->filtro_and(filtro: $filtro_im);
-        if(errores::$error){
-            return $this->error->error(mensaje: 'Error obtener registro patronal',data:  $im_registro_patronal);
-        }
-
-        $filtro_im['org_sucursal.id'] = $this->registro['org_sucursal_id'];
-        $em_registro_patronal = (new org_sucursal($this->link))->filtro_and(filtro: $filtro_im);
+        $em_registro_patronal = (new em_registro_patronal($this->link))->filtro_and(filtro: $filtro_im);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error obtener registro patronal',data:  $em_registro_patronal);
         }
 
-        if($im_registro_patronal->n_registros < 1){
-            return $this->error->error(mensaje: 'Error no existe registro patronal relacionado',
-                data:  $im_registro_patronal);
-        }
         if($em_registro_patronal->n_registros < 1){
             return $this->error->error(mensaje: 'Error no existe registro patronal relacionado',
                 data:  $em_registro_patronal);
@@ -135,7 +125,7 @@ class tg_manifiesto extends _modelo_parent{
         $registro_periodo['fecha_inicial_pago'] = $this->registro['fecha_inicial_pago'];
         $registro_periodo['fecha_final_pago'] = $this->registro['fecha_final_pago'];
         $registro_periodo['cat_sat_periodicidad_pago_nom_id'] = $tg_tipo_servicio['cat_sat_periodicidad_pago_nom_id'];
-        $registro_periodo['im_registro_patronal_id'] = $im_registro_patronal->registros[0]['im_registro_patronal_id'];
+        $registro_periodo['im_registro_patronal_id'] = $em_registro_patronal->registros[0]['em_registro_patronal_id'];
         $registro_periodo['em_registro_patronal_id'] = $em_registro_patronal->registros[0]['em_registro_patronal_id'];
         $registro_periodo['nom_tipo_periodo_id'] = 1;
         $registro_periodo['cat_sat_tipo_nomina_id'] = $tg_tipo_servicio['cat_sat_tipo_nomina_id'];

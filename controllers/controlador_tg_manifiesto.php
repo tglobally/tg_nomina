@@ -317,7 +317,6 @@ class controlador_tg_manifiesto extends _ctl_base
             return $this->retorno_error(mensaje: 'Error al inicializar selects', data: $keys_selects, header: $header,
                 ws: $ws);
         }
-        $keys_selects['org_sucursal_id']->required = false;
         $this->row_upd->fecha_envio = date('Y-m-d');
         $this->row_upd->fecha_pago = date('Y-m-d');
         $this->row_upd->fecha_inicial_pago = date('Y-m-d');
@@ -545,11 +544,10 @@ class controlador_tg_manifiesto extends _ctl_base
     {
         $keys_selects = $this->init_selects(keys_selects: array(), key: "tg_cte_alianza_id", label: "Alianza");
         $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "com_sucursal_id", label: "Sucursal");
-        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "org_sucursal", label: "Sucursal Empresa", cols: 12);
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "fc_csd_id", label: "CSD", cols: 6);
         $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "nom_percepcion_id", label: "Percepción ", cols: 12);
         $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "nom_deduccion_id", label: "Deducción  ", cols: 12);
         $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "nom_otro_pago_id", label: "Otro Pago ", cols: 12);
-        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "org_sucursal_id", label: "Empresa Bis", cols: 12);
         return $this->init_selects(keys_selects: $keys_selects, key: "tg_tipo_servicio_id", label: "Tipo Servicio");
     }
 
@@ -614,8 +612,6 @@ class controlador_tg_manifiesto extends _ctl_base
             return $this->retorno_error(mensaje: 'Error al inicializar selects', data: $keys_selects, header: $header,
                 ws: $ws);
         }
-
-        $keys_selects['org_sucursal']->id_selected = $this->registro['org_sucursal'];
         $keys_selects['tg_tipo_servicio_id']->id_selected = $this->registro['tg_tipo_servicio_id'];
 
         $base = $this->base_upd(keys_selects: $keys_selects, params: array(), params_ajustados: array());
