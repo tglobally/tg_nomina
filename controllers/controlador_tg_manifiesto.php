@@ -1110,6 +1110,17 @@ class controlador_tg_manifiesto extends _ctl_base
                                 return $this->errores->error(mensaje: 'Error al insertar percepcion default', data: $r_alta_nom_par_percepcion);
                             }
                         }
+                        if ($empleado_excel->horas_extras_triples > 0) {
+                            $nom_par_percepcion_sep = array();
+                            $nom_par_percepcion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
+                            $nom_par_percepcion_sep['nom_percepcion_id'] = 19;
+                            $nom_par_percepcion_sep['importe_gravado'] = $empleado_excel->horas_extras_triples;
+
+                            $r_alta_nom_par_percepcion = (new nom_par_percepcion($this->link))->alta_registro(registro: $nom_par_percepcion_sep);
+                            if (errores::$error) {
+                                return $this->errores->error(mensaje: 'Error al insertar percepcion default', data: $r_alta_nom_par_percepcion);
+                            }
+                        }
                         if ($empleado_excel->gratificacion_especial > 0) {
                             $nom_par_percepcion_sep = array();
                             $nom_par_percepcion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
@@ -1349,8 +1360,8 @@ class controlador_tg_manifiesto extends _ctl_base
         }
 
         return $columna;
-    }    
-    
+    }
+
     public function obten_columna_monto_sueldo(Spreadsheet $documento){
         $totalDeHojas = $documento->getSheetCount();
 
@@ -1399,6 +1410,24 @@ class controlador_tg_manifiesto extends _ctl_base
                 foreach ($fila->getCellIterator() as $celda) {
                     $valorRaw = $celda->getValue();
                     if($valorRaw === 'HORAS EXTRAS DOBLES') {
+                        $columna = $celda->getColumn();
+                    }
+                }
+            }
+        }
+
+        return $columna;
+    }
+    public function obten_columna_horas_extras_triples(Spreadsheet $documento){
+        $totalDeHojas = $documento->getSheetCount();
+
+        $columna = -1;
+        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+            $hojaActual = $documento->getSheet($indiceHoja);
+            foreach ($hojaActual->getRowIterator() as $fila) {
+                foreach ($fila->getCellIterator() as $celda) {
+                    $valorRaw = $celda->getValue();
+                    if($valorRaw === 'HORAS EXTRAS TRIPLES') {
                         $columna = $celda->getColumn();
                     }
                 }
@@ -1502,7 +1531,7 @@ class controlador_tg_manifiesto extends _ctl_base
 
         return $columna;
     }
-    
+
     public function obten_columna_seguro_vida(Spreadsheet $documento){
         $totalDeHojas = $documento->getSheetCount();
 
@@ -1521,7 +1550,7 @@ class controlador_tg_manifiesto extends _ctl_base
 
         return $columna;
     }
-    
+
     public function obten_columna_descuentos(Spreadsheet $documento){
         $totalDeHojas = $documento->getSheetCount();
 
@@ -1735,7 +1764,7 @@ class controlador_tg_manifiesto extends _ctl_base
             return $this->errores->error(mensaje: 'Error obtener columna de monto neto',
                 data:  $columna_monto_neto);
         }
-        
+
         $columna_monto_sueldo = $this->obten_columna_monto_sueldo(documento: $documento);
         if(errores::$error){
             return $this->errores->error(mensaje: 'Error obtener columna de monto neto',
@@ -1758,6 +1787,12 @@ class controlador_tg_manifiesto extends _ctl_base
         if(errores::$error){
             return $this->errores->error(mensaje: 'Error obtener columna de horas_extras_dobles',
                 data:  $columna_horas_extras_dobles);
+        }
+
+        $columna_horas_extras_triples = $this->obten_columna_horas_extras_triples(documento: $documento);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error obtener columna de horas_extras_triples',
+                data:  $columna_horas_extras_triples);
         }
 
         $columna_gratificacion_especial = $this->obten_columna_gratificacion_especial(documento: $documento);
@@ -1841,6 +1876,7 @@ class controlador_tg_manifiesto extends _ctl_base
                 $reg->seguro_vida = 0;
                 $reg->descuentos = 0;
                 $reg->horas_extras_dobles = 0;
+                $reg->horas_extras_triples = 0;
                 $reg->gratificacion_especial = 0;
                 $reg->premio_puntualidad = 0;
                 $reg->premio_asistencia = 0;
@@ -1905,7 +1941,7 @@ class controlador_tg_manifiesto extends _ctl_base
                         $reg->monto_neto = 0;
                     }
                 }
-                
+
                 if ($columna_monto_sueldo !== -1) {
                     $monto_sueldo = $hojaActual->getCell($columna_monto_sueldo . $registro->fila)->getCalculatedValue();
                     $reg->monto_sueldo = trim((string)$monto_sueldo);
@@ -1953,6 +1989,14 @@ class controlador_tg_manifiesto extends _ctl_base
 
                     if (!is_numeric($reg->horas_extras_dobles)) {
                         $reg->horas_extras_dobles = 0;
+                    }
+                }
+                if ($columna_horas_extras_triples !== -1) {
+                    $horas_extras_triples = $hojaActual->getCell($columna_horas_extras_triples . $registro->fila)->getCalculatedValue();
+                    $reg->horas_extras_triples = trim((string)$horas_extras_triples);
+
+                    if (!is_numeric($reg->horas_extras_triples)) {
+                        $reg->horas_extras_triples = 0;
                     }
                 }
                 if ($columna_gratificacion_especial !== -1) {
