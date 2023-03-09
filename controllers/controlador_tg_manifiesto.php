@@ -2048,7 +2048,7 @@ class controlador_tg_manifiesto extends _ctl_base
             return $this->errores->error(mensaje: 'Error obtener manifiesto',data:  $tg_manifiesto);
         }
 
-        $filtro_org['fc_csd.id'] = $tg_manifiesto['fc_csd_id'];
+        $filtro_org['fc_csd.id'] = $tg_manifiesto['tg_manifiesto_fc_csd_id'];
         $im_registro_patronal = (new em_registro_patronal($this->link))->filtro_and(filtro: $filtro_org);
         if(errores::$error){
             return $this->errores->error(mensaje: 'Error obtener registro patronal',data:  $im_registro_patronal);

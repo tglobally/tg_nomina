@@ -19,7 +19,7 @@ class tg_manifiesto extends _modelo_parent{
 
     public function __construct(PDO $link){
         $tabla = 'tg_manifiesto';
-        $columnas = array($tabla=>false, 'tg_tipo_servicio' =>$tabla,'tg_sucursal_alianza'=>$tabla,
+        $columnas = array($tabla=>false, 'tg_tipo_servicio' =>$tabla,'tg_sucursal_alianza'=>$tabla,'fc_csd'=>$tabla,
             'org_sucursal'=>$tabla, 'com_sucursal'=>'tg_sucursal_alianza','tg_cte_alianza'=>'tg_sucursal_alianza',
             'nom_conf_nomina'=>'tg_tipo_servicio');
         $campos_obligatorios = array('descripcion','codigo','descripcion_select','alias','codigo_bis',
