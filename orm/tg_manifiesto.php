@@ -53,10 +53,17 @@ class tg_manifiesto extends _modelo_parent{
 
     public function alta_bd(array $keys_integra_ds = array('codigo', 'descripcion')): array|stdClass
     {
-        $fc_csd = (new fc_csd($this->link))->registro(registro_id: $this->registro['fc_csd_id']);
+        $filtro_csd['org_sucursal.id'] = $this->registro['org_sucursal_id'];
+        $fc_csd = (new fc_csd($this->link))->filtro_and(filtro: $filtro_csd);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener registro empresa',data: $fc_csd);
         }
+        if($fc_csd->n_registros < 1){
+            return $this->error->error(mensaje: 'Error no existe registro de fc_csd relacionado',
+                data: $fc_csd);
+        }
+
+        $fc_csd = $fc_csd->registros[0];
 
         $tg_sucursal_alianza = $this->obten_sucursal_alianza(com_sucursal_id: $this->registro['com_sucursal_id'],
             tg_cte_alianza_id: $this->registro['tg_cte_alianza_id']);
@@ -86,6 +93,10 @@ class tg_manifiesto extends _modelo_parent{
             $alias .= $fc_csd['org_empresa_rfc'];
 
             $this->registro['alias'] = strtoupper($alias);
+        }
+
+        if(!isset($this->registro['fc_csd_id']) || $this->registro['fc_csd_id'] === ''){
+            $this->registro['fc_csd_id'] = $fc_csd['fc_csd_id'];
         }
 
         if(isset($this->registro['com_sucursal_id'])){

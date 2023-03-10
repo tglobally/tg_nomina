@@ -10,7 +10,7 @@
                 <?php echo $controlador->inputs->descripcion; ?>
                 <?php echo $controlador->inputs->com_sucursal_id; ?>
                 <?php echo $controlador->inputs->tg_cte_alianza_id; ?>
-                <?php echo $controlador->inputs->fc_csd_id; ?>
+                <?php echo $controlador->inputs->org_sucursal_id; ?>
                 <?php echo $controlador->inputs->tg_tipo_servicio_id; ?>
                 <?php echo $controlador->inputs->fecha_inicial_pago; ?>
                 <?php echo $controlador->inputs->fecha_final_pago; ?>

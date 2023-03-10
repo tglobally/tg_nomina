@@ -543,8 +543,9 @@ class controlador_tg_manifiesto extends _ctl_base
     public function init_selects_inputs(): array
     {
         $keys_selects = $this->init_selects(keys_selects: array(), key: "tg_cte_alianza_id", label: "Alianza");
-        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "com_sucursal_id", label: "Sucursal");
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "com_sucursal_id", label: "Cliente");
         $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "fc_csd_id", label: "CSD", cols: 6);
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "org_sucursal_id", label: "Empresa", cols: 6);
         $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "nom_percepcion_id", label: "Percepción ", cols: 12);
         $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "nom_deduccion_id", label: "Deducción  ", cols: 12);
         $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "nom_otro_pago_id", label: "Otro Pago ", cols: 12);
@@ -675,6 +676,12 @@ class controlador_tg_manifiesto extends _ctl_base
 
     public function descarga_nomina(bool $header, bool $ws = false): array|stdClass
     {
+        $manifiesto = (new tg_manifiesto($this->link))->registro(registro_id: $this->registro_id);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al obtener manifiesto',data:  $manifiesto,
+                header: $header,ws:$ws);
+        }
+
         $nominas = (new tg_manifiesto_periodo($this->link))->nominas_by_manifiesto(tg_manifiesto_id: $this->registro_id);
         if(errores::$error){
             return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo',data:  $nominas,
@@ -763,8 +770,9 @@ class controlador_tg_manifiesto extends _ctl_base
         $keys_hojas['pagos']->keys = $keys_pagos;
         $keys_hojas['pagos']->registros = $registros_pagos_excel;
 
-        $xls = $exportador->genera_xls(header: $header,name: "reporte nomina",nombre_hojas: array("nominas",
-            "provisionado", "pagos"), keys_hojas: $keys_hojas, path_base: $this->path_base);
+        $xls = $exportador->genera_xls(header: $header,name: $manifiesto["tg_manifiesto_descripcion"],
+            nombre_hojas: array("nominas", "provisionado", "pagos"), keys_hojas: $keys_hojas,
+            path_base: $this->path_base);
         if(errores::$error){
             return $this->retorno_error(mensaje: 'Error al generar xls',data:  $xls, header: $header,
                 ws:$ws);
