@@ -7,7 +7,6 @@
 
         <div class="  form-main" id="form">
             <form method="post" action="./index.php?seccion=tg_manifiesto&accion=modifica_bd&session_id=<?php echo $controlador->session_id; ?>&registro_id=<?php echo $controlador->registro_id; ?>" class="form-additional">
-                <?php echo $controlador->inputs->descripcion; ?>
                 <?php echo $controlador->inputs->com_sucursal_id; ?>
                 <?php echo $controlador->inputs->tg_cte_alianza_id; ?>
                 <?php echo $controlador->inputs->org_sucursal_id; ?>
