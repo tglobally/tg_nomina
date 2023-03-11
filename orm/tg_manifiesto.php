@@ -65,8 +65,7 @@ class tg_manifiesto extends _modelo_parent{
 
         $fc_csd = $fc_csd->registros[0];
 
-        $tg_sucursal_alianza = $this->obten_sucursal_alianza(com_sucursal_id: $this->registro['com_sucursal_id'],
-            tg_cte_alianza_id: $this->registro['tg_cte_alianza_id']);
+        $tg_sucursal_alianza = $this->obten_sucursal_alianza(com_sucursal_id: $this->registro['com_sucursal_id']);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener registro sucursal alianza',data: $tg_sucursal_alianza);
         }
@@ -162,10 +161,8 @@ class tg_manifiesto extends _modelo_parent{
     }
 
 
-    public function obten_sucursal_alianza(int $com_sucursal_id, int $tg_cte_alianza_id){
+    public function obten_sucursal_alianza(int $com_sucursal_id){
         $filtro['com_sucursal.id'] = $com_sucursal_id;
-        
-        $filtro['tg_cte_alianza.id'] = $tg_cte_alianza_id;
         $tg_sucursal_alianza = (new tg_sucursal_alianza($this->link))->filtro_and(filtro: $filtro);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener configuracion tg_sucursal_alianza',
@@ -182,8 +179,7 @@ class tg_manifiesto extends _modelo_parent{
 
     public function modifica_bd(array $registro, int $id, bool $reactiva = false, array $keys_integra_ds = array('codigo', 'descripcion')): array|stdClass
     {
-        $tg_sucursal_alianza = $this->obten_sucursal_alianza(com_sucursal_id: $registro['com_sucursal_id'],
-            tg_cte_alianza_id: $registro['tg_cte_alianza_id']);
+        $tg_sucursal_alianza = $this->obten_sucursal_alianza(com_sucursal_id: $registro['com_sucursal_id']);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener registro empresa',data: $tg_sucursal_alianza);
         }
