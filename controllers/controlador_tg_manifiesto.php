@@ -613,7 +613,11 @@ class controlador_tg_manifiesto extends _ctl_base
             return $this->retorno_error(mensaje: 'Error al inicializar selects', data: $keys_selects, header: $header,
                 ws: $ws);
         }
+
         $keys_selects['tg_tipo_servicio_id']->id_selected = $this->registro['tg_tipo_servicio_id'];
+        $keys_selects['com_sucursal_id']->id_selected = $this->registro['com_sucursal_id'];
+        $keys_selects['org_sucursal_id']->id_selected = $this->registro['org_sucursal_id'];
+        $keys_selects['tg_cte_alianza_id']->id_selected = $this->registro['tg_cte_alianza_id'];
 
         $base = $this->base_upd(keys_selects: $keys_selects, params: array(), params_ajustados: array());
         if (errores::$error) {

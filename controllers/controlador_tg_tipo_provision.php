@@ -172,7 +172,7 @@ class controlador_tg_tipo_provision extends _ctl_base
 
         $keys_selects['nom_percepcion_id']->id_selected = $this->registro['nom_percepcion_id'];
 
-        $base = $this->base_upd(keys_selects: $keys_selects, not_actions: array(), params: array(), params_ajustados: array());
+        $base = $this->base_upd(keys_selects: $keys_selects, params: array(), params_ajustados: array());
         if (errores::$error) {
             return $this->retorno_error(mensaje: 'Error al integrar base', data: $base, header: $header, ws: $ws);
         }

@@ -12,7 +12,7 @@ use stdClass;
 
 class controlador_tg_manifiesto_otro_pago extends system {
 
-    public array $keys_selects = array();
+    public array|stdClass $keys_selects = array();
 
     public function __construct(PDO $link, html $html = new \gamboamartin\template_1\html(),
                                 stdClass $paths_conf = new stdClass()){
@@ -75,7 +75,7 @@ class controlador_tg_manifiesto_otro_pago extends system {
     }
 
     public function modifica(bool $header, bool $ws = false, string $breadcrumbs = '', bool $aplica_form = true,
-                             bool $muestra_btn = true): array|string
+                             bool $muestra_btn = true): array
     {
         $base = $this->base();
         if(errores::$error){
