@@ -1,0 +1,1 @@
+<img src="img/7.gris.svg" class="numero">
