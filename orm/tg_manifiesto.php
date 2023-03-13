@@ -73,13 +73,27 @@ class tg_manifiesto extends _modelo_parent{
         $this->registro['tg_sucursal_alianza_id'] = $tg_sucursal_alianza['tg_sucursal_alianza_id'];
 
         if (!isset($this->registro['codigo'])) {
-            $consecutivo = $this->obten_ultimo_registro();
+            $filtro_cod['tg_manifiesto.tg_agrupador_id'] = $this->registro['tg_agrupador_id'];
+            $filtro_cod['tg_manifiesto.tg_sucursal_alianza_id'] = $this->registro['tg_sucursal_alianza_id'];
+
+            $ultimo_registro_man = $this->filtro_and(filtro: $filtro_cod,order: array($this->tabla.'.id'=>'DESC'));
             if(errores::$error){
-                return $this->error->error(mensaje: 'Error al obtener ultimo id',data: $consecutivo);
+                return $this->error->error(mensaje: 'Error al obtener ultimo registro manifiesto',
+                    data: $ultimo_registro_man);
             }
 
+            $consecutivo = 1;
             $this->registro['codigo'] = $fc_csd['org_empresa_codigo'].$tg_sucursal_alianza['com_cliente_codigo'];
             $this->registro['codigo'] .= $consecutivo;
+
+            if((int)$ultimo_registro_man['n_registros'] > 0){
+                $buscar = array($fc_csd['org_empresa_codigo'], $tg_sucursal_alianza['com_cliente_codigo']);
+                $consecutivo = str_replace($buscar,"",$ultimo_registro_man->registros[0][$this->tabla.'_codigo']);
+                $consecutivo = $consecutivo + 1;
+
+                $this->registro['codigo'] = $fc_csd['org_empresa_codigo'].$tg_sucursal_alianza['com_cliente_codigo'];
+                $this->registro['codigo'] .= $consecutivo;
+            }
         }
 
         if (!isset($this->registro['descripcion'])) {
