@@ -7,17 +7,17 @@
 
 
         <div class="  form-main" id="form">
-            <form method="post" action="./index.php?seccion=nom_conf_nomina&accion=alta_bd&session_id=<?php echo $controlador->session_id; ?>" class="form-additional">
+            <form method="post" action="./index.php?seccion=nom_conf_nomina&accion=modifica_bd&session_id=<?php echo $controlador->session_id; ?>&registro_id=<?php echo $controlador->registro_id; ?>" class="form-additional">
                 <?php echo $controlador->inputs->cat_sat_tipo_nomina_id; ?>
                 <?php echo $controlador->inputs->cat_sat_periodicidad_pago_nom_id; ?>
                 <?php echo $controlador->inputs->nom_conf_factura_id; ?>
                 <?php echo $controlador->inputs->descripcion; ?>
                 <div class="buttons col-md-12">
                     <div class="col-md-6">
-                        <button type="submit" class="btn btn-info btn-guarda col-md-12 " >Guarda</button>
+                        <button type="submit" class="btn btn-info btn-guarda col-md-12 " value="modifica">Guarda</button>
                     </div>
-                    <div class="col-md-6">
-                        <a href="index.php?seccion=<?php echo $controlador->tabla; ?>&accion=lista&session_id=<?php echo $controlador->session_id; ?>"  class="btn btn-info btn-guarda col-md-12 ">Regresar</a>
+                    <div class="col-md-6 ">
+                        <a href="index.php?seccion=nom_conf_nomina&accion=lista&session_id=<?php echo $controlador->session_id; ?>&registro_id=<?php echo $controlador->registro_id; ?>"  class="btn btn-info btn-guarda col-md-12 ">Lista</a>
                     </div>
                 </div>
             </form>

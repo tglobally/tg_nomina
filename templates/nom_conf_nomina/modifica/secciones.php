@@ -1,4 +1,4 @@
-<?php /** @var \tglobally\tg_nomina\controllers\controlador_nom_conf_nomina $controlador */ ?>
+<?php /** @var \tglobally\tg_nomina\controllers\controlador_nom_conf_nomina $controlador */?>
 <?php use config\views; ?>
 
 <div class="col-md-3 secciones">
@@ -8,9 +8,8 @@
             <img src="<?php echo (new views())->url_assets.'img/stepper/1.svg'?>" class="img-seccion">
         </div>
         <div class="col-md-8">
-            <h3>Alta Conf Nomina</h3>
+            <h3>Modifica Conf Nomina</h3>
             <?php include "templates/nom_conf_nomina/_base/buttons/1.azul.php"; ?>
         </div>
     </div>
 </div>
-
