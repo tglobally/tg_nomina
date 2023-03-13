@@ -2,14 +2,12 @@
 namespace tglobally\tg_nomina\models;
 
 use base\orm\_modelo_parent;
-use base\orm\modelo;
 
 use gamboamartin\comercial\models\com_sucursal;
 use gamboamartin\empleado\models\em_registro_patronal;
 use gamboamartin\errores\errores;
 
 use gamboamartin\facturacion\models\fc_csd;
-use gamboamartin\im_registro_patronal\models\im_registro_patronal;
 use gamboamartin\nomina\models\nom_periodo;
 use gamboamartin\organigrama\models\org_sucursal;
 use PDO;
@@ -20,8 +18,8 @@ class tg_manifiesto extends _modelo_parent{
     public function __construct(PDO $link){
         $tabla = 'tg_manifiesto';
         $columnas = array($tabla=>false, 'tg_tipo_servicio' =>$tabla,'tg_sucursal_alianza'=>$tabla,'fc_csd'=>$tabla,
-            'org_sucursal'=>$tabla, 'com_sucursal'=>'tg_sucursal_alianza','tg_cte_alianza'=>'tg_sucursal_alianza',
-            'nom_conf_nomina'=>'tg_tipo_servicio');
+            'org_sucursal'=>$tabla, 'tg_agrupador'=>$tabla, 'com_sucursal'=>'tg_sucursal_alianza',
+            'tg_cte_alianza'=>'tg_sucursal_alianza', 'nom_conf_nomina'=>'tg_tipo_servicio');
         $campos_obligatorios = array('descripcion','codigo','descripcion_select','alias','codigo_bis',
             'fc_csd_id','tg_tipo_servicio_id','fecha_envio','fecha_pago');
 
@@ -33,6 +31,8 @@ class tg_manifiesto extends _modelo_parent{
         $campos_view['tg_tipo_servicio_id']['model'] = (new tg_tipo_servicio($link));
         $campos_view['org_sucursal_id']['type'] = 'selects';
         $campos_view['org_sucursal_id']['model'] = (new org_sucursal($link));
+        $campos_view['tg_agrupador_id']['type'] = 'selects';
+        $campos_view['tg_agrupador_id']['model'] = (new tg_agrupador($link));
         $campos_view['fecha_envio']['type'] = 'dates';
         $campos_view['fecha_pago']['type'] = 'dates';
         $campos_view['fecha_inicial_pago']['type'] = 'dates';
@@ -73,7 +73,13 @@ class tg_manifiesto extends _modelo_parent{
         $this->registro['tg_sucursal_alianza_id'] = $tg_sucursal_alianza['tg_sucursal_alianza_id'];
 
         if (!isset($this->registro['codigo'])) {
-            $this->registro['codigo'] = rand();
+            $consecutivo = $this->obten_ultimo_registro();
+            if(errores::$error){
+                return $this->error->error(mensaje: 'Error al obtener ultimo id',data: $consecutivo);
+            }
+
+            $this->registro['codigo'] = $fc_csd['org_empresa_codigo'].$tg_sucursal_alianza['com_cliente_codigo'];
+            $this->registro['codigo'] .= $consecutivo;
         }
 
         if (!isset($this->registro['descripcion'])) {
