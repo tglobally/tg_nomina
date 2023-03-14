@@ -14,7 +14,7 @@
                 <?php echo $controlador->inputs->descripcion; ?>
                 <?php echo $controlador->inputs->fc_csd_id; ?>
                 <?php echo $controlador->inputs->tg_agrupador_id; ?>
-                <?php echo $controlador->inputs->nom_clasificación_id; ?>
+                <?php echo $controlador->inputs->nom_clasificacion_id; ?>
 
                 <div class="buttons col-md-12">
                     <div class="col-md-6">
