@@ -10,11 +10,8 @@
         <div class="  form-main" id="form">
             <form method="post" action="<?php echo $controlador->link_alta_bd;?>" class="form-additional">
 
-                <?php echo $controlador->inputs->cob_concepto_id; ?>
-                <?php echo $controlador->inputs->cob_cliente_id; ?>
-
-                <?php echo $controlador->inputs->monto; ?>
-                <?php echo $controlador->inputs->fecha_vencimiento; ?>
+                <?php echo $controlador->inputs->codigo; ?>
+                <?php echo $controlador->inputs->descripcion; ?>
 
                 <div class="buttons col-md-12">
                     <div class="col-md-6">
