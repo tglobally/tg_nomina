@@ -695,14 +695,14 @@ class controlador_tg_manifiesto extends _ctl_base
                 header: $header,ws:$ws);
         }
 
-        $registros = array();
+        $registros_tabla_1 = array();
+        $registros_tabla_2 = array();
+
 
         foreach ($nominas as $nomina) {
 
-            $registro = [
-                $nomina['em_empleado_id'],
-                $nomina['em_empleado_nss'],
-                $nomina['em_empleado_nombre_completo'],
+            $registro_tabla_1 = [$nomina['em_empleado_id'], $nomina['em_empleado_nss'], $nomina['em_empleado_nombre_completo']];
+            $registro_tabla_2 = [
                 $nomina['cat_sat_periodicidad_pago_nom_n_dias'],
                 $nomina['em_empleado_fecha_inicio_rel_laboral'],
                 $nomina['em_empleado_fecha_inicio_rel_laboral'],
@@ -738,9 +738,19 @@ class controlador_tg_manifiesto extends _ctl_base
                 "-",
                 "-",
                 "-",
+                "-",
+                "-",
                 "-"
             ];
-            $registros[] = $registro;
+            $registros_tabla_1[] = $registro_tabla_1;
+            $registros_tabla_2[] = $registro_tabla_2;
+        }
+
+        $totales = $this->suma_totales(registros: $nominas, campo_sumar: array('em_empleado_salario_diario_integrado'));
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener totales', data: $totales);
+            print_r($error);
+            die('Error');
         }
 
         $formatter = new IntlDateFormatter('es_ES', IntlDateFormatter::LONG, IntlDateFormatter::NONE);
@@ -749,25 +759,68 @@ class controlador_tg_manifiesto extends _ctl_base
 
         $periodo = "$fecha_inicio - $fecha_final";
 
-        $tabla['detalles'] = [
+        $tabla_1['detalles'] = [
             ["titulo" => 'EMPRESA:', 'valor' => $manifiesto['org_sucursal_descripcion']],
             ["titulo" => 'CLIENTE:', 'valor' => $manifiesto['com_sucursal_descripcion']],
             ["titulo" => 'PERIODO:', 'valor' => $periodo]
         ];
-        $tabla['headers'] = ['ID REM', 'NSS', 'NOMBRE COMPLETO', 'DIAS LABORADOS', 'FECHA INGRESO', 'FECHA ANTIGÜEDAD',
-            'REGISTRO PATRONAL', 'UBICACIÓN', 'SD', 'FI', 'SDI', 'SUELDO', 'SUBSIDIO', 'COMPENSACIÓN', 'SUBSIDIO',
-            'DEVOLUCION INFONAVIT', 'PRESTACION DE LEY', 'PRIMA DOMINICAL', 'PRESTACION DE LEY', 'GRATIFICACION',
-            'DESTAJO', 'PRESTACION DE LEY', 'SEPTIMO DIA', 'DIA FESTIVO', 'GRAVADO', 'EXENTO', 'GRAVADAS', 'EXENTAS',
-            'SUMA PERCEPCION', 'BASE GRAVABLE', 'RETENCION ISR', 'RETENCION IMSS', 'INFONAVIT', 'FONACOT',
+        $tabla_1['headers'] = ['ID REM', 'NSS', 'NOMBRE COMPLETO'];
+        $tabla_1['data'] = $registros_tabla_1;
+        $tabla_1['startRow'] = 4;
+        $tabla_1['startColumn'] = "A";
+
+        $tabla_2['detalles'] = [
+            ["titulo" => 'FOLIO:', 'valor' => $manifiesto['org_sucursal_descripcion']],
+            ["titulo" => 'FECHA EMISION:', 'valor' => $manifiesto['com_sucursal_descripcion']],
+            ["titulo" => ' ', 'valor' => " "]
+        ];
+        $tabla_2['headers'] = ['DIAS LABORADOS', 'FECHA INGRESO', 'FECHA ANTIGÜEDAD',
+            'REGISTRO PATRONAL', 'UBICACIÓN', 'SD', 'FI', 'SDI', 'SUELDO', 'SUBSIDIO', 'COMPENSACIÓN', 'DEVOLUCION INFONAVIT',
+            'PRESTACION DE LEY', ' PROVISIONAL', 'PRIMA DOMINICAL', 'PRESTACION DE LEY', ' PROVISIONALES', 'GRATIFICACION',
+            'DESTAJO', 'PRESTACION DE LEY', ' PROVISIONAL', 'SEPTIMO DIA', 'DIA FESTIVO', 'GRAVADO', 'EXENTO', 'GRAVADAS',
+            'EXENTAS', 'SUMA PERCEPCION', 'BASE GRAVABLE', 'RETENCION ISR', 'RETENCION IMSS', 'INFONAVIT', 'FONACOT',
             'PENSION ALIMENTICIA', 'OTROS DESCUENTOS', 'DESCUENTO COMEDOR', 'SUMA DEDUCCION', 'NETO A PAGAR'];
-        $tabla['data'] = $registros;
-        $tabla['startRow'] = 4;
-        $tabla['startColumn'] = "A";
+        $tabla_2['data'] = $registros_tabla_2;
+        $tabla_2['startRow'] = 4;
+        $tabla_2['startColumn'] = "D";
+        $tabla_2['totales'] = [
+            ["columna" => 'L', 'valor' => $totales->em_empleado_salario_diario_integrado],
+            ["columna" => 'M', 'valor' => $totales->em_empleado_salario_diario_integrado],
+            ["columna" => 'N', 'valor' => $totales->em_empleado_salario_diario_integrado],
+            ["columna" => 'O', 'valor' => $totales->em_empleado_salario_diario_integrado],
+            ["columna" => 'P', 'valor' => $totales->em_empleado_salario_diario_integrado],
+            ["columna" => 'Q', 'valor' => $totales->em_empleado_salario_diario_integrado],
+            ["columna" => 'R', 'valor' => $totales->em_empleado_salario_diario_integrado],
+            ["columna" => 'S', 'valor' => $totales->em_empleado_salario_diario_integrado],
+            ["columna" => 'T', 'valor' => $totales->em_empleado_salario_diario_integrado],
+            ["columna" => 'U', 'valor' => $totales->em_empleado_salario_diario_integrado],
+            ["columna" => 'V', 'valor' => $totales->em_empleado_salario_diario_integrado],
+            ["columna" => 'W', 'valor' => $totales->em_empleado_salario_diario_integrado],
+            ["columna" => 'X', 'valor' => $totales->em_empleado_salario_diario_integrado],
+            ["columna" => 'Y', 'valor' => $totales->em_empleado_salario_diario_integrado],
+            ["columna" => 'Z', 'valor' => $totales->em_empleado_salario_diario_integrado],
+            ["columna" => 'AA', 'valor' => $totales->em_empleado_salario_diario_integrado],
+            ["columna" => 'AB', 'valor' => $totales->em_empleado_salario_diario_integrado],
+            ["columna" => 'AC', 'valor' => $totales->em_empleado_salario_diario_integrado],
+            ["columna" => 'AD', 'valor' => $totales->em_empleado_salario_diario_integrado],
+            ["columna" => 'AE', 'valor' => $totales->em_empleado_salario_diario_integrado],
+            ["columna" => 'AF', 'valor' => $totales->em_empleado_salario_diario_integrado],
+            ["columna" => 'AG', 'valor' => $totales->em_empleado_salario_diario_integrado],
+            ["columna" => 'AH', 'valor' => $totales->em_empleado_salario_diario_integrado],
+            ["columna" => 'AI', 'valor' => $totales->em_empleado_salario_diario_integrado],
+            ["columna" => 'AJ', 'valor' => $totales->em_empleado_salario_diario_integrado],
+            ["columna" => 'AK', 'valor' => $totales->em_empleado_salario_diario_integrado],
+            ["columna" => 'AL', 'valor' => $totales->em_empleado_salario_diario_integrado],
+            ["columna" => 'AM', 'valor' => $totales->em_empleado_salario_diario_integrado],
+            ["columna" => 'AN', 'valor' => $totales->em_empleado_salario_diario_integrado],
+            ["columna" => 'AO', 'valor' => $totales->em_empleado_salario_diario_integrado]
+        ];
 
 
-        $data["RAYA IMSS"] = [$tabla];
 
-        $name = "_REPORTE MENIFIESTO";
+        $data["RAYA IMSS"] = [$tabla_1, $tabla_2];
+
+        $name = $manifiesto['org_sucursal_descripcion']."_REPORTE MANIFIESTO";
 
         $resultado = (new exportador())->exportar_template(header: $header, path_base: $this->path_base, name: $name,
             data: $data, styles: \tglobally\tg_nomina\controllers\Reporte_Template::REPORTE_GENERAL);
@@ -784,7 +837,23 @@ class controlador_tg_manifiesto extends _ctl_base
         exit;
     }
 
+    private function suma_totales(array $registros, array $campo_sumar): stdClass
+    {
+        $totales = new stdClass();
 
+        foreach ($campo_sumar as $campo) {
+            $totales->$campo = 0.0;
+        }
+
+        foreach ($registros as $registro) {
+            foreach ($campo_sumar as $campo) {
+                $valor = $registro[$campo];
+                $totales->$campo += $valor;
+            }
+        }
+
+        return $totales;
+    }
 
     /**
      * @throws \JsonException
