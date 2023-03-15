@@ -695,6 +695,12 @@ class controlador_tg_manifiesto extends _ctl_base
                 header: $header,ws:$ws);
         }
 
+        $conceptos = (new nom_nomina($this->link))->obten_conceptos_nominas(nominas: $nominas);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo',data:  $conceptos,
+                header: $header,ws:$ws);
+        }
+
         $registros_tabla_1 = array();
         $registros_tabla_2 = array();
 
@@ -770,8 +776,8 @@ class controlador_tg_manifiesto extends _ctl_base
         $tabla_1['startColumn'] = "A";
 
         $tabla_2['detalles'] = [
-            ["titulo" => 'FOLIO:', 'valor' => $manifiesto['org_sucursal_descripcion']],
-            ["titulo" => 'FECHA EMISION:', 'valor' => $manifiesto['com_sucursal_descripcion']],
+            ["titulo" => 'FOLIO:', 'valor' => $manifiesto['tg_manifiesto_codigo']],
+            ["titulo" => 'FECHA EMISION:', 'valor' => date("Y-m-d")],
             ["titulo" => ' ', 'valor' => " "]
         ];
         $tabla_2['headers'] = ['DIAS LABORADOS', 'FECHA INGRESO', 'FECHA ANTIGÜEDAD',

@@ -14,6 +14,12 @@ class Reporte_Template
                 'vertical' => 'center',
             ]
         ],
+        "C" => [
+            'alignment' => [
+                'horizontal' => 'left',
+                'vertical' => 'center',
+            ]
+        ],
         "I:AO" => [
             'numberFormat' => [
                 'formatCode' => "$#,##0.00;-$#,##0.00",
