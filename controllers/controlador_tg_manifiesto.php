@@ -22,13 +22,16 @@ use gamboamartin\nomina\models\nom_par_otro_pago;
 use gamboamartin\nomina\models\nom_par_percepcion;
 use gamboamartin\nomina\models\nom_percepcion;
 use gamboamartin\nomina\models\nom_periodo;
+use gamboamartin\plugins\exportador;
 use gamboamartin\system\_ctl_base;
 use gamboamartin\system\actions;
 use gamboamartin\system\links_menu;
 use gamboamartin\template\html;
 use html\tg_manifiesto_html;
 use gamboamartin\documento\models\doc_documento;
+use IntlDateFormatter;
 use PhpOffice\PhpSpreadsheet\Exception;
+use tglobally\tg_empleado\controllers\Reporte_Template;
 use tglobally\tg_nomina\models\em_cuenta_bancaria;
 use tglobally\tg_nomina\models\nom_nomina;
 use tglobally\tg_nomina\models\tg_manifiesto;
@@ -692,110 +695,93 @@ class controlador_tg_manifiesto extends _ctl_base
                 header: $header,ws:$ws);
         }
 
-        $conceptos = (new nom_nomina($this->link))->obten_conceptos_nominas(nominas: $nominas);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo',data:  $conceptos,
-                header: $header,ws:$ws);
-        }
-
-        $exportador = (new exportador_eliminar(num_hojas: 3));
-        $registros_xls = array();
-        $registros_provisiones = array();
-
-        foreach ($nominas as $nomina){
-            $row = (new nom_nomina($this->link))->maqueta_registros_excel(nom_nomina_id: $nomina['nom_nomina_id'],
-                conceptos_nomina: $conceptos);
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al maquetar datos de la nomina',data:  $row,
-                    header: $header,ws:$ws);
-            }
-
-            $provisiones = (new tg_provision($this->link))->maqueta_excel_provisiones(
-                nom_nomina_id: $nomina['nom_nomina_id']);
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al maquetar provisiones de la nomina',data:  $provisiones,
-                    header: $header,ws:$ws);
-            }
-
-            $pagos = (new em_cuenta_bancaria($this->link))->maqueta_excel_pagos(data_general: $row);
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al maquetar pagos de la nomina',data:  $pagos,
-                    header: $header,ws:$ws);
-            }
-
-            $registros_xls[] = $row;
-            $registros_provisiones[] = $provisiones;
-            $registros_pagos[] = $pagos;
-        }
-
-        $keys = array();
-        $keys_provisiones = array();
-        $keys_pagos = array();
-
-        foreach (array_keys($registros_xls[0]) as $key) {
-            $keys[$key] = strtoupper(str_replace('_', ' ', $key));
-        }
-
-        foreach (array_keys($registros_provisiones[0]) as $key) {
-            $keys_provisiones[$key] = strtoupper(str_replace('_', ' ', $key));
-        }
-
-        foreach (array_keys($registros_pagos[0]) as $key) {
-            $keys_pagos[$key] = strtoupper(str_replace('_', ' ', $key));
-        }
-
         $registros = array();
-        $registros_provisiones_excel = array();
-        $registros_pagos_excel = array();
 
-        foreach ($registros_xls as $row) {
-            $registros[] = array_combine(preg_replace(array_map(function($s){return "/^$s$/";},
-                array_keys($keys)),$keys, array_keys($row)), $row);
+        foreach ($nominas as $nomina) {
+
+            $registro = [
+                $nomina['em_empleado_id'],
+                $nomina['em_empleado_nss'],
+                $nomina['em_empleado_nombre_completo'],
+                $nomina['cat_sat_periodicidad_pago_nom_n_dias'],
+                $nomina['em_empleado_fecha_inicio_rel_laboral'],
+                $nomina['em_empleado_fecha_inicio_rel_laboral'],
+                $nomina['em_empleado_fecha_inicio_rel_laboral'],
+                $nomina['dp_estado_descripcion'],
+                $nomina['em_empleado_salario_diario'],
+                $nomina['em_empleado_salario_diario'],
+                $nomina['em_empleado_salario_diario_integrado'],
+                $nomina['cat_sat_periodicidad_pago_nom_n_dias'] * $nomina['em_empleado_salario_diario'],
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+                "-",
+                "-"
+            ];
+            $registros[] = $registro;
         }
 
-        foreach ($registros_provisiones as $row) {
-            $registros_provisiones_excel[] = array_combine(preg_replace(array_map(function($s){return "/^$s$/";},
-                array_keys($keys_provisiones)),$keys_provisiones, array_keys($row)), $row);
-        }
+        $formatter = new IntlDateFormatter('es_ES', IntlDateFormatter::LONG, IntlDateFormatter::NONE);
+        $fecha_inicio = $formatter->format(strtotime($manifiesto['tg_manifiesto_fecha_inicial_pago']));
+        $fecha_final = $formatter->format(strtotime($manifiesto['tg_manifiesto_fecha_final_pago']));
 
-        foreach ($registros_pagos as $row) {
-            $registros_pagos_excel[] = array_combine(preg_replace(array_map(function($s){return "/^$s$/";},
-                array_keys($keys_pagos)),$keys_pagos, array_keys($row)), $row);
-        }
+        $periodo = "$fecha_inicio - $fecha_final";
 
-        $keys_hojas =  array();
-        $keys_hojas['nominas'] = new stdClass();
-        $keys_hojas['nominas']->keys = $keys;
-        $keys_hojas['nominas']->registros = $registros;
-        $keys_hojas['provisionado'] = new stdClass();
-        $keys_hojas['provisionado']->keys = $keys_provisiones;
-        $keys_hojas['provisionado']->registros = $registros_provisiones_excel;
-        $keys_hojas['pagos'] = new stdClass();
-        $keys_hojas['pagos']->keys = $keys_pagos;
-        $keys_hojas['pagos']->registros = $registros_pagos_excel;
+        $tabla['detalles'] = [
+            ["titulo" => 'EMPRESA:', 'valor' => $manifiesto['org_sucursal_descripcion']],
+            ["titulo" => 'CLIENTE:', 'valor' => $manifiesto['com_sucursal_descripcion']],
+            ["titulo" => 'PERIODO:', 'valor' => $periodo]
+        ];
+        $tabla['headers'] = ['ID REM', 'NSS', 'NOMBRE COMPLETO', 'DIAS LABORADOS', 'FECHA INGRESO', 'FECHA ANTIGÜEDAD',
+            'REGISTRO PATRONAL', 'UBICACIÓN', 'SD', 'FI', 'SDI', 'SUELDO', 'SUBSIDIO', 'COMPENSACIÓN', 'SUBSIDIO',
+            'DEVOLUCION INFONAVIT', 'PRESTACION DE LEY', 'PRIMA DOMINICAL', 'PRESTACION DE LEY', 'GRATIFICACION',
+            'DESTAJO', 'PRESTACION DE LEY', 'SEPTIMO DIA', 'DIA FESTIVO', 'GRAVADO', 'EXENTO', 'GRAVADAS', 'EXENTAS',
+            'SUMA PERCEPCION', 'BASE GRAVABLE', 'RETENCION ISR', 'RETENCION IMSS', 'INFONAVIT', 'FONACOT',
+            'PENSION ALIMENTICIA', 'OTROS DESCUENTOS', 'DESCUENTO COMEDOR', 'SUMA DEDUCCION', 'NETO A PAGAR'];
+        $tabla['data'] = $registros;
+        $tabla['startRow'] = 4;
+        $tabla['startColumn'] = "A";
 
-        $xls = $exportador->genera_xls(header: $header,name: $manifiesto["tg_manifiesto_descripcion"],
-            nombre_hojas: array("nominas", "provisionado", "pagos"), keys_hojas: $keys_hojas,
-            path_base: $this->path_base);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al generar xls',data:  $xls, header: $header,
-                ws:$ws);
-        }
 
-       /* $resultado = $exportador->listado_base_xls(header: $header, name: $this->seccion, keys:  $keys,
-            path_base: $this->path_base,registros:  $registros,totales:  array());
-        if(errores::$error){
-            $error =  $this->errores->error('Error al generar xls',$resultado);
-            if(!$header){
+        $data["RAYA IMSS"] = [$tabla];
+
+        $name = "_REPORTE MENIFIESTO";
+
+        $resultado = (new exportador())->exportar_template(header: $header, path_base: $this->path_base, name: $name,
+            data: $data, styles: \tglobally\tg_nomina\controllers\Reporte_Template::REPORTE_GENERAL);
+        if (errores::$error) {
+            $error = $this->errores->error('Error al generar xls', $resultado);
+            if (!$header) {
                 return $error;
             }
             print_r($error);
             die('Error');
-        }*/
+        }
 
-
+        header('Location:' . $this->link_lista);
         exit;
-        //return $this->nominas;
     }
 
 

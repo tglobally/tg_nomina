@@ -39,6 +39,7 @@ class tg_manifiesto extends _modelo_parent{
         $campos_view['fecha_final_pago']['type'] = 'dates';
 
 
+
         $columnas_extra['tg_manifiesto_n_nominas'] =
             "IFNULL ((SELECT COUNT(*) FROM  nom_nomina 
             INNER JOIN tg_manifiesto_periodo ON tg_manifiesto_periodo.tg_manifiesto_id = tg_manifiesto.id
