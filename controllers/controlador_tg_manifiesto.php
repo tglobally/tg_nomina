@@ -704,10 +704,18 @@ class controlador_tg_manifiesto extends _ctl_base
         $registros_tabla_1 = array();
         $registros_tabla_2 = array();
 
-
         foreach ($nominas as $nomina) {
 
             $registro_tabla_1 = [$nomina['em_empleado_id'], $nomina['em_empleado_nss'], $nomina['em_empleado_nombre_completo']];
+
+            $row = (new nom_nomina($this->link))->maqueta_registros_excel(nom_nomina_id: $nomina['nom_nomina_id'],
+                conceptos_nomina: $conceptos);
+            if(errores::$error){
+                return $this->retorno_error(mensaje: 'Error al maquetar datos de la nomina',data:  $row,
+                    header: $header,ws:$ws);
+            }
+
+
             $registro_tabla_2 = [
                 $nomina['cat_sat_periodicidad_pago_nom_n_dias'],
                 $nomina['em_empleado_fecha_inicio_rel_laboral'],
@@ -740,13 +748,13 @@ class controlador_tg_manifiesto extends _ctl_base
                 "-",
                 "-",
                 "-",
+                $row['infonavit'],
                 "-",
                 "-",
                 "-",
                 "-",
                 "-",
-                "-",
-                "-"
+                '-'
             ];
             $registros_tabla_1[] = $registro_tabla_1;
             $registros_tabla_2[] = $registro_tabla_2;
