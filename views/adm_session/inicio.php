@@ -19,17 +19,6 @@ $url_assets = (new views())->url_assets;
     <div class="row form-main">
         <div class="col-md-12 control-group">
             <div class="col-sm-2">
-                <a href="<?php echo $controlador->link_lista_org_sucursal; ?>">
-                    <div class="cont_imagen_accion">
-                        <img src="<?php echo $url_assets; ?>img/inicio/imagen_2.jpg">
-                    </div>
-                    <div class="cont_text_accion">
-                        <h4 class="text_seccion">Sucursales</h4>
-                        <h4 class="text_accion">Catalogo</h4>
-                    </div>
-                </a>
-            </div>
-            <div class="col-sm-2">
                 <a href="<?php echo $controlador->link_lista_nom_nomina; ?>">
                     <div class="cont_imagen_accion">
                         <img src="<?php echo $url_assets; ?>img/inicio/imagen_2.jpg">
@@ -84,8 +73,6 @@ $url_assets = (new views())->url_assets;
                     </div>
                 </a>
             </div>
-        </div>
-        <div class="col-md-12 control-group">
             <div class="col-sm-2">
                 <a href="<?php echo $controlador->link_lista_tg_manifiesto; ?>">
                     <div class="cont_imagen_accion">
@@ -97,6 +84,9 @@ $url_assets = (new views())->url_assets;
                     </div>
                 </a>
             </div>
+        </div>
+
+        <div class="col-md-12 control-group">
             <div class="col-sm-2">
                 <a href="<?php echo $controlador->link_lista_tg_manifiesto_periodo; ?>">
                     <div class="cont_imagen_accion">
@@ -153,9 +143,6 @@ $url_assets = (new views())->url_assets;
                     </div>
                 </a>
             </div>
-        </div>
-
-        <div class="col-md-12 control-group">
             <div class="col-sm-2">
                 <a href="<?php echo $controlador->link_lista_tg_tipo_column; ?>">
                     <div class="cont_imagen_accion">
@@ -167,6 +154,9 @@ $url_assets = (new views())->url_assets;
                     </div>
                 </a>
             </div>
+        </div>
+
+        <div class="col-md-12 control-group">
             <div class="col-sm-2">
                 <a href="<?php echo $controlador->link_lista_tg_column; ?>">
                     <div class="cont_imagen_accion">
@@ -200,7 +190,6 @@ $url_assets = (new views())->url_assets;
                     </div>
                 </a>
             </div>
-
             <div class="col-sm-2">
                 <a href="<?php echo $controlador->link_lista_tg_conf_manifiesto; ?>">
                     <div class="cont_imagen_accion">
