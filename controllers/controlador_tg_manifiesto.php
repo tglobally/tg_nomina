@@ -852,6 +852,30 @@ class controlador_tg_manifiesto extends _ctl_base
         exit;
     }
 
+    public function descarga_recibo_manifiesto(bool $header, bool $ws = false){
+        $filtro['tg_manifiesto_periodo.tg_manifiesto_id'] = $this->registro_id;
+        $manifiesto_periodo = (new tg_manifiesto_periodo($this->link))->filtro_and(filtro: $filtro);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al obtener nominas', data: $manifiesto_periodo);
+        }
+
+        $nom_periodo_id = $manifiesto_periodo->registros[0]['nom_periodo_id']; /** Id del periodo */
+
+        $filtro_nomina['nom_nomina.nom_periodo_id'] = $nom_periodo_id;
+        $nominas = (new nom_nomina($this->link))->filtro_and(filtro: $filtro_nomina);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al obtener nominas', data: $nominas);
+        }
+
+        $r_nomina = (new nom_nomina($this->link))->descarga_recibo_nomina_foreach(nom_nominas: $nominas);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener recibo de nomina', data: $r_nomina);
+            print_r($error);
+            die('Error');
+        }
+        exit;
+    }
+
     private function suma_totales(array $registros, array $campo_sumar): stdClass
     {
         $totales = new stdClass();
