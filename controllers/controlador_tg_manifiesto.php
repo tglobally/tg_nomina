@@ -852,6 +852,30 @@ class controlador_tg_manifiesto extends _ctl_base
         exit;
     }
 
+    public function descarga_recibo_manifiesto(bool $header, bool $ws = false){
+        $filtro['tg_manifiesto_periodo.tg_manifiesto_id'] = $this->registro_id;
+        $manifiesto_periodo = (new tg_manifiesto_periodo($this->link))->filtro_and(filtro: $filtro);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al obtener nominas', data: $manifiesto_periodo);
+        }
+
+        $nom_periodo_id = $manifiesto_periodo->registros[0]['nom_periodo_id']; /** Id del periodo */
+
+        $filtro_nomina['nom_nomina.nom_periodo_id'] = $nom_periodo_id;
+        $nominas = (new nom_nomina($this->link))->filtro_and(filtro: $filtro_nomina);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al obtener nominas', data: $nominas);
+        }
+
+        $r_nomina = (new nom_nomina($this->link))->descarga_recibo_nomina_foreach(nom_nominas: $nominas);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener recibo de nomina', data: $r_nomina);
+            print_r($error);
+            die('Error');
+        }
+        exit;
+    }
+
     private function suma_totales(array $registros, array $campo_sumar): stdClass
     {
         $totales = new stdClass();
@@ -2321,6 +2345,41 @@ class controlador_tg_manifiesto extends _ctl_base
 }
 
     public function nominas(bool $header, bool $ws = false): array|stdClass
+    {
+        $r_tg_manifiesto_periodo = (new tg_manifiesto_periodo($this->link))
+            ->get_periodos_manifiesto(tg_manifiesto_id:  $this->registro_id);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al obtener manifiesto periodo',data:  $r_tg_manifiesto_periodo,
+                header: $header,ws:$ws);
+        }
+
+        $in = (new inicializacion())->genera_data_in(campo:'id', tabla: 'nom_periodo',
+            registros: $r_tg_manifiesto_periodo->registros);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al integrar in',data:  $in, header: $header,ws:$ws);
+        }
+
+        $columns = array();
+        $columns["nom_nomina_id"]["titulo"] = "Id";
+        $columns["em_empleado_nombre"]["titulo"] = "Nombre";
+        $columns["em_empleado_nombre"]["campos"] = array("em_empleado_ap","em_empleado_am");
+        $columns["em_empleado_rfc"]["titulo"] = "Rfc";
+        $columns["nom_nomina_fecha_inicial_pago"]["titulo"] = "Fecha Inicial Pago";
+        $columns["nom_nomina_fecha_final_pago"]["titulo"] = "Fecha Final Pago";
+        $columns["org_empresa_descripcion"]["titulo"] = "Empresa";
+        $filtro = array("nom_nomina_id",  "em_empleado_nombre",    );
+
+        $datatables = $this->datatable_init(columns: $columns, filtro: $filtro, identificador: "#nom_nomina",
+            in: $in,  multi_selects: true);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al inicializar datatable',data:  $datatables,
+                header: $header,ws:$ws);
+        }
+
+        return $datatables;
+    }
+
+    public function recibos_masivos(bool $header, bool $ws = false): array|stdClass
     {
         $r_tg_manifiesto_periodo = (new tg_manifiesto_periodo($this->link))
             ->get_periodos_manifiesto(tg_manifiesto_id:  $this->registro_id);
