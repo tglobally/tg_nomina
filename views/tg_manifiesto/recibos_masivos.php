@@ -5,7 +5,7 @@ use config\views;
 $url_icons = (new views())->url_icons;
 ?>
 
-<?php include 'templates/nom_periodo/nominas/secciones.php'; ?>
+<?php include 'templates/nom_periodo/recibos_masivos/secciones.php'; ?>
 <div class="col-md-9 formulario">
     <div class="col-lg-12">
 
@@ -14,7 +14,7 @@ $url_icons = (new views())->url_icons;
         <div class="lista">
             <div class="card">
                 <div class="card-header">
-                    <span class="text-header">Nominas</span>
+                    <span class="text-header">Recibos Masivos</span>
 
                     <div class="dropdown ">
                         <button class="btn btn-icon-only " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
