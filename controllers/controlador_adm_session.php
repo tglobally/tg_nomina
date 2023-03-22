@@ -22,8 +22,8 @@ class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_
 
     public array $secciones = array("nom_nomina", "nom_periodo", "nom_conf_factura", "nom_conf_nomina", "tg_tipo_servicio",
         "tg_manifiesto", "tg_manifiesto_periodo", "tg_tipo_provision", "tg_provision" , "tg_conf_provision" , "tg_layout",
-        "tg_tipo_column", "tg_column", "nom_clasificacion", "tg_layout", "tg_agrupador", "tg_conf_manifiesto",
-        "tg_empleado_agrupado");
+        "tg_tipo_column", "tg_column", "nom_clasificacion", "tg_agrupador", "tg_conf_manifiesto",
+        "tg_empleado_agrupado", "nom_conf_empleado");
     public array $links_catalogos = array();
 
     public stdClass $links;
@@ -39,8 +39,59 @@ class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_
             die('Error');
         }
 
-        $this->links_catalogos["em_empleado"]["titulo"] = "Empleados";
-        $this->links_catalogos["em_empleado"]["subtitulo"] = "Catálogo";
+        $this->links_catalogos["nom_nomina"]["titulo"] = "Nominas";
+        $this->links_catalogos["nom_nomina"]["subtitulo"] = "Catálogo";
+
+        $this->links_catalogos["nom_periodo"]["titulo"] = "Periodos";
+        $this->links_catalogos["nom_periodo"]["subtitulo"] = "Catálogo";
+
+        $this->links_catalogos["nom_conf_factura"]["titulo"] = "Conf. Factura";
+        $this->links_catalogos["nom_conf_factura"]["subtitulo"] = "Catálogo";
+
+        $this->links_catalogos["nom_conf_nomina"]["titulo"] = "Conf. Nomina";
+        $this->links_catalogos["nom_conf_nomina"]["subtitulo"] = "Catálogo";
+
+        $this->links_catalogos["tg_tipo_servicio"]["titulo"] = "Tipo Servicio";
+        $this->links_catalogos["tg_tipo_servicio"]["subtitulo"] = "Catálogo";
+
+        $this->links_catalogos["tg_manifiesto"]["titulo"] = "Manifiesto";
+        $this->links_catalogos["tg_manifiesto"]["subtitulo"] = "Catálogo";
+
+        $this->links_catalogos["tg_manifiesto_periodo"]["titulo"] = "Manifiesto Periodo";
+        $this->links_catalogos["tg_manifiesto_periodo"]["subtitulo"] = "Catálogo";
+
+        $this->links_catalogos["tg_tipo_provision"]["titulo"] = "Tipo Provision";
+        $this->links_catalogos["tg_tipo_provision"]["subtitulo"] = "Catálogo";
+
+        $this->links_catalogos["tg_provision"]["titulo"] = "Provisiones";
+        $this->links_catalogos["tg_provision"]["subtitulo"] = "Catálogo";
+
+        $this->links_catalogos["tg_conf_provision"]["titulo"] = "Conf. Provision";
+        $this->links_catalogos["tg_conf_provision"]["subtitulo"] = "Catálogo";
+
+        $this->links_catalogos["tg_layout"]["titulo"] = "Layout";
+        $this->links_catalogos["tg_layout"]["subtitulo"] = "Catálogo";
+
+        $this->links_catalogos["tg_tipo_column"]["titulo"] = "Tipo Column";
+        $this->links_catalogos["tg_tipo_column"]["subtitulo"] = "Catálogo";
+
+        $this->links_catalogos["tg_column"]["titulo"] = "Column";
+        $this->links_catalogos["tg_column"]["subtitulo"] = "Catálogo";
+
+        $this->links_catalogos["nom_clasificacion"]["titulo"] = "Clasificacion";
+        $this->links_catalogos["nom_clasificacion"]["subtitulo"] = "Catálogo";
+
+        $this->links_catalogos["tg_agrupador"]["titulo"] = "Agrupador";
+        $this->links_catalogos["tg_agrupador"]["subtitulo"] = "Catálogo";
+
+        $this->links_catalogos["tg_conf_manifiesto"]["titulo"] = "Conf. Manifiesto";
+        $this->links_catalogos["tg_conf_manifiesto"]["subtitulo"] = "Catálogo";
+
+        $this->links_catalogos["tg_empleado_agrupado"]["titulo"] = "Empleado Agrupado";
+        $this->links_catalogos["tg_empleado_agrupado"]["subtitulo"] = "Catálogo";
+
+        $this->links_catalogos["nom_conf_empleado"]["titulo"] = "Conf. Empleado";
+        $this->links_catalogos["nom_conf_empleado"]["subtitulo"] = "Catálogo";
     }
 
 
