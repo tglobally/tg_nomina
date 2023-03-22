@@ -2379,6 +2379,41 @@ class controlador_tg_manifiesto extends _ctl_base
         return $datatables;
     }
 
+    public function recibos_masivos(bool $header, bool $ws = false): array|stdClass
+    {
+        $r_tg_manifiesto_periodo = (new tg_manifiesto_periodo($this->link))
+            ->get_periodos_manifiesto(tg_manifiesto_id:  $this->registro_id);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al obtener manifiesto periodo',data:  $r_tg_manifiesto_periodo,
+                header: $header,ws:$ws);
+        }
+
+        $in = (new inicializacion())->genera_data_in(campo:'id', tabla: 'nom_periodo',
+            registros: $r_tg_manifiesto_periodo->registros);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al integrar in',data:  $in, header: $header,ws:$ws);
+        }
+
+        $columns = array();
+        $columns["nom_nomina_id"]["titulo"] = "Id";
+        $columns["em_empleado_nombre"]["titulo"] = "Nombre";
+        $columns["em_empleado_nombre"]["campos"] = array("em_empleado_ap","em_empleado_am");
+        $columns["em_empleado_rfc"]["titulo"] = "Rfc";
+        $columns["nom_nomina_fecha_inicial_pago"]["titulo"] = "Fecha Inicial Pago";
+        $columns["nom_nomina_fecha_final_pago"]["titulo"] = "Fecha Final Pago";
+        $columns["org_empresa_descripcion"]["titulo"] = "Empresa";
+        $filtro = array("nom_nomina_id",  "em_empleado_nombre",    );
+
+        $datatables = $this->datatable_init(columns: $columns, filtro: $filtro, identificador: "#nom_nomina",
+            in: $in,  multi_selects: true);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al inicializar datatable',data:  $datatables,
+                header: $header,ws:$ws);
+        }
+
+        return $datatables;
+    }
+
     public function ve_nominas(bool $header, bool $ws = false): array|stdClass
     {
         $nominas = (new tg_manifiesto_periodo($this->link))->nominas_by_manifiesto(tg_manifiesto_id: $this->registro_id);
