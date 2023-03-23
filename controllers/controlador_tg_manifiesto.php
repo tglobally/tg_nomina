@@ -2577,4 +2577,15 @@ class controlador_tg_manifiesto extends _ctl_base
         return $this->nominas;
     }
 
+    public function descarga_recibo_nomina(bool $header, bool $ws = false){
+        $r_nomina = (new nom_nomina($this->link))->descarga_recibo_nomina(nom_nomina_id: $this->registro_id);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener recibo de nomina', data: $r_nomina);
+            print_r($error);
+            die('Error');
+        }
+
+        return $r_nomina;
+    }
+
 }
