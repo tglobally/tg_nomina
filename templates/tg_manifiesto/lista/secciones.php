@@ -4,6 +4,7 @@
             <h3>Manifiesto</h3>
             <?php include "templates/tg_manifiesto/_base/links/alta.php"; ?>
             <?php include "templates/tg_manifiesto/_base/links/sube_manifiesto.php"; ?>
+            <?php include "templates/tg_manifiesto/_base/links/recibos_masivos.php"; ?>
         </div>
     </div>
 </div>

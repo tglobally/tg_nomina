@@ -2561,7 +2561,7 @@ class controlador_tg_manifiesto extends _ctl_base
     }
 
     public function sube_manifiesto(bool $header, bool $ws = false){
-    
+
 }
 
     public function nominas(bool $header, bool $ws = false): array|stdClass

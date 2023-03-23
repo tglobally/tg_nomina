@@ -1,0 +1,1 @@
+<span class="texto-menu-lateral">Recibos Masibos</span>
