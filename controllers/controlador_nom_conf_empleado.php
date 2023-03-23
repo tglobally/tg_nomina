@@ -7,7 +7,9 @@ use gamboamartin\nomina\models\em_empleado;
 use tglobally\template_tg\html;
 use PDO;
 use stdClass;
+use tglobally\tg_nomina\models\tg_conf_provision;
 use tglobally\tg_nomina\models\tg_provision;
+use tglobally\tg_nomina\models\tg_tipo_provision;
 
 class controlador_nom_conf_empleado extends \gamboamartin\nomina\controllers\controlador_nom_conf_empleado
 {
@@ -133,6 +135,31 @@ class controlador_nom_conf_empleado extends \gamboamartin\nomina\controllers\con
             $this->link->rollBack();
             return $this->retorno_error(mensaje: 'Error al dar de alta provision', data: $tg_provision,header: $header,
                 ws: $ws);
+        }
+
+        $tg_tipo_provision = (new tg_tipo_provision($this->link))->registro(registro_id: $_POST['tg_tipo_provision_id']);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al obtener tipo provision', data: $tg_tipo_provision,
+                header: $header, ws: $ws);
+        }
+
+        $monto = $_POST['monto'];
+
+        if (strcasecmp($tg_tipo_provision['tg_tipo_provision_descripcion'], 'VACACIONES') == 0){
+            $monto = 999;
+        }
+
+        $registros_tg_conf_provision['tg_tipo_provision_id'] = $_POST['tg_tipo_provision_id'];
+        $registros_tg_conf_provision['nom_conf_empleado_id'] = $this->registro_id;
+        $registros_tg_conf_provision['descripcion'] = $_POST['descripcion'];
+        $registros_tg_conf_provision['fecha_inicio'] = date("y-m-d");
+        $registros_tg_conf_provision['fecha_fin'] = date( "y-m-d", strtotime('last day of December', time()));
+        $registros_tg_provision['monto'] = $monto;
+
+        $tg_conf_provision = (new tg_conf_provision($this->link))->alta_registro(registro: $registros_tg_conf_provision);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al dar de alta conf provision', data: $tg_conf_provision,
+                header: $header, ws: $ws);
         }
 
         $this->link->commit();
