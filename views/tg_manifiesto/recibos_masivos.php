@@ -14,7 +14,7 @@ $url_icons = (new views())->url_icons;
         <div class="lista">
             <div class="card">
                 <div class="card-header">
-                    <span class="text-header">Recibos Masivos</span>
+                    <span class="text-header">Recibos masivos</span>
 
                     <div class="dropdown ">
                         <button class="btn btn-icon-only " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -88,7 +88,7 @@ $url_icons = (new views())->url_icons;
                         </form>
                     </div>
 
-                   <!-- <div class="col-sm-2">
+                    <!-- <div class="col-sm-2">
                         <form method="post" action="<?php /*echo $controlador->link_tg_manifiesto_elimina_percepciones; */?> "
                               class="form-additional" id="form_export">
                             <input id="percepciones_eliminar" name="percepciones_eliminar" type="hidden">
@@ -108,7 +108,7 @@ $url_icons = (new views())->url_icons;
         <div class="lista">
             <div class="card">
                 <div class="card-header">
-                    <span class="text-header">Nominas Seleccionadas</span>
+                    <span class="text-header">Recibos Masivos Seleccionados</span>
                 </div>
                 <div class="card-body tablas_nominas ">
                     <div class="col-md-12">
