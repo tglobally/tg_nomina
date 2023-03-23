@@ -3,13 +3,16 @@
 namespace tglobally\tg_nomina\controllers;
 
 use gamboamartin\errores\errores;
+use gamboamartin\nomina\models\em_empleado;
 use tglobally\template_tg\html;
 use PDO;
 use stdClass;
+use tglobally\tg_nomina\models\tg_provision;
 
 class controlador_nom_conf_empleado extends \gamboamartin\nomina\controllers\controlador_nom_conf_empleado
 {
     public string $link_nom_conf_empleado_integra_provision = '';
+    public string $link_nom_conf_empleado_integra_provision_alta_bd = '';
 
     public function __construct(PDO $link, stdClass $paths_conf = new stdClass())
     {
@@ -47,6 +50,14 @@ class controlador_nom_conf_empleado extends \gamboamartin\nomina\controllers\con
             exit;
         }
         $this->link_nom_conf_empleado_integra_provision = $link;
+
+        $link = $this->obj_link->get_link(seccion: "nom_conf_empleado", accion: "integra_provision_alta_bd");
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al recuperar link abono_alta_bd', data: $link);
+            print_r($error);
+            exit;
+        }
+        $this->link_nom_conf_empleado_integra_provision_alta_bd = $link;
 
         return $link;
     }
@@ -87,17 +98,57 @@ class controlador_nom_conf_empleado extends \gamboamartin\nomina\controllers\con
     {
         $provision = new controlador_tg_provision($this->link);
 
-        $r_template = $provision->alta(header: false);
+        $r_template = $provision->init_alta();
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al obtener template', data: $r_template);
         }
 
-        $inputs = $provision->inputs(keys_selects: array());
+        $keys_selects = $provision->init_selects_inputs();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar selects', data: $keys_selects, header: $header,
+                ws: $ws);
+        }
+
+        $inputs = $provision->inputs(keys_selects: $keys_selects);
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al obtener inputs', data: $inputs);
         }
 
+        $this->inputs = $inputs;
+
         return $r_template;
+    }
+
+    public function integra_provision_alta_bd(bool $header, bool $ws = false): array|stdClass |string
+    {
+        $registros_tg_provision['tg_tipo_provision_id'] = $_POST['tg_tipo_provision_id'];
+        $registros_tg_provision['nom_nomina_id'] = $_POST['nom_nomina_id'];
+        $registros_tg_provision['descripcion'] = $_POST['descripcion'];
+        $registros_tg_provision['monto'] = $_POST['monto'];
+
+        $this->link->beginTransaction();
+
+        $tg_provision = (new tg_provision($this->link))->alta_registro(registro: $registros_tg_provision);
+        if (errores::$error) {
+            $this->link->rollBack();
+            return $this->retorno_error(mensaje: 'Error al dar de alta provision', data: $tg_provision,header: $header,
+                ws: $ws);
+        }
+
+        $this->link->commit();
+
+        if ($header) {
+            $this->retorno_base(registro_id:$this->registro_id, result: $tg_provision, siguiente_view: "integra_provision",
+                ws:  $ws);
+        }
+        if ($ws) {
+            header('Content-Type: application/json');
+            echo json_encode($tg_provision, JSON_THROW_ON_ERROR);
+            exit;
+        }
+        $tg_provision->siguiente_view = "integra_provision";
+
+        return $tg_provision;
     }
 
     public function menu_item(string $menu_item_titulo, string $link, bool $menu_seccion_active = false, bool $menu_lateral_active = false): array

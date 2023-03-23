@@ -9,14 +9,13 @@
             Hola, <?php echo $controlador->datos_session_usuario['adm_usuario_user']; ?> </h3>
 
         <div class="  form-main" id="form">
-            <form method="post" action="<?php echo $controlador->link_tg_empleado_sucursal_alta_bd; ?>"
+            <form method="post" action="<?php echo $controlador->link_nom_conf_empleado_integra_provision_alta_bd; ?>"
                   class="form-additional">
                 <?php echo $controlador->inputs->em_empleado_id; ?>
                 <?php echo $controlador->inputs->tg_tipo_provision_id; ?>
-
-                <?php echo $controlador->inputs->hidden_row_id; ?>
-                <?php echo $controlador->inputs->hidden_seccion_retorno; ?>
-                <?php echo $controlador->inputs->hidden_id_retorno; ?>
+                <?php echo $controlador->inputs->nom_nomina_id; ?>
+                <?php echo $controlador->inputs->descripcion; ?>
+                <?php echo $controlador->inputs->monto; ?>
 
                 <div class="buttons col-md-12">
                     <div class="col-md-6 btn-ancho">
@@ -30,16 +29,6 @@
 
                 </div>
             </form>
-        </div>
-    </div>
-    <div class="lista">
-        <div class="card">
-            <div class="card-header">
-                <span class="text-header">Configuracion Provision</span>
-            </div>
-            <div class="card-body">
-                <?php echo $controlador->contenido_table; ?>
-            </div> <!-- /. widget-table-->
         </div>
     </div>
 

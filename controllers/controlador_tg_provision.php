@@ -80,6 +80,7 @@ class controlador_tg_provision extends _ctl_base
         $keys->selects = array();
 
         $init_data = array();
+        $init_data['em_empleado'] = "gamboamartin\\empleado";
         $init_data['tg_tipo_provision'] = "tglobally\\tg_nomina";
         $init_data['nom_nomina'] = "gamboamartin\\nomina";
 
@@ -131,7 +132,8 @@ class controlador_tg_provision extends _ctl_base
 
     public function init_selects_inputs(): array
     {
-        $keys_selects = $this->init_selects(keys_selects: array(), key: "tg_tipo_provision_id", label: "Tipo Provisión");
+        $keys_selects = $this->init_selects(keys_selects: array(), key: "em_empleado_id", label: "Empleado", cols:  12);
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "tg_tipo_provision_id", label: "Tipo Provisión");
         return $this->init_selects(keys_selects: $keys_selects, key: "nom_nomina_id", label: "Nómina");
     }
 
