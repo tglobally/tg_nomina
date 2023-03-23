@@ -2,6 +2,7 @@
 
 namespace tglobally\tg_nomina\controllers;
 
+use base\controller\controler;
 use gamboamartin\errores\errores;
 use gamboamartin\system\_ctl_base;
 use gamboamartin\system\links_menu;
@@ -15,8 +16,6 @@ use stdClass;
 
 class controlador_tg_provision extends _ctl_base
 {
-
-    public array $sidebar = array();
 
     public function __construct(PDO      $link, html $html = new \gamboamartin\template_1\html(),
                                 stdClass $paths_conf = new stdClass())
@@ -35,21 +34,19 @@ class controlador_tg_provision extends _ctl_base
         parent::__construct(html: $html_, link: $link, modelo: $modelo, obj_link: $obj_link, datatables: $datatables,
             paths_conf: $paths_conf);
 
+        $configuraciones = $this->init_configuraciones();
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al inicializar configuraciones', data: $configuraciones);
+            print_r($error);
+            die('Error');
+        }
 
-        $this->sidebar['lista']['titulo'] = "Provisión";
-        $this->sidebar['lista']['menu'] = array(
-            $this->menu_item(menu_item_titulo: "Alta", link: $this->link_alta, menu_seccion_active: true,
-                menu_lateral_active: true));
-
-        $this->sidebar['alta']['titulo'] = "Alta Provisión";
-        $this->sidebar['alta']['stepper_active'] = true;
-        $this->sidebar['alta']['menu'] = array(
-            $this->menu_item(menu_item_titulo: "Alta", link: $this->link_alta, menu_lateral_active: true));
-
-        $this->sidebar['modifica']['titulo'] = "Modifica Provisión";
-        $this->sidebar['modifica']['stepper_active'] = true;
-        $this->sidebar['modifica']['menu'] = array(
-            $this->menu_item(menu_item_titulo: "Modifica", link: $this->link_alta, menu_lateral_active: true));
+        $sidebar = $this->init_sidebar();
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al inicializar sidebar', data: $sidebar);
+            print_r($error);
+            die('Error');
+        }
     }
 
     public function alta(bool $header, bool $ws = false): array|string
@@ -64,6 +61,8 @@ class controlador_tg_provision extends _ctl_base
             return $this->retorno_error(mensaje: 'Error al inicializar selects', data: $keys_selects, header: $header,
                 ws: $ws);
         }
+
+        $this->row_upd->monto = 0;
 
         $inputs = $this->inputs(keys_selects: $keys_selects);
         if (errores::$error) {
@@ -92,16 +91,24 @@ class controlador_tg_provision extends _ctl_base
         return $campos_view;
     }
 
-    private function init_datatable(): stdClass
+    protected function init_configuraciones(): controler
+    {
+        $this->seccion_titulo = 'Provisiones';
+        $this->titulo_lista = 'Registro de Provisiones';
+
+        $this->lista_get_data = true;
+
+        return $this;
+    }
+
+    protected function init_datatable(): stdClass
     {
         $columns["tg_provision_id"]["titulo"] = "Id";
-        $columns["tg_provision_codigo"]["titulo"] = "Código";
-        $columns["tg_tipo_provision_descripcion"]["titulo"] = "Tipo de Provisión";
+        $columns["tg_tipo_provision_descripcion"]["titulo"] = "Tipo Provision";
+        $columns["nom_nomina_id"]["titulo"] = "Nomina";
         $columns["tg_provision_monto"]["titulo"] = "Monto";
-        $columns["nom_nomina_descripcion"]["titulo"] = "Nómina";
 
-        $filtro = array("tg_tipo_provision.id", "tg_tipo_provision.codigo", "tg_tipo_provision.descripcion",
-            "nom_nomina.descripcion");
+        $filtro = array("tg_provision.id", "tg_tipo_provision.descripcion", "nom_nomina.id", "tg_provision.monto");
 
         $datatables = new stdClass();
         $datatables->columns = $columns;
@@ -110,8 +117,8 @@ class controlador_tg_provision extends _ctl_base
         return $datatables;
     }
 
-    private function init_selects(array $keys_selects, string $key, string $label, int $id_selected = -1, int $cols = 6,
-                                  bool  $con_registros = true, array $filtro = array()): array
+    protected function init_selects(array $keys_selects, string $key, string $label, int $id_selected = -1, int $cols = 6,
+                                    bool  $con_registros = true, array $filtro = array()): array
     {
         $keys_selects = $this->key_select(cols: $cols, con_registros: $con_registros, filtro: $filtro, key: $key,
             keys_selects: $keys_selects, id_selected: $id_selected, label: $label);
@@ -124,22 +131,39 @@ class controlador_tg_provision extends _ctl_base
 
     public function init_selects_inputs(): array
     {
-        $keys_selects = $this->init_selects(keys_selects: array(), key: "tg_tipo_provision_id", label: "Tipo de Provisión",
-            cols: 6);
+        $keys_selects = $this->init_selects(keys_selects: array(), key: "tg_tipo_provision_id", label: "Tipo Provisión");
+        return $this->init_selects(keys_selects: $keys_selects, key: "nom_nomina_id", label: "Nómina");
+    }
 
-        return $this->init_selects(keys_selects: $keys_selects, key: "nom_nomina_id", label: "Nómina",
-            cols: 6);
+    private function init_sidebar(): stdClass|array
+    {
+        $menu_items = new stdClass();
+
+        $menu_items->lista = $this->menu_item(menu_item_titulo: "Inicio", link: $this->link_lista);
+        $menu_items->alta = $this->menu_item(menu_item_titulo: "Alta", link: $this->link_alta);
+        $menu_items->modifica = $this->menu_item(menu_item_titulo: "Modifica", link: $this->link_modifica);
+
+        $menu_items->lista['menu_seccion_active'] = true;
+        $menu_items->lista['menu_lateral_active'] = true;
+        $menu_items->alta['menu_seccion_active'] = true;
+        $menu_items->alta['menu_lateral_active'] = true;
+        $menu_items->modifica['menu_lateral_active'] = true;
+
+        $this->sidebar['lista']['titulo'] = "Provisiones";
+        $this->sidebar['lista']['menu'] = array($menu_items->alta);
+
+        $this->sidebar['alta']['titulo'] = "Provisiones";
+        $this->sidebar['alta']['menu'] = array($menu_items->alta);
+
+        $this->sidebar['modifica']['titulo'] = "Provisiones";
+        $this->sidebar['modifica']['menu'] = array($menu_items->modifica);
+
+        return $menu_items;
     }
 
     protected function key_selects_txt(array $keys_selects): array
     {
-        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 4, key: 'codigo',
-            keys_selects: $keys_selects, place_holder: 'Código');
-        if (errores::$error) {
-            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
-        }
-
-        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 8, key: 'descripcion',
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 12, key: 'descripcion',
             keys_selects: $keys_selects, place_holder: 'Descripción');
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
@@ -152,17 +176,6 @@ class controlador_tg_provision extends _ctl_base
         }
 
         return $keys_selects;
-    }
-
-    public function menu_item(string $menu_item_titulo, string $link, bool $menu_seccion_active = false, bool $menu_lateral_active = false): array
-    {
-        $menu_item = array();
-        $menu_item['menu_item'] = $menu_item_titulo;
-        $menu_item['menu_seccion_active'] = $menu_seccion_active;
-        $menu_item['link'] = $link;
-        $menu_item['menu_lateral_active'] = $menu_lateral_active;
-
-        return $menu_item;
     }
 
     public function modifica(bool $header, bool $ws = false): array|stdClass
@@ -190,4 +203,14 @@ class controlador_tg_provision extends _ctl_base
         return $r_modifica;
     }
 
+    public function menu_item(string $menu_item_titulo, string $link, bool $menu_seccion_active = false, bool $menu_lateral_active = false): array
+    {
+        $menu_item = array();
+        $menu_item['menu_item'] = $menu_item_titulo;
+        $menu_item['menu_seccion_active'] = $menu_seccion_active;
+        $menu_item['link'] = $link;
+        $menu_item['menu_lateral_active'] = $menu_lateral_active;
+
+        return $menu_item;
+    }
 }

@@ -29,8 +29,6 @@ class controlador_nom_conf_empleado extends \gamboamartin\nomina\controllers\con
             print_r($error);
             die('Error');
         }
-
-
     }
 
     protected function init_links(): array|string
@@ -64,19 +62,20 @@ class controlador_nom_conf_empleado extends \gamboamartin\nomina\controllers\con
 
         $menu_items->lista['menu_seccion_active'] = true;
         $menu_items->lista['menu_lateral_active'] = true;
+        $menu_items->alta['menu_seccion_active'] = true;
         $menu_items->alta['menu_lateral_active'] = true;
         $menu_items->modifica['menu_lateral_active'] = true;
         $menu_items->provision['menu_seccion_active'] = true;
         $menu_items->provision['menu_lateral_active'] = true;
 
         $this->sidebar['lista']['titulo'] = "Conf. Empleados";
-        $this->sidebar['lista']['menu'] = array($menu_items->alta, $menu_items->provision);
+        $this->sidebar['lista']['menu'] = array($menu_items->alta);
 
         $this->sidebar['alta']['titulo'] = "Conf. Empleados";
         $this->sidebar['alta']['menu'] = array($menu_items->alta);
 
         $this->sidebar['modifica']['titulo'] = "Conf. Empleados";
-        $this->sidebar['modifica']['menu'] = array($menu_items->modifica);
+        $this->sidebar['modifica']['menu'] = array($menu_items->modifica, $menu_items->provision);
 
         $this->sidebar['integra_provision']['titulo'] = "Empleados";
         $this->sidebar['integra_provision']['menu'] = array($menu_items->provision);

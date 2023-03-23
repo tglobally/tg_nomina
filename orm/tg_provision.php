@@ -4,6 +4,7 @@ namespace tglobally\tg_nomina\models;
 use base\orm\_modelo_parent;
 use gamboamartin\errores\errores;
 use PDO;
+use stdClass;
 
 class tg_provision extends _modelo_parent {
 
@@ -17,6 +18,28 @@ class tg_provision extends _modelo_parent {
             columnas: $columnas);
 
         $this->NAMESPACE = __NAMESPACE__;
+    }
+
+    public function alta_bd(array $keys_integra_ds = array('codigo', 'descripcion')): array|stdClass
+    {
+        if(!isset($this->registro['codigo'])){
+
+            $this->registro['codigo'] =  $this->get_codigo_aleatorio();
+            if(errores::$error){
+                return $this->error->error(mensaje: 'Error al generar codigo aleatorio',data:  $this->registro);
+            }
+
+            if (isset($this->registro['rfc'])){
+                $this->registro['codigo'] = $this->registro['rfc'];
+            }
+        }
+
+        $r_alta_bd = parent::alta_bd($keys_integra_ds);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al dar de alta provision',data:  $r_alta_bd);
+        }
+
+        return $r_alta_bd;
     }
 
     public function maqueta_excel_provisiones(int $nom_nomina_id){

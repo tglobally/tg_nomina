@@ -12,7 +12,6 @@
 
                 <?php echo $controlador->inputs->tg_tipo_provision_id; ?>
                 <?php echo $controlador->inputs->nom_nomina_id; ?>
-                <?php echo $controlador->inputs->codigo; ?>
                 <?php echo $controlador->inputs->descripcion; ?>
                 <?php echo $controlador->inputs->monto; ?>
 
