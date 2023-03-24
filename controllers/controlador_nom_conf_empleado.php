@@ -3,7 +3,9 @@
 namespace tglobally\tg_nomina\controllers;
 
 use gamboamartin\errores\errores;
+use gamboamartin\im_registro_patronal\models\im_conf_pres_empresa;
 use gamboamartin\nomina\models\em_empleado;
+use gamboamartin\nomina\models\nom_nomina;
 use tglobally\template_tg\html;
 use PDO;
 use stdClass;
@@ -143,9 +145,35 @@ class controlador_nom_conf_empleado extends \gamboamartin\nomina\controllers\con
                 header: $header, ws: $ws);
         }
 
+        $nom_nomina = (new nom_nomina($this->link))->registro(registro_id: $_POST['nom_nomina_id']);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al obtener nomina', data: $nom_nomina,
+                header: $header, ws: $ws);
+        }
+
+        $extra_join["im_detalle_conf_prestaciones"]['key'] = "im_conf_prestaciones_id";
+        $extra_join["im_detalle_conf_prestaciones"]['enlace'] = "im_conf_pres_empresa";
+        $extra_join["im_detalle_conf_prestaciones"]['key_enlace'] = "im_conf_prestaciones_id";
+        $extra_join["im_detalle_conf_prestaciones"]['renombre'] = "im_detalle_conf_prestaciones";
+
+        $filtro['org_empresa_id'] = $nom_nomina['org_empresa_id'];
+        $conf_pres_empresa = (new im_conf_pres_empresa($this->link))->filtro_and(extra_join: $extra_join, filtro: $filtro,
+            limit: 1);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al obtener nomina', data: $conf_pres_empresa,
+                header: $header, ws: $ws);
+        }
+
+        if ($conf_pres_empresa->n_registros <= 0) {
+            return $this->retorno_error(mensaje: 'Error no existe una conf. im_conf_pres_empresa para la empresa',
+                data: $conf_pres_empresa, header: $header, ws: $ws);
+        }
+
         $monto = $_POST['monto'];
 
         if (strcasecmp($tg_tipo_provision['tg_tipo_provision_descripcion'], 'VACACIONES') == 0){
+            $monto = $conf_pres_empresa->registros[0]['im_detalle_conf_prestaciones_n_dias_vacaciones'] * $nom_nomina['em_empleado_salario_diario'] / 365;
+        } else if (strcasecmp($tg_tipo_provision['tg_tipo_provision_descripcion'], 'GRATIFICACIÓN ANUAL (AGUINALDO)') == 0){
             $monto = 999;
         }
 
@@ -154,7 +182,7 @@ class controlador_nom_conf_empleado extends \gamboamartin\nomina\controllers\con
         $registros_tg_conf_provision['descripcion'] = $_POST['descripcion'];
         $registros_tg_conf_provision['fecha_inicio'] = date("y-m-d");
         $registros_tg_conf_provision['fecha_fin'] = date( "y-m-d", strtotime('last day of December', time()));
-        $registros_tg_provision['monto'] = $monto;
+        $registros_tg_conf_provision['monto'] = $monto;
 
         $tg_conf_provision = (new tg_conf_provision($this->link))->alta_registro(registro: $registros_tg_conf_provision);
         if (errores::$error) {
