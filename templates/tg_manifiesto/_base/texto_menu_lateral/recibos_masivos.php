@@ -1,1 +1,1 @@
-<span class="texto-menu-lateral">Recibos Masibos</span>
+<span class="texto-menu-lateral">Recibos Masivos</span>

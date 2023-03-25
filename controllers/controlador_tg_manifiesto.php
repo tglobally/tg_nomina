@@ -2602,7 +2602,7 @@ class controlador_tg_manifiesto extends _ctl_base
     public function recibos_masivos(bool $header, bool $ws = false): array|stdClass
     {
         $r_tg_manifiesto_periodo = (new tg_manifiesto_periodo($this->link))
-            ->get_periodos_manifiesto(tg_manifiesto_id:  $this->registro_id);
+            ->get_periodos_manifiesto(tg_manifiesto_id:  $this->registro_id );
         if(errores::$error){
             return $this->retorno_error(mensaje: 'Error al obtener manifiesto periodo',data:  $r_tg_manifiesto_periodo,
                 header: $header,ws:$ws);
@@ -2622,7 +2622,7 @@ class controlador_tg_manifiesto extends _ctl_base
         $columns["nom_nomina_fecha_inicial_pago"]["titulo"] = "Fecha Inicial Pago";
         $columns["nom_nomina_fecha_final_pago"]["titulo"] = "Fecha Final Pago";
         $columns["org_empresa_descripcion"]["titulo"] = "Empresa";
-        $filtro = array("nom_nomina_id",  "em_empleado_nombre",    );
+        $filtro = array("nom_nomina_id",  "em_empleado_nombre",);
 
         $datatables = $this->datatable_init(columns: $columns, filtro: $filtro, identificador: "#nom_nomina",
             in: $in,  multi_selects: true);
