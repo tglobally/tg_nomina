@@ -88,6 +88,19 @@ $url_icons = (new views())->url_icons;
                         </form>
                     </div>
 
+                    <div class="col-sm-2">
+                        <form method="post" action="<?php echo $controlador->link_tg_manifiesto_descarga_pdf; ?> "
+                              class="form-additional form_nominas " id="form_descarga_pdf">
+                            <input id="descarga_pdf" name="descarga_pdf" type="hidden">
+                            <div class="botones">
+                                <button type="submit" class="btn btn-info" name="btn_action_next"
+                                        value="exportar" form="form_descarga_pdf">
+                                    Descargar PDF
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
                    <!-- <div class="col-sm-2">
                         <form method="post" action="<?php /*echo $controlador->link_tg_manifiesto_elimina_percepciones; */?> "
                               class="form-additional" id="form_export">
