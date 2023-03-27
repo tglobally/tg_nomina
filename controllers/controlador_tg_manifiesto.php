@@ -61,6 +61,7 @@ class controlador_tg_manifiesto extends _ctl_base
     public string $link_tg_manifiesto_agregar_otro_pago_bd = '';
     public string $link_tg_manifiesto_elimina_percepciones = '';
     public string $link_tg_manifiesto_descarga_pdf = '';
+    public string $link_tg_manifiesto_descarga_comprimido = '';
 
     public array $nominas_seleccionadas = array();
 
@@ -378,15 +379,51 @@ class controlador_tg_manifiesto extends _ctl_base
                 ws: $ws);
         }
 
-        $nominas = $_POST['descarga_pdf'];
-        $r_nomina = (new nom_nomina($this->link))->descarga_recibo_nomina_foreach(nom_nominas: $nominas);
+        $this->nominas_seleccionadas = explode(",",$_POST['descarga_pdf']);
+
+        $temporales = (new generales())->path_base . "archivos/tmp/";
+        $pdf = new Mpdf(['tempDir' => $temporales]);
         if (errores::$error) {
-            $error = $this->errores->error(mensaje: 'Error al obtener recibo de nomina', data: $r_nomina);
+            return $this->retorno_error(mensaje: 'Error al crear pdf',data: $pdf, header: $header, ws: $ws);
+        }
+
+        foreach ($this->nominas_seleccionadas as $nomina) {
+            $r_pdf = (new nom_nomina($this->link))->crea_pdf_recibo_nomina(nom_nomina_id: $nomina, pdf: $pdf);
+        }
+
+        $nombre_archivo = "Nominas por periodo";
+        $pdf->Output($nombre_archivo.'.pdf','D');
+
+        exit;
+    }
+
+    public function descarga_comprimido(bool $header, bool $ws = false){
+        if (!isset($_POST['descarga_comprimido'])){
+            return $this->retorno_error(mensaje: 'Error no existe descargar_comprimido', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        if ($_POST['descarga_comprimido'] === ""){
+            return $this->retorno_error(mensaje: 'Error no ha seleccionado una nomina', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        $this->nominas_seleccionadas = explode(",",$_POST['descarga_pdf']);
+
+        print_r($this->nominas_seleccionadas);
+
+        /**
+
+        $r_zip = (new nom_nomina($this->link))->descarga_recibo_nomina_zip(nom_nominas: $this->nominas_seleccionadas);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener recibo de nomina', data: $r_zip);
             print_r($error);
             die('Error');
         }
+         **/
         exit;
     }
+
 
     public function elimina_percepciones(bool $header, bool $ws = false): array|stdClass
     {
@@ -529,6 +566,15 @@ class controlador_tg_manifiesto extends _ctl_base
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al obtener link',
                 data: $this->link_tg_manifiesto_descarga_pdf);
+            print_r($error);
+            exit;
+        }
+
+        $this->link_tg_manifiesto_descarga_comprimido = $this->obj_link->link_con_id(accion: "descarga_comprimido",
+            link: $this->link, registro_id: $this->registro_id, seccion: $this->seccion);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener link',
+                data: $this->link_tg_manifiesto_descarga_comprimido);
             print_r($error);
             exit;
         }

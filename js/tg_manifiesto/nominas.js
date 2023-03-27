@@ -271,6 +271,9 @@ $(document).ready(function () {
             $('#agregar_percepcion').val(nominas_seleccionadas);
             $('#agregar_deduccion').val(nominas_seleccionadas);
             $('#agregar_otro_pago').val(nominas_seleccionadas);
+            $('#descarga_pdf').val(nominas_seleccionadas);
+            $('#descarga_comprimido').val(nominas_seleccionadas);
+
 
         }, 1500);
     });

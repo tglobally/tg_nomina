@@ -50,5 +50,6 @@ config/database.php
 config/generales.php
 config/views.php
 config/pac.php
+Recibos por periodo.zip
 vendor
 archivos
