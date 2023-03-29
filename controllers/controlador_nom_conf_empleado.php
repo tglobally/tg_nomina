@@ -175,6 +175,10 @@ class controlador_nom_conf_empleado extends \gamboamartin\nomina\controllers\con
             $monto = $conf_pres_empresa->registros[0]['im_detalle_conf_prestaciones_n_dias_vacaciones'] * $nom_nomina['em_empleado_salario_diario'] / 365;
         } else if (strcasecmp($tg_tipo_provision['tg_tipo_provision_descripcion'], 'GRATIFICACIÓN ANUAL (AGUINALDO)') == 0){
             $monto = 999;
+        }else if (strcasecmp($tg_tipo_provision['tg_tipo_provision_descripcion'], 'PRIMA VACACIONAL') == 0){
+            $monto = $nom_nomina['em_empleado_salario_diario'] * $conf_pres_empresa->registros[0]['im_detalle_conf_prestaciones_n_dias_vacaciones'] * 0.25 / 365;
+        }else if (strcasecmp($tg_tipo_provision['tg_tipo_provision_descripcion'], 'PRIMA DE ANTIGÜEDAD') == 0){
+            $monto = 999;
         }
 
         $registros_tg_conf_provision['tg_tipo_provision_id'] = $_POST['tg_tipo_provision_id'];
