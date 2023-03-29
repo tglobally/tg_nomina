@@ -5,7 +5,7 @@ use config\views;
 $url_icons = (new views())->url_icons;
 ?>
 
-<?php include 'templates/nom_periodo/recibos_masivos/secciones.php'; ?>
+<?php include 'templates/tg_manifiesto/recibos_masivos/secciones.php'; ?>
 <div class="col-md-9 formulario">
     <div class="col-lg-12">
 
@@ -23,7 +23,7 @@ $url_icons = (new views())->url_icons;
                         <div class="dropdown-menu dropdown-menu-right">
                             <button type="submit" class="dropdown-item" name="btn_action_next"
                                     value="ve_nominas" form="form_agregar_percepcion">
-                                Agregar Percepción
+                                Descarga
                             </button>
                             <button type="submit" class="dropdown-item" name="btn_action_next"
                                     value="ve_nominas" form="form_agregar_deduccion">
