@@ -64,7 +64,7 @@ class tg_manifiesto extends _modelo_parent{
                 data: $fc_csd);
         }
 
-        $fc_csd = $fc_csd->registros[0];
+        $fc_csd = $fc_csd->registros[2];
 
         $tg_sucursal_alianza = $this->obten_sucursal_alianza(com_sucursal_id: $this->registro['com_sucursal_id']);
         if(errores::$error){
