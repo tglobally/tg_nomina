@@ -45,6 +45,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use stdClass;
 use Throwable;
+use ZipArchive;
 
 class controlador_tg_manifiesto extends _ctl_base
 {
@@ -408,19 +409,21 @@ class controlador_tg_manifiesto extends _ctl_base
                 ws: $ws);
         }
 
-        $this->nominas_seleccionadas = explode(",",$_POST['descarga_pdf']);
+        $id_nominas = array_map('intval', explode(',', $_POST['descarga_comprimido']));
 
-        print_r($this->nominas_seleccionadas);
-
-        /**
-
-        $r_zip = (new nom_nomina($this->link))->descarga_recibo_nomina_zip(nom_nominas: $this->nominas_seleccionadas);
+        $nominas = (new nom_nomina($this->link))->filtro_and(in: $id_nominas);
         if (errores::$error) {
-            $error = $this->errores->error(mensaje: 'Error al obtener recibo de nomina', data: $r_zip);
+            return $this->retorno_error(mensaje: 'Error al obtener nominas', data: $nominas,
+                header: $header, ws: $ws);
+        }
+
+        $r_nomina = (new nom_nomina($this->link))->descarga_recibo_nomina_zip(nom_nominas: $nominas);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener recibo de nomina', data: $r_nomina);
             print_r($error);
             die('Error');
         }
-         **/
+
         exit;
     }
 

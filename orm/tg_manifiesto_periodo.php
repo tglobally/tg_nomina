@@ -63,7 +63,7 @@ class tg_manifiesto_periodo extends modelo{
 
     public function get_periodos_manifiesto(int $tg_manifiesto_id): array|stdClass
     {
-        if($tg_manifiesto_id >=0){
+        if($tg_manifiesto_id <=0){
             return $this->error->error(mensaje: 'Error $tg_manifiesto_id debe ser mayor a 0', data: $tg_manifiesto_id);
         }
 
