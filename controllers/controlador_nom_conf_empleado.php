@@ -5,6 +5,8 @@ namespace tglobally\tg_nomina\controllers;
 use DateTime;
 use gamboamartin\errores\errores;
 use gamboamartin\im_registro_patronal\models\im_conf_pres_empresa;
+use gamboamartin\im_registro_patronal\models\im_salario_minimo;
+use gamboamartin\im_registro_patronal\models\im_uma;
 use gamboamartin\nomina\models\em_empleado;
 use gamboamartin\nomina\models\nom_nomina;
 use tglobally\template_tg\html;
@@ -179,7 +181,12 @@ class controlador_nom_conf_empleado extends \gamboamartin\nomina\controllers\con
         }else if (strcasecmp($tg_tipo_provision['tg_tipo_provision_descripcion'], 'PRIMA VACACIONAL') == 0){
             $monto = $nom_nomina['em_empleado_salario_diario'] * $conf_pres_empresa->registros[0]['im_detalle_conf_prestaciones_n_dias_vacaciones'] * 0.25 / 365;
         }else if (strcasecmp($tg_tipo_provision['tg_tipo_provision_descripcion'], 'PRIMA DE ANTIGÜEDAD') == 0){
-            $monto = 999;
+
+            $monto = $this->calcula_prima_antiguedad(fecha_inicio_rel_laboral: $nom_nomina['em_empleado_fecha_inicio_rel_laboral'],configuracion: true);
+            if (errores::$error) {
+                return $this->retorno_error(mensaje: 'Error al calcular prima antiguedad', data: $monto,
+                    header: $header, ws: $ws);
+            }
         }
 
         $registros_tg_conf_provision['tg_tipo_provision_id'] = $_POST['tg_tipo_provision_id'];
@@ -220,16 +227,59 @@ class controlador_nom_conf_empleado extends \gamboamartin\nomina\controllers\con
         return $intervalo->y;
     }
 
-    public function calcula_prima_antiguedad(string $fecha_inicio_rel_laboral): float|array{
+    public function calcula_prima_antiguedad(string $fecha_inicio_rel_laboral, bool $configuracion): float|array{
         $years = $this->calcula_anios_laborados(fecha_inicio_rel_laboral: $fecha_inicio_rel_laboral);
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al calcular años laborados', data: $years);
         }
 
-        print_r($years);exit();
+        $fecha_actual = date("Y-m-d");
 
-        return 0.0;
+        $valor_calculo = 1.0;
 
+        if ($configuracion){
+            $filtro_especial[0][$fecha_inicio_rel_laboral]['operador'] = '>=';
+            $filtro_especial[0][$fecha_inicio_rel_laboral]['valor'] = 'im_salario_minimo.fecha_inicio';
+            $filtro_especial[0][$fecha_inicio_rel_laboral]['comparacion'] = 'AND';
+            $filtro_especial[0][$fecha_inicio_rel_laboral]['valor_es_campo'] = true;
+
+            $filtro_especial[1][$fecha_actual]['operador'] = '<=';
+            $filtro_especial[1][$fecha_actual]['valor'] = 'im_salario_minimo.fecha_fin';
+            $filtro_especial[1][$fecha_actual]['comparacion'] = 'AND';
+            $filtro_especial[1][$fecha_actual]['valor_es_campo'] = true;
+            $im_salario_minimo = (new im_salario_minimo($this->link))->filtro_and(filtro_especial:  $filtro_especial, limit: 1);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener salario minimo', data: $im_salario_minimo);
+            }
+
+            if ($im_salario_minimo->n_registros > 0) {
+                $valor_calculo = $im_salario_minimo->registros[0]['im_salario_minimo_monto'];
+            }
+        }else {
+            $filtro_especial[0][$fecha_inicio_rel_laboral]['operador'] = '>=';
+            $filtro_especial[0][$fecha_inicio_rel_laboral]['valor'] = 'im_salario_minimo.fecha_inicio';
+            $filtro_especial[0][$fecha_inicio_rel_laboral]['comparacion'] = 'AND';
+            $filtro_especial[0][$fecha_inicio_rel_laboral]['valor_es_campo'] = true;
+
+            $filtro_especial[1][$fecha_actual]['operador'] = '<=';
+            $filtro_especial[1][$fecha_actual]['valor'] = 'im_salario_minimo.fecha_fin';
+            $filtro_especial[1][$fecha_actual]['comparacion'] = 'AND';
+            $filtro_especial[1][$fecha_actual]['valor_es_campo'] = true;
+            $im_uma = (new im_uma($this->link))->filtro_and(filtro_especial:  $filtro_especial, limit: 1);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener uma', data: im_uma);
+            }
+
+            if ($im_uma->n_registros > 0) {
+                $valor_calculo = $im_uma->registros[0]['im_uma_monto'];
+            }
+        }
+
+        $monto = $years * 12;
+        $monto *= $valor_calculo * 2;
+        $monto /= 365;
+
+        return $monto;
     }
 
     public function menu_item(string $menu_item_titulo, string $link, bool $menu_seccion_active = false, bool $menu_lateral_active = false): array
