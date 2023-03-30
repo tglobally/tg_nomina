@@ -2,6 +2,7 @@
 
 namespace tglobally\tg_nomina\controllers;
 
+use DateTime;
 use gamboamartin\errores\errores;
 use gamboamartin\im_registro_patronal\models\im_conf_pres_empresa;
 use gamboamartin\nomina\models\em_empleado;
@@ -208,6 +209,27 @@ class controlador_nom_conf_empleado extends \gamboamartin\nomina\controllers\con
         $tg_provision->siguiente_view = "integra_provision";
 
         return $tg_provision;
+    }
+
+    public function calcula_anios_laborados(string $fecha_inicio_rel_laboral): int{
+        $fechaInicio = new DateTime($fecha_inicio_rel_laboral);
+        $fecha_actual = date("Y-m-d");
+        $fechaFin = new DateTime(date($fecha_actual));
+        $intervalo = $fechaInicio->diff($fechaFin);
+
+        return $intervalo->y;
+    }
+
+    public function calcula_prima_antiguedad(string $fecha_inicio_rel_laboral): float|array{
+        $years = $this->calcula_anios_laborados(fecha_inicio_rel_laboral: $fecha_inicio_rel_laboral);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al calcular años laborados', data: $years);
+        }
+
+        print_r($years);exit();
+
+        return 0.0;
+
     }
 
     public function menu_item(string $menu_item_titulo, string $link, bool $menu_seccion_active = false, bool $menu_lateral_active = false): array
