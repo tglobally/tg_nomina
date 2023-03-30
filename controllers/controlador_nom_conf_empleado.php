@@ -257,12 +257,12 @@ class controlador_nom_conf_empleado extends \gamboamartin\nomina\controllers\con
             }
         }else {
             $filtro_especial[0][$fecha_inicio_rel_laboral]['operador'] = '>=';
-            $filtro_especial[0][$fecha_inicio_rel_laboral]['valor'] = 'im_salario_minimo.fecha_inicio';
+            $filtro_especial[0][$fecha_inicio_rel_laboral]['valor'] = 'im_uma.fecha_inicio';
             $filtro_especial[0][$fecha_inicio_rel_laboral]['comparacion'] = 'AND';
             $filtro_especial[0][$fecha_inicio_rel_laboral]['valor_es_campo'] = true;
 
             $filtro_especial[1][$fecha_actual]['operador'] = '<=';
-            $filtro_especial[1][$fecha_actual]['valor'] = 'im_salario_minimo.fecha_fin';
+            $filtro_especial[1][$fecha_actual]['valor'] = 'im_uma.fecha_fin';
             $filtro_especial[1][$fecha_actual]['comparacion'] = 'AND';
             $filtro_especial[1][$fecha_actual]['valor_es_campo'] = true;
             $im_uma = (new im_uma($this->link))->filtro_and(filtro_especial:  $filtro_especial, limit: 1);
