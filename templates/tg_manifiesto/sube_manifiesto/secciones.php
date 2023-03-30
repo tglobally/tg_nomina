@@ -6,7 +6,7 @@
             <img src="<?php echo (new views())->url_assets.'img/stepper/1.svg'?>" class="img-seccion">
         </div>
         <div class="col-md-8">
-            <h3>Sube Manifiesto</h3>
+            <h3>Manifiesto</h3>
             <?php include "templates/tg_manifiesto/_base/links/modifica.php"; ?>
             <hr class="hr-menu-lateral">
             <?php include "templates/tg_manifiesto/_base/buttons/2.azul.sube_manifiesto.php"; ?>
