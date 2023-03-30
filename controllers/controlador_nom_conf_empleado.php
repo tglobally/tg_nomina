@@ -267,7 +267,7 @@ class controlador_nom_conf_empleado extends \gamboamartin\nomina\controllers\con
             $filtro_especial[1][$fecha_actual]['valor_es_campo'] = true;
             $im_uma = (new im_uma($this->link))->filtro_and(filtro_especial:  $filtro_especial, limit: 1);
             if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener uma', data: im_uma);
+                return $this->errores->error(mensaje: 'Error al obtener uma', data: $im_uma);
             }
 
             if ($im_uma->n_registros > 0) {
