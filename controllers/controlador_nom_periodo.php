@@ -1,13 +1,16 @@
 <?php
 namespace tglobally\tg_nomina\controllers;
 
+use base\orm\inicializacion;
+use config\generales;
 use gamboamartin\errores\errores;
 use gamboamartin\nomina\models\nom_nomina;
-use gamboamartin\nomina\models\nom_periodo;
 use gamboamartin\plugins\exportador;
+use Mpdf\Mpdf;
 use PDO;
 use stdClass;
 use tglobally\template_tg\html;
+use tglobally\tg_nomina\models\tg_manifiesto_periodo;
 
 class controlador_nom_periodo extends \gamboamartin\nomina\controllers\controlador_nom_periodo {
 
@@ -15,6 +18,14 @@ class controlador_nom_periodo extends \gamboamartin\nomina\controllers\controlad
     public stdClass|array $keys_selects = array();
     public string $link_nom_periodo_reportes = '';
     public string $link_nom_periodo_exportar = '';
+    public string $link_tg_manifiesto_agregar_percepcion = '';
+    public string $link_tg_manifiesto_agregar_percepcion_bd = '';
+    public string $link_tg_manifiesto_agregar_deduccion = '';
+    public string $link_tg_manifiesto_agregar_deduccion_bd = '';
+    public string $link_tg_manifiesto_agregar_otro_pago = '';
+    public string $link_tg_manifiesto_agregar_otro_pago_bd = '';
+    public string $link_nom_periodo_descarga_pdf = '';
+    public string $link_nom_periodo_descarga_comprimido = '';
     public function __construct(PDO $link, stdClass $paths_conf = new stdClass()){
         $html_base = new html();
         parent::__construct( link: $link, html: $html_base);
@@ -212,5 +223,79 @@ class controlador_nom_periodo extends \gamboamartin\nomina\controllers\controlad
         }
 
         return $this->keys_selects;
+    }
+
+    public function descarga_pdf(bool $header, bool $ws = false){
+        if (!isset($_POST['descarga_pdf'])){
+            return $this->retorno_error(mensaje: 'Error no existe descargar_pdf', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        if ($_POST['descarga_pdf'] === ""){
+            return $this->retorno_error(mensaje: 'Error no ha seleccionado una nomina', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        print_r($_POST['descarga_pdf']);
+    }
+
+    public function descarga_recibo_manifiesto_zip(bool $header, bool $ws = false){
+        $filtro['tg_manifiesto_periodo.tg_manifiesto_id'] = $this->registro_id;
+        $manifiesto_periodo = (new tg_manifiesto_periodo($this->link))->filtro_and(filtro: $filtro);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al obtener nominas', data: $manifiesto_periodo);
+        }
+
+        $nom_periodo_id = $manifiesto_periodo->registros[0]['nom_periodo_id']; /** Id del periodo */
+
+        $filtro_nomina['nom_nomina.nom_periodo_id'] = $nom_periodo_id;
+        $nominas = (new nom_nomina($this->link))->filtro_and(filtro: $filtro_nomina);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al obtener nominas', data: $nominas);
+        }
+
+        $r_nomina = (new nom_nomina($this->link))->descarga_recibo_nomina_zip(nom_nominas: $nominas);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener recibo de nomina', data: $r_nomina);
+            print_r($error);
+            die('Error');
+        }
+        exit;
+    }
+
+    public function recibos_masivos(bool $header, bool $ws = false): array|stdClass
+    {
+
+
+        $filtro_nomina['nom_nomina.nom_periodo_id'] = $this->registro_id;
+        $nominas = (new nom_nomina($this->link))->filtro_and(filtro: $filtro_nomina);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al obtener nominas', data: $nominas);
+        }
+
+        $in = (new inicializacion())->genera_data_in(campo:'id', tabla: 'nom_nomina',
+            registros: $nominas->registros);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al integrar in',data:  $in, header: $header,ws:$ws);
+        }
+
+        $columns = array();
+        $columns["nom_nomina_id"]["titulo"] = "Id";
+        $columns["em_empleado_nombre"]["titulo"] = "Nombre";
+        $columns["em_empleado_nombre"]["campos"] = array("em_empleado_ap","em_empleado_am");
+        $columns["em_empleado_rfc"]["titulo"] = "Rfc";
+        $columns["nom_nomina_fecha_inicial_pago"]["titulo"] = "Fecha Inicial Pago";
+        $columns["nom_nomina_fecha_final_pago"]["titulo"] = "Fecha Final Pago";
+        $columns["org_empresa_descripcion"]["titulo"] = "Empresa";
+        $filtro = array("nom_nomina_id",  "em_empleado_nombre",);
+
+        $datatables = $this->datatable_init(columns: $columns, filtro: $filtro, identificador: "#nom_nomina",
+            in: $in, multi_selects: true);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al inicializar datatable',data:  $datatables,
+                header: $header,ws:$ws);
+        }
+
+        return $datatables;
     }
 }

@@ -1,11 +1,11 @@
-<?php /** @var \tglobally\tg_nomina\controllers\controlador_tg_manifiesto $controlador */ ?>
+<?php /** @var \tglobally\tg_nomina\controllers\controlador_nom_periodo $controlador */ ?>
 <?php
 
 use config\views;
 $url_icons = (new views())->url_icons;
 ?>
 
-<?php include 'templates/tg_manifiesto/recibos_masivos/secciones.php'; ?>
+<?php include 'templates/nom_periodo/recibos_masivos/secciones.php'; ?>
 <div class="col-md-9 formulario">
     <div class="col-lg-12">
 
@@ -50,7 +50,7 @@ $url_icons = (new views())->url_icons;
                         </a>
                     </div>
                     <div class="col-sm-2">
-                        <form method="post" action="<?php echo $controlador->link_tg_manifiesto_agregar_percepcion; ?> "
+                        <form method="post" action="<?php echo $controlador->link_nom_periodo_agregar_percepcion; ?> "
                               class="form-additional form_nominas " id="form_agregar_percepcion">
                             <input id="agregar_percepcion" name="agregar_percepcion" type="hidden">
                             <div class="botones">
@@ -63,7 +63,7 @@ $url_icons = (new views())->url_icons;
                     </div>
 
                     <div class="col-sm-2">
-                        <form method="post" action="<?php echo $controlador->link_tg_manifiesto_agregar_deduccion; ?> "
+                        <form method="post" action="<?php echo $controlador->link_nom_periodo_agregar_deduccion; ?> "
                               class="form-additional form_nominas " id="form_agregar_deduccion">
                             <input id="agregar_deduccion" name="agregar_deduccion" type="hidden">
                             <div class="botones">
@@ -76,7 +76,7 @@ $url_icons = (new views())->url_icons;
                     </div>
 
                     <div class="col-sm-2">
-                        <form method="post" action="<?php echo $controlador->link_tg_manifiesto_agregar_otro_pago; ?> "
+                        <form method="post" action="<?php echo $controlador->link_nom_periodo_agregar_otro_pago; ?> "
                               class="form-additional form_nominas " id="form_agregar_otro_pago">
                             <input id="agregar_otro_pago" name="agregar_otro_pago" type="hidden">
                             <div class="botones">
@@ -89,7 +89,7 @@ $url_icons = (new views())->url_icons;
                     </div>
 
                     <div class="col-sm-2">
-                        <form method="post" action="<?php echo $controlador->link_tg_manifiesto_descarga_pdf; ?> "
+                        <form method="post" action="<?php echo $controlador->link_nom_periodo_descarga_pdf; ?> "
                               class="form-additional form_nominas " id="form_descarga_pdf">
                             <input id="descarga_pdf" name="descarga_pdf" type="hidden">
                             <div class="botones">
@@ -102,7 +102,7 @@ $url_icons = (new views())->url_icons;
                     </div>
 
                     <div class="col-sm-2">
-                        <form method="post" action="<?php echo $controlador->link_tg_manifiesto_descarga_comprimido; ?> "
+                        <form method="post" action="<?php echo $controlador->link_nom_periodo_descarga_comprimido; ?> "
                               class="form-additional form_nominas " id="form_descarga_comprimido">
                             <input id="descarga_comprimido" name="descarga_comprimido" type="hidden">
                             <div class="botones">
@@ -113,19 +113,6 @@ $url_icons = (new views())->url_icons;
                             </div>
                         </form>
                     </div>
-
-                    <!-- <div class="col-sm-2">
-                        <form method="post" action="<?php /*echo $controlador->link_tg_manifiesto_elimina_percepciones; */?> "
-                              class="form-additional" id="form_export">
-                            <input id="percepciones_eliminar" name="percepciones_eliminar" type="hidden">
-                            <div class="botones">
-                                <button type="submit" class="btn btn-info" name="btn_action_next"
-                                        value="exportar" form="form_export">
-                                    Eliminar Percepciones
-                                </button>
-                            </div>
-                        </form>
-                    </div>-->
 
                 </div>
             </div>
