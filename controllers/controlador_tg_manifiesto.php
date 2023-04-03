@@ -117,8 +117,6 @@ class controlador_tg_manifiesto extends _ctl_base
                 ws: $ws);
         }
 
-        print_r($_POST['agregar_deduccion']);
-
         $this->nominas_seleccionadas = explode(",",$_POST['agregar_deduccion']);
 
         $r_alta = $this->init_alta();

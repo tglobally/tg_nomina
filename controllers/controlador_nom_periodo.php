@@ -16,14 +16,15 @@ class controlador_nom_periodo extends \gamboamartin\nomina\controllers\controlad
 
     public array $sidebar = array();
     public stdClass|array $keys_selects = array();
+    public string $link_nom_periodo_alta_bd = '';
     public string $link_nom_periodo_reportes = '';
     public string $link_nom_periodo_exportar = '';
-    public string $link_tg_manifiesto_agregar_percepcion = '';
-    public string $link_tg_manifiesto_agregar_percepcion_bd = '';
-    public string $link_tg_manifiesto_agregar_deduccion = '';
-    public string $link_tg_manifiesto_agregar_deduccion_bd = '';
-    public string $link_tg_manifiesto_agregar_otro_pago = '';
-    public string $link_tg_manifiesto_agregar_otro_pago_bd = '';
+    public string $link_nom_periodo_agregar_percepcion = '';
+    public string $link_nom_periodo_agregar_percepcion_bd = '';
+    public string $link_nom_periodo_agregar_deduccion = '';
+    public string $link_nom_periodo_agregar_deduccion_bd = '';
+    public string $link_nom_periodo_agregar_otro_pago = '';
+    public string $link_nom_periodo_agregar_otro_pago_bd = '';
     public string $link_nom_periodo_descarga_pdf = '';
     public string $link_nom_periodo_descarga_comprimido = '';
     public function __construct(PDO $link, stdClass $paths_conf = new stdClass()){
@@ -54,6 +55,13 @@ class controlador_nom_periodo extends \gamboamartin\nomina\controllers\controlad
             exit;
         }
 
+        $init_links = $this->init_links();
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al inicializar links', data: $init_links);
+            print_r($error);
+            die('Error');
+        }
+
         $this->sidebar['lista']['titulo'] = "Periodos";
         $this->sidebar['lista']['menu'] = array(
             $this->menu_item(menu_item_titulo: "Alta", link: $this->link_alta, menu_seccion_active: true,
@@ -81,6 +89,93 @@ class controlador_nom_periodo extends \gamboamartin\nomina\controllers\controlad
         $this->sidebar['reportes']['menu'] = array(
             $this->menu_item(menu_item_titulo: "periodo", link: $this->link_alta, menu_lateral_active: true));
 
+    }
+
+    private function init_links(): array|string
+    {
+
+        $this->link_nom_periodo_alta_bd = $this->obj_link->link_alta_bd(link: $this->link,
+            seccion: 'tg_manifiesto_periodo');
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener link',
+                data: $this->link_nom_periodo_alta_bd);
+            print_r($error);
+            exit;
+        }
+
+        $this->link_nom_periodo_agregar_percepcion = $this->obj_link->link_con_id(accion: "agregar_percepcion",
+            link: $this->link, registro_id: $this->registro_id, seccion: $this->seccion);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener link',
+                data: $this->link_nom_periodo_agregar_percepcion);
+            print_r($error);
+            exit;
+        }
+
+        $this->link_nom_periodo_agregar_percepcion_bd = $this->obj_link->link_con_id(accion: "agregar_percepcion_bd",
+            link: $this->link, registro_id: $this->registro_id, seccion: $this->seccion);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener link',
+                data: $this->link_nom_periodo_agregar_percepcion_bd);
+            print_r($error);
+            exit;
+        }
+
+        $this->link_nom_periodo_agregar_deduccion = $this->obj_link->link_con_id(accion: "agregar_deduccion",
+            link: $this->link, registro_id: $this->registro_id, seccion: $this->seccion);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener link',
+                data: $this->link_nom_periodo_agregar_deduccion);
+            print_r($error);
+            exit;
+        }
+
+        $this->link_nom_periodo_agregar_deduccion_bd = $this->obj_link->link_con_id(accion: "agregar_deduccion_bd",
+            link: $this->link, registro_id: $this->registro_id, seccion: $this->seccion);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener link',
+                data: $this->link_nom_periodo_agregar_deduccion_bd);
+            print_r($error);
+            exit;
+        }
+
+        $this->link_nom_periodo_agregar_otro_pago = $this->obj_link->link_con_id(accion: "agregar_otro_pago",
+            link: $this->link, registro_id: $this->registro_id, seccion: $this->seccion);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener link',
+                data: $this->link_nom_periodo_agregar_otro_pago);
+            print_r($error);
+            exit;
+        }
+
+        $this->link_nom_periodo_agregar_otro_pago_bd = $this->obj_link->link_con_id(accion: "agregar_otro_pago_bd",
+            link: $this->link, registro_id: $this->registro_id, seccion: $this->seccion);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener link',
+                data: $this->link_nom_periodo_agregar_otro_pago_bd);
+            print_r($error);
+            exit;
+        }
+
+        $this->link_nom_periodo_descarga_pdf = $this->obj_link->link_con_id(accion: "descarga_pdf",
+            link: $this->link, registro_id: $this->registro_id, seccion: $this->seccion);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener link',
+                data: $this->link_nom_periodo_descarga_pdf);
+            print_r($error);
+            exit;
+        }
+
+        $this->link_nom_periodo_descarga_comprimido = $this->obj_link->link_con_id(accion: "descarga_comprimido",
+            link: $this->link, registro_id: $this->registro_id, seccion: $this->seccion);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener link',
+                data: $this->link_nom_periodo_descarga_comprimido);
+            print_r($error);
+            exit;
+        }
+
+        return $this->link_nom_periodo_alta_bd;
     }
 
     public function menu_item(string $menu_item_titulo, string $link, bool $menu_seccion_active = false, bool $menu_lateral_active = false): array
@@ -236,7 +331,23 @@ class controlador_nom_periodo extends \gamboamartin\nomina\controllers\controlad
                 ws: $ws);
         }
 
-        print_r($_POST['descarga_pdf']);
+        $this->nominas_seleccionadas = explode(",",$_POST['descarga_pdf']);
+
+        $temporales = (new generales())->path_base . "archivos/tmp/";
+        $pdf = new Mpdf(['tempDir' => $temporales]);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al crear pdf',data: $pdf, header: $header, ws: $ws);
+        }
+
+        foreach ($this->nominas_seleccionadas as $nomina) {
+            $r_pdf = (new nom_nomina($this->link))->crea_pdf_recibo_nomina(nom_nomina_id: $nomina, pdf: $pdf);
+        }
+
+        $nombre_archivo = "Nominas por periodo";
+        $pdf->Output($nombre_archivo.'.pdf','D');
+
+        exit;
+
     }
 
     public function descarga_recibo_manifiesto_zip(bool $header, bool $ws = false){
