@@ -5,12 +5,17 @@ use base\orm\inicializacion;
 use config\generales;
 use gamboamartin\errores\errores;
 use gamboamartin\nomina\models\nom_nomina;
+use gamboamartin\nomina\models\nom_par_deduccion;
+use gamboamartin\nomina\models\nom_par_otro_pago;
+use gamboamartin\nomina\models\nom_par_percepcion;
 use gamboamartin\plugins\exportador;
+use gamboamartin\system\_ctl_base;
 use Mpdf\Mpdf;
 use PDO;
 use stdClass;
 use tglobally\template_tg\html;
 use tglobally\tg_nomina\models\tg_manifiesto_periodo;
+use ZipArchive;
 
 class controlador_nom_periodo extends \gamboamartin\nomina\controllers\controlador_nom_periodo {
 
@@ -19,6 +24,7 @@ class controlador_nom_periodo extends \gamboamartin\nomina\controllers\controlad
     public string $link_nom_periodo_alta_bd = '';
     public string $link_nom_periodo_reportes = '';
     public string $link_nom_periodo_exportar = '';
+    public string $link_nom_periodo_nominas = '';
     public string $link_nom_periodo_agregar_percepcion = '';
     public string $link_nom_periodo_agregar_percepcion_bd = '';
     public string $link_nom_periodo_agregar_deduccion = '';
@@ -99,6 +105,15 @@ class controlador_nom_periodo extends \gamboamartin\nomina\controllers\controlad
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al obtener link',
                 data: $this->link_nom_periodo_alta_bd);
+            print_r($error);
+            exit;
+        }
+
+        $this->link_nom_periodo_nominas = $this->obj_link->link_con_id(accion: "nominas",
+            link: $this->link, registro_id: $this->registro_id, seccion: $this->seccion);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener link',
+                data: $this->link_nom_periodo_nominas);
             print_r($error);
             exit;
         }
@@ -307,6 +322,215 @@ class controlador_nom_periodo extends \gamboamartin\nomina\controllers\controlad
         exit;
     }
 
+    public function agregar_deduccion(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
+    {
+        if (!isset($_POST['agregar_deduccion'])){
+            return $this->retorno_error(mensaje: 'Error no existe agregar_deduccion', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        if ($_POST['agregar_deduccion'] === ""){
+            return $this->retorno_error(mensaje: 'Error no ha seleccionado una nomina', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        $this->nominas_seleccionadas = explode(",",$_POST['agregar_deduccion']);
+
+        $r_alta = (new _ctl_base(html: $this->html,link: $this->link, modelo: $this->modelo, obj_link: $this->obj_link))->init_alta();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar alta', data: $r_alta, header: $header, ws: $ws);
+        }
+
+        $this->row_upd->importe_gravado = 0;
+        $this->row_upd->importe_exento = 0;
+
+        $keys_selects = (new _ctl_base(html: $this->html,link: $this->link, modelo: $this->modelo, obj_link: $this->obj_link))->init_selects_inputs();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar selects', data: $keys_selects, header: $header,
+                ws: $ws);
+        }
+
+        $inputs = $this->inputs(keys_selects: $keys_selects);
+        if (errores::$error) {
+            return $this->retorno_error(
+                mensaje: 'Error al obtener inputs', data: $inputs, header: $header, ws: $ws);
+        }
+
+        return $r_alta;
+    }
+
+    public function agregar_deduccion_bd(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
+    {
+        if (!isset($_POST['agregar_deduccion'])){
+            return $this->retorno_error(mensaje: 'Error no existe agregar_deduccion', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        $this->nominas_seleccionadas = explode(",",$_POST['agregar_deduccion']);
+
+        if (count($this->nominas_seleccionadas) === 0){
+            return $this->retorno_error(mensaje: 'Error no ha seleccionado una nomina', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        foreach ($this->nominas_seleccionadas as $nomina){
+
+            $registro['nom_nomina_id'] = $nomina;
+            $registro['nom_deduccion_id'] = $_POST['nom_deduccion_id'];
+            $registro['importe_gravado'] = $_POST['importe_gravado'];
+            $registro['importe_exento'] = $_POST['importe_exento'];
+            $registro['descripcion'] = $_POST['descripcion'];
+            $resultado = (new nom_par_deduccion($this->link))->alta_registro(registro: $registro);
+            if (errores::$error) {
+                return $this->retorno_error(mensaje: 'Error al ingresar deduccion para la nomina', data: $resultado,
+                    header: $header, ws: $ws);
+            }
+        }
+
+        header('Location:' . $this->link_nom_periodo_nominas);
+        exit;
+    }
+
+    public function agregar_otro_pago(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
+    {
+        if (!isset($_POST['agregar_otro_pago'])){
+            return $this->retorno_error(mensaje: 'Error no existe agregar_otro_pago', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        if ($_POST['agregar_otro_pago'] === ""){
+            return $this->retorno_error(mensaje: 'Error no ha seleccionado una nomina', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        $this->nominas_seleccionadas = explode(",",$_POST['agregar_otro_pago']);
+
+        $r_alta = (new _ctl_base(html: $this->html,link: $this->link, modelo: $this->modelo, obj_link: $this->obj_link))->init_alta();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar alta', data: $r_alta, header: $header, ws: $ws);
+        }
+
+        $this->row_upd->importe_gravado = 0;
+        $this->row_upd->importe_exento = 0;
+
+        $keys_selects = (new _ctl_base(html: $this->html,link: $this->link, modelo: $this->modelo, obj_link: $this->obj_link))->init_selects_inputs();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar selects', data: $keys_selects, header: $header,
+                ws: $ws);
+        }
+
+        $inputs = $this->inputs(keys_selects: $keys_selects);
+        if (errores::$error) {
+            return $this->retorno_error(
+                mensaje: 'Error al obtener inputs', data: $inputs, header: $header, ws: $ws);
+        }
+
+        return $r_alta;
+    }
+
+    public function agregar_otro_pago_bd(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
+    {
+        if (!isset($_POST['agregar_otro_pago'])){
+            return $this->retorno_error(mensaje: 'Error no existe agregar_otro_pago', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        $this->nominas_seleccionadas = explode(",",$_POST['agregar_otro_pago']);
+
+        if (count($this->nominas_seleccionadas) === 0){
+            return $this->retorno_error(mensaje: 'Error no ha seleccionado una nomina', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        foreach ($this->nominas_seleccionadas as $nomina){
+
+            $registro['nom_nomina_id'] = $nomina;
+            $registro['nom_otro_pago_id'] = $_POST['nom_otro_pago_id'];
+            $registro['importe_gravado'] = $_POST['importe_gravado'];
+            $registro['importe_exento'] = $_POST['importe_exento'];
+            $registro['descripcion'] = $_POST['descripcion'];
+            $resultado = (new nom_par_otro_pago($this->link))->alta_registro(registro: $registro);
+            if (errores::$error) {
+                return $this->retorno_error(mensaje: 'Error al ingresar otro pago para la nomina', data: $resultado,
+                    header: $header, ws: $ws);
+            }
+        }
+
+        header('Location:' . $this->link_nom_periodo_nominas);
+        exit;
+    }
+
+    public function agregar_percepcion(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
+    {
+        if (!isset($_POST['agregar_percepcion'])){
+            return $this->retorno_error(mensaje: 'Error no existe agregar_percepcion', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        if ($_POST['agregar_percepcion'] === ""){
+            return $this->retorno_error(mensaje: 'Error no ha seleccionado una nomina', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        $this->nominas_seleccionadas = explode(",",$_POST['agregar_percepcion']);
+
+        $r_alta = (new _ctl_base(html: $this->html,link: $this->link, modelo: $this->modelo, obj_link: $this->obj_link))->init_alta();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar alta', data: $r_alta, header: $header, ws: $ws);
+        }
+
+        $this->row_upd->importe_gravado = 0;
+        $this->row_upd->importe_exento = 0;
+
+        $keys_selects = (new _ctl_base(html: $this->html,link: $this->link, modelo: $this->modelo, obj_link: $this->obj_link))->init_selects_inputs();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar selects', data: $keys_selects, header: $header,
+                ws: $ws);
+        }
+
+        $inputs = $this->inputs(keys_selects: $keys_selects);
+        if (errores::$error) {
+            return $this->retorno_error(
+                mensaje: 'Error al obtener inputs', data: $inputs, header: $header, ws: $ws);
+        }
+
+        return $r_alta;
+    }
+
+    public function agregar_percepcion_bd(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
+    {
+        if (!isset($_POST['agregar_percepcion'])){
+            return $this->retorno_error(mensaje: 'Error no existe agregar_percepcion', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+
+
+        $this->nominas_seleccionadas = explode(",",$_POST['agregar_percepcion']);
+
+        if (count($this->nominas_seleccionadas) === 0){
+            return $this->retorno_error(mensaje: 'Error no ha seleccionado una nomina', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        foreach ($this->nominas_seleccionadas as $nomina){
+
+            $registro['nom_nomina_id'] = $nomina;
+            $registro['nom_percepcion_id'] = $_POST['nom_percepcion_id'];
+            $registro['importe_gravado'] = $_POST['importe_gravado'];
+            $registro['importe_exento'] = $_POST['importe_exento'];
+            $registro['descripcion'] = $_POST['descripcion'];
+            $resultado = (new nom_par_percepcion($this->link))->alta_registro(registro: $registro);
+            if (errores::$error) {
+                return $this->retorno_error(mensaje: 'Error al ingresar percepcion para la nomina', data: $resultado,
+                    header: $header, ws: $ws);
+            }
+        }
+
+        header('Location:' . $this->link_nom_periodo_nominas);
+        exit;
+    }
+
     public function asignar_propiedad(string $identificador, mixed $propiedades): array|stdClass
     {
         if (!array_key_exists($identificador,$this->keys_selects)){
@@ -350,27 +574,49 @@ class controlador_nom_periodo extends \gamboamartin\nomina\controllers\controlad
 
     }
 
-    public function descarga_recibo_manifiesto_zip(bool $header, bool $ws = false){
-        $filtro['tg_manifiesto_periodo.tg_manifiesto_id'] = $this->registro_id;
-        $manifiesto_periodo = (new tg_manifiesto_periodo($this->link))->filtro_and(filtro: $filtro);
-        if (errores::$error) {
-            return $this->errores->error(mensaje: 'Error al obtener nominas', data: $manifiesto_periodo);
+    public function descarga_comprimido(bool $header, bool $ws = false){
+        if (!isset($_POST['descarga_comprimido'])){
+            return $this->retorno_error(mensaje: 'Error no existe descargar_comprimido', data: $_POST, header: $header,
+                ws: $ws);
         }
 
-        $nom_periodo_id = $manifiesto_periodo->registros[0]['nom_periodo_id']; /** Id del periodo */
-
-        $filtro_nomina['nom_nomina.nom_periodo_id'] = $nom_periodo_id;
-        $nominas = (new nom_nomina($this->link))->filtro_and(filtro: $filtro_nomina);
-        if (errores::$error) {
-            return $this->errores->error(mensaje: 'Error al obtener nominas', data: $nominas);
+        if ($_POST['descarga_comprimido'] === ""){
+            return $this->retorno_error(mensaje: 'Error no ha seleccionado una nomina', data: $_POST, header: $header,
+                ws: $ws);
         }
 
-        $r_nomina = (new nom_nomina($this->link))->descarga_recibo_nomina_zip(nom_nominas: $nominas);
-        if (errores::$error) {
-            $error = $this->errores->error(mensaje: 'Error al obtener recibo de nomina', data: $r_nomina);
-            print_r($error);
-            die('Error');
+        $id_nominas = array_map('intval', explode(',', $_POST['descarga_comprimido']));
+
+        $zip = new ZipArchive();
+        $nombreZip = 'Recibos por periodo.zip';
+        $zip->open($nombreZip, ZipArchive::CREATE);
+
+        foreach ($id_nominas as $nom_nomina_id){
+            $temporales = (new generales())->path_base . "archivos/tmp/";
+            $pdf = new Mpdf(['tempDir' => $temporales]);
+            if (errores::$error) {
+                return $this->retorno_error(mensaje: 'Error al crear pdf', data: $pdf,
+                    header: $header, ws: $ws);
+            }
+
+            $nom_nomina = (new \tglobally\tg_nomina\models\nom_nomina($this->link))->registro(registro_id: $nom_nomina_id);
+            if (errores::$error) {
+                return $this->retorno_error(mensaje: 'Error al obtener nomina', data: $nom_nomina,
+                    header: $header, ws: $ws);
+            }
+
+            $r_pdf = (new nom_nomina($this->link))->crea_pdf_recibo_nomina(nom_nomina_id: $nom_nomina['nom_nomina_id'] ,pdf: $pdf);
+            $archivo = $pdf->Output('','S');
+            $zip->addFromString($nom_nomina['nom_nomina_descripcion'].'.pdf', $archivo);
         }
+
+        $zip->close();
+
+        header('Content-Type: application/zip');
+        header('Content-disposition: attachment; filename=' . $nombreZip);
+        header('Content-Length: ' . filesize($nombreZip));
+        readfile($nombreZip);
+
         exit;
     }
 

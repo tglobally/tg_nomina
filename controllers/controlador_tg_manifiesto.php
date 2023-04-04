@@ -409,18 +409,35 @@ class controlador_tg_manifiesto extends _ctl_base
 
         $id_nominas = array_map('intval', explode(',', $_POST['descarga_comprimido']));
 
-        $nominas = (new nom_nomina($this->link))->filtro_and(in: $id_nominas);
-        if (errores::$error) {
-            return $this->retorno_error(mensaje: 'Error al obtener nominas', data: $nominas,
-                header: $header, ws: $ws);
+        $zip = new ZipArchive();
+        $nombreZip = 'Recibos por periodo.zip';
+        $zip->open($nombreZip, ZipArchive::CREATE);
+
+        foreach ($id_nominas as $nom_nomina_id){
+            $temporales = (new generales())->path_base . "archivos/tmp/";
+            $pdf = new Mpdf(['tempDir' => $temporales]);
+            if (errores::$error) {
+                return $this->retorno_error(mensaje: 'Error al crear pdf', data: $pdf,
+                    header: $header, ws: $ws);
+            }
+
+            $nom_nomina = (new nom_nomina($this->link))->registro(registro_id: $nom_nomina_id);
+            if (errores::$error) {
+                return $this->retorno_error(mensaje: 'Error al obtener nomina', data: $nom_nomina,
+                    header: $header, ws: $ws);
+            }
+
+            $r_pdf = (new nom_nomina($this->link))->crea_pdf_recibo_nomina(nom_nomina_id: $nom_nomina['nom_nomina_id'] ,pdf: $pdf);
+            $archivo = $pdf->Output('','S');
+            $zip->addFromString($nom_nomina['nom_nomina_descripcion'].'.pdf', $archivo);
         }
 
-        $r_nomina = (new nom_nomina($this->link))->descarga_recibo_nomina_zip(nom_nominas: $nominas);
-        if (errores::$error) {
-            $error = $this->errores->error(mensaje: 'Error al obtener recibo de nomina', data: $r_nomina);
-            print_r($error);
-            die('Error');
-        }
+        $zip->close();
+
+        header('Content-Type: application/zip');
+        header('Content-disposition: attachment; filename=' . $nombreZip);
+        header('Content-Length: ' . filesize($nombreZip));
+        readfile($nombreZip);
 
         exit;
     }
