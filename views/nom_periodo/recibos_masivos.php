@@ -74,34 +74,5 @@ $url_icons = (new views())->url_icons;
                 </div>
             </div>
         </div>
-
-        <div class="lista">
-            <div class="card">
-                <div class="card-header">
-                    <p class="text-header">Recibos Masivos Seleccionados</p>
-                </div>
-                <div class="card-body tablas_nominas ">
-                    <div class="col-md-12">
-                        <div class="tabla_titulo">
-                            <span class="text-header">Percepciones</span>
-                        </div>
-                        <table id="nominas_percepciones" class="datatables table table-striped "></table>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="tabla_titulo">
-                            <span class="text-header">Deducciones</span>
-                        </div>
-                        <table id="nominas_deducciones" class="datatables table table-striped "></table>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="tabla_titulo">
-                            <span class="text-header">Otros pagos</span>
-                        </div>
-                        <table id="nominas_otros_pagos" class="datatables table table-striped "></table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
 </div>
