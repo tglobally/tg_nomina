@@ -1,4 +1,5 @@
 <?php
+
 namespace tglobally\tg_nomina\controllers;
 
 use gamboamartin\errores\errores;
@@ -7,11 +8,12 @@ use gamboamartin\system\links_menu;
 use gamboamartin\system\system;
 use gamboamartin\template\html;
 use gamboamartin\tg_nomina\html\tg_empleado_agrupado_html;
-use gamboamartin\tg_nomina\models\tg_empleado_agrupado;
+use tglobally\tg_nomina\models\tg_empleado_agrupado;
 use html\tg_column_html;
 use tglobally\tg_nomina\models\tg_column;
 use PDO;
 use stdClass;
+
 
 class controlador_tg_empleado_agrupado extends _ctl_base {
 
@@ -23,6 +25,7 @@ class controlador_tg_empleado_agrupado extends _ctl_base {
         parent::__construct(html:$html_, link: $link,modelo:  $modelo, obj_link: $obj_link, paths_conf: $paths_conf);
 
         $this->titulo_lista = 'Empleado Agrupado';
+
     }
 
     public function alta(bool $header, bool $ws = false): array|string
