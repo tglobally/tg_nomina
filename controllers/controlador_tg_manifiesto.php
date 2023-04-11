@@ -610,10 +610,10 @@ class controlador_tg_manifiesto extends _ctl_base
         $columns["tg_manifiesto_fecha_final_pago"]["titulo"] = "Fecha Final Pago";
         $columns["tg_manifiesto_n_nominas"]["titulo"] = "Nóminas ";
 
-        $filtro = array("tg_manifiesto.id","com_sucursal.descripcion","tg_manifiesto.fecha_envio",
-            "tg_manifiesto.fecha_pago", "tg_manifiesto.fecha_inicial_pago","tg_manifiesto.fecha_final_pago");
+        $filtro = array("tg_manifiesto.id","com_sucursal.descripcion","tg_manifiesto.fecha_pago");
 
         $datatables = new stdClass();
+        $datatables->type = "scroll";
         $datatables->columns = $columns;
         $datatables->filtro = $filtro;
         $datatables->menu_active = true;

@@ -2,12 +2,23 @@
 namespace tglobally\tg_nomina\models;
 
 use gamboamartin\errores\errores;
+use gamboamartin\im_registro_patronal\models\im_movimiento;
 use stdClass;
 
 class nom_nomina extends \gamboamartin\nomina\models\nom_nomina {
 
     public function alta_bd(): array|stdClass
     {
+        $movimiento = (new im_movimiento($this->link))->filtro_and(filtro: array("em_empleado.id" => $this->registro['em_empleado_id']),
+            limit: 1, order: array("im_movimiento_id" => "DESC"));
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener movimientos', data: $movimiento);
+        }
+
+        if ($movimiento->n_registros > 0 && $movimiento->registros [0]['im_tipo_movimiento_descripcion'] === 'BAJA') {
+            return $this->error->error(mensaje: 'Error el empleado esta dado de baja', data: $movimiento);
+        }
+
         $alta = parent::alta_bd();
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al insertar nomina', data: $alta);
