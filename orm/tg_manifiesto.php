@@ -59,12 +59,13 @@ class tg_manifiesto extends _modelo_parent{
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener registro empresa',data: $fc_csd);
         }
+
         if($fc_csd->n_registros < 1){
             return $this->error->error(mensaje: 'Error no existe registro de fc_csd relacionado',
                 data: $fc_csd);
         }
 
-        $fc_csd = $fc_csd->registros[2];
+        $fc_csd = $fc_csd->registros[0];
 
         $tg_sucursal_alianza = $this->obten_sucursal_alianza(com_sucursal_id: $this->registro['com_sucursal_id']);
         if(errores::$error){
