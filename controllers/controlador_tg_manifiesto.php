@@ -11,11 +11,13 @@ namespace tglobally\tg_nomina\controllers;
 use base\controller\controler;
 use base\orm\inicializacion;
 use config\generales;
+use DateTime;
 use gamboamartin\direccion_postal\models\dp_calle_pertenece;
 use gamboamartin\direccion_postal\models\dp_estado;
 use gamboamartin\empleado\models\em_empleado;
 use gamboamartin\empleado\models\em_registro_patronal;
 use gamboamartin\errores\errores;
+use gamboamartin\facturacion\models\fc_cfdi_sellado;
 use gamboamartin\im_registro_patronal\models\im_registro_patronal;
 use gamboamartin\nomina\models\calcula_nomina;
 use gamboamartin\nomina\models\nom_conf_empleado;
@@ -793,11 +795,12 @@ class controlador_tg_manifiesto extends _ctl_base
             ["titulo" => '# REGISTROS:', 'valor' => $total_registros]
         ];
 
-        $tabla['headers'] = ['FOLIO NÓMINA','ID REM','NOMBRE','RFC','NSS','REGISTRO PATRONAL','UBICACIÓN RP','UBICACIÓN TRABAJADOR',
-            'FOLIO FISCAL', 'ESTATUS', 'SD', 'FI', 'SDI', 'SUELDO', 'SUBSIDIO', 'PRIMA DOMINICAL', 'VACACIONES', 'SEPTIMO DÍA',
-            'COMPENSACIÓN', 'DESPENSA', 'OTROS INGRESOS', 'DEVOLUCIÓN INFONAVIT', 'GRAVADO', 'EXENTO', 'GRAVADO', 'EXENTO',
-            'GRAVADO', 'EXENTO', 'GRAVADO', 'EXENTO', 'GRAVADO', 'EXENTO', 'GRAVADO', 'EXENTO', 'TOTAL PERCEPCIONES', 'BASE GRAVABLE',
-            'RETENCION ISR', 'RETENCION IMSS', 'INFONAVIT', 'FONACOT', 'PENSION ALIMENTICIA', 'OTROS DESCUENTOS', 'DESCUENTO COMEDOR ',
+        $tabla['headers'] = ['FOLIO NÓMINA','ID REM','NOMBRE','RFC','NSS','REGISTRO PATRONAL','UBICACIÓN RP', 'EMPRESA',
+            'UBICACIÓN TRABAJADOR', 'MES', 'PERIODO DE PAGO', 'FOLIO FISCAL IMSS', 'ESTATUS', 'SD', 'FI', 'SDI', 'SUELDO',
+            'SUBSIDIO', 'PRIMA DOMINICAL', 'VACACIONES', 'SEPTIMO DÍA', 'COMPENSACIÓN', 'DESPENSA', 'OTROS INGRESOS',
+            'DEVOLUCIÓN INFONAVIT', 'GRAVADO', 'EXENTO', 'GRAVADO', 'EXENTO', 'GRAVADO', 'EXENTO', 'GRAVADO', 'EXENTO',
+            'GRAVADO', 'EXENTO', 'GRAVADO', 'EXENTO', 'TOTAL PERCEPCIONES', 'BASE GRAVABLE', 'RETENCION ISR',
+            'RETENCION IMSS', 'INFONAVIT', 'FONACOT', 'PENSION ALIMENTICIA', 'OTROS DESCUENTOS', 'DESCUENTO COMEDOR ',
             'TOTAL DEDUCCIONES', 'NETO IMSS', 'NETO HABERES', 'BASE ISN', 'TASA ISN', 'IMPORTE ISN', 'CLIENTE'];
         $tabla['data'] = $registros;
         $tabla['startRow'] = 5;
@@ -820,20 +823,47 @@ class controlador_tg_manifiesto extends _ctl_base
                 header: $header,ws:$ws);
         }
 
+        $meses = array('ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO', 'JULIO', 'AGOSTO', 'SEPTIEMBRE',
+            'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE');
+
+        $empresa = $manifiesto['org_sucursal_descripcion'];
+
+        $fecha_inicio = date('d/m/Y', strtotime($manifiesto['tg_manifiesto_fecha_inicial_pago']));
+        $fecha_final = date('d/m/Y', strtotime($manifiesto['tg_manifiesto_fecha_final_pago']));
+
+        $periodo_general =  "$fecha_inicio - $fecha_final";
+
         $registros = array();
 
         foreach ($nominas as $nomina) {
             $org_sucursal_estado = (new dp_calle_pertenece($this->link))->registro(registro_id: $nomina['org_sucursal_dp_calle_pertenece_id']);
             if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al obtener el estado',data:  $nominas,
+                return $this->retorno_error(mensaje: 'Error al obtener el estado',data:  $org_sucursal_estado,
                     header: $header,ws:$ws);
             }
 
             $em_empleado_estado = (new dp_calle_pertenece($this->link))->registro(registro_id: $nomina['em_empleado_dp_calle_pertenece_id']);
             if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al obtener el estado',data:  $nominas,
+                return $this->retorno_error(mensaje: 'Error al obtener el estado',data:  $em_empleado_estado,
                     header: $header,ws:$ws);
             }
+
+            $timbrado = (new fc_cfdi_sellado($this->link))->filtro_and(filtro: array("fc_factura_id" => $nomina['fc_factura_id']), limit: 1);
+            if(errores::$error){
+                return $this->retorno_error(mensaje: 'Error al obtener cfdi sellado',data:  $timbrado,
+                    header: $header,ws:$ws);
+            }
+
+            $uuid = "";
+
+            if($timbrado->n_registros > 0){
+                $uuid = $timbrado->registros[0]['fc_cfdi_sellado_uuid'];
+            }
+
+            $fecha_inicio = date('d/m/Y', strtotime($nomina['nom_nomina_fecha_inicial_pago']));
+            $fecha_final = date('d/m/Y', strtotime($nomina['nom_nomina_fecha_final_pago']));
+
+            $periodo =  "$fecha_inicio - $fecha_final";
 
             $registro = [
                 $nomina['fc_factura_folio'],
@@ -843,23 +873,20 @@ class controlador_tg_manifiesto extends _ctl_base
                 $nomina['em_empleado_nss'],
                 $nomina['em_registro_patronal_descripcion'],
                 $org_sucursal_estado['dp_estado_descripcion'],
+                $empresa,
                 $em_empleado_estado['dp_estado_descripcion'],
-                "ENERO",
+                $meses[(new DateTime($fecha_inicio))->format('n') - 1],
+                $periodo,
+                $uuid,
+                (!empty($uuid)) ? 'TIMBRADO': ''
             ];
             $registros[] = $registro;
         }
 
         $data = array();
 
-        $empresa = $manifiesto['org_sucursal_descripcion'];
 
-        $formatter = new IntlDateFormatter('es_ES', IntlDateFormatter::LONG, IntlDateFormatter::NONE);
-        $fecha_inicio = $formatter->format(strtotime($manifiesto['tg_manifiesto_fecha_inicial_pago']));
-        $fecha_final = $formatter->format(strtotime($manifiesto['tg_manifiesto_fecha_final_pago']));
-
-        $periodo = "$fecha_inicio - $fecha_final";
-
-        $data["REPORTE NOMINAS"] = $this->maqueta_salida(empresa: $empresa,periodo: $periodo,remunerados: 0,
+        $data["REPORTE NOMINAS"] = $this->maqueta_salida(empresa: $empresa,periodo: $periodo_general,remunerados: 0,
             total_registros: count($nominas), registros: $registros);
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al maquetar salida de datos', data: $data);
