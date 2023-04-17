@@ -33,7 +33,7 @@ use gamboamartin\documento\models\doc_documento;
 use IntlDateFormatter;
 use Mpdf\Mpdf;
 use PhpOffice\PhpSpreadsheet\Exception;
-use tglobally\tg_empleado\controllers\Reporte_Template;
+use tglobally\tg_nomina\controllers\Reporte_Template;
 use tglobally\tg_nomina\models\em_cuenta_bancaria;
 use tglobally\tg_nomina\models\nom_nomina;
 use tglobally\tg_nomina\models\tg_manifiesto;
@@ -613,7 +613,7 @@ class controlador_tg_manifiesto extends _ctl_base
         $filtro = array("tg_manifiesto.id","com_sucursal.descripcion","tg_manifiesto.fecha_pago");
 
         $datatables = new stdClass();
-        /*$datatables->type = "scroll";*/
+        $datatables->type = "scroll";
         $datatables->columns = $columns;
         $datatables->filtro = $filtro;
         $datatables->menu_active = true;
@@ -792,9 +792,65 @@ class controlador_tg_manifiesto extends _ctl_base
 
         $nominas = (new tg_manifiesto_periodo($this->link))->nominas_by_manifiesto(tg_manifiesto_id: $this->registro_id);
         if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo',data:  $nominas,
+            return $this->retorno_error(mensaje: 'Error al obtener nominas del manifiesto',data:  $nominas,
                 header: $header,ws:$ws);
         }
+
+        $registros = array();
+
+        foreach ($nominas as $nomina) {
+            $registro = [
+                $nomina['nom_nomina_id']
+            ];
+            $registros[] = $registro;
+        }
+
+        $empresa = $manifiesto['org_sucursal_descripcion'];
+
+        $formatter = new IntlDateFormatter('es_ES', IntlDateFormatter::LONG, IntlDateFormatter::NONE);
+        $fecha_inicio = $formatter->format(strtotime($manifiesto['tg_manifiesto_fecha_inicial_pago']));
+        $fecha_final = $formatter->format(strtotime($manifiesto['tg_manifiesto_fecha_final_pago']));
+
+        $periodo = "$fecha_inicio - $fecha_final";
+
+        $tabla['detalles'] = [
+            ["titulo" => 'EMPRESA:', 'valor' => $empresa],
+            ["titulo" => 'PERIODO:', 'valor' => $periodo],
+            ["titulo" => '# REMUNERADOS:', 'valor' => 0],
+            ["titulo" => '# REGISTROS:', 'valor' => count($nominas)]
+        ];
+
+        $tabla['headers'] = ['FOLIO NÓMINA','ID REM','NOMBRE','RFC','NSS','REGISTRO PATRONAL','UBICACIÓN RP','UBICACIÓN TRABAJADOR',
+            'FOLIO FISCAL', 'ESTATUS', 'SD', 'FI', 'SDI', 'SUELDO', 'SUBSIDIO', 'PRIMA DOMINICAL', 'VACACIONES', 'SEPTIMO DÍA',
+            'COMPENSACIÓN', 'DESPENSA', 'OTROS INGRESOS', 'DEVOLUCIÓN INFONAVIT', 'GRAVADO', 'EXENTO', 'GRAVADO', 'EXENTO',
+            'GRAVADO', 'EXENTO', 'GRAVADO', 'EXENTO', 'GRAVADO', 'EXENTO', 'GRAVADO', 'EXENTO', 'TOTAL PERCEPCIONES', 'BASE GRAVABLE',
+            'RETENCION ISR', 'RETENCION IMSS', 'INFONAVIT', 'FONACOT', 'PENSION ALIMENTICIA', 'OTROS DESCUENTOS', 'DESCUENTO COMEDOR ',
+            'TOTAL DEDUCCIONES', 'NETO IMSS', 'NETO HABERES', 'BASE ISN', 'TASA ISN', 'IMPORTE ISN', 'CLIENTE'];
+        $tabla['data'] = $registros;
+        $tabla['startRow'] = 5;
+        $tabla['startColumn'] = "A";
+
+        $data["REPORTE GENERAL"] = [$tabla];
+
+        $name = "REPORTE DE NOMINAS_".$manifiesto['tg_manifiesto_descripcion'];
+
+        $resultado = (new exportador())->exportar_template(header: $header, path_base: $this->path_base, name: $name,
+            data: $data,styles: Reporte_Template::REPORTE_GENERAL);
+        if (errores::$error) {
+            $error = $this->errores->error('Error al generar xls', $resultado);
+            if (!$header) {
+                return $error;
+            }
+            print_r($error);
+            die('Error');
+        }
+
+        header('Location:' . $this->link_lista);
+        exit;
+
+
+
+
 
         $conceptos = (new nom_nomina($this->link))->obten_conceptos_nominas(nominas: $nominas);
         if(errores::$error){
