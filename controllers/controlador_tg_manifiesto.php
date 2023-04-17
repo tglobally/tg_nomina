@@ -10,6 +10,7 @@ namespace tglobally\tg_nomina\controllers;
 
 use base\controller\controler;
 use base\orm\inicializacion;
+use Cassandra\Date;
 use config\generales;
 use DateTime;
 use gamboamartin\direccion_postal\models\dp_calle_pertenece;
@@ -860,10 +861,10 @@ class controlador_tg_manifiesto extends _ctl_base
                 $uuid = $timbrado->registros[0]['fc_cfdi_sellado_uuid'];
             }
 
-            $fecha_inicio = date('d/m/Y', strtotime($nomina['nom_nomina_fecha_inicial_pago']));
-            $fecha_final = date('d/m/Y', strtotime($nomina['nom_nomina_fecha_final_pago']));
+            $fecha_inicio = DateTime::createFromFormat('d/m/Y',  date('d/m/Y',strtotime($nomina['nom_nomina_fecha_inicial_pago'])));
+            $fecha_final = DateTime::createFromFormat('d/m/Y',  date('d/m/Y',strtotime($nomina['nom_nomina_fecha_final_pago'])));
 
-            $periodo =  "$fecha_inicio - $fecha_final";
+            $periodo =  $fecha_inicio->format('d/m/Y').  " - " . $fecha_final->format('d/m/Y');
 
             $registro = [
                 $nomina['fc_factura_folio'],
@@ -875,10 +876,16 @@ class controlador_tg_manifiesto extends _ctl_base
                 $org_sucursal_estado['dp_estado_descripcion'],
                 $empresa,
                 $em_empleado_estado['dp_estado_descripcion'],
-                $meses[(new DateTime($fecha_inicio))->format('n') - 1],
+                $meses[$fecha_inicio->format('n') - 1],
                 $periodo,
                 $uuid,
-                (!empty($uuid)) ? 'TIMBRADO': ''
+                (!empty($uuid)) ? 'TIMBRADO': '',
+                $nomina['em_empleado_salario_diario'],
+                'POR REVISAR',
+                $nomina['em_empleado_salario_diario_integrado'],
+                (($fecha_inicio->diff($fecha_final))->days + 1) * $nomina['em_empleado_salario_diario'],
+                'POR REVISAR',
+
             ];
             $registros[] = $registro;
         }
