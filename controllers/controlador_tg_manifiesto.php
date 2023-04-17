@@ -11,6 +11,8 @@ namespace tglobally\tg_nomina\controllers;
 use base\controller\controler;
 use base\orm\inicializacion;
 use config\generales;
+use gamboamartin\direccion_postal\models\dp_calle_pertenece;
+use gamboamartin\direccion_postal\models\dp_estado;
 use gamboamartin\empleado\models\em_empleado;
 use gamboamartin\empleado\models\em_registro_patronal;
 use gamboamartin\errores\errores;
@@ -782,6 +784,28 @@ class controlador_tg_manifiesto extends _ctl_base
         return $periodo;
     }
 
+    private function maqueta_salida(String $empresa, string $periodo, int $remunerados, int $total_registros, array $registros): array
+    {
+        $tabla['detalles'] = [
+            ["titulo" => 'EMPRESA:', 'valor' => $empresa],
+            ["titulo" => 'PERIODO:', 'valor' => $periodo],
+            ["titulo" => '# REMUNERADOS:', 'valor' => $remunerados],
+            ["titulo" => '# REGISTROS:', 'valor' => $total_registros]
+        ];
+
+        $tabla['headers'] = ['FOLIO NÓMINA','ID REM','NOMBRE','RFC','NSS','REGISTRO PATRONAL','UBICACIÓN RP','UBICACIÓN TRABAJADOR',
+            'FOLIO FISCAL', 'ESTATUS', 'SD', 'FI', 'SDI', 'SUELDO', 'SUBSIDIO', 'PRIMA DOMINICAL', 'VACACIONES', 'SEPTIMO DÍA',
+            'COMPENSACIÓN', 'DESPENSA', 'OTROS INGRESOS', 'DEVOLUCIÓN INFONAVIT', 'GRAVADO', 'EXENTO', 'GRAVADO', 'EXENTO',
+            'GRAVADO', 'EXENTO', 'GRAVADO', 'EXENTO', 'GRAVADO', 'EXENTO', 'GRAVADO', 'EXENTO', 'TOTAL PERCEPCIONES', 'BASE GRAVABLE',
+            'RETENCION ISR', 'RETENCION IMSS', 'INFONAVIT', 'FONACOT', 'PENSION ALIMENTICIA', 'OTROS DESCUENTOS', 'DESCUENTO COMEDOR ',
+            'TOTAL DEDUCCIONES', 'NETO IMSS', 'NETO HABERES', 'BASE ISN', 'TASA ISN', 'IMPORTE ISN', 'CLIENTE'];
+        $tabla['data'] = $registros;
+        $tabla['startRow'] = 5;
+        $tabla['startColumn'] = "A";
+
+        return array($tabla);
+    }
+
     public function descarga_nomina(bool $header, bool $ws = false): array|stdClass
     {
         $manifiesto = (new tg_manifiesto($this->link))->registro(registro_id: $this->registro_id);
@@ -799,11 +823,33 @@ class controlador_tg_manifiesto extends _ctl_base
         $registros = array();
 
         foreach ($nominas as $nomina) {
+            $org_sucursal_estado = (new dp_calle_pertenece($this->link))->registro(registro_id: $nomina['org_sucursal_dp_calle_pertenece_id']);
+            if(errores::$error){
+                return $this->retorno_error(mensaje: 'Error al obtener el estado',data:  $nominas,
+                    header: $header,ws:$ws);
+            }
+
+            $em_empleado_estado = (new dp_calle_pertenece($this->link))->registro(registro_id: $nomina['em_empleado_dp_calle_pertenece_id']);
+            if(errores::$error){
+                return $this->retorno_error(mensaje: 'Error al obtener el estado',data:  $nominas,
+                    header: $header,ws:$ws);
+            }
+
             $registro = [
-                $nomina['nom_nomina_id']
+                $nomina['fc_factura_folio'],
+                $nomina['em_empleado_id'],
+                $nomina['em_empleado_nombre_completo'],
+                $nomina['em_empleado_rfc'],
+                $nomina['em_empleado_nss'],
+                $nomina['em_registro_patronal_descripcion'],
+                $org_sucursal_estado['dp_estado_descripcion'],
+                $em_empleado_estado['dp_estado_descripcion'],
+                "ENERO",
             ];
             $registros[] = $registro;
         }
+
+        $data = array();
 
         $empresa = $manifiesto['org_sucursal_descripcion'];
 
@@ -813,26 +859,15 @@ class controlador_tg_manifiesto extends _ctl_base
 
         $periodo = "$fecha_inicio - $fecha_final";
 
-        $tabla['detalles'] = [
-            ["titulo" => 'EMPRESA:', 'valor' => $empresa],
-            ["titulo" => 'PERIODO:', 'valor' => $periodo],
-            ["titulo" => '# REMUNERADOS:', 'valor' => 0],
-            ["titulo" => '# REGISTROS:', 'valor' => count($nominas)]
-        ];
+        $data["REPORTE NOMINAS"] = $this->maqueta_salida(empresa: $empresa,periodo: $periodo,remunerados: 0,
+            total_registros: count($nominas), registros: $registros);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al maquetar salida de datos', data: $data);
+            print_r($error);
+            die('Error');
+        }
 
-        $tabla['headers'] = ['FOLIO NÓMINA','ID REM','NOMBRE','RFC','NSS','REGISTRO PATRONAL','UBICACIÓN RP','UBICACIÓN TRABAJADOR',
-            'FOLIO FISCAL', 'ESTATUS', 'SD', 'FI', 'SDI', 'SUELDO', 'SUBSIDIO', 'PRIMA DOMINICAL', 'VACACIONES', 'SEPTIMO DÍA',
-            'COMPENSACIÓN', 'DESPENSA', 'OTROS INGRESOS', 'DEVOLUCIÓN INFONAVIT', 'GRAVADO', 'EXENTO', 'GRAVADO', 'EXENTO',
-            'GRAVADO', 'EXENTO', 'GRAVADO', 'EXENTO', 'GRAVADO', 'EXENTO', 'GRAVADO', 'EXENTO', 'TOTAL PERCEPCIONES', 'BASE GRAVABLE',
-            'RETENCION ISR', 'RETENCION IMSS', 'INFONAVIT', 'FONACOT', 'PENSION ALIMENTICIA', 'OTROS DESCUENTOS', 'DESCUENTO COMEDOR ',
-            'TOTAL DEDUCCIONES', 'NETO IMSS', 'NETO HABERES', 'BASE ISN', 'TASA ISN', 'IMPORTE ISN', 'CLIENTE'];
-        $tabla['data'] = $registros;
-        $tabla['startRow'] = 5;
-        $tabla['startColumn'] = "A";
-
-        $data["REPORTE GENERAL"] = [$tabla];
-
-        $name = "REPORTE DE NOMINAS_".$manifiesto['tg_manifiesto_descripcion'];
+        $name = "REPORTE DE NOMINAS_$empresa";
 
         $resultado = (new exportador())->exportar_template(header: $header, path_base: $this->path_base, name: $name,
             data: $data,styles: Reporte_Template::REPORTE_GENERAL);
