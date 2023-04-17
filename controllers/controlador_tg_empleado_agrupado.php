@@ -7,7 +7,7 @@ use gamboamartin\system\_ctl_base;
 use gamboamartin\system\links_menu;
 use gamboamartin\system\system;
 use gamboamartin\template\html;
-use gamboamartin\tg_nomina\html\tg_empleado_agrupado_html;
+use html\tg_empleado_agrupado_html;
 use tglobally\tg_nomina\models\tg_empleado_agrupado;
 use html\tg_column_html;
 use tglobally\tg_nomina\models\tg_column;
@@ -22,6 +22,24 @@ class controlador_tg_empleado_agrupado extends _ctl_base {
         $modelo = new tg_empleado_agrupado(link: $link);
         $html_ = new tg_empleado_agrupado_html(html: $html);
         $obj_link = new links_menu(link: $link, registro_id: $this->registro_id);
+
+        $this->lista_get_data = true;
+
+        $this->sidebar['lista']['titulo'] = "Empleado Agrupado";
+        $this->sidebar['lista']['menu'] = array(
+            $this->menu_item(menu_item_titulo: "Alta", link: $this->link_alta, menu_seccion_active: true,
+                menu_lateral_active: true));
+
+        $this->sidebar['alta']['titulo'] = "Alta Empleado Agrupado";
+        $this->sidebar['alta']['stepper_active'] = true;
+        $this->sidebar['alta']['menu'] = array(
+            $this->menu_item(menu_item_titulo: "Alta", link: $this->link_alta, menu_lateral_active: true));
+
+        $this->sidebar['modifica']['titulo'] = "Modifica Empleado Agrupado";
+        $this->sidebar['modifica']['stepper_active'] = true;
+        $this->sidebar['modifica']['menu'] = array(
+            $this->menu_item(menu_item_titulo: "Modifica", link: $this->link_modifica, menu_lateral_active: true));
+
         parent::__construct(html:$html_, link: $link,modelo:  $modelo, obj_link: $obj_link, paths_conf: $paths_conf);
 
         $this->titulo_lista = 'Empleado Agrupado';
@@ -122,6 +140,17 @@ class controlador_tg_empleado_agrupado extends _ctl_base {
         }
 
         return $keys_selects;
+    }
+
+    public function menu_item(string $menu_item_titulo, string $link, bool $menu_seccion_active = false, bool $menu_lateral_active = false): array
+    {
+        $menu_item = array();
+        $menu_item['menu_item'] = $menu_item_titulo;
+        $menu_item['menu_seccion_active'] = $menu_seccion_active;
+        $menu_item['link'] = $link;
+        $menu_item['menu_lateral_active'] = $menu_lateral_active;
+
+        return $menu_item;
     }
 
     public function modifica(bool $header, bool $ws = false): array|stdClass
