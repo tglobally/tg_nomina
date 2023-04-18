@@ -897,12 +897,28 @@ class controlador_tg_manifiesto extends _ctl_base
                     header: $header,ws:$ws);
             }
 
+            $otros_ingresos = (new nom_par_otro_pago($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_otro_pago.es_subsidio" => 'inactivo'));
+            if(errores::$error){
+                return $this->retorno_error(mensaje: 'Error al obtener otros pagos de la nomina',data:  $otros_ingresos,
+                    header: $header,ws:$ws);
+            }
+
+            $infonavit = (new nom_par_deduccion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_deduccion.descripcion" => 'INFONAVIT'));
+            if(errores::$error){
+                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $infonavit,
+                    header: $header,ws:$ws);
+            }
+
             $total_subsidio = 0;
             $total_prima_dominical = 0;
             $total_vacaciones = 0;
             $total_septimo_dia = 0;
             $total_compensacion = 0;
             $total_despensa = 0;
+            $total_otros_ingresos = 0;
+            $total_infonavit = 0;
 
             foreach ($subsidios->registros as $subsidio){
                 $total_subsidio += $subsidio['nom_par_otro_pago_importe_gravado'] + $subsidio['nom_par_otro_pago_importe_exento'];
@@ -926,6 +942,14 @@ class controlador_tg_manifiesto extends _ctl_base
 
             foreach ($despensa->registros as $registro){
                 $total_despensa += $registro['nom_par_percepcion_importe_gravado'] + $registro['nom_par_percepcion_importe_exento'];
+            }
+
+            foreach ($otros_ingresos->registros as $registro){
+                $total_otros_ingresos += $registro['nom_par_otro_pago_importe_gravado'] + $registro['nom_par_otro_pago_importe_exento'];
+            }
+
+            foreach ($infonavit->registros as $registro){
+                $total_infonavit += $registro['nom_par_deduccion_importe_gravado'] + $registro['nom_par_deduccion_importe_exento'];
             }
 
             $uuid = "";
@@ -962,7 +986,9 @@ class controlador_tg_manifiesto extends _ctl_base
                 $total_vacaciones,
                 $total_septimo_dia,
                 $total_compensacion,
-                $total_despensa
+                $total_despensa,
+                $total_otros_ingresos,
+                $total_infonavit
             ];
             $registros[] = $registro;
         }
