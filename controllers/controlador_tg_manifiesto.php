@@ -1031,16 +1031,33 @@ class controlador_tg_manifiesto extends _ctl_base
                 $montos_horas_extras['exento'] += $registro['nom_par_percepcion_importe_exento'];
             }
 
+            $fecha_inicio = DateTime::createFromFormat('d/m/Y',  date('d/m/Y',strtotime($nomina['nom_nomina_fecha_inicial_pago'])));
+            $fecha_final = DateTime::createFromFormat('d/m/Y',  date('d/m/Y',strtotime($nomina['nom_nomina_fecha_final_pago'])));
+
+            $periodo =  $fecha_inicio->format('d/m/Y').  " - " . $fecha_final->format('d/m/Y');
+
+            $sueldo = (($fecha_inicio->diff($fecha_final))->days + 1) * $nomina['em_empleado_salario_diario'];
+
+            $total_percepciones = $sueldo + $total_subsidio + $total_prima_dominical + $total_vacaciones +
+                $total_septimo_dia + $total_compensacion + $total_despensa + $total_otros_ingresos + $total_infonavit +
+                $montos_prima_vacacional['gravado']+ $montos_prima_vacacional['exento']+
+                $montos_gratificacion['gravado']+ $montos_gratificacion['exento']+ $montos_aguinaldo['gravado']+
+                $montos_aguinaldo['exento']+ $montos_dia_festivo['gravado']+ $montos_dia_festivo['exento']+
+                $montos_dia_descanso['gravado']+ $montos_dia_descanso['exento']+ $montos_horas_extras['gravado']+
+                $montos_horas_extras['exento'];
+
+            $base_gravable = $sueldo + $total_vacaciones + $total_septimo_dia + $total_compensacion + $total_despensa +
+                $total_otros_ingresos + $montos_prima_vacacional['gravado'] + $montos_gratificacion['gravado']+
+                $montos_aguinaldo['gravado'] + $montos_dia_festivo['gravado'] + $montos_dia_descanso['gravado'] +
+                $montos_horas_extras['gravado'];
+
             $uuid = "";
 
             if($timbrado->n_registros > 0){
                 $uuid = $timbrado->registros[0]['fc_cfdi_sellado_uuid'];
             }
 
-            $fecha_inicio = DateTime::createFromFormat('d/m/Y',  date('d/m/Y',strtotime($nomina['nom_nomina_fecha_inicial_pago'])));
-            $fecha_final = DateTime::createFromFormat('d/m/Y',  date('d/m/Y',strtotime($nomina['nom_nomina_fecha_final_pago'])));
 
-            $periodo =  $fecha_inicio->format('d/m/Y').  " - " . $fecha_final->format('d/m/Y');
 
             $registro = [
                 $nomina['fc_factura_folio'],
@@ -1059,7 +1076,7 @@ class controlador_tg_manifiesto extends _ctl_base
                 $nomina['em_empleado_salario_diario'],
                 'POR REVISAR',
                 $nomina['em_empleado_salario_diario_integrado'],
-                (($fecha_inicio->diff($fecha_final))->days + 1) * $nomina['em_empleado_salario_diario'],
+                $sueldo,
                 $total_subsidio,
                 $total_prima_dominical,
                 $total_vacaciones,
@@ -1080,6 +1097,8 @@ class controlador_tg_manifiesto extends _ctl_base
                 $montos_dia_descanso['exento'],
                 $montos_horas_extras['gravado'],
                 $montos_horas_extras['exento'],
+                $total_percepciones,
+                $base_gravable
             ];
             $registros[] = $registro;
         }
