@@ -13,6 +13,7 @@ use base\orm\inicializacion;
 use Cassandra\Date;
 use config\generales;
 use DateTime;
+use gamboamartin\comercial\models\com_sucursal;
 use gamboamartin\direccion_postal\models\dp_calle_pertenece;
 use gamboamartin\direccion_postal\models\dp_estado;
 use gamboamartin\empleado\models\em_empleado;
@@ -967,6 +968,47 @@ class controlador_tg_manifiesto extends _ctl_base
                     header: $header,ws:$ws);
             }
 
+            $fonacot = (new nom_par_deduccion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_deduccion.descripcion" => 'FONACOT'));
+            if(errores::$error){
+                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $fonacot,
+                    header: $header,ws:$ws);
+            }
+
+            $fonacot = (new nom_par_deduccion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_deduccion.descripcion" => 'FONACOT'));
+            if(errores::$error){
+                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $fonacot,
+                    header: $header,ws:$ws);
+            }
+
+            $pension_alimenticia = (new nom_par_deduccion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_deduccion.descripcion" => 'PENSION ALIMENTICIA'));
+            if(errores::$error){
+                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $pension_alimenticia,
+                    header: $header,ws:$ws);
+            }
+
+            $otros_descuentos = (new nom_par_deduccion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_deduccion.descripcion" => 'Otros Descuentos'));
+            if(errores::$error){
+                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $otros_descuentos,
+                    header: $header,ws:$ws);
+            }
+
+            $descuento_comedor = (new nom_par_deduccion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_deduccion.descripcion" => 'DESCUENTO COMEDOR'));
+            if(errores::$error){
+                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $otros_descuentos,
+                    header: $header,ws:$ws);
+            }
+
+            $cliente_nomina = (new com_sucursal($this->link))->registro(registro_id: $nomina['fc_factura_com_sucursal_id']);
+            if(errores::$error){
+                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $cliente_nomina,
+                    header: $header,ws:$ws);
+            }
+
             $total_subsidio = 0;
             $total_prima_dominical = 0;
             $total_vacaciones = 0;
@@ -977,6 +1019,10 @@ class controlador_tg_manifiesto extends _ctl_base
             $total_infonavit = 0;
             $total_isr = 0;
             $total_imss = 0;
+            $total_fonacot = 0;
+            $total_pension_alimenticia = 0;
+            $total_otros_descuentos = 0;
+            $total_descuento_comedor = 0;
 
             $montos_prima_vacacional = array('gravado' => 0, 'exento' => 0);
             $montos_gratificacion = array('gravado' => 0, 'exento' => 0);
@@ -1023,6 +1069,22 @@ class controlador_tg_manifiesto extends _ctl_base
 
             foreach ($imss->registros as $registro){
                 $total_imss += $registro['nom_par_deduccion_importe_gravado'] + $registro['nom_par_deduccion_importe_exento'];
+            }
+
+            foreach ($fonacot->registros as $registro){
+                $total_fonacot += $registro['nom_par_deduccion_importe_gravado'] + $registro['nom_par_deduccion_importe_exento'];
+            }
+
+            foreach ($pension_alimenticia->registros as $registro){
+                $total_pension_alimenticia += $registro['nom_par_deduccion_importe_gravado'] + $registro['nom_par_deduccion_importe_exento'];
+            }
+
+            foreach ($otros_descuentos->registros as $registro){
+                $total_otros_descuentos += $registro['nom_par_deduccion_importe_gravado'] + $registro['nom_par_deduccion_importe_exento'];
+            }
+
+            foreach ($descuento_comedor->registros as $registro){
+                $total_descuento_comedor += $registro['nom_par_deduccion_importe_gravado'] + $registro['nom_par_deduccion_importe_exento'];
             }
 
             foreach ($prima_vacacional->registros as $registro){
@@ -1075,13 +1137,21 @@ class controlador_tg_manifiesto extends _ctl_base
                 $montos_aguinaldo['gravado'] + $montos_dia_festivo['gravado'] + $montos_dia_descanso['gravado'] +
                 $montos_horas_extras['gravado'];
 
+            $total_deducciones = $total_isr + $total_imss + $total_infonavit + $total_fonacot + $total_pension_alimenticia +
+                $total_otros_descuentos + $total_descuento_comedor;
+            $neto_imss = $total_percepciones - $total_deducciones;
+
+            $base_isn = $total_percepciones - $total_subsidio - $total_infonavit;
+
+            $tasa_isn = "POR REVISAR";
+            $importe_isn = "POR REVISAR";
+            $cliente = $cliente_nomina['com_sucursal_descripcion'];
+
             $uuid = "";
 
             if($timbrado->n_registros > 0){
                 $uuid = $timbrado->registros[0]['fc_cfdi_sellado_uuid'];
             }
-
-
 
             $registro = [
                 $nomina['fc_factura_folio'],
@@ -1124,7 +1194,19 @@ class controlador_tg_manifiesto extends _ctl_base
                 $total_percepciones,
                 $base_gravable,
                 $total_isr,
-                $total_imss
+                $total_imss,
+                $total_infonavit,
+                $total_fonacot,
+                $total_pension_alimenticia,
+                $total_otros_descuentos,
+                $total_descuento_comedor,
+                $total_deducciones,
+                $neto_imss,
+                "POR REVISAR",
+                $base_isn,
+                $tasa_isn,
+                $importe_isn,
+                $cliente
             ];
             $registros[] = $registro;
         }
