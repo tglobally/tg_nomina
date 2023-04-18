@@ -855,6 +855,19 @@ class controlador_tg_manifiesto extends _ctl_base
                     header: $header,ws:$ws);
             }
 
+            $subsidios = (new nom_par_otro_pago($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_otro_pago.es_subsidio" => 'activo'));
+            if(errores::$error){
+                return $this->retorno_error(mensaje: 'Error al obtener otros pagos de la nomina',data:  $subsidios,
+                    header: $header,ws:$ws);
+            }
+
+            $total_subsidio = 0;
+
+            foreach ($subsidios->registros as $subsidio){
+                $total_subsidio += $subsidio['nom_par_otro_pago_importe_gravado'] + $subsidio['nom_par_otro_pago_importe_exento'];
+            }
+
             $uuid = "";
 
             if($timbrado->n_registros > 0){
@@ -884,7 +897,7 @@ class controlador_tg_manifiesto extends _ctl_base
                 'POR REVISAR',
                 $nomina['em_empleado_salario_diario_integrado'],
                 (($fecha_inicio->diff($fecha_final))->days + 1) * $nomina['em_empleado_salario_diario'],
-                'POR REVISAR',
+                ($total_subsidio <= 0) ? 0 : $total_subsidio
 
             ];
             $registros[] = $registro;
@@ -1026,6 +1039,7 @@ class controlador_tg_manifiesto extends _ctl_base
         exit;
         //return $this->nominas;
     }
+
     /*public function descarga_nomina(bool $header, bool $ws = false): array|stdClass
     {
         $manifiesto = (new tg_manifiesto($this->link))->registro(registro_id: $this->registro_id);
