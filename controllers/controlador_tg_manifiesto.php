@@ -1225,7 +1225,7 @@ class controlador_tg_manifiesto extends _ctl_base
         $name = "REPORTE DE NOMINAS_$empresa";
 
         $resultado = (new exportador())->exportar_template(header: $header, path_base: $this->path_base, name: $name,
-            data: $data,styles: Reporte_Template::REPORTE_GENERAL);
+            data: $data,styles: Reporte_Template::REPORTE_NOMINA);
         if (errores::$error) {
             $error = $this->errores->error('Error al generar xls', $resultado);
             if (!$header) {

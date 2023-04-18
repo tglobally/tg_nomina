@@ -97,5 +97,62 @@ class Reporte_Template
 
     ];
 
+    const REPORTE_NOMINA = [
+        "A:BA" => [
+            'alignment' => [
+                'horizontal' => 'center',
+                'vertical' => 'center',
+            ]
+        ],
+        "N:AZ" => [
+            'numberFormat' => [
+                'formatCode' => "$#,##0.00;-$#,##0.00",
+            ],
+        ],
+        "A1:A4" => [
+            'font' => [
+                'bold' => true,
+                'color' => ['rgb' => 'FFFFFF'],
+                'size' => 11,
+            ],
+            'fill' => array(
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => array('rgb' => '0070C0')
+            ),
+            'alignment' => [
+                'horizontal' => 'right',
+                'vertical' => 'center',
+            ]
+        ],
+        "B1:B4" => [
+            'font' => [
+                'bold' => true,
+                'color' => ['rgb' => '000000'],
+                'size' => 11,
+            ],
+            'alignment' => [
+                'horizontal' => 'center',
+                'vertical' => 'center',
+            ]
+        ],
+        "A5:BA5" => [
+            'font' => [
+                'bold' => true,
+                'color' => ['rgb' => 'FFFFFF'],
+                'size' => 11,
+            ],
+            'fill' => array(
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => array('rgb' => '0070C0')
+            ),
+            'alignment' => [
+                'horizontal' => 'center',
+                'vertical' => 'center',
+            ]
+        ],
+
+    ];
+
+
 
 }
