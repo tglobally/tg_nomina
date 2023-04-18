@@ -12,6 +12,8 @@
 
                 <?php echo $controlador->inputs->codigo; ?>
                 <?php echo $controlador->inputs->descripcion; ?>
+                <?php echo $controlador->inputs->em_empleado_id; ?>
+                <?php echo $controlador->inputs->tg_agrupador_id; ?>
 
                 <div class="buttons col-md-12">
                     <div class="col-md-6">
