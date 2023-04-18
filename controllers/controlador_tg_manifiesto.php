@@ -953,6 +953,20 @@ class controlador_tg_manifiesto extends _ctl_base
                     header: $header,ws:$ws);
             }
 
+            $isr = (new nom_par_deduccion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_deduccion.descripcion" => 'ISR'));
+            if(errores::$error){
+                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $isr,
+                    header: $header,ws:$ws);
+            }
+
+            $imss = (new nom_par_deduccion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_deduccion.descripcion" => 'IMSS'));
+            if(errores::$error){
+                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $imss,
+                    header: $header,ws:$ws);
+            }
+
             $total_subsidio = 0;
             $total_prima_dominical = 0;
             $total_vacaciones = 0;
@@ -961,6 +975,8 @@ class controlador_tg_manifiesto extends _ctl_base
             $total_despensa = 0;
             $total_otros_ingresos = 0;
             $total_infonavit = 0;
+            $total_isr = 0;
+            $total_imss = 0;
 
             $montos_prima_vacacional = array('gravado' => 0, 'exento' => 0);
             $montos_gratificacion = array('gravado' => 0, 'exento' => 0);
@@ -999,6 +1015,14 @@ class controlador_tg_manifiesto extends _ctl_base
 
             foreach ($infonavit->registros as $registro){
                 $total_infonavit += $registro['nom_par_deduccion_importe_gravado'] + $registro['nom_par_deduccion_importe_exento'];
+            }
+
+            foreach ($isr->registros as $registro){
+                $total_isr += $registro['nom_par_deduccion_importe_gravado'] + $registro['nom_par_deduccion_importe_exento'];
+            }
+
+            foreach ($imss->registros as $registro){
+                $total_imss += $registro['nom_par_deduccion_importe_gravado'] + $registro['nom_par_deduccion_importe_exento'];
             }
 
             foreach ($prima_vacacional->registros as $registro){
@@ -1098,7 +1122,9 @@ class controlador_tg_manifiesto extends _ctl_base
                 $montos_horas_extras['gravado'],
                 $montos_horas_extras['exento'],
                 $total_percepciones,
-                $base_gravable
+                $base_gravable,
+                $total_isr,
+                $total_imss
             ];
             $registros[] = $registro;
         }
