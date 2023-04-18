@@ -22,6 +22,9 @@ class controlador_tg_empleado_agrupado extends _ctl_base {
         $modelo = new tg_empleado_agrupado(link: $link);
         $html_ = new tg_empleado_agrupado_html(html: $html);
         $obj_link = new links_menu(link: $link, registro_id: $this->registro_id);
+        parent::__construct(html:$html_, link: $link,modelo:  $modelo, obj_link: $obj_link, paths_conf: $paths_conf);
+
+        $this->titulo_lista = 'Empleado Agrupado';
 
         $this->lista_get_data = true;
 
@@ -39,11 +42,6 @@ class controlador_tg_empleado_agrupado extends _ctl_base {
         $this->sidebar['modifica']['stepper_active'] = true;
         $this->sidebar['modifica']['menu'] = array(
             $this->menu_item(menu_item_titulo: "Modifica", link: $this->link_modifica, menu_lateral_active: true));
-
-        parent::__construct(html:$html_, link: $link,modelo:  $modelo, obj_link: $obj_link, paths_conf: $paths_conf);
-
-        $this->titulo_lista = 'Empleado Agrupado';
-
     }
 
     public function alta(bool $header, bool $ws = false): array|string
@@ -75,7 +73,7 @@ class controlador_tg_empleado_agrupado extends _ctl_base {
         $keys->selects = array();
 
         $init_data = array();
-        $init_data['em_empleado_id'] = "gamboa.martin\\em_empleado";
+        $init_data['em_empleado'] = "gamboamartin\\empleado";
         $init_data['tg_agrupador'] = "tglobally\\tg_nomina";
 
         $campos_view = $this->campos_view_base(init_data: $init_data, keys: $keys);
@@ -100,10 +98,10 @@ class controlador_tg_empleado_agrupado extends _ctl_base {
 
     public function init_selects_inputs(): array
     {
-        $keys_selects = $this->init_selects(keys_selects: array(), key: "tg_layout_id", label: "Layout",
+        $keys_selects = $this->init_selects(keys_selects: array(), key: "em_empleado_id", label: "Empleado",
             cols: 6);
 
-        return $this->init_selects(keys_selects: $keys_selects, key: "tg_tipo_column_id", label: "Tipo column",
+        return $this->init_selects(keys_selects: $keys_selects, key: "tg_agrupador_id", label: "Agrupador",
             cols: 6);
     }
 
@@ -167,8 +165,8 @@ class controlador_tg_empleado_agrupado extends _ctl_base {
                 ws: $ws);
         }
 
-        $keys_selects['tg_layout_id']->id_selected = $this->registro['tg_column_tg_layout_id'];
-        $keys_selects['tg_tipo_column_id']->id_selected = $this->registro['tg_column_tg_tipo_column_id'];
+        $keys_selects['em_empleado_id']->id_selected = $this->registro['em_empleado_id'];
+        $keys_selects['tg_agrupador_id']->id_selected = $this->registro['tg_agrupador_id'];
 
         $base = $this->base_upd(keys_selects: $keys_selects, params: array(), params_ajustados: array());
         if (errores::$error) {
