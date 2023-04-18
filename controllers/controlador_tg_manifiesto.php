@@ -862,10 +862,22 @@ class controlador_tg_manifiesto extends _ctl_base
                     header: $header,ws:$ws);
             }
 
+            $prima_dominical = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Prima Dominical'));
+            if(errores::$error){
+                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $prima_dominical,
+                    header: $header,ws:$ws);
+            }
+
             $total_subsidio = 0;
+            $total_prima_dominical = 0;
 
             foreach ($subsidios->registros as $subsidio){
                 $total_subsidio += $subsidio['nom_par_otro_pago_importe_gravado'] + $subsidio['nom_par_otro_pago_importe_exento'];
+            }
+
+            foreach ($prima_dominical->registros as $prima){
+                $total_prima_dominical += $prima['nom_par_percepcion_importe_gravado'] + $prima['nom_par_percepcion_importe_exento'];
             }
 
             $uuid = "";
@@ -897,8 +909,8 @@ class controlador_tg_manifiesto extends _ctl_base
                 'POR REVISAR',
                 $nomina['em_empleado_salario_diario_integrado'],
                 (($fecha_inicio->diff($fecha_final))->days + 1) * $nomina['em_empleado_salario_diario'],
-                ($total_subsidio <= 0) ? 0 : $total_subsidio
-
+                $total_subsidio,
+                $total_prima_dominical,
             ];
             $registros[] = $registro;
         }
