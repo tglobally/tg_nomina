@@ -876,9 +876,17 @@ class controlador_tg_manifiesto extends _ctl_base
                     header: $header,ws:$ws);
             }
 
+            $septimo_dia = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Septimo Dia'));
+            if(errores::$error){
+                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $septimo_dia,
+                    header: $header,ws:$ws);
+            }
+
             $total_subsidio = 0;
             $total_prima_dominical = 0;
             $total_vacaciones = 0;
+            $total_septimo_dia = 0;
 
             foreach ($subsidios->registros as $subsidio){
                 $total_subsidio += $subsidio['nom_par_otro_pago_importe_gravado'] + $subsidio['nom_par_otro_pago_importe_exento'];
@@ -890,6 +898,10 @@ class controlador_tg_manifiesto extends _ctl_base
 
             foreach ($vacaciones->registros as $vacacion){
                 $total_vacaciones += $vacacion['nom_par_percepcion_importe_gravado'] + $vacacion['nom_par_percepcion_importe_exento'];
+            }
+
+            foreach ($septimo_dia->registros as $septimo){
+                $total_septimo_dia += $septimo['nom_par_percepcion_importe_gravado'] + $septimo['nom_par_percepcion_importe_exento'];
             }
 
             $uuid = "";
@@ -924,6 +936,7 @@ class controlador_tg_manifiesto extends _ctl_base
                 $total_subsidio,
                 $total_prima_dominical,
                 $total_vacaciones,
+                $total_septimo_dia
             ];
             $registros[] = $registro;
         }
