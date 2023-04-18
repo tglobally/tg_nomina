@@ -911,6 +911,13 @@ class controlador_tg_manifiesto extends _ctl_base
                     header: $header,ws:$ws);
             }
 
+            $prima_vacacional = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Prima Vacacional'));
+            if(errores::$error){
+                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $prima_vacacional,
+                    header: $header,ws:$ws);
+            }
+
             $total_subsidio = 0;
             $total_prima_dominical = 0;
             $total_vacaciones = 0;
@@ -919,6 +926,8 @@ class controlador_tg_manifiesto extends _ctl_base
             $total_despensa = 0;
             $total_otros_ingresos = 0;
             $total_infonavit = 0;
+
+            $montos_prima_vacacional = array('gravado' => 0, 'exento' => 0);
 
             foreach ($subsidios->registros as $subsidio){
                 $total_subsidio += $subsidio['nom_par_otro_pago_importe_gravado'] + $subsidio['nom_par_otro_pago_importe_exento'];
@@ -950,6 +959,11 @@ class controlador_tg_manifiesto extends _ctl_base
 
             foreach ($infonavit->registros as $registro){
                 $total_infonavit += $registro['nom_par_deduccion_importe_gravado'] + $registro['nom_par_deduccion_importe_exento'];
+            }
+
+            foreach ($prima_vacacional->registros as $registro){
+                $montos_prima_vacacional['gravado'] += $registro['nom_par_percepcion_importe_gravado'];
+                $montos_prima_vacacional['exento'] += $registro['nom_par_percepcion_importe_exento'];
             }
 
             $uuid = "";
@@ -988,7 +1002,9 @@ class controlador_tg_manifiesto extends _ctl_base
                 $total_compensacion,
                 $total_despensa,
                 $total_otros_ingresos,
-                $total_infonavit
+                $total_infonavit,
+                $montos_prima_vacacional['gravado'],
+                $montos_prima_vacacional['exento']
             ];
             $registros[] = $registro;
         }
