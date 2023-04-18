@@ -918,6 +918,41 @@ class controlador_tg_manifiesto extends _ctl_base
                     header: $header,ws:$ws);
             }
 
+            $gratificacion = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Gratificacion'));
+            if(errores::$error){
+                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $gratificacion,
+                    header: $header,ws:$ws);
+            }
+
+            $aguinaldo = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Aguinaldo'));
+            if(errores::$error){
+                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $aguinaldo,
+                    header: $header,ws:$ws);
+            }
+
+            $dia_festivo = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Dia Festivo Laborado'));
+            if(errores::$error){
+                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $dia_festivo,
+                    header: $header,ws:$ws);
+            }
+
+            $dia_descanso = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Dia de Descanso'));
+            if(errores::$error){
+                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $dia_descanso,
+                    header: $header,ws:$ws);
+            }
+
+            $horas_extras = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "cat_sat_tipo_percepcion_nom.descripcion" => 'Horas extras'));
+            if(errores::$error){
+                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $horas_extras,
+                    header: $header,ws:$ws);
+            }
+
             $total_subsidio = 0;
             $total_prima_dominical = 0;
             $total_vacaciones = 0;
@@ -928,6 +963,11 @@ class controlador_tg_manifiesto extends _ctl_base
             $total_infonavit = 0;
 
             $montos_prima_vacacional = array('gravado' => 0, 'exento' => 0);
+            $montos_gratificacion = array('gravado' => 0, 'exento' => 0);
+            $montos_aguinaldo = array('gravado' => 0, 'exento' => 0);
+            $montos_dia_festivo = array('gravado' => 0, 'exento' => 0);
+            $montos_dia_descanso = array('gravado' => 0, 'exento' => 0);
+            $montos_horas_extras = array('gravado' => 0, 'exento' => 0);
 
             foreach ($subsidios->registros as $subsidio){
                 $total_subsidio += $subsidio['nom_par_otro_pago_importe_gravado'] + $subsidio['nom_par_otro_pago_importe_exento'];
@@ -964,6 +1004,31 @@ class controlador_tg_manifiesto extends _ctl_base
             foreach ($prima_vacacional->registros as $registro){
                 $montos_prima_vacacional['gravado'] += $registro['nom_par_percepcion_importe_gravado'];
                 $montos_prima_vacacional['exento'] += $registro['nom_par_percepcion_importe_exento'];
+            }
+
+            foreach ($gratificacion->registros as $registro){
+                $montos_gratificacion['gravado'] += $registro['nom_par_percepcion_importe_gravado'];
+                $montos_gratificacion['exento'] += $registro['nom_par_percepcion_importe_exento'];
+            }
+
+            foreach ($aguinaldo->registros as $registro){
+                $montos_aguinaldo['gravado'] += $registro['nom_par_percepcion_importe_gravado'];
+                $montos_aguinaldo['exento'] += $registro['nom_par_percepcion_importe_exento'];
+            }
+
+            foreach ($dia_festivo->registros as $registro){
+                $montos_dia_festivo['gravado'] += $registro['nom_par_percepcion_importe_gravado'];
+                $montos_dia_festivo['exento'] += $registro['nom_par_percepcion_importe_exento'];
+            }
+
+            foreach ($dia_descanso->registros as $registro){
+                $montos_dia_descanso['gravado'] += $registro['nom_par_percepcion_importe_gravado'];
+                $montos_dia_descanso['exento'] += $registro['nom_par_percepcion_importe_exento'];
+            }
+
+            foreach ($horas_extras->registros as $registro){
+                $montos_horas_extras['gravado'] += $registro['nom_par_percepcion_importe_gravado'];
+                $montos_horas_extras['exento'] += $registro['nom_par_percepcion_importe_exento'];
             }
 
             $uuid = "";
@@ -1004,7 +1069,17 @@ class controlador_tg_manifiesto extends _ctl_base
                 $total_otros_ingresos,
                 $total_infonavit,
                 $montos_prima_vacacional['gravado'],
-                $montos_prima_vacacional['exento']
+                $montos_prima_vacacional['exento'],
+                $montos_gratificacion['gravado'],
+                $montos_gratificacion['exento'],
+                $montos_aguinaldo['gravado'],
+                $montos_aguinaldo['exento'],
+                $montos_dia_festivo['gravado'],
+                $montos_dia_festivo['exento'],
+                $montos_dia_descanso['gravado'],
+                $montos_dia_descanso['exento'],
+                $montos_horas_extras['gravado'],
+                $montos_horas_extras['exento'],
             ];
             $registros[] = $registro;
         }
