@@ -859,202 +859,158 @@ class controlador_tg_manifiesto extends _ctl_base
         return array($tabla2, $tabla);
     }
 
-    public function descarga_nomina(bool $header, bool $ws = false): array|stdClass
+    private function maqueta_datos(array $nominas, string $empresa): array
     {
-        $manifiesto = (new tg_manifiesto($this->link))->registro(registro_id: $this->registro_id);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al obtener manifiesto',data:  $manifiesto,
-                header: $header,ws:$ws);
-        }
-
-        $nominas = (new tg_manifiesto_periodo($this->link))->nominas_by_manifiesto(tg_manifiesto_id: $this->registro_id);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al obtener nominas del manifiesto',data:  $nominas,
-                header: $header,ws:$ws);
-        }
-
         $meses = array('ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO', 'JULIO', 'AGOSTO', 'SEPTIEMBRE',
             'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE');
-
-        $empresa = $manifiesto['org_sucursal_descripcion'];
-
-        $fecha_inicio = date('d/m/Y', strtotime($manifiesto['tg_manifiesto_fecha_inicial_pago']));
-        $fecha_final = date('d/m/Y', strtotime($manifiesto['tg_manifiesto_fecha_final_pago']));
-
-        $periodo_general =  "$fecha_inicio - $fecha_final";
 
         $registros = array();
 
         foreach ($nominas as $nomina) {
             $org_sucursal_estado = (new dp_calle_pertenece($this->link))->registro(registro_id: $nomina['org_sucursal_dp_calle_pertenece_id']);
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al obtener el estado',data:  $org_sucursal_estado,
-                    header: $header,ws:$ws);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener el estado', data: $org_sucursal_estado);
             }
 
             $em_empleado_estado = (new dp_calle_pertenece($this->link))->registro(registro_id: $nomina['em_empleado_dp_calle_pertenece_id']);
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al obtener el estado',data:  $em_empleado_estado,
-                    header: $header,ws:$ws);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener el estado', data: $em_empleado_estado);
             }
 
             $timbrado = (new fc_cfdi_sellado($this->link))->filtro_and(filtro: array("fc_factura_id" => $nomina['fc_factura_id']), limit: 1);
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al obtener cfdi sellado',data:  $timbrado,
-                    header: $header,ws:$ws);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener cfdi sellado', data: $timbrado);
             }
 
             $subsidios = (new nom_par_otro_pago($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_otro_pago.es_subsidio" => 'activo'));
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al obtener otros pagos de la nomina',data:  $subsidios,
-                    header: $header,ws:$ws);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener otros pagos de la nomina', data: $subsidios);
             }
 
             $prima_dominical = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_percepcion.descripcion" => 'Prima Dominical'));
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $prima_dominical,
-                    header: $header,ws:$ws);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener prima dominical de la nomina', data: $prima_dominical);
             }
 
             $vacaciones = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_percepcion.descripcion" => 'Vacaciones'));
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $vacaciones,
-                    header: $header,ws:$ws);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
             }
 
             $septimo_dia = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_percepcion.descripcion" => 'Septimo Dia'));
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $septimo_dia,
-                    header: $header,ws:$ws);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
             }
 
             $compensacion = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_percepcion.descripcion" => 'Compensacion'));
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $compensacion,
-                    header: $header,ws:$ws);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
             }
 
             $despensa = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_percepcion.descripcion" => 'Despensa'));
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $despensa,
-                    header: $header,ws:$ws);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
             }
 
             $otros_ingresos = (new nom_par_otro_pago($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_otro_pago.es_subsidio" => 'inactivo'));
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al obtener otros pagos de la nomina',data:  $otros_ingresos,
-                    header: $header,ws:$ws);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
             }
 
             $infonavit = (new nom_par_deduccion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_deduccion.descripcion" => 'INFONAVIT'));
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $infonavit,
-                    header: $header,ws:$ws);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
             }
 
             $prima_vacacional = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_percepcion.descripcion" => 'Prima Vacacional'));
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $prima_vacacional,
-                    header: $header,ws:$ws);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
             }
 
             $gratificacion = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_percepcion.descripcion" => 'Gratificacion'));
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $gratificacion,
-                    header: $header,ws:$ws);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
             }
 
             $aguinaldo = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_percepcion.descripcion" => 'Aguinaldo'));
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $aguinaldo,
-                    header: $header,ws:$ws);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
             }
 
             $dia_festivo = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_percepcion.descripcion" => 'Dia Festivo Laborado'));
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $dia_festivo,
-                    header: $header,ws:$ws);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
             }
 
             $dia_descanso = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_percepcion.descripcion" => 'Dia de Descanso'));
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $dia_descanso,
-                    header: $header,ws:$ws);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
             }
 
             $horas_extras = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "cat_sat_tipo_percepcion_nom.descripcion" => 'Horas extras'));
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $horas_extras,
-                    header: $header,ws:$ws);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
             }
 
             $isr = (new nom_par_deduccion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_deduccion.descripcion" => 'ISR'));
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $isr,
-                    header: $header,ws:$ws);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
             }
 
             $imss = (new nom_par_deduccion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_deduccion.descripcion" => 'IMSS'));
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $imss,
-                    header: $header,ws:$ws);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
             }
 
             $fonacot = (new nom_par_deduccion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_deduccion.descripcion" => 'FONACOT'));
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $fonacot,
-                    header: $header,ws:$ws);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
             }
 
             $fonacot = (new nom_par_deduccion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_deduccion.descripcion" => 'FONACOT'));
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $fonacot,
-                    header: $header,ws:$ws);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
             }
 
             $pension_alimenticia = (new nom_par_deduccion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_deduccion.descripcion" => 'PENSION ALIMENTICIA'));
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $pension_alimenticia,
-                    header: $header,ws:$ws);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
             }
 
             $otros_descuentos = (new nom_par_deduccion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_deduccion.descripcion" => 'Otros Descuentos'));
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $otros_descuentos,
-                    header: $header,ws:$ws);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
             }
 
             $descuento_comedor = (new nom_par_deduccion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_deduccion.descripcion" => 'DESCUENTO COMEDOR'));
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $otros_descuentos,
-                    header: $header,ws:$ws);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
             }
 
             $cliente_nomina = (new com_sucursal($this->link))->registro(registro_id: $nomina['fc_factura_com_sucursal_id']);
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al obtener prima dominical de la nomina',data:  $cliente_nomina,
-                    header: $header,ws:$ws);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
             }
 
             $total_subsidio = 0;
@@ -1259,10 +1215,40 @@ class controlador_tg_manifiesto extends _ctl_base
             $registros[] = $registro;
         }
 
-        $data = array();
+        return $registros;
+    }
 
 
-        $data["REPORTE NOMINAS"] = $this->maqueta_salida(empresa: $empresa,periodo: $periodo_general,remunerados: 0,
+
+    public function descarga_nomina(bool $header, bool $ws = false): array|stdClass
+    {
+        $manifiesto = (new tg_manifiesto($this->link))->registro(registro_id: $this->registro_id);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al obtener manifiesto',data:  $manifiesto,
+                header: $header,ws:$ws);
+        }
+
+        $nominas = (new tg_manifiesto_periodo($this->link))->nominas_by_manifiesto(tg_manifiesto_id: $this->registro_id);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al obtener nominas del manifiesto',data:  $nominas,
+                header: $header,ws:$ws);
+        }
+
+        $empresa = $manifiesto['org_sucursal_descripcion'];
+
+        $fecha_inicio = date('d/m/Y', strtotime($manifiesto['tg_manifiesto_fecha_inicial_pago']));
+        $fecha_final = date('d/m/Y', strtotime($manifiesto['tg_manifiesto_fecha_final_pago']));
+
+        $periodo =  "$fecha_inicio - $fecha_final";
+
+        $registros = $this->maqueta_datos(nominas: $nominas, empresa : $empresa);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al maquetar datos', data: $registros);
+            print_r($error);
+            die('Error');
+        }
+
+        $data["REPORTE NOMINAS"] = $this->maqueta_salida(empresa: $empresa,periodo: $periodo,remunerados: 0,
             total_registros: count($nominas), registros: $registros);
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al maquetar salida de datos', data: $data);
@@ -1273,7 +1259,7 @@ class controlador_tg_manifiesto extends _ctl_base
         $name = "REPORTE DE NOMINAS_$empresa";
 
         $resultado = (new exportador())->exportar_template(header: $header, path_base: $this->path_base, name: $name,
-            data: $data,styles: Reporte_Template::REPORTE_NOMINA);
+            data: $data, styles: Reporte_Template::REPORTE_NOMINA);
         if (errores::$error) {
             $error = $this->errores->error('Error al generar xls', $resultado);
             if (!$header) {
@@ -1285,115 +1271,6 @@ class controlador_tg_manifiesto extends _ctl_base
 
         header('Location:' . $this->link_lista);
         exit;
-
-
-
-
-
-        $conceptos = (new nom_nomina($this->link))->obten_conceptos_nominas(nominas: $nominas);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo',data:  $conceptos,
-                header: $header,ws:$ws);
-        }
-
-        $exportador = (new exportador_eliminar(num_hojas: 3));
-        $registros_xls = array();
-        $registros_provisiones = array();
-
-        foreach ($nominas as $nomina){
-            $row = (new nom_nomina($this->link))->maqueta_registros_excel(nom_nomina_id: $nomina['nom_nomina_id'],
-                conceptos_nomina: $conceptos);
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al maquetar datos de la nomina',data:  $row,
-                    header: $header,ws:$ws);
-            }
-
-            $provisiones = (new tg_provision($this->link))->maqueta_excel_provisiones(
-                nom_nomina_id: $nomina['nom_nomina_id']);
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al maquetar provisiones de la nomina',data:  $provisiones,
-                    header: $header,ws:$ws);
-            }
-
-            $pagos = (new em_cuenta_bancaria($this->link))->maqueta_excel_pagos(data_general: $row);
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al maquetar pagos de la nomina',data:  $pagos,
-                    header: $header,ws:$ws);
-            }
-
-            $registros_xls[] = $row;
-            $registros_provisiones[] = $provisiones;
-            $registros_pagos[] = $pagos;
-        }
-
-        $keys = array();
-        $keys_provisiones = array();
-        $keys_pagos = array();
-
-        foreach (array_keys($registros_xls[0]) as $key) {
-            $keys[$key] = strtoupper(str_replace('_', ' ', $key));
-        }
-
-        foreach (array_keys($registros_provisiones[0]) as $key) {
-            $keys_provisiones[$key] = strtoupper(str_replace('_', ' ', $key));
-        }
-
-        foreach (array_keys($registros_pagos[0]) as $key) {
-            $keys_pagos[$key] = strtoupper(str_replace('_', ' ', $key));
-        }
-
-        $registros = array();
-        $registros_provisiones_excel = array();
-        $registros_pagos_excel = array();
-
-        foreach ($registros_xls as $row) {
-            $registros[] = array_combine(preg_replace(array_map(function($s){return "/^$s$/";},
-                array_keys($keys)),$keys, array_keys($row)), $row);
-        }
-
-        foreach ($registros_provisiones as $row) {
-            $registros_provisiones_excel[] = array_combine(preg_replace(array_map(function($s){return "/^$s$/";},
-                array_keys($keys_provisiones)),$keys_provisiones, array_keys($row)), $row);
-        }
-
-        foreach ($registros_pagos as $row) {
-            $registros_pagos_excel[] = array_combine(preg_replace(array_map(function($s){return "/^$s$/";},
-                array_keys($keys_pagos)),$keys_pagos, array_keys($row)), $row);
-        }
-
-        $keys_hojas =  array();
-        $keys_hojas['nominas'] = new stdClass();
-        $keys_hojas['nominas']->keys = $keys;
-        $keys_hojas['nominas']->registros = $registros;
-        $keys_hojas['provisionado'] = new stdClass();
-        $keys_hojas['provisionado']->keys = $keys_provisiones;
-        $keys_hojas['provisionado']->registros = $registros_provisiones_excel;
-        $keys_hojas['pagos'] = new stdClass();
-        $keys_hojas['pagos']->keys = $keys_pagos;
-        $keys_hojas['pagos']->registros = $registros_pagos_excel;
-
-        $xls = $exportador->genera_xls(header: $header,name: $manifiesto["tg_manifiesto_descripcion"],
-            nombre_hojas: array("nominas", "provisionado", "pagos"), keys_hojas: $keys_hojas,
-            path_base: $this->path_base);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al generar xls',data:  $xls, header: $header,
-                ws:$ws);
-        }
-
-        /* $resultado = $exportador->listado_base_xls(header: $header, name: $this->seccion, keys:  $keys,
-             path_base: $this->path_base,registros:  $registros,totales:  array());
-         if(errores::$error){
-             $error =  $this->errores->error('Error al generar xls',$resultado);
-             if(!$header){
-                 return $error;
-             }
-             print_r($error);
-             die('Error');
-         }*/
-
-
-        exit;
-        //return $this->nominas;
     }
 
     /*public function descarga_nomina(bool $header, bool $ws = false): array|stdClass
