@@ -856,7 +856,7 @@ class controlador_tg_manifiesto extends _ctl_base
         $tabla2['startRow'] = 4;
         $tabla2['startColumn'] = "Z";
 
-        return array($tabla, $tabla2);
+        return array($tabla2, $tabla);
     }
 
     public function descarga_nomina(bool $header, bool $ws = false): array|stdClass
