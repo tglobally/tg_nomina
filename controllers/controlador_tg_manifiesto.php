@@ -808,7 +808,13 @@ class controlador_tg_manifiesto extends _ctl_base
         $tabla['startRow'] = 5;
         $tabla['startColumn'] = "A";
 
-        return array($tabla);
+        $tabla2['headers'] = ['PRIMA VACACIONAL (15 UMAS)','GRATIFICACION ( 30 UMAS )','AGUINALDO ( 15 UMAS )',
+            'DIA FESTIVO','DESCANSO LABORADO','HORAS EXTRAS ( 5 UMAS POR SEMANA)'];
+        $tabla2['data'] = array();
+        $tabla2['startRow'] = 4;
+        $tabla2['startColumn'] = "Z";
+
+        return array($tabla, $tabla2);
     }
 
     public function descarga_nomina(bool $header, bool $ws = false): array|stdClass
