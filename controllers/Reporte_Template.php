@@ -124,6 +124,22 @@ class Reporte_Template
                 'vertical' => 'center',
             ]
         ],
+        "Z4:AK4" => [
+            'font' => [
+                'bold' => true,
+                'color' => ['rgb' => 'FFFFFF'],
+                'size' => 11,
+            ],
+            'fill' => array(
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => array('rgb' => '002060')
+            ),
+            'alignment' => [
+                'horizontal' => 'right',
+                'vertical' => 'center',
+            ]
+        ],
+
         "B1:B4" => [
             'font' => [
                 'bold' => true,
