@@ -6,6 +6,7 @@
  * @final En proceso
  *
  */
+
 namespace tglobally\tg_nomina\controllers;
 
 use base\controller\controler;
@@ -113,17 +114,17 @@ class controlador_tg_manifiesto extends _ctl_base
 
     public function agregar_deduccion(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
     {
-        if (!isset($_POST['agregar_deduccion'])){
+        if (!isset($_POST['agregar_deduccion'])) {
             return $this->retorno_error(mensaje: 'Error no existe agregar_deduccion', data: $_POST, header: $header,
                 ws: $ws);
         }
 
-        if ($_POST['agregar_deduccion'] === ""){
+        if ($_POST['agregar_deduccion'] === "") {
             return $this->retorno_error(mensaje: 'Error no ha seleccionado una nomina', data: $_POST, header: $header,
                 ws: $ws);
         }
 
-        $this->nominas_seleccionadas = explode(",",$_POST['agregar_deduccion']);
+        $this->nominas_seleccionadas = explode(",", $_POST['agregar_deduccion']);
 
         $r_alta = $this->init_alta();
         if (errores::$error) {
@@ -150,19 +151,19 @@ class controlador_tg_manifiesto extends _ctl_base
 
     public function agregar_deduccion_bd(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
     {
-        if (!isset($_POST['agregar_deduccion'])){
+        if (!isset($_POST['agregar_deduccion'])) {
             return $this->retorno_error(mensaje: 'Error no existe agregar_deduccion', data: $_POST, header: $header,
                 ws: $ws);
         }
 
-        $this->nominas_seleccionadas = explode(",",$_POST['agregar_deduccion']);
+        $this->nominas_seleccionadas = explode(",", $_POST['agregar_deduccion']);
 
-        if (count($this->nominas_seleccionadas) === 0){
+        if (count($this->nominas_seleccionadas) === 0) {
             return $this->retorno_error(mensaje: 'Error no ha seleccionado una nomina', data: $_POST, header: $header,
                 ws: $ws);
         }
 
-        foreach ($this->nominas_seleccionadas as $nomina){
+        foreach ($this->nominas_seleccionadas as $nomina) {
 
             $registro['nom_nomina_id'] = $nomina;
             $registro['nom_deduccion_id'] = $_POST['nom_deduccion_id'];
@@ -182,17 +183,17 @@ class controlador_tg_manifiesto extends _ctl_base
 
     public function agregar_otro_pago(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
     {
-        if (!isset($_POST['agregar_otro_pago'])){
+        if (!isset($_POST['agregar_otro_pago'])) {
             return $this->retorno_error(mensaje: 'Error no existe agregar_otro_pago', data: $_POST, header: $header,
                 ws: $ws);
         }
 
-        if ($_POST['agregar_otro_pago'] === ""){
+        if ($_POST['agregar_otro_pago'] === "") {
             return $this->retorno_error(mensaje: 'Error no ha seleccionado una nomina', data: $_POST, header: $header,
                 ws: $ws);
         }
 
-        $this->nominas_seleccionadas = explode(",",$_POST['agregar_otro_pago']);
+        $this->nominas_seleccionadas = explode(",", $_POST['agregar_otro_pago']);
 
         $r_alta = $this->init_alta();
         if (errores::$error) {
@@ -219,19 +220,19 @@ class controlador_tg_manifiesto extends _ctl_base
 
     public function agregar_otro_pago_bd(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
     {
-        if (!isset($_POST['agregar_otro_pago'])){
+        if (!isset($_POST['agregar_otro_pago'])) {
             return $this->retorno_error(mensaje: 'Error no existe agregar_otro_pago', data: $_POST, header: $header,
                 ws: $ws);
         }
 
-        $this->nominas_seleccionadas = explode(",",$_POST['agregar_otro_pago']);
+        $this->nominas_seleccionadas = explode(",", $_POST['agregar_otro_pago']);
 
-        if (count($this->nominas_seleccionadas) === 0){
+        if (count($this->nominas_seleccionadas) === 0) {
             return $this->retorno_error(mensaje: 'Error no ha seleccionado una nomina', data: $_POST, header: $header,
                 ws: $ws);
         }
 
-        foreach ($this->nominas_seleccionadas as $nomina){
+        foreach ($this->nominas_seleccionadas as $nomina) {
 
             $registro['nom_nomina_id'] = $nomina;
             $registro['nom_otro_pago_id'] = $_POST['nom_otro_pago_id'];
@@ -251,17 +252,17 @@ class controlador_tg_manifiesto extends _ctl_base
 
     public function agregar_percepcion(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
     {
-        if (!isset($_POST['agregar_percepcion'])){
+        if (!isset($_POST['agregar_percepcion'])) {
             return $this->retorno_error(mensaje: 'Error no existe agregar_percepcion', data: $_POST, header: $header,
                 ws: $ws);
         }
 
-        if ($_POST['agregar_percepcion'] === ""){
+        if ($_POST['agregar_percepcion'] === "") {
             return $this->retorno_error(mensaje: 'Error no ha seleccionado una nomina', data: $_POST, header: $header,
                 ws: $ws);
         }
 
-        $this->nominas_seleccionadas = explode(",",$_POST['agregar_percepcion']);
+        $this->nominas_seleccionadas = explode(",", $_POST['agregar_percepcion']);
 
         $r_alta = $this->init_alta();
         if (errores::$error) {
@@ -288,21 +289,20 @@ class controlador_tg_manifiesto extends _ctl_base
 
     public function agregar_percepcion_bd(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
     {
-        if (!isset($_POST['agregar_percepcion'])){
+        if (!isset($_POST['agregar_percepcion'])) {
             return $this->retorno_error(mensaje: 'Error no existe agregar_percepcion', data: $_POST, header: $header,
                 ws: $ws);
         }
 
 
+        $this->nominas_seleccionadas = explode(",", $_POST['agregar_percepcion']);
 
-        $this->nominas_seleccionadas = explode(",",$_POST['agregar_percepcion']);
-
-        if (count($this->nominas_seleccionadas) === 0){
+        if (count($this->nominas_seleccionadas) === 0) {
             return $this->retorno_error(mensaje: 'Error no ha seleccionado una nomina', data: $_POST, header: $header,
                 ws: $ws);
         }
 
-        foreach ($this->nominas_seleccionadas as $nomina){
+        foreach ($this->nominas_seleccionadas as $nomina) {
 
             $registro['nom_nomina_id'] = $nomina;
             $registro['nom_percepcion_id'] = $_POST['nom_percepcion_id'];
@@ -349,7 +349,7 @@ class controlador_tg_manifiesto extends _ctl_base
     protected function campos_view(): array
     {
         $keys = new stdClass();
-        $keys->inputs = array('descripcion', 'importe_gravado', 'importe_exento','razón social ');
+        $keys->inputs = array('descripcion', 'importe_gravado', 'importe_exento', 'razón social ');
         $keys->fechas = array('fecha_envio', 'fecha_pago', 'fecha_inicial_pago', 'fecha_final_pago');
         $keys->selects = array();
 
@@ -373,23 +373,24 @@ class controlador_tg_manifiesto extends _ctl_base
         return $campos_view;
     }
 
-    public function descarga_pdf(bool $header, bool $ws = false){
-        if (!isset($_POST['descarga_pdf'])){
+    public function descarga_pdf(bool $header, bool $ws = false)
+    {
+        if (!isset($_POST['descarga_pdf'])) {
             return $this->retorno_error(mensaje: 'Error no existe descargar_pdf', data: $_POST, header: $header,
                 ws: $ws);
         }
 
-        if ($_POST['descarga_pdf'] === ""){
+        if ($_POST['descarga_pdf'] === "") {
             return $this->retorno_error(mensaje: 'Error no ha seleccionado una nomina', data: $_POST, header: $header,
                 ws: $ws);
         }
 
-        $this->nominas_seleccionadas = explode(",",$_POST['descarga_pdf']);
+        $this->nominas_seleccionadas = explode(",", $_POST['descarga_pdf']);
 
         $temporales = (new generales())->path_base . "archivos/tmp/";
         $pdf = new Mpdf(['tempDir' => $temporales]);
         if (errores::$error) {
-            return $this->retorno_error(mensaje: 'Error al crear pdf',data: $pdf, header: $header, ws: $ws);
+            return $this->retorno_error(mensaje: 'Error al crear pdf', data: $pdf, header: $header, ws: $ws);
         }
 
         foreach ($this->nominas_seleccionadas as $nomina) {
@@ -397,18 +398,19 @@ class controlador_tg_manifiesto extends _ctl_base
         }
 
         $nombre_archivo = "Nominas por periodo";
-        $pdf->Output($nombre_archivo.'.pdf','D');
+        $pdf->Output($nombre_archivo . '.pdf', 'D');
 
         exit;
     }
 
-    public function descarga_comprimido(bool $header, bool $ws = false){
-        if (!isset($_POST['descarga_comprimido'])){
+    public function descarga_comprimido(bool $header, bool $ws = false)
+    {
+        if (!isset($_POST['descarga_comprimido'])) {
             return $this->retorno_error(mensaje: 'Error no existe descargar_comprimido', data: $_POST, header: $header,
                 ws: $ws);
         }
 
-        if ($_POST['descarga_comprimido'] === ""){
+        if ($_POST['descarga_comprimido'] === "") {
             return $this->retorno_error(mensaje: 'Error no ha seleccionado una nomina', data: $_POST, header: $header,
                 ws: $ws);
         }
@@ -419,7 +421,7 @@ class controlador_tg_manifiesto extends _ctl_base
         $nombreZip = 'Recibos por periodo.zip';
         $zip->open($nombreZip, ZipArchive::CREATE);
 
-        foreach ($id_nominas as $nom_nomina_id){
+        foreach ($id_nominas as $nom_nomina_id) {
             $temporales = (new generales())->path_base . "archivos/tmp/";
             $pdf = new Mpdf(['tempDir' => $temporales]);
             if (errores::$error) {
@@ -433,9 +435,9 @@ class controlador_tg_manifiesto extends _ctl_base
                     header: $header, ws: $ws);
             }
 
-            $r_pdf = (new nom_nomina($this->link))->crea_pdf_recibo_nomina(nom_nomina_id: $nom_nomina['nom_nomina_id'] ,pdf: $pdf);
-            $archivo = $pdf->Output('','S');
-            $zip->addFromString($nom_nomina['nom_nomina_descripcion'].'.pdf', $archivo);
+            $r_pdf = (new nom_nomina($this->link))->crea_pdf_recibo_nomina(nom_nomina_id: $nom_nomina['nom_nomina_id'], pdf: $pdf);
+            $archivo = $pdf->Output('', 'S');
+            $zip->addFromString($nom_nomina['nom_nomina_descripcion'] . '.pdf', $archivo);
         }
 
         $zip->close();
@@ -451,14 +453,14 @@ class controlador_tg_manifiesto extends _ctl_base
 
     public function elimina_percepciones(bool $header, bool $ws = false): array|stdClass
     {
-        if (!isset($_POST['percepciones_eliminar'])){
+        if (!isset($_POST['percepciones_eliminar'])) {
             return $this->retorno_error(mensaje: 'Error no existe percepciones_eliminar', data: $_POST, header: $header,
                 ws: $ws);
         }
 
-        $nominas_seleccionadas = explode(",",$_POST['percepciones_eliminar']);
+        $nominas_seleccionadas = explode(",", $_POST['percepciones_eliminar']);
 
-        foreach ($nominas_seleccionadas as $nomina){
+        foreach ($nominas_seleccionadas as $nomina) {
             $filtro["nom_nomina_id"] = $nomina;
             $resultado = (new nom_par_percepcion($this->link))->elimina_con_filtro_and(filtro: $filtro);
             if (errores::$error) {
@@ -467,12 +469,11 @@ class controlador_tg_manifiesto extends _ctl_base
             }
         }
 
-        $link = "./index.php?seccion=tg_manifiesto&accion=ve_nominas&registro_id=".$this->registro_id;
-        $link.="&session_id=$this->session_id";
+        $link = "./index.php?seccion=tg_manifiesto&accion=ve_nominas&registro_id=" . $this->registro_id;
+        $link .= "&session_id=$this->session_id";
         header('Location:' . $link);
         exit;
     }
-
 
 
     private function init_configuraciones(): controler
@@ -616,7 +617,7 @@ class controlador_tg_manifiesto extends _ctl_base
         $columns["tg_manifiesto_fecha_final_pago"]["titulo"] = "Fecha Final Pago";
         $columns["tg_manifiesto_n_nominas"]["titulo"] = "Nóminas ";
 
-        $filtro = array("tg_manifiesto.id","com_sucursal.descripcion","tg_manifiesto.fecha_pago");
+        $filtro = array("tg_manifiesto.id", "com_sucursal.descripcion", "tg_manifiesto.fecha_pago");
 
         $datatables = new stdClass();
         $datatables->type = "scroll";
@@ -632,7 +633,7 @@ class controlador_tg_manifiesto extends _ctl_base
      * @param array $keys_selects Key de selcta integrar
      * @param string $key key a validar
      * @param string $label Etiqueta a mostrar
-     * @param int $id_selected  selected
+     * @param int $id_selected selected
      * @param int $cols cols css
      * @param bool $con_registros Intrega valores
      * @param array $filtro Filtro de datos
@@ -738,14 +739,9 @@ class controlador_tg_manifiesto extends _ctl_base
     }
 
 
-
-
-
-
     public stdClass $periodos;
     public int $tg_manifiesto_periodo_id = -1;
     public array $nominas = array();
-
 
 
     private function data_nomina_btn(array $nomina): array
@@ -772,14 +768,14 @@ class controlador_tg_manifiesto extends _ctl_base
         $params['tg_manifiesto_periodo_id'] = $periodo['tg_manifiesto_periodo_id'];
 
         $btn_elimina = $this->html_base->button_href(accion: 'periodo_elimina_bd', etiqueta: 'Elimina',
-            registro_id: $this->registro_id, seccion: 'tg_manifiesto', style: 'danger',params: $params);
+            registro_id: $this->registro_id, seccion: 'tg_manifiesto', style: 'danger', params: $params);
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al generar btn', data: $btn_elimina);
         }
         $periodo['link_elimina'] = $btn_elimina;
 
         $btn_modifica = $this->html_base->button_href(accion: 'periodo_modifica', etiqueta: 'Modifica',
-            registro_id: $this->registro_id, seccion: 'tg_manifiesto', style: 'warning',params: $params);
+            registro_id: $this->registro_id, seccion: 'tg_manifiesto', style: 'warning', params: $params);
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al generar btn', data: $btn_modifica);
         }
@@ -788,7 +784,7 @@ class controlador_tg_manifiesto extends _ctl_base
         return $periodo;
     }
 
-    private function maqueta_salida(String $empresa, string $periodo, int $remunerados, int $total_registros, array $registros): array
+    private function maqueta_salida(string $empresa, string $periodo, int $remunerados, int $total_registros, array $registros): array
     {
         $tabla['detalles'] = [
             ["titulo" => 'EMPRESA:', 'valor' => $empresa],
@@ -797,7 +793,7 @@ class controlador_tg_manifiesto extends _ctl_base
             ["titulo" => '# REGISTROS:', 'valor' => $total_registros]
         ];
 
-        $tabla['headers'] = ['FOLIO NÓMINA','ID REM','NOMBRE','RFC','NSS','REGISTRO PATRONAL','UBICACIÓN RP', 'EMPRESA',
+        $tabla['headers'] = ['FOLIO NÓMINA', 'ID REM', 'NOMBRE', 'RFC', 'NSS', 'REGISTRO PATRONAL', 'UBICACIÓN RP', 'EMPRESA',
             'UBICACIÓN TRABAJADOR', 'MES', 'PERIODO DE PAGO', 'FOLIO FISCAL IMSS', 'ESTATUS', 'SD', 'FI', 'SDI', 'SUELDO',
             'SUBSIDIO', 'PRIMA DOMINICAL', 'VACACIONES', 'SEPTIMO DÍA', 'COMPENSACIÓN', 'DESPENSA', 'OTROS INGRESOS',
             'DEVOLUCIÓN INFONAVIT', 'GRAVADO', 'EXENTO', 'GRAVADO', 'EXENTO', 'GRAVADO', 'EXENTO', 'GRAVADO', 'EXENTO',
@@ -850,8 +846,8 @@ class controlador_tg_manifiesto extends _ctl_base
         ];
 
 
-        $tabla2['headers'] = ['PRIMA VACACIONAL (15 UMAS)','GRATIFICACION ( 30 UMAS )','AGUINALDO ( 15 UMAS )',
-            'DIA FESTIVO','DESCANSO LABORADO','HORAS EXTRAS ( 5 UMAS POR SEMANA)'];
+        $tabla2['headers'] = ['PRIMA VACACIONAL (15 UMAS)', 'GRATIFICACION ( 30 UMAS )', 'AGUINALDO ( 15 UMAS )',
+            'DIA FESTIVO', 'DESCANSO LABORADO', 'HORAS EXTRAS ( 5 UMAS POR SEMANA)'];
         $tabla2['data'] = array();
         $tabla2['startRow'] = 4;
         $tabla2['startColumn'] = "Z";
@@ -859,7 +855,30 @@ class controlador_tg_manifiesto extends _ctl_base
         return array($tabla2, $tabla);
     }
 
-    private function maqueta_datos(array $nominas, string $empresa): array
+    private function get_totales(array $campos): array
+    {
+        $salida = array();
+
+        foreach ($campos as $key => $data){
+            $gravado = (new nom_par_percepcion($this->link))->suma(campos: array("gravado" => "nom_par_percepcion.importe_gravado"),filtro: $data);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener nom_par_percepcion de la nomina', data: $gravado);
+            }
+
+            $exento = (new nom_par_percepcion($this->link))->suma(campos: array("exento" => "nom_par_percepcion.importe_exento"),filtro: $data);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener nom_par_percepcion de la nomina', data: $exento);
+            }
+
+            $salida[$key] = array("gravado" => $gravado["gravado"],
+                                  "exento" => $exento["exento"],
+                                  "total" => $gravado["gravado"] + $exento["exento"]);
+        }
+
+        return $salida;
+    }
+
+    private function fill_data(array $nominas, string $empresa): array
     {
         $meses = array('ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO', 'JULIO', 'AGOSTO', 'SEPTIEMBRE',
             'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE');
@@ -887,6 +906,8 @@ class controlador_tg_manifiesto extends _ctl_base
             if (errores::$error) {
                 return $this->errores->error(mensaje: 'Error al obtener otros pagos de la nomina', data: $subsidios);
             }
+
+            // ----
 
             $prima_dominical = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_percepcion.descripcion" => 'Prima Dominical'));
@@ -918,11 +939,43 @@ class controlador_tg_manifiesto extends _ctl_base
                 return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
             }
 
+            $prima_vacacional = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Prima Vacacional'));
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
+            }
+
+            $campos['prima_dominical'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Prima Dominical');
+            $campos['vacaciones'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Vacaciones');
+            $campos['septimo_dia'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Septimo Dia');
+            $campos['compensacion'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Compensacion');
+            $campos['despensa'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Despensa');
+            $campos['prima_vacacional'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Prima Vacacional');
+
+            $percepciones = $this->get_totales(campos: $campos);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener totales de percepciones', data: $percepciones);
+            }
+
             $otros_ingresos = (new nom_par_otro_pago($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_otro_pago.es_subsidio" => 'inactivo'));
             if (errores::$error) {
                 return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
             }
+
+
+
+
+
+
+
+
 
             $infonavit = (new nom_par_deduccion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_deduccion.descripcion" => 'INFONAVIT'));
@@ -930,11 +983,7 @@ class controlador_tg_manifiesto extends _ctl_base
                 return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
             }
 
-            $prima_vacacional = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
-                "nom_percepcion.descripcion" => 'Prima Vacacional'));
-            if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
-            }
+
 
             $gratificacion = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_percepcion.descripcion" => 'Gratificacion'));
@@ -1035,109 +1084,109 @@ class controlador_tg_manifiesto extends _ctl_base
             $montos_dia_descanso = array('gravado' => 0, 'exento' => 0);
             $montos_horas_extras = array('gravado' => 0, 'exento' => 0);
 
-            foreach ($subsidios->registros as $subsidio){
+            foreach ($subsidios->registros as $subsidio) {
                 $total_subsidio += $subsidio['nom_par_otro_pago_importe_gravado'] + $subsidio['nom_par_otro_pago_importe_exento'];
             }
 
-            foreach ($prima_dominical->registros as $prima){
+            foreach ($prima_dominical->registros as $prima) {
                 $total_prima_dominical += $prima['nom_par_percepcion_importe_gravado'] + $prima['nom_par_percepcion_importe_exento'];
             }
 
-            foreach ($vacaciones->registros as $vacacion){
+            foreach ($vacaciones->registros as $vacacion) {
                 $total_vacaciones += $vacacion['nom_par_percepcion_importe_gravado'] + $vacacion['nom_par_percepcion_importe_exento'];
             }
 
-            foreach ($septimo_dia->registros as $septimo){
+            foreach ($septimo_dia->registros as $septimo) {
                 $total_septimo_dia += $septimo['nom_par_percepcion_importe_gravado'] + $septimo['nom_par_percepcion_importe_exento'];
             }
 
-            foreach ($compensacion->registros as $registro){
+            foreach ($compensacion->registros as $registro) {
                 $total_compensacion += $registro['nom_par_percepcion_importe_gravado'] + $registro['nom_par_percepcion_importe_exento'];
             }
 
-            foreach ($despensa->registros as $registro){
+            foreach ($despensa->registros as $registro) {
                 $total_despensa += $registro['nom_par_percepcion_importe_gravado'] + $registro['nom_par_percepcion_importe_exento'];
             }
 
-            foreach ($otros_ingresos->registros as $registro){
+            foreach ($otros_ingresos->registros as $registro) {
                 $total_otros_ingresos += $registro['nom_par_otro_pago_importe_gravado'] + $registro['nom_par_otro_pago_importe_exento'];
             }
 
-            foreach ($infonavit->registros as $registro){
+            foreach ($infonavit->registros as $registro) {
                 $total_infonavit += $registro['nom_par_deduccion_importe_gravado'] + $registro['nom_par_deduccion_importe_exento'];
             }
 
-            foreach ($isr->registros as $registro){
+            foreach ($isr->registros as $registro) {
                 $total_isr += $registro['nom_par_deduccion_importe_gravado'] + $registro['nom_par_deduccion_importe_exento'];
             }
 
-            foreach ($imss->registros as $registro){
+            foreach ($imss->registros as $registro) {
                 $total_imss += $registro['nom_par_deduccion_importe_gravado'] + $registro['nom_par_deduccion_importe_exento'];
             }
 
-            foreach ($fonacot->registros as $registro){
+            foreach ($fonacot->registros as $registro) {
                 $total_fonacot += $registro['nom_par_deduccion_importe_gravado'] + $registro['nom_par_deduccion_importe_exento'];
             }
 
-            foreach ($pension_alimenticia->registros as $registro){
+            foreach ($pension_alimenticia->registros as $registro) {
                 $total_pension_alimenticia += $registro['nom_par_deduccion_importe_gravado'] + $registro['nom_par_deduccion_importe_exento'];
             }
 
-            foreach ($otros_descuentos->registros as $registro){
+            foreach ($otros_descuentos->registros as $registro) {
                 $total_otros_descuentos += $registro['nom_par_deduccion_importe_gravado'] + $registro['nom_par_deduccion_importe_exento'];
             }
 
-            foreach ($descuento_comedor->registros as $registro){
+            foreach ($descuento_comedor->registros as $registro) {
                 $total_descuento_comedor += $registro['nom_par_deduccion_importe_gravado'] + $registro['nom_par_deduccion_importe_exento'];
             }
 
-            foreach ($prima_vacacional->registros as $registro){
+            foreach ($prima_vacacional->registros as $registro) {
                 $montos_prima_vacacional['gravado'] += $registro['nom_par_percepcion_importe_gravado'];
                 $montos_prima_vacacional['exento'] += $registro['nom_par_percepcion_importe_exento'];
             }
 
-            foreach ($gratificacion->registros as $registro){
+            foreach ($gratificacion->registros as $registro) {
                 $montos_gratificacion['gravado'] += $registro['nom_par_percepcion_importe_gravado'];
                 $montos_gratificacion['exento'] += $registro['nom_par_percepcion_importe_exento'];
             }
 
-            foreach ($aguinaldo->registros as $registro){
+            foreach ($aguinaldo->registros as $registro) {
                 $montos_aguinaldo['gravado'] += $registro['nom_par_percepcion_importe_gravado'];
                 $montos_aguinaldo['exento'] += $registro['nom_par_percepcion_importe_exento'];
             }
 
-            foreach ($dia_festivo->registros as $registro){
+            foreach ($dia_festivo->registros as $registro) {
                 $montos_dia_festivo['gravado'] += $registro['nom_par_percepcion_importe_gravado'];
                 $montos_dia_festivo['exento'] += $registro['nom_par_percepcion_importe_exento'];
             }
 
-            foreach ($dia_descanso->registros as $registro){
+            foreach ($dia_descanso->registros as $registro) {
                 $montos_dia_descanso['gravado'] += $registro['nom_par_percepcion_importe_gravado'];
                 $montos_dia_descanso['exento'] += $registro['nom_par_percepcion_importe_exento'];
             }
 
-            foreach ($horas_extras->registros as $registro){
+            foreach ($horas_extras->registros as $registro) {
                 $montos_horas_extras['gravado'] += $registro['nom_par_percepcion_importe_gravado'];
                 $montos_horas_extras['exento'] += $registro['nom_par_percepcion_importe_exento'];
             }
 
-            $fecha_inicio = DateTime::createFromFormat('d/m/Y',  date('d/m/Y',strtotime($nomina['nom_nomina_fecha_inicial_pago'])));
-            $fecha_final = DateTime::createFromFormat('d/m/Y',  date('d/m/Y',strtotime($nomina['nom_nomina_fecha_final_pago'])));
+            $fecha_inicio = DateTime::createFromFormat('d/m/Y', date('d/m/Y', strtotime($nomina['nom_nomina_fecha_inicial_pago'])));
+            $fecha_final = DateTime::createFromFormat('d/m/Y', date('d/m/Y', strtotime($nomina['nom_nomina_fecha_final_pago'])));
 
-            $periodo =  $fecha_inicio->format('d/m/Y').  " - " . $fecha_final->format('d/m/Y');
+            $periodo = $fecha_inicio->format('d/m/Y') . " - " . $fecha_final->format('d/m/Y');
 
             $sueldo = (($fecha_inicio->diff($fecha_final))->days + 1) * $nomina['em_empleado_salario_diario'];
 
             $total_percepciones = $sueldo + $total_subsidio + $total_prima_dominical + $total_vacaciones +
                 $total_septimo_dia + $total_compensacion + $total_despensa + $total_otros_ingresos + $total_infonavit +
-                $montos_prima_vacacional['gravado']+ $montos_prima_vacacional['exento']+
-                $montos_gratificacion['gravado']+ $montos_gratificacion['exento']+ $montos_aguinaldo['gravado']+
-                $montos_aguinaldo['exento']+ $montos_dia_festivo['gravado']+ $montos_dia_festivo['exento']+
-                $montos_dia_descanso['gravado']+ $montos_dia_descanso['exento']+ $montos_horas_extras['gravado']+
+                $montos_prima_vacacional['gravado'] + $montos_prima_vacacional['exento'] +
+                $montos_gratificacion['gravado'] + $montos_gratificacion['exento'] + $montos_aguinaldo['gravado'] +
+                $montos_aguinaldo['exento'] + $montos_dia_festivo['gravado'] + $montos_dia_festivo['exento'] +
+                $montos_dia_descanso['gravado'] + $montos_dia_descanso['exento'] + $montos_horas_extras['gravado'] +
                 $montos_horas_extras['exento'];
 
             $base_gravable = $sueldo + $total_vacaciones + $total_septimo_dia + $total_compensacion + $total_despensa +
-                $total_otros_ingresos + $montos_prima_vacacional['gravado'] + $montos_gratificacion['gravado']+
+                $total_otros_ingresos + $montos_prima_vacacional['gravado'] + $montos_gratificacion['gravado'] +
                 $montos_aguinaldo['gravado'] + $montos_dia_festivo['gravado'] + $montos_dia_descanso['gravado'] +
                 $montos_horas_extras['gravado'];
 
@@ -1153,7 +1202,7 @@ class controlador_tg_manifiesto extends _ctl_base
 
             $uuid = "";
 
-            if($timbrado->n_registros > 0){
+            if ($timbrado->n_registros > 0) {
                 $uuid = $timbrado->registros[0]['fc_cfdi_sellado_uuid'];
             }
 
@@ -1170,17 +1219,17 @@ class controlador_tg_manifiesto extends _ctl_base
                 $meses[$fecha_inicio->format('n') - 1],
                 $periodo,
                 $uuid,
-                (!empty($uuid)) ? 'TIMBRADO': '',
+                (!empty($uuid)) ? 'TIMBRADO' : '',
                 $nomina['em_empleado_salario_diario'],
                 'POR REVISAR',
                 $nomina['em_empleado_salario_diario_integrado'],
                 $sueldo,
                 $total_subsidio,
-                $total_prima_dominical,
-                $total_vacaciones,
-                $total_septimo_dia,
-                $total_compensacion,
-                $total_despensa,
+                $percepciones['prima_dominical']['total'],
+                $percepciones['vacaciones']['total'],
+                $percepciones['septimo_dia']['total'],
+                $percepciones['compensacion']['total'],
+                $percepciones['despensa']['total'],
                 $total_otros_ingresos,
                 $total_infonavit,
                 $montos_prima_vacacional['gravado'],
@@ -1218,20 +1267,18 @@ class controlador_tg_manifiesto extends _ctl_base
         return $registros;
     }
 
-
-
     public function descarga_nomina(bool $header, bool $ws = false): array|stdClass
     {
         $manifiesto = (new tg_manifiesto($this->link))->registro(registro_id: $this->registro_id);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al obtener manifiesto',data:  $manifiesto,
-                header: $header,ws:$ws);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al obtener manifiesto', data: $manifiesto,
+                header: $header, ws: $ws);
         }
 
         $nominas = (new tg_manifiesto_periodo($this->link))->nominas_by_manifiesto(tg_manifiesto_id: $this->registro_id);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al obtener nominas del manifiesto',data:  $nominas,
-                header: $header,ws:$ws);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al obtener nominas del manifiesto', data: $nominas,
+                header: $header, ws: $ws);
         }
 
         $empresa = $manifiesto['org_sucursal_descripcion'];
@@ -1239,16 +1286,16 @@ class controlador_tg_manifiesto extends _ctl_base
         $fecha_inicio = date('d/m/Y', strtotime($manifiesto['tg_manifiesto_fecha_inicial_pago']));
         $fecha_final = date('d/m/Y', strtotime($manifiesto['tg_manifiesto_fecha_final_pago']));
 
-        $periodo =  "$fecha_inicio - $fecha_final";
+        $periodo = "$fecha_inicio - $fecha_final";
 
-        $registros = $this->maqueta_datos(nominas: $nominas, empresa : $empresa);
+        $registros = $this->fill_data(nominas: $nominas, empresa: $empresa);
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al maquetar datos', data: $registros);
             print_r($error);
             die('Error');
         }
 
-        $data["REPORTE NOMINAS"] = $this->maqueta_salida(empresa: $empresa,periodo: $periodo,remunerados: 0,
+        $data["REPORTE NOMINAS"] = $this->maqueta_salida(empresa: $empresa, periodo: $periodo, remunerados: 0,
             total_registros: count($nominas), registros: $registros);
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al maquetar salida de datos', data: $data);
@@ -1443,14 +1490,16 @@ class controlador_tg_manifiesto extends _ctl_base
         exit;
     }*/
 
-    public function descarga_recibo_manifiesto(bool $header, bool $ws = false){
+    public function descarga_recibo_manifiesto(bool $header, bool $ws = false)
+    {
         $filtro['tg_manifiesto_periodo.tg_manifiesto_id'] = $this->registro_id;
         $manifiesto_periodo = (new tg_manifiesto_periodo($this->link))->filtro_and(filtro: $filtro);
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al obtener nominas', data: $manifiesto_periodo);
         }
 
-        $nom_periodo_id = $manifiesto_periodo->registros[0]['nom_periodo_id']; /** Id del periodo */
+        $nom_periodo_id = $manifiesto_periodo->registros[0]['nom_periodo_id'];
+        /** Id del periodo */
 
         $filtro_nomina['nom_nomina.nom_periodo_id'] = $nom_periodo_id;
         $nominas = (new nom_nomina($this->link))->filtro_and(filtro: $filtro_nomina);
@@ -1467,14 +1516,16 @@ class controlador_tg_manifiesto extends _ctl_base
         exit;
     }
 
-    public function descarga_recibo_manifiesto_zip(bool $header, bool $ws = false){
+    public function descarga_recibo_manifiesto_zip(bool $header, bool $ws = false)
+    {
         $filtro['tg_manifiesto_periodo.tg_manifiesto_id'] = $this->registro_id;
         $manifiesto_periodo = (new tg_manifiesto_periodo($this->link))->filtro_and(filtro: $filtro);
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al obtener nominas', data: $manifiesto_periodo);
         }
 
-        $nom_periodo_id = $manifiesto_periodo->registros[0]['nom_periodo_id']; /** Id del periodo */
+        $nom_periodo_id = $manifiesto_periodo->registros[0]['nom_periodo_id'];
+        /** Id del periodo */
 
         $filtro_nomina['nom_nomina.nom_periodo_id'] = $nom_periodo_id;
         $nominas = (new nom_nomina($this->link))->filtro_and(filtro: $filtro_nomina);
@@ -1516,8 +1567,8 @@ class controlador_tg_manifiesto extends _ctl_base
     {
         $tg_manifiesto = (new tg_manifiesto($this->link))->registro(registro_id: $this->registro_id);
         if (errores::$error) {
-            $error =  $this->errores->error(mensaje: 'Error al obtener manifiesto', data: $tg_manifiesto);
-            if(!$header){
+            $error = $this->errores->error(mensaje: 'Error al obtener manifiesto', data: $tg_manifiesto);
+            if (!$header) {
                 return $error;
             }
             print_r($error);
@@ -1529,8 +1580,8 @@ class controlador_tg_manifiesto extends _ctl_base
         $doc_documento_modelo->registro['doc_tipo_documento_id'] = 1;
         $doc_documento = $doc_documento_modelo->alta_bd(file: $_FILES['archivo']);
         if (errores::$error) {
-            $error =  $this->errores->error(mensaje: 'Error al dar de alta el documento', data: $doc_documento);
-            if(!$header){
+            $error = $this->errores->error(mensaje: 'Error al dar de alta el documento', data: $doc_documento);
+            if (!$header) {
                 return $error;
             }
             print_r($error);
@@ -1539,8 +1590,8 @@ class controlador_tg_manifiesto extends _ctl_base
 
         $empleados_excel = $this->obten_empleados_excel(ruta_absoluta: $doc_documento->registro['doc_documento_ruta_absoluta']);
         if (errores::$error) {
-            $error =  $this->errores->error(mensaje: 'Error obtener empleados',data:  $empleados_excel);
-            if(!$header){
+            $error = $this->errores->error(mensaje: 'Error obtener empleados', data: $empleados_excel);
+            if (!$header) {
                 return $error;
             }
             print_r($error);
@@ -1549,8 +1600,8 @@ class controlador_tg_manifiesto extends _ctl_base
 
         $em_registro_patronal = $this->obten_registro_patronal(tg_manifiesto_id: $this->registro_id);
         if (errores::$error) {
-            $error =  $this->errores->error(mensaje: 'Error obtener registro patronal',data:  $em_registro_patronal);
-            if(!$header){
+            $error = $this->errores->error(mensaje: 'Error obtener registro patronal', data: $em_registro_patronal);
+            if (!$header) {
                 return $error;
             }
             print_r($error);
@@ -1559,7 +1610,7 @@ class controlador_tg_manifiesto extends _ctl_base
 
         $em_registro_patronal_id = $em_registro_patronal['em_registro_patronal_id'];
         $empleados = array();
-        foreach ($empleados_excel as $empleado_excel){
+        foreach ($empleados_excel as $empleado_excel) {
             $filtro['em_registro_patronal.id'] = $em_registro_patronal_id;
             $filtro['em_empleado.nombre'] = $empleado_excel->nombre;
             $filtro['em_empleado.ap'] = $empleado_excel->ap;
@@ -1567,23 +1618,23 @@ class controlador_tg_manifiesto extends _ctl_base
 
             $registro = (new em_empleado($this->link))->filtro_and(filtro: $filtro);
             if (errores::$error) {
-                $error =  $this->errores->error(mensaje: 'Error al al obtener registro de empleado', data: $registro);
-                if(!$header){
+                $error = $this->errores->error(mensaje: 'Error al al obtener registro de empleado', data: $registro);
+                if (!$header) {
                     return $error;
                 }
                 print_r($error);
                 die('Error');
             }
             if ($registro->n_registros === 0) {
-                $error =  $this->errores->error(mensaje: 'Error se encontro el empleado '.$empleado_excel->nombre.' '.
-                    $empleado_excel->ap.' '.$empleado_excel->am, data: $registro);
-                if(!$header){
+                $error = $this->errores->error(mensaje: 'Error se encontro el empleado ' . $empleado_excel->nombre . ' ' .
+                    $empleado_excel->ap . ' ' . $empleado_excel->am, data: $registro);
+                if (!$header) {
                     return $error;
                 }
                 print_r($error);
                 die('Error');
             }
-            if($registro->n_registros > 0){
+            if ($registro->n_registros > 0) {
                 $empleados[] = $registro->registros[0];
             }
         }
@@ -1591,24 +1642,24 @@ class controlador_tg_manifiesto extends _ctl_base
         $filtro_per['tg_manifiesto.id'] = $this->registro_id;
         $nom_periodos = (new tg_manifiesto_periodo($this->link))->filtro_and(filtro: $filtro_per);
         if (errores::$error) {
-            $error =  $this->errores->error(mensaje: 'Error al al obtener periodos', data: $nom_periodos);
-            if(!$header){
+            $error = $this->errores->error(mensaje: 'Error al al obtener periodos', data: $nom_periodos);
+            if (!$header) {
                 return $error;
             }
             print_r($error);
             die('Error');
         }
 
-        foreach ($nom_periodos->registros  as $nom_periodo) {
+        foreach ($nom_periodos->registros as $nom_periodo) {
             $empleados_res = array();
             foreach ($empleados as $empleado) {
                 $filtro_em['em_empleado.id'] = $empleado['em_empleado_id'];
                 $filtro_em['nom_conf_nomina.id'] = $tg_manifiesto['nom_conf_nomina_id'];
                 $conf_empleado = (new nom_conf_empleado($this->link))->filtro_and(filtro: $filtro_em);
                 if (errores::$error) {
-                    $error =  $this->errores->error(mensaje: 'Error al obtener configuracion de empleado',
+                    $error = $this->errores->error(mensaje: 'Error al obtener configuracion de empleado',
                         data: $conf_empleado);
-                    if(!$header){
+                    if (!$header) {
                         return $error;
                     }
                     print_r($error);
@@ -1622,16 +1673,16 @@ class controlador_tg_manifiesto extends _ctl_base
 
             foreach ($empleados_res as $empleado) {
                 foreach ($empleados_excel as $empleado_excel) {
-                    if(trim($empleado_excel->nombre) === trim($empleado['em_empleado_nombre']) &&
+                    if (trim($empleado_excel->nombre) === trim($empleado['em_empleado_nombre']) &&
                         trim($empleado_excel->ap) === trim($empleado['em_empleado_ap']) &&
                         trim($empleado_excel->am) === trim($empleado['em_empleado_am'])) {
 
-                        if((float)$empleado_excel->monto_sueldo > 0) {
+                        if ((float)$empleado_excel->monto_sueldo > 0) {
 
                             $dias_asistidos = $empleado_excel->monto_sueldo / $empleado['em_empleado_salario_diario'];
 
                             $dias_restantes = $empleado['cat_sat_periodicidad_pago_nom_n_dias'];
-                            if($empleado['nom_conf_nomina_aplica_septimo_dia'] === 'activo'){
+                            if ($empleado['nom_conf_nomina_aplica_septimo_dia'] === 'activo') {
                                 $res = $empleado['cat_sat_periodicidad_pago_nom_n_dias'] / 7;
                                 $dias_restantes -= round($res);
                             }
@@ -1763,9 +1814,9 @@ class controlador_tg_manifiesto extends _ctl_base
                 $alta_empleado = (new nom_periodo($this->link))->alta_empleado_periodo(empleado: $empleado,
                     nom_periodo: $nom_periodo);
                 if (errores::$error) {
-                    $error =  $this->errores->error(mensaje: 'Error al dar de alta la nomina del empleado',
+                    $error = $this->errores->error(mensaje: 'Error al dar de alta la nomina del empleado',
                         data: $alta_empleado);
-                    if(!$header){
+                    if (!$header) {
                         return $error;
                     }
                     print_r($error);
@@ -1958,15 +2009,15 @@ class controlador_tg_manifiesto extends _ctl_base
             }
         }
 
-        $link = "./index.php?seccion=tg_manifiesto&accion=lista&registro_id=".$this->registro_id;
-        $link.="&session_id=$this->session_id";
+        $link = "./index.php?seccion=tg_manifiesto&accion=lista&registro_id=" . $this->registro_id;
+        $link .= "&session_id=$this->session_id";
         header('Location:' . $link);
         exit;
     }
 
 
-
-    public function obten_columna_faltas(Spreadsheet $documento){
+    public function obten_columna_faltas(Spreadsheet $documento)
+    {
         $totalDeHojas = $documento->getSheetCount();
 
         $columna = -1;
@@ -1975,7 +2026,7 @@ class controlador_tg_manifiesto extends _ctl_base
             foreach ($hojaActual->getRowIterator() as $fila) {
                 foreach ($fila->getCellIterator() as $celda) {
                     $valorRaw = $celda->getValue();
-                    if($valorRaw === 'FALTAS') {
+                    if ($valorRaw === 'FALTAS') {
                         $columna = $celda->getColumn();
                     }
                 }
@@ -1985,7 +2036,8 @@ class controlador_tg_manifiesto extends _ctl_base
         return $columna;
     }
 
-    public function obten_columna_prima_dominical(Spreadsheet $documento){
+    public function obten_columna_prima_dominical(Spreadsheet $documento)
+    {
         $totalDeHojas = $documento->getSheetCount();
 
         $columna = -1;
@@ -1994,7 +2046,7 @@ class controlador_tg_manifiesto extends _ctl_base
             foreach ($hojaActual->getRowIterator() as $fila) {
                 foreach ($fila->getCellIterator() as $celda) {
                     $valorRaw = $celda->getValue();
-                    if($valorRaw === 'DÍAS DE PRIMA DOMINICAL') {
+                    if ($valorRaw === 'DÍAS DE PRIMA DOMINICAL') {
                         $columna = $celda->getColumn();
                     }
                 }
@@ -2004,7 +2056,8 @@ class controlador_tg_manifiesto extends _ctl_base
         return $columna;
     }
 
-    public function obten_columna_dias_festivos_laborados(Spreadsheet $documento){
+    public function obten_columna_dias_festivos_laborados(Spreadsheet $documento)
+    {
         $totalDeHojas = $documento->getSheetCount();
 
         $columna = -1;
@@ -2013,7 +2066,7 @@ class controlador_tg_manifiesto extends _ctl_base
             foreach ($hojaActual->getRowIterator() as $fila) {
                 foreach ($fila->getCellIterator() as $celda) {
                     $valorRaw = $celda->getValue();
-                    if($valorRaw === 'FESTIVO LABORADO') {
+                    if ($valorRaw === 'FESTIVO LABORADO') {
                         $columna = $celda->getColumn();
                     }
                 }
@@ -2023,7 +2076,8 @@ class controlador_tg_manifiesto extends _ctl_base
         return $columna;
     }
 
-    public function obten_columna_dias_descanso_laborado(Spreadsheet $documento){
+    public function obten_columna_dias_descanso_laborado(Spreadsheet $documento)
+    {
         $totalDeHojas = $documento->getSheetCount();
 
         $columna = -1;
@@ -2032,7 +2086,7 @@ class controlador_tg_manifiesto extends _ctl_base
             foreach ($hojaActual->getRowIterator() as $fila) {
                 foreach ($fila->getCellIterator() as $celda) {
                     $valorRaw = $celda->getValue();
-                    if($valorRaw === 'DESCANSO LABORADO') {
+                    if ($valorRaw === 'DESCANSO LABORADO') {
                         $columna = $celda->getColumn();
                     }
                 }
@@ -2042,7 +2096,8 @@ class controlador_tg_manifiesto extends _ctl_base
         return $columna;
     }
 
-    public function obten_columna_compensacion(Spreadsheet $documento){
+    public function obten_columna_compensacion(Spreadsheet $documento)
+    {
         $totalDeHojas = $documento->getSheetCount();
 
         $columna = -1;
@@ -2051,25 +2106,7 @@ class controlador_tg_manifiesto extends _ctl_base
             foreach ($hojaActual->getRowIterator() as $fila) {
                 foreach ($fila->getCellIterator() as $celda) {
                     $valorRaw = $celda->getValue();
-                    if($valorRaw === 'COMPENSACION') {
-                        $columna = $celda->getColumn();
-                    }
-                }
-            }
-        }
-
-        return $columna;
-    }
-    public function obten_columna_monto_neto(Spreadsheet $documento){
-        $totalDeHojas = $documento->getSheetCount();
-
-        $columna = -1;
-        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
-            $hojaActual = $documento->getSheet($indiceHoja);
-            foreach ($hojaActual->getRowIterator() as $fila) {
-                foreach ($fila->getCellIterator() as $celda) {
-                    $valorRaw = $celda->getValue();
-                    if($valorRaw === 'MONTO NETO') {
+                    if ($valorRaw === 'COMPENSACION') {
                         $columna = $celda->getColumn();
                     }
                 }
@@ -2079,7 +2116,8 @@ class controlador_tg_manifiesto extends _ctl_base
         return $columna;
     }
 
-    public function obten_columna_monto_sueldo(Spreadsheet $documento){
+    public function obten_columna_monto_neto(Spreadsheet $documento)
+    {
         $totalDeHojas = $documento->getSheetCount();
 
         $columna = -1;
@@ -2088,7 +2126,7 @@ class controlador_tg_manifiesto extends _ctl_base
             foreach ($hojaActual->getRowIterator() as $fila) {
                 foreach ($fila->getCellIterator() as $celda) {
                     $valorRaw = $celda->getValue();
-                    if($valorRaw === 'MONTO SUELDO') {
+                    if ($valorRaw === 'MONTO NETO') {
                         $columna = $celda->getColumn();
                     }
                 }
@@ -2098,7 +2136,8 @@ class controlador_tg_manifiesto extends _ctl_base
         return $columna;
     }
 
-    public function obten_columna_despensa(Spreadsheet $documento){
+    public function obten_columna_monto_sueldo(Spreadsheet $documento)
+    {
         $totalDeHojas = $documento->getSheetCount();
 
         $columna = -1;
@@ -2107,7 +2146,7 @@ class controlador_tg_manifiesto extends _ctl_base
             foreach ($hojaActual->getRowIterator() as $fila) {
                 foreach ($fila->getCellIterator() as $celda) {
                     $valorRaw = $celda->getValue();
-                    if($valorRaw === 'DESPENSA') {
+                    if ($valorRaw === 'MONTO SUELDO') {
                         $columna = $celda->getColumn();
                     }
                 }
@@ -2117,7 +2156,8 @@ class controlador_tg_manifiesto extends _ctl_base
         return $columna;
     }
 
-    public function obten_columna_horas_extras_dobles(Spreadsheet $documento){
+    public function obten_columna_despensa(Spreadsheet $documento)
+    {
         $totalDeHojas = $documento->getSheetCount();
 
         $columna = -1;
@@ -2126,25 +2166,7 @@ class controlador_tg_manifiesto extends _ctl_base
             foreach ($hojaActual->getRowIterator() as $fila) {
                 foreach ($fila->getCellIterator() as $celda) {
                     $valorRaw = $celda->getValue();
-                    if($valorRaw === 'HORAS EXTRAS DOBLES') {
-                        $columna = $celda->getColumn();
-                    }
-                }
-            }
-        }
-
-        return $columna;
-    }
-    public function obten_columna_horas_extras_triples(Spreadsheet $documento){
-        $totalDeHojas = $documento->getSheetCount();
-
-        $columna = -1;
-        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
-            $hojaActual = $documento->getSheet($indiceHoja);
-            foreach ($hojaActual->getRowIterator() as $fila) {
-                foreach ($fila->getCellIterator() as $celda) {
-                    $valorRaw = $celda->getValue();
-                    if($valorRaw === 'HORAS EXTRAS TRIPLES') {
+                    if ($valorRaw === 'DESPENSA') {
                         $columna = $celda->getColumn();
                     }
                 }
@@ -2154,7 +2176,8 @@ class controlador_tg_manifiesto extends _ctl_base
         return $columna;
     }
 
-    public function obten_columna_gratificacion_especial(Spreadsheet $documento){
+    public function obten_columna_horas_extras_dobles(Spreadsheet $documento)
+    {
         $totalDeHojas = $documento->getSheetCount();
 
         $columna = -1;
@@ -2163,7 +2186,7 @@ class controlador_tg_manifiesto extends _ctl_base
             foreach ($hojaActual->getRowIterator() as $fila) {
                 foreach ($fila->getCellIterator() as $celda) {
                     $valorRaw = $celda->getValue();
-                    if($valorRaw === 'GRATIFICACION ESPECIAL') {
+                    if ($valorRaw === 'HORAS EXTRAS DOBLES') {
                         $columna = $celda->getColumn();
                     }
                 }
@@ -2173,7 +2196,8 @@ class controlador_tg_manifiesto extends _ctl_base
         return $columna;
     }
 
-    public function obten_columna_premio_puntualidad(Spreadsheet $documento){
+    public function obten_columna_horas_extras_triples(Spreadsheet $documento)
+    {
         $totalDeHojas = $documento->getSheetCount();
 
         $columna = -1;
@@ -2182,7 +2206,7 @@ class controlador_tg_manifiesto extends _ctl_base
             foreach ($hojaActual->getRowIterator() as $fila) {
                 foreach ($fila->getCellIterator() as $celda) {
                     $valorRaw = $celda->getValue();
-                    if($valorRaw === 'PREMIO PUNTUALIDAD') {
+                    if ($valorRaw === 'HORAS EXTRAS TRIPLES') {
                         $columna = $celda->getColumn();
                     }
                 }
@@ -2192,7 +2216,8 @@ class controlador_tg_manifiesto extends _ctl_base
         return $columna;
     }
 
-    public function obten_columna_premio_asistencia(Spreadsheet $documento){
+    public function obten_columna_gratificacion_especial(Spreadsheet $documento)
+    {
         $totalDeHojas = $documento->getSheetCount();
 
         $columna = -1;
@@ -2201,7 +2226,7 @@ class controlador_tg_manifiesto extends _ctl_base
             foreach ($hojaActual->getRowIterator() as $fila) {
                 foreach ($fila->getCellIterator() as $celda) {
                     $valorRaw = $celda->getValue();
-                    if($valorRaw === 'PREMIO ASISTENCIA') {
+                    if ($valorRaw === 'GRATIFICACION ESPECIAL') {
                         $columna = $celda->getColumn();
                     }
                 }
@@ -2211,7 +2236,8 @@ class controlador_tg_manifiesto extends _ctl_base
         return $columna;
     }
 
-    public function obten_columna_ayuda_transporte(Spreadsheet $documento){
+    public function obten_columna_premio_puntualidad(Spreadsheet $documento)
+    {
         $totalDeHojas = $documento->getSheetCount();
 
         $columna = -1;
@@ -2220,7 +2246,7 @@ class controlador_tg_manifiesto extends _ctl_base
             foreach ($hojaActual->getRowIterator() as $fila) {
                 foreach ($fila->getCellIterator() as $celda) {
                     $valorRaw = $celda->getValue();
-                    if($valorRaw === 'AYUDA TRANSPORTE') {
+                    if ($valorRaw === 'PREMIO PUNTUALIDAD') {
                         $columna = $celda->getColumn();
                     }
                 }
@@ -2230,7 +2256,8 @@ class controlador_tg_manifiesto extends _ctl_base
         return $columna;
     }
 
-    public function obten_columna_gratificacion(Spreadsheet $documento){
+    public function obten_columna_premio_asistencia(Spreadsheet $documento)
+    {
         $totalDeHojas = $documento->getSheetCount();
 
         $columna = -1;
@@ -2239,7 +2266,7 @@ class controlador_tg_manifiesto extends _ctl_base
             foreach ($hojaActual->getRowIterator() as $fila) {
                 foreach ($fila->getCellIterator() as $celda) {
                     $valorRaw = $celda->getValue();
-                    if($valorRaw === 'GRATIFICACION') {
+                    if ($valorRaw === 'PREMIO ASISTENCIA') {
                         $columna = $celda->getColumn();
                     }
                 }
@@ -2249,7 +2276,8 @@ class controlador_tg_manifiesto extends _ctl_base
         return $columna;
     }
 
-    public function obten_columna_seguro_vida(Spreadsheet $documento){
+    public function obten_columna_ayuda_transporte(Spreadsheet $documento)
+    {
         $totalDeHojas = $documento->getSheetCount();
 
         $columna = -1;
@@ -2258,7 +2286,7 @@ class controlador_tg_manifiesto extends _ctl_base
             foreach ($hojaActual->getRowIterator() as $fila) {
                 foreach ($fila->getCellIterator() as $celda) {
                     $valorRaw = $celda->getValue();
-                    if($valorRaw === 'SEGURO DE VIDA') {
+                    if ($valorRaw === 'AYUDA TRANSPORTE') {
                         $columna = $celda->getColumn();
                     }
                 }
@@ -2268,7 +2296,8 @@ class controlador_tg_manifiesto extends _ctl_base
         return $columna;
     }
 
-    public function obten_columna_descuentos(Spreadsheet $documento){
+    public function obten_columna_gratificacion(Spreadsheet $documento)
+    {
         $totalDeHojas = $documento->getSheetCount();
 
         $columna = -1;
@@ -2277,7 +2306,7 @@ class controlador_tg_manifiesto extends _ctl_base
             foreach ($hojaActual->getRowIterator() as $fila) {
                 foreach ($fila->getCellIterator() as $celda) {
                     $valorRaw = $celda->getValue();
-                    if($valorRaw === 'DESCUENTOS') {
+                    if ($valorRaw === 'GRATIFICACION') {
                         $columna = $celda->getColumn();
                     }
                 }
@@ -2287,7 +2316,8 @@ class controlador_tg_manifiesto extends _ctl_base
         return $columna;
     }
 
-    public function obten_columna_incapacidades(Spreadsheet $documento){
+    public function obten_columna_seguro_vida(Spreadsheet $documento)
+    {
         $totalDeHojas = $documento->getSheetCount();
 
         $columna = -1;
@@ -2296,7 +2326,7 @@ class controlador_tg_manifiesto extends _ctl_base
             foreach ($hojaActual->getRowIterator() as $fila) {
                 foreach ($fila->getCellIterator() as $celda) {
                     $valorRaw = $celda->getValue();
-                    if($valorRaw === 'INCAPACIDAD') {
+                    if ($valorRaw === 'SEGURO DE VIDA') {
                         $columna = $celda->getColumn();
                     }
                 }
@@ -2306,7 +2336,8 @@ class controlador_tg_manifiesto extends _ctl_base
         return $columna;
     }
 
-    public function obten_columna_vacaciones(Spreadsheet $documento){
+    public function obten_columna_descuentos(Spreadsheet $documento)
+    {
         $totalDeHojas = $documento->getSheetCount();
 
         $columna = -1;
@@ -2315,7 +2346,7 @@ class controlador_tg_manifiesto extends _ctl_base
             foreach ($hojaActual->getRowIterator() as $fila) {
                 foreach ($fila->getCellIterator() as $celda) {
                     $valorRaw = $celda->getValue();
-                    if($valorRaw === 'DÍAS DE VACACIONES') {
+                    if ($valorRaw === 'DESCUENTOS') {
                         $columna = $celda->getColumn();
                     }
                 }
@@ -2325,7 +2356,8 @@ class controlador_tg_manifiesto extends _ctl_base
         return $columna;
     }
 
-    public function obten_columna_prima_vacacional(Spreadsheet $documento){
+    public function obten_columna_incapacidades(Spreadsheet $documento)
+    {
         $totalDeHojas = $documento->getSheetCount();
 
         $columna = -1;
@@ -2334,7 +2366,47 @@ class controlador_tg_manifiesto extends _ctl_base
             foreach ($hojaActual->getRowIterator() as $fila) {
                 foreach ($fila->getCellIterator() as $celda) {
                     $valorRaw = $celda->getValue();
-                    if($valorRaw === 'PRIMA VACACIONAL') {
+                    if ($valorRaw === 'INCAPACIDAD') {
+                        $columna = $celda->getColumn();
+                    }
+                }
+            }
+        }
+
+        return $columna;
+    }
+
+    public function obten_columna_vacaciones(Spreadsheet $documento)
+    {
+        $totalDeHojas = $documento->getSheetCount();
+
+        $columna = -1;
+        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+            $hojaActual = $documento->getSheet($indiceHoja);
+            foreach ($hojaActual->getRowIterator() as $fila) {
+                foreach ($fila->getCellIterator() as $celda) {
+                    $valorRaw = $celda->getValue();
+                    if ($valorRaw === 'DÍAS DE VACACIONES') {
+                        $columna = $celda->getColumn();
+                    }
+                }
+            }
+        }
+
+        return $columna;
+    }
+
+    public function obten_columna_prima_vacacional(Spreadsheet $documento)
+    {
+        $totalDeHojas = $documento->getSheetCount();
+
+        $columna = -1;
+        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+            $hojaActual = $documento->getSheet($indiceHoja);
+            foreach ($hojaActual->getRowIterator() as $fila) {
+                foreach ($fila->getCellIterator() as $celda) {
+                    $valorRaw = $celda->getValue();
+                    if ($valorRaw === 'PRIMA VACACIONAL') {
                         $columna = $celda->getColumn();
                     }
                 }
@@ -2348,210 +2420,211 @@ class controlador_tg_manifiesto extends _ctl_base
      * @throws Exception
      * @throws \PhpOffice\PhpSpreadsheet\Calculation\Exception
      */
-    public function obten_empleados_excel(string $ruta_absoluta){
+    public function obten_empleados_excel(string $ruta_absoluta)
+    {
         $documento = IOFactory::load($ruta_absoluta);
         $totalDeHojas = $documento->getSheetCount();
-/*
-        $tg_layout_id = (new tg_layout(link: $this->link))->obten_tg_layout_id(layout: 'manifiesto_nomina');
-        if(errores::$error){
-            return $this->errores->error(mensaje: 'Error obtener tg_layout_id',data:  $tg_layout_id);
-        }
+        /*
+                $tg_layout_id = (new tg_layout(link: $this->link))->obten_tg_layout_id(layout: 'manifiesto_nomina');
+                if(errores::$error){
+                    return $this->errores->error(mensaje: 'Error obtener tg_layout_id',data:  $tg_layout_id);
+                }
 
-        $filtro_colums['tg_layout.id'] = $tg_layout_id;
-        $tg_columnas = (new tg_column(link: $this->link))->filtro_and(filtro: $filtro_colums);
-        if(errores::$error){
-            return $this->errores->error(mensaje: 'Error no existe configuracion layout',data:  $tg_columnas);
-        }
+                $filtro_colums['tg_layout.id'] = $tg_layout_id;
+                $tg_columnas = (new tg_column(link: $this->link))->filtro_and(filtro: $filtro_colums);
+                if(errores::$error){
+                    return $this->errores->error(mensaje: 'Error no existe configuracion layout',data:  $tg_columnas);
+                }
 
-        $ubicacion_columnas = array();
-        $fila_inicio = 1;
-        foreach ($tg_columnas->registros as $columna){
-            $columna_base = $columna['tg_column_descripcion'];
-            $columna_cal = $columna['tg_column_alias'].'.'.$columna_base;
+                $ubicacion_columnas = array();
+                $fila_inicio = 1;
+                foreach ($tg_columnas->registros as $columna){
+                    $columna_base = $columna['tg_column_descripcion'];
+                    $columna_cal = $columna['tg_column_alias'].'.'.$columna_base;
 
-            for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
-                $hojaActual = $documento->getSheet($indiceHoja);
-                foreach ($hojaActual->getRowIterator() as $fila) {
-                    foreach ($fila->getCellIterator() as $celda) {
-                        $valorRaw = $celda->getValue();
-                        if($valorRaw === $columna_base || $valorRaw === $columna_cal) {
-                            $ubicacion_columnas[$columna_cal] = $celda->getColumn();
-                            $fila_inicio = $celda->getRow();
+                    for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+                        $hojaActual = $documento->getSheet($indiceHoja);
+                        foreach ($hojaActual->getRowIterator() as $fila) {
+                            foreach ($fila->getCellIterator() as $celda) {
+                                $valorRaw = $celda->getValue();
+                                if($valorRaw === $columna_base || $valorRaw === $columna_cal) {
+                                    $ubicacion_columnas[$columna_cal] = $celda->getColumn();
+                                    $fila_inicio = $celda->getRow();
+                                }
+                            }
                         }
                     }
                 }
-            }
-        }
 
-        $keys = array('IDTR.ID Trabajador','NOMB.Nombre','APAT.Paterno','AMAT.Materno');
+                $keys = array('IDTR.ID Trabajador','NOMB.Nombre','APAT.Paterno','AMAT.Materno');
 
-        $filas = array();
-        foreach ($ubicacion_columnas as $columna => $valor){
-            foreach ($keys as $key){
-                $fila_init = $fila_inicio;
-                if($columna === $key){
-                    $salida = false;
-                    while(!$salida){
+                $filas = array();
+                foreach ($ubicacion_columnas as $columna => $valor){
+                    foreach ($keys as $key){
+                        $fila_init = $fila_inicio;
+                        if($columna === $key){
+                            $salida = false;
+                            while(!$salida){
+                                for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+                                    $fila_init++;
+
+                                    $hojaActual = $documento->getSheet($indiceHoja);
+                                    $coordenadas = $valor.$fila_init;
+                                    $celda = $hojaActual->getCell($coordenadas);
+
+                                    $valor_celda = (string)$celda->getCalculatedValue();
+                                    if($valor_celda !== ''){
+                                        $filas[] = $fila_init;
+                                    }else{
+                                        $salida = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                $filas_exist = array_unique($filas);
+
+                $prefijos =  array('DIA.','P.','D.','OP.','M.');
+                $empleados = array();
+                foreach ($filas_exist as $fila_exist){
+                    $reg = array();
+                    foreach ($ubicacion_columnas as $columna => $valor){
                         for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
-                            $fila_init++;
-
                             $hojaActual = $documento->getSheet($indiceHoja);
-                            $coordenadas = $valor.$fila_init;
-                            $celda = $hojaActual->getCell($coordenadas);
+                            $reg[$columna] = $hojaActual->getCell($valor.$fila_exist)->getCalculatedValue();
 
-                            $valor_celda = (string)$celda->getCalculatedValue();
-                            if($valor_celda !== ''){
-                                $filas[] = $fila_init;
-                            }else{
-                                $salida = true;
+                            foreach ($prefijos as $prefijo){
+                                if (stristr($columna, $prefijo)) {
+                                    $reg[$columna] = trim((string)$reg[$columna]);
+                                    if(!is_numeric($reg[$columna]) || $reg[$columna] === ''){
+                                        $reg[$columna] = 0;
+                                    }
+                                }
                             }
                         }
                     }
-                }
-            }
-        }
-
-        $filas_exist = array_unique($filas);
-
-        $prefijos =  array('DIA.','P.','D.','OP.','M.');
-        $empleados = array();
-        foreach ($filas_exist as $fila_exist){
-            $reg = array();
-            foreach ($ubicacion_columnas as $columna => $valor){
-                for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
-                    $hojaActual = $documento->getSheet($indiceHoja);
-                    $reg[$columna] = $hojaActual->getCell($valor.$fila_exist)->getCalculatedValue();
-
-                    foreach ($prefijos as $prefijo){
-                        if (stristr($columna, $prefijo)) {
-                            $reg[$columna] = trim((string)$reg[$columna]);
-                            if(!is_numeric($reg[$columna]) || $reg[$columna] === ''){
-                                $reg[$columna] = 0;
-                            }
-                        }
-                    }
-                }
-            }
-            $empleados[] = $reg;
-        }*/
+                    $empleados[] = $reg;
+                }*/
 
         $columna_faltas = $this->obten_columna_faltas(documento: $documento);
-        if(errores::$error){
-            return $this->errores->error(mensaje: 'Error obtener columna de faltas',data:  $columna_faltas);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error obtener columna de faltas', data: $columna_faltas);
         }
 
         $columna_prima_dominical = $this->obten_columna_prima_dominical(documento: $documento);
-        if(errores::$error){
+        if (errores::$error) {
             return $this->errores->error(mensaje: 'Error obtener columna de prima dominical',
-                data:  $columna_prima_dominical);
+                data: $columna_prima_dominical);
         }
 
         $columna_dias_festivos_laborados = $this->obten_columna_dias_festivos_laborados(documento: $documento);
-        if(errores::$error){
+        if (errores::$error) {
             return $this->errores->error(mensaje: 'Error obtener columna de dias festivos laborados',
-                data:  $columna_dias_festivos_laborados);
+                data: $columna_dias_festivos_laborados);
         }
 
         $columna_incapacidades = $this->obten_columna_incapacidades(documento: $documento);
-        if(errores::$error){
+        if (errores::$error) {
             return $this->errores->error(mensaje: 'Error obtener columna de incapacidades',
-                data:  $columna_incapacidades);
+                data: $columna_incapacidades);
         }
 
         $columna_vacaciones = $this->obten_columna_vacaciones(documento: $documento);
-        if(errores::$error){
+        if (errores::$error) {
             return $this->errores->error(mensaje: 'Error obtener columna de vacaciones',
-                data:  $columna_vacaciones);
+                data: $columna_vacaciones);
         }
 
         $columna_dias_descanso_laborado = $this->obten_columna_dias_descanso_laborado(documento: $documento);
-        if(errores::$error){
+        if (errores::$error) {
             return $this->errores->error(mensaje: 'Error obtener columna de vacaciones',
-                data:  $columna_dias_descanso_laborado);
+                data: $columna_dias_descanso_laborado);
         }
 
         $columna_compensacion = $this->obten_columna_compensacion(documento: $documento);
-        if(errores::$error){
+        if (errores::$error) {
             return $this->errores->error(mensaje: 'Error obtener columna de compensacion',
-                data:  $columna_compensacion);
+                data: $columna_compensacion);
         }
 
         $columna_monto_neto = $this->obten_columna_monto_neto(documento: $documento);
-        if(errores::$error){
+        if (errores::$error) {
             return $this->errores->error(mensaje: 'Error obtener columna de monto neto',
-                data:  $columna_monto_neto);
+                data: $columna_monto_neto);
         }
 
         $columna_monto_sueldo = $this->obten_columna_monto_sueldo(documento: $documento);
-        if(errores::$error){
+        if (errores::$error) {
             return $this->errores->error(mensaje: 'Error obtener columna de monto neto',
-                data:  $columna_monto_sueldo);
+                data: $columna_monto_sueldo);
         }
 
         $columna_prima_vacacional = $this->obten_columna_prima_vacacional(documento: $documento);
-        if(errores::$error){
+        if (errores::$error) {
             return $this->errores->error(mensaje: 'Error obtener columna de prima vacacional',
-                data:  $columna_prima_vacacional);
+                data: $columna_prima_vacacional);
         }
 
         $columna_despensa = $this->obten_columna_despensa(documento: $documento);
-        if(errores::$error){
+        if (errores::$error) {
             return $this->errores->error(mensaje: 'Error obtener columna de despensa',
-                data:  $columna_despensa);
+                data: $columna_despensa);
         }
 
         $columna_horas_extras_dobles = $this->obten_columna_horas_extras_dobles(documento: $documento);
-        if(errores::$error){
+        if (errores::$error) {
             return $this->errores->error(mensaje: 'Error obtener columna de horas_extras_dobles',
-                data:  $columna_horas_extras_dobles);
+                data: $columna_horas_extras_dobles);
         }
 
         $columna_horas_extras_triples = $this->obten_columna_horas_extras_triples(documento: $documento);
-        if(errores::$error){
+        if (errores::$error) {
             return $this->errores->error(mensaje: 'Error obtener columna de horas_extras_triples',
-                data:  $columna_horas_extras_triples);
+                data: $columna_horas_extras_triples);
         }
 
         $columna_gratificacion_especial = $this->obten_columna_gratificacion_especial(documento: $documento);
-        if(errores::$error){
+        if (errores::$error) {
             return $this->errores->error(mensaje: 'Error obtener columna de gratificacion_especial',
-                data:  $columna_gratificacion_especial);
+                data: $columna_gratificacion_especial);
         }
 
         $columna_premio_puntualidad = $this->obten_columna_premio_puntualidad(documento: $documento);
-        if(errores::$error){
+        if (errores::$error) {
             return $this->errores->error(mensaje: 'Error obtener columna de premio puntualidad',
-                data:  $columna_premio_puntualidad);
+                data: $columna_premio_puntualidad);
         }
 
         $columna_premio_asistencia = $this->obten_columna_premio_asistencia(documento: $documento);
-        if(errores::$error){
+        if (errores::$error) {
             return $this->errores->error(mensaje: 'Error obtener columna de premio_asistencia',
-                data:  $columna_premio_asistencia);
+                data: $columna_premio_asistencia);
         }
 
         $columna_ayuda_transporte = $this->obten_columna_ayuda_transporte(documento: $documento);
-        if(errores::$error){
+        if (errores::$error) {
             return $this->errores->error(mensaje: 'Error obtener columna de ayuda transporte',
-                data:  $columna_ayuda_transporte);
+                data: $columna_ayuda_transporte);
         }
 
         $columna_gratificacion = $this->obten_columna_gratificacion(documento: $documento);
-        if(errores::$error){
+        if (errores::$error) {
             return $this->errores->error(mensaje: 'Error obtener columna de gratificacion',
-                data:  $columna_gratificacion);
+                data: $columna_gratificacion);
         }
 
         $columna_seguro_vida = $this->obten_columna_seguro_vida(documento: $documento);
-        if(errores::$error){
+        if (errores::$error) {
             return $this->errores->error(mensaje: 'Error obtener columna de seguro_vida',
-                data:  $columna_seguro_vida);
+                data: $columna_seguro_vida);
         }
 
         $columna_descuentos = $this->obten_columna_descuentos(documento: $documento);
-        if(errores::$error){
+        if (errores::$error) {
             return $this->errores->error(mensaje: 'Error obtener columna de descuentos',
-                data:  $columna_descuentos);
+                data: $columna_descuentos);
         }
 
         $empleados = array();
@@ -2763,16 +2836,17 @@ class controlador_tg_manifiesto extends _ctl_base
         return $empleados;
     }
 
-    public function obten_registro_patronal(int $tg_manifiesto_id){
+    public function obten_registro_patronal(int $tg_manifiesto_id)
+    {
         $tg_manifiesto = (new tg_manifiesto($this->link))->registro(registro_id: $tg_manifiesto_id);
-        if(errores::$error){
-            return $this->errores->error(mensaje: 'Error obtener manifiesto',data:  $tg_manifiesto);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error obtener manifiesto', data: $tg_manifiesto);
         }
 
         $filtro_org['fc_csd.id'] = $tg_manifiesto['tg_manifiesto_fc_csd_id'];
         $im_registro_patronal = (new em_registro_patronal($this->link))->filtro_and(filtro: $filtro_org);
-        if(errores::$error){
-            return $this->errores->error(mensaje: 'Error obtener registro patronal',data:  $im_registro_patronal);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error obtener registro patronal', data: $im_registro_patronal);
         }
 
         return $im_registro_patronal->registros[0];
@@ -2790,7 +2864,7 @@ class controlador_tg_manifiesto extends _ctl_base
                 "filtro" => array('tg_manifiesto.id' => $this->registro_id)]);
 
         $this->inputs = $this->controlador_tg_manifiesto_periodo->genera_inputs(
-            keys_selects:  $this->controlador_tg_manifiesto_periodo->keys_selects);
+            keys_selects: $this->controlador_tg_manifiesto_periodo->keys_selects);
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al generar inputs', data: $this->inputs);
             print_r($error);
@@ -2798,8 +2872,8 @@ class controlador_tg_manifiesto extends _ctl_base
         }
 
         $periodos = (new tg_manifiesto_periodo($this->link))->get_periodos_manifiesto(tg_manifiesto_id: $this->registro_id);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al obtener periodos',data:  $periodos,header: $header,ws:$ws);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al obtener periodos', data: $periodos, header: $header, ws: $ws);
         }
 
         foreach ($periodos->registros as $indice => $periodo) {
@@ -2841,8 +2915,8 @@ class controlador_tg_manifiesto extends _ctl_base
         $this->link->commit();
 
         if ($header) {
-            $this->retorno_base(registro_id:$this->registro_id, result: $alta,
-                siguiente_view: "periodo", ws:  $ws);
+            $this->retorno_base(registro_id: $this->registro_id, result: $alta,
+                siguiente_view: "periodo", ws: $ws);
         }
         if ($ws) {
             header('Content-Type: application/json');
@@ -2859,14 +2933,14 @@ class controlador_tg_manifiesto extends _ctl_base
         $this->controlador_tg_manifiesto_periodo->registro_id = $this->tg_manifiesto_periodo_id;
 
         $modifica = $this->controlador_tg_manifiesto_periodo->modifica(header: false);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al generar template',data:  $modifica, header: $header,ws:$ws);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al generar template', data: $modifica, header: $header, ws: $ws);
         }
 
         $this->inputs = $this->controlador_tg_manifiesto_periodo->genera_inputs(
-            keys_selects:  $this->controlador_tg_manifiesto_periodo->keys_selects);
-        if(errores::$error){
-            $error = $this->errores->error(mensaje: 'Error al generar inputs',data:  $this->inputs);
+            keys_selects: $this->controlador_tg_manifiesto_periodo->keys_selects);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al generar inputs', data: $this->inputs);
             print_r($error);
             die('Error');
         }
@@ -2900,8 +2974,8 @@ class controlador_tg_manifiesto extends _ctl_base
         $this->link->commit();
 
         if ($header) {
-            $this->retorno_base(registro_id:$this->registro_id, result: $r_modifica,
-                siguiente_view: "periodo", ws:  $ws);
+            $this->retorno_base(registro_id: $this->registro_id, result: $r_modifica,
+                siguiente_view: "periodo", ws: $ws);
         }
         if ($ws) {
             header('Content-Type: application/json');
@@ -2937,8 +3011,8 @@ class controlador_tg_manifiesto extends _ctl_base
         $this->link->commit();
 
         if ($header) {
-            $this->retorno_base(registro_id:$this->registro_id, result: $r_elimina,
-                siguiente_view: "periodo", ws:  $ws);
+            $this->retorno_base(registro_id: $this->registro_id, result: $r_elimina,
+                siguiente_view: "periodo", ws: $ws);
         }
         if ($ws) {
             header('Content-Type: application/json');
@@ -2950,40 +3024,41 @@ class controlador_tg_manifiesto extends _ctl_base
         return $r_elimina;
     }
 
-    public function sube_manifiesto(bool $header, bool $ws = false){
+    public function sube_manifiesto(bool $header, bool $ws = false)
+    {
 
-}
+    }
 
     public function nominas(bool $header, bool $ws = false): array|stdClass
     {
         $r_tg_manifiesto_periodo = (new tg_manifiesto_periodo($this->link))
-            ->get_periodos_manifiesto(tg_manifiesto_id:  $this->registro_id);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al obtener manifiesto periodo',data:  $r_tg_manifiesto_periodo,
-                header: $header,ws:$ws);
+            ->get_periodos_manifiesto(tg_manifiesto_id: $this->registro_id);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al obtener manifiesto periodo', data: $r_tg_manifiesto_periodo,
+                header: $header, ws: $ws);
         }
 
-        $in = (new inicializacion())->genera_data_in(campo:'id', tabla: 'nom_periodo',
+        $in = (new inicializacion())->genera_data_in(campo: 'id', tabla: 'nom_periodo',
             registros: $r_tg_manifiesto_periodo->registros);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al integrar in',data:  $in, header: $header,ws:$ws);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al integrar in', data: $in, header: $header, ws: $ws);
         }
 
         $columns = array();
         $columns["nom_nomina_id"]["titulo"] = "Id";
         $columns["em_empleado_nombre"]["titulo"] = "Nombre";
-        $columns["em_empleado_nombre"]["campos"] = array("em_empleado_ap","em_empleado_am");
+        $columns["em_empleado_nombre"]["campos"] = array("em_empleado_ap", "em_empleado_am");
         $columns["em_empleado_rfc"]["titulo"] = "Rfc";
         $columns["nom_nomina_fecha_inicial_pago"]["titulo"] = "Fecha Inicial Pago";
         $columns["nom_nomina_fecha_final_pago"]["titulo"] = "Fecha Final Pago";
         $columns["org_empresa_descripcion"]["titulo"] = "Empresa";
-        $filtro = array("nom_nomina_id",  "em_empleado_nombre",    );
+        $filtro = array("nom_nomina_id", "em_empleado_nombre",);
 
         $datatables = $this->datatable_init(columns: $columns, filtro: $filtro, identificador: "#nom_nomina",
-            in: $in,  multi_selects: true);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al inicializar datatable',data:  $datatables,
-                header: $header,ws:$ws);
+            in: $in, multi_selects: true);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar datatable', data: $datatables,
+                header: $header, ws: $ws);
         }
 
         return $datatables;
@@ -2992,33 +3067,33 @@ class controlador_tg_manifiesto extends _ctl_base
     public function recibos_masivos(bool $header, bool $ws = false): array|stdClass
     {
         $r_tg_manifiesto_periodo = (new tg_manifiesto_periodo($this->link))
-            ->get_periodos_manifiesto(tg_manifiesto_id:  $this->registro_id );
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al obtener manifiesto periodo',data:  $r_tg_manifiesto_periodo,
-                header: $header,ws:$ws);
+            ->get_periodos_manifiesto(tg_manifiesto_id: $this->registro_id);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al obtener manifiesto periodo', data: $r_tg_manifiesto_periodo,
+                header: $header, ws: $ws);
         }
 
-        $in = (new inicializacion())->genera_data_in(campo:'id', tabla: 'nom_periodo',
+        $in = (new inicializacion())->genera_data_in(campo: 'id', tabla: 'nom_periodo',
             registros: $r_tg_manifiesto_periodo->registros);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al integrar in',data:  $in, header: $header,ws:$ws);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al integrar in', data: $in, header: $header, ws: $ws);
         }
 
         $columns = array();
         $columns["nom_nomina_id"]["titulo"] = "Id";
         $columns["em_empleado_nombre"]["titulo"] = "Nombre";
-        $columns["em_empleado_nombre"]["campos"] = array("em_empleado_ap","em_empleado_am");
+        $columns["em_empleado_nombre"]["campos"] = array("em_empleado_ap", "em_empleado_am");
         $columns["em_empleado_rfc"]["titulo"] = "Rfc";
         $columns["nom_nomina_fecha_inicial_pago"]["titulo"] = "Fecha Inicial Pago";
         $columns["nom_nomina_fecha_final_pago"]["titulo"] = "Fecha Final Pago";
         $columns["org_empresa_descripcion"]["titulo"] = "Empresa";
-        $filtro = array("nom_nomina_id",  "em_empleado_nombre",);
+        $filtro = array("nom_nomina_id", "em_empleado_nombre",);
 
         $datatables = $this->datatable_init(columns: $columns, filtro: $filtro, identificador: "#nom_nomina",
-            in: $in,  multi_selects: true);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al inicializar datatable',data:  $datatables,
-                header: $header,ws:$ws);
+            in: $in, multi_selects: true);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar datatable', data: $datatables,
+                header: $header, ws: $ws);
         }
 
         return $datatables;
@@ -3027,9 +3102,9 @@ class controlador_tg_manifiesto extends _ctl_base
     public function ve_nominas(bool $header, bool $ws = false): array|stdClass
     {
         $nominas = (new tg_manifiesto_periodo($this->link))->nominas_by_manifiesto(tg_manifiesto_id: $this->registro_id);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo',data:  $nominas,
-                header: $header,ws:$ws);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo', data: $nominas,
+                header: $header, ws: $ws);
         }
 
         foreach ($nominas as $indice => $nomina) {
@@ -3044,7 +3119,8 @@ class controlador_tg_manifiesto extends _ctl_base
         return $this->nominas;
     }
 
-    public function descarga_recibo(bool $header, bool $ws = false){
+    public function descarga_recibo(bool $header, bool $ws = false)
+    {
         $r_nomina = (new \gamboamartin\nomina\models\nom_nomina($this->link))->descarga_recibo_nomina(nom_nomina_id: $this->registro_id);
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al obtener recibo de nomina', data: $r_nomina);
@@ -3055,7 +3131,8 @@ class controlador_tg_manifiesto extends _ctl_base
         return $r_nomina;
     }
 
-    public function descarga_recibo_conjunto(bool $header, bool $ws = false){
+    public function descarga_recibo_conjunto(bool $header, bool $ws = false)
+    {
 
         $filtro['nom_nomina.nom_periodo_id'] = $this->registro_id;
         $nominas = (new \gamboamartin\nomina\models\nom_nomina($this->link))->filtro_and(filtro: $filtro);
