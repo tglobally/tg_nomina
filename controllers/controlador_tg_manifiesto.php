@@ -807,6 +807,48 @@ class controlador_tg_manifiesto extends _ctl_base
         $tabla['data'] = $registros;
         $tabla['startRow'] = 5;
         $tabla['startColumn'] = "A";
+        $tabla['totales'] = [
+            ["columna" => 'N', 'valor' => 10],
+            ["columna" => 'O', 'valor' => 10],
+            ["columna" => 'P', 'valor' => 10],
+            ["columna" => 'Q', 'valor' => 10],
+            ["columna" => 'R', 'valor' => 10],
+            ["columna" => 'S', 'valor' => 10],
+            ["columna" => 'T', 'valor' => 10],
+            ["columna" => 'U', 'valor' => 10],
+            ["columna" => 'V', 'valor' => 10],
+            ["columna" => 'W', 'valor' => 10],
+            ["columna" => 'X', 'valor' => 10],
+            ["columna" => 'Y', 'valor' => 10],
+            ["columna" => 'Z', 'valor' => 10],
+            ["columna" => 'AA', 'valor' => 10],
+            ["columna" => 'AB', 'valor' => 10],
+            ["columna" => 'AC', 'valor' => 10],
+            ["columna" => 'AD', 'valor' => 10],
+            ["columna" => 'AE', 'valor' => 10],
+            ["columna" => 'AF', 'valor' => 10],
+            ["columna" => 'AG', 'valor' => 10],
+            ["columna" => 'AH', 'valor' => 10],
+            ["columna" => 'AI', 'valor' => 10],
+            ["columna" => 'AJ', 'valor' => 10],
+            ["columna" => 'AK', 'valor' => 10],
+            ["columna" => 'AL', 'valor' => 10],
+            ["columna" => 'AM', 'valor' => 10],
+            ["columna" => 'AN', 'valor' => 10],
+            ["columna" => 'AO', 'valor' => 10],
+            ["columna" => 'AP', 'valor' => 10],
+            ["columna" => 'AQ', 'valor' => 10],
+            ["columna" => 'AR', 'valor' => 10],
+            ["columna" => 'AS', 'valor' => 10],
+            ["columna" => 'AT', 'valor' => 10],
+            ["columna" => 'AU', 'valor' => 10],
+            ["columna" => 'AV', 'valor' => 10],
+            ["columna" => 'AW', 'valor' => 10],
+            ["columna" => 'AX', 'valor' => 10],
+            ["columna" => 'AY', 'valor' => 10],
+            ["columna" => 'AZ', 'valor' => 10]
+        ];
+
 
         $tabla2['headers'] = ['PRIMA VACACIONAL (15 UMAS)','GRATIFICACION ( 30 UMAS )','AGUINALDO ( 15 UMAS )',
             'DIA FESTIVO','DESCANSO LABORADO','HORAS EXTRAS ( 5 UMAS POR SEMANA)'];
