@@ -11,6 +11,7 @@ namespace tglobally\tg_nomina\controllers;
 
 use base\controller\controler;
 use base\orm\inicializacion;
+use base\orm\modelo;
 use Cassandra\Date;
 use config\generales;
 use DateTime;
@@ -855,24 +856,24 @@ class controlador_tg_manifiesto extends _ctl_base
         return array($tabla2, $tabla);
     }
 
-    private function get_totales(array $campos): array
+    private function get_totales(modelo $entidad, array $campos): array
     {
         $salida = array();
 
-        foreach ($campos as $key => $data){
-            $gravado = (new nom_par_percepcion($this->link))->suma(campos: array("gravado" => "nom_par_percepcion.importe_gravado"),filtro: $data);
+        foreach ($campos as $key => $data) {
+            $gravado = $entidad->suma(campos: array("gravado" => "$entidad->tabla.importe_gravado"), filtro: $data);
             if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener nom_par_percepcion de la nomina', data: $gravado);
+                return $this->errores->error(mensaje: "Error al obtener $entidad->tabla de la nomina - $key", data: $gravado);
             }
 
-            $exento = (new nom_par_percepcion($this->link))->suma(campos: array("exento" => "nom_par_percepcion.importe_exento"),filtro: $data);
+            $exento = (new $entidad($this->link))->suma(campos: array("exento" => "$entidad->tabla.importe_exento"), filtro: $data);
             if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener nom_par_percepcion de la nomina', data: $exento);
+                return $this->errores->error(mensaje: "Error al obtener $entidad->tabla de la nomina - $key", data: $exento);
             }
 
             $salida[$key] = array("gravado" => $gravado["gravado"],
-                                  "exento" => $exento["exento"],
-                                  "total" => $gravado["gravado"] + $exento["exento"]);
+                "exento" => $exento["exento"],
+                "total" => $gravado["gravado"] + $exento["exento"]);
         }
 
         return $salida;
@@ -945,46 +946,6 @@ class controlador_tg_manifiesto extends _ctl_base
                 return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
             }
 
-            $campos['prima_dominical'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
-                "nom_percepcion.descripcion" => 'Prima Dominical');
-            $campos['vacaciones'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
-                "nom_percepcion.descripcion" => 'Vacaciones');
-            $campos['septimo_dia'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
-                "nom_percepcion.descripcion" => 'Septimo Dia');
-            $campos['compensacion'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
-                "nom_percepcion.descripcion" => 'Compensacion');
-            $campos['despensa'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
-                "nom_percepcion.descripcion" => 'Despensa');
-            $campos['prima_vacacional'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
-                "nom_percepcion.descripcion" => 'Prima Vacacional');
-
-            $percepciones = $this->get_totales(campos: $campos);
-            if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener totales de percepciones', data: $percepciones);
-            }
-
-            $otros_ingresos = (new nom_par_otro_pago($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
-                "nom_otro_pago.es_subsidio" => 'inactivo'));
-            if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
-            }
-
-
-
-
-
-
-
-
-
-            $infonavit = (new nom_par_deduccion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
-                "nom_deduccion.descripcion" => 'INFONAVIT'));
-            if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
-            }
-
-
-
             $gratificacion = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_percepcion.descripcion" => 'Gratificacion'));
             if (errores::$error) {
@@ -1015,6 +976,12 @@ class controlador_tg_manifiesto extends _ctl_base
                 return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
             }
 
+            $infonavit = (new nom_par_deduccion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_deduccion.descripcion" => 'INFONAVIT'));
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
+            }
+
             $isr = (new nom_par_deduccion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_deduccion.descripcion" => 'ISR'));
             if (errores::$error) {
@@ -1023,12 +990,6 @@ class controlador_tg_manifiesto extends _ctl_base
 
             $imss = (new nom_par_deduccion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_deduccion.descripcion" => 'IMSS'));
-            if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
-            }
-
-            $fonacot = (new nom_par_deduccion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
-                "nom_deduccion.descripcion" => 'FONACOT'));
             if (errores::$error) {
                 return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
             }
@@ -1053,6 +1014,66 @@ class controlador_tg_manifiesto extends _ctl_base
 
             $descuento_comedor = (new nom_par_deduccion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_deduccion.descripcion" => 'DESCUENTO COMEDOR'));
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
+            }
+
+            $campos['prima_dominical'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Prima Dominical');
+            $campos['vacaciones'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Vacaciones');
+            $campos['septimo_dia'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Septimo Dia');
+            $campos['compensacion'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Compensacion');
+            $campos['despensa'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Despensa');
+            $campos['prima_vacacional'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Prima Vacacional');
+            $campos['gratificacion'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Gratificacion');
+            $campos['aguinaldo'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Aguinaldo');
+            $campos['dia_festivo'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Dia Festivo Laborado');
+            $campos['dia_descanso'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Dia de Descanso');
+            $campos['horas_extras'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "cat_sat_tipo_percepcion_nom.descripcion" => 'Horas extras');
+
+            $percepciones = $this->get_totales(entidad: new nom_par_percepcion($this->link), campos: $campos);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener totales de percepciones', data: $percepciones);
+            }
+
+            $campos_deduccion['infonavit'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_deduccion.descripcion" => 'INFONAVIT');
+
+            $campos_deduccion['isr'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_deduccion.descripcion" => 'ISR');
+
+            $campos_deduccion['imss'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_deduccion.descripcion" => 'IMSS');
+
+            $campos_deduccion['fonacot'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_deduccion.descripcion" => 'FONACOT');
+
+            $campos_deduccion['pension_alimenticia'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_deduccion.descripcion" => 'PENSION ALIMENTICIA');
+
+            $campos_deduccion['otros_descuentos'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_deduccion.descripcion" => 'Otros Descuentos');
+
+            $campos_deduccion['descuento_comedor'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_deduccion.descripcion" => 'DESCUENTO COMEDOR');
+
+            $deducciones = $this->get_totales(entidad: new nom_par_deduccion($this->link), campos: $campos_deduccion);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener totales de deducciones', data: $deducciones);
+            }
+
+            $otros_ingresos = (new nom_par_otro_pago($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_otro_pago.es_subsidio" => 'inactivo'));
             if (errores::$error) {
                 return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
             }
@@ -1231,7 +1252,7 @@ class controlador_tg_manifiesto extends _ctl_base
                 $percepciones['compensacion']['total'],
                 $percepciones['despensa']['total'],
                 $total_otros_ingresos,
-                $total_infonavit,
+                $deducciones['infonavit']['total'],
                 $montos_prima_vacacional['gravado'],
                 $montos_prima_vacacional['exento'],
                 $montos_gratificacion['gravado'],
@@ -1246,13 +1267,13 @@ class controlador_tg_manifiesto extends _ctl_base
                 $montos_horas_extras['exento'],
                 $total_percepciones,
                 $base_gravable,
-                $total_isr,
-                $total_imss,
-                $total_infonavit,
-                $total_fonacot,
-                $total_pension_alimenticia,
-                $total_otros_descuentos,
-                $total_descuento_comedor,
+                $deducciones['isr']['total'],
+                $deducciones['imss']['total'],
+                $deducciones['infonavit']['total'],
+                $deducciones['fonacot']['total'],
+                $deducciones['pension_alimenticia']['total'],
+                $deducciones['otros_descuentos']['total'],
+                $deducciones['descuento_comedor']['total'],
                 $total_deducciones,
                 $neto_imss,
                 "POR REVISAR",
