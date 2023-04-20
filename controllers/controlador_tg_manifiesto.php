@@ -859,6 +859,7 @@ class controlador_tg_manifiesto extends _ctl_base
     private function get_totales(modelo $entidad, array $campos): array
     {
         $salida = array();
+        $salida['total'] = 0;
 
         foreach ($campos as $key => $data) {
             $gravado = $entidad->suma(campos: array("gravado" => "$entidad->tabla.importe_gravado"), filtro: $data);
@@ -874,6 +875,7 @@ class controlador_tg_manifiesto extends _ctl_base
             $salida[$key] = array("gravado" => $gravado["gravado"],
                 "exento" => $exento["exento"],
                 "total" => $gravado["gravado"] + $exento["exento"]);
+            $salida['total'] += $salida[$key]["total"];
         }
 
         return $salida;
@@ -902,120 +904,9 @@ class controlador_tg_manifiesto extends _ctl_base
                 return $this->errores->error(mensaje: 'Error al obtener cfdi sellado', data: $timbrado);
             }
 
-            $subsidios = (new nom_par_otro_pago($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
-                "nom_otro_pago.es_subsidio" => 'activo'));
+            $cliente_nomina = (new com_sucursal($this->link))->registro(registro_id: $nomina['fc_factura_com_sucursal_id']);
             if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener otros pagos de la nomina', data: $subsidios);
-            }
-
-            // ----
-
-            $prima_dominical = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
-                "nom_percepcion.descripcion" => 'Prima Dominical'));
-            if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener prima dominical de la nomina', data: $prima_dominical);
-            }
-
-            $vacaciones = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
-                "nom_percepcion.descripcion" => 'Vacaciones'));
-            if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
-            }
-
-            $septimo_dia = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
-                "nom_percepcion.descripcion" => 'Septimo Dia'));
-            if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
-            }
-
-            $compensacion = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
-                "nom_percepcion.descripcion" => 'Compensacion'));
-            if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
-            }
-
-            $despensa = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
-                "nom_percepcion.descripcion" => 'Despensa'));
-            if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
-            }
-
-            $prima_vacacional = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
-                "nom_percepcion.descripcion" => 'Prima Vacacional'));
-            if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
-            }
-
-            $gratificacion = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
-                "nom_percepcion.descripcion" => 'Gratificacion'));
-            if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
-            }
-
-            $aguinaldo = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
-                "nom_percepcion.descripcion" => 'Aguinaldo'));
-            if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
-            }
-
-            $dia_festivo = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
-                "nom_percepcion.descripcion" => 'Dia Festivo Laborado'));
-            if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
-            }
-
-            $dia_descanso = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
-                "nom_percepcion.descripcion" => 'Dia de Descanso'));
-            if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
-            }
-
-            $horas_extras = (new nom_par_percepcion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
-                "cat_sat_tipo_percepcion_nom.descripcion" => 'Horas extras'));
-            if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
-            }
-
-            $infonavit = (new nom_par_deduccion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
-                "nom_deduccion.descripcion" => 'INFONAVIT'));
-            if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
-            }
-
-            $isr = (new nom_par_deduccion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
-                "nom_deduccion.descripcion" => 'ISR'));
-            if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
-            }
-
-            $imss = (new nom_par_deduccion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
-                "nom_deduccion.descripcion" => 'IMSS'));
-            if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
-            }
-
-            $fonacot = (new nom_par_deduccion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
-                "nom_deduccion.descripcion" => 'FONACOT'));
-            if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
-            }
-
-            $pension_alimenticia = (new nom_par_deduccion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
-                "nom_deduccion.descripcion" => 'PENSION ALIMENTICIA'));
-            if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
-            }
-
-            $otros_descuentos = (new nom_par_deduccion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
-                "nom_deduccion.descripcion" => 'Otros Descuentos'));
-            if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
-            }
-
-            $descuento_comedor = (new nom_par_deduccion($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
-                "nom_deduccion.descripcion" => 'DESCUENTO COMEDOR'));
-            if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
+                return $this->errores->error(mensaje: 'Error al obtener cliente de la nomina', data: $cliente_nomina);
             }
 
             $campos['prima_dominical'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
@@ -1072,123 +963,14 @@ class controlador_tg_manifiesto extends _ctl_base
                 return $this->errores->error(mensaje: 'Error al obtener totales de deducciones', data: $deducciones);
             }
 
-            $otros_ingresos = (new nom_par_otro_pago($this->link))->filtro_and(filtro: array("nom_nomina_id" => $nomina['nom_nomina_id'],
-                "nom_otro_pago.es_subsidio" => 'inactivo'));
+
+            $campos_otro_pago['subsidios'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_otro_pago.es_subsidio" => 'activo');
+            $campos_otro_pago['otros_ingresos'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_otro_pago.es_subsidio" => 'inactivo');
+            $otros_pagos = $this->get_totales(entidad: new nom_par_otro_pago($this->link), campos: $campos_otro_pago);
             if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
-            }
-
-            $cliente_nomina = (new com_sucursal($this->link))->registro(registro_id: $nomina['fc_factura_com_sucursal_id']);
-            if (errores::$error) {
-                return $this->errores->error(mensaje: 'Error al obtener vacaciones de la nomina', data: $vacaciones);
-            }
-
-            $total_subsidio = 0;
-            $total_prima_dominical = 0;
-            $total_vacaciones = 0;
-            $total_septimo_dia = 0;
-            $total_compensacion = 0;
-            $total_despensa = 0;
-            $total_otros_ingresos = 0;
-            $total_infonavit = 0;
-            $total_isr = 0;
-            $total_imss = 0;
-            $total_fonacot = 0;
-            $total_pension_alimenticia = 0;
-            $total_otros_descuentos = 0;
-            $total_descuento_comedor = 0;
-
-            $montos_prima_vacacional = array('gravado' => 0, 'exento' => 0);
-            $montos_gratificacion = array('gravado' => 0, 'exento' => 0);
-            $montos_aguinaldo = array('gravado' => 0, 'exento' => 0);
-            $montos_dia_festivo = array('gravado' => 0, 'exento' => 0);
-            $montos_dia_descanso = array('gravado' => 0, 'exento' => 0);
-            $montos_horas_extras = array('gravado' => 0, 'exento' => 0);
-
-            foreach ($subsidios->registros as $subsidio) {
-                $total_subsidio += $subsidio['nom_par_otro_pago_importe_gravado'] + $subsidio['nom_par_otro_pago_importe_exento'];
-            }
-
-            foreach ($prima_dominical->registros as $prima) {
-                $total_prima_dominical += $prima['nom_par_percepcion_importe_gravado'] + $prima['nom_par_percepcion_importe_exento'];
-            }
-
-            foreach ($vacaciones->registros as $vacacion) {
-                $total_vacaciones += $vacacion['nom_par_percepcion_importe_gravado'] + $vacacion['nom_par_percepcion_importe_exento'];
-            }
-
-            foreach ($septimo_dia->registros as $septimo) {
-                $total_septimo_dia += $septimo['nom_par_percepcion_importe_gravado'] + $septimo['nom_par_percepcion_importe_exento'];
-            }
-
-            foreach ($compensacion->registros as $registro) {
-                $total_compensacion += $registro['nom_par_percepcion_importe_gravado'] + $registro['nom_par_percepcion_importe_exento'];
-            }
-
-            foreach ($despensa->registros as $registro) {
-                $total_despensa += $registro['nom_par_percepcion_importe_gravado'] + $registro['nom_par_percepcion_importe_exento'];
-            }
-
-            foreach ($otros_ingresos->registros as $registro) {
-                $total_otros_ingresos += $registro['nom_par_otro_pago_importe_gravado'] + $registro['nom_par_otro_pago_importe_exento'];
-            }
-
-            foreach ($infonavit->registros as $registro) {
-                $total_infonavit += $registro['nom_par_deduccion_importe_gravado'] + $registro['nom_par_deduccion_importe_exento'];
-            }
-
-            foreach ($isr->registros as $registro) {
-                $total_isr += $registro['nom_par_deduccion_importe_gravado'] + $registro['nom_par_deduccion_importe_exento'];
-            }
-
-            foreach ($imss->registros as $registro) {
-                $total_imss += $registro['nom_par_deduccion_importe_gravado'] + $registro['nom_par_deduccion_importe_exento'];
-            }
-
-            foreach ($fonacot->registros as $registro) {
-                $total_fonacot += $registro['nom_par_deduccion_importe_gravado'] + $registro['nom_par_deduccion_importe_exento'];
-            }
-
-            foreach ($pension_alimenticia->registros as $registro) {
-                $total_pension_alimenticia += $registro['nom_par_deduccion_importe_gravado'] + $registro['nom_par_deduccion_importe_exento'];
-            }
-
-            foreach ($otros_descuentos->registros as $registro) {
-                $total_otros_descuentos += $registro['nom_par_deduccion_importe_gravado'] + $registro['nom_par_deduccion_importe_exento'];
-            }
-
-            foreach ($descuento_comedor->registros as $registro) {
-                $total_descuento_comedor += $registro['nom_par_deduccion_importe_gravado'] + $registro['nom_par_deduccion_importe_exento'];
-            }
-
-            foreach ($prima_vacacional->registros as $registro) {
-                $montos_prima_vacacional['gravado'] += $registro['nom_par_percepcion_importe_gravado'];
-                $montos_prima_vacacional['exento'] += $registro['nom_par_percepcion_importe_exento'];
-            }
-
-            foreach ($gratificacion->registros as $registro) {
-                $montos_gratificacion['gravado'] += $registro['nom_par_percepcion_importe_gravado'];
-                $montos_gratificacion['exento'] += $registro['nom_par_percepcion_importe_exento'];
-            }
-
-            foreach ($aguinaldo->registros as $registro) {
-                $montos_aguinaldo['gravado'] += $registro['nom_par_percepcion_importe_gravado'];
-                $montos_aguinaldo['exento'] += $registro['nom_par_percepcion_importe_exento'];
-            }
-
-            foreach ($dia_festivo->registros as $registro) {
-                $montos_dia_festivo['gravado'] += $registro['nom_par_percepcion_importe_gravado'];
-                $montos_dia_festivo['exento'] += $registro['nom_par_percepcion_importe_exento'];
-            }
-
-            foreach ($dia_descanso->registros as $registro) {
-                $montos_dia_descanso['gravado'] += $registro['nom_par_percepcion_importe_gravado'];
-                $montos_dia_descanso['exento'] += $registro['nom_par_percepcion_importe_exento'];
-            }
-
-            foreach ($horas_extras->registros as $registro) {
-                $montos_horas_extras['gravado'] += $registro['nom_par_percepcion_importe_gravado'];
-                $montos_horas_extras['exento'] += $registro['nom_par_percepcion_importe_exento'];
+                return $this->errores->error(mensaje: 'Error al obtener totales de otros pagos', data: $otros_pagos);
             }
 
             $fecha_inicio = DateTime::createFromFormat('d/m/Y', date('d/m/Y', strtotime($nomina['nom_nomina_fecha_inicial_pago'])));
@@ -1196,26 +978,20 @@ class controlador_tg_manifiesto extends _ctl_base
 
             $periodo = $fecha_inicio->format('d/m/Y') . " - " . $fecha_final->format('d/m/Y');
 
-            $sueldo = (($fecha_inicio->diff($fecha_final))->days + 1) * $nomina['em_empleado_salario_diario'];
+            $sueldo = ($fecha_inicio->diff($fecha_final))->days * $nomina['em_empleado_salario_diario'];
 
-            $total_percepciones = $sueldo + $total_subsidio + $total_prima_dominical + $total_vacaciones +
-                $total_septimo_dia + $total_compensacion + $total_despensa + $total_otros_ingresos + $total_infonavit +
-                $montos_prima_vacacional['gravado'] + $montos_prima_vacacional['exento'] +
-                $montos_gratificacion['gravado'] + $montos_gratificacion['exento'] + $montos_aguinaldo['gravado'] +
-                $montos_aguinaldo['exento'] + $montos_dia_festivo['gravado'] + $montos_dia_festivo['exento'] +
-                $montos_dia_descanso['gravado'] + $montos_dia_descanso['exento'] + $montos_horas_extras['gravado'] +
-                $montos_horas_extras['exento'];
+            $percepciones['total'] += $sueldo + $otros_pagos['subsidios']['total'];
 
-            $base_gravable = $sueldo + $total_vacaciones + $total_septimo_dia + $total_compensacion + $total_despensa +
-                $total_otros_ingresos + $montos_prima_vacacional['gravado'] + $montos_gratificacion['gravado'] +
-                $montos_aguinaldo['gravado'] + $montos_dia_festivo['gravado'] + $montos_dia_descanso['gravado'] +
-                $montos_horas_extras['gravado'];
+            $base_gravable = $sueldo + $percepciones['vacaciones']['total'] + $percepciones['septimo_dia']['total'] +
+                $percepciones['compensacion']['total'] + $percepciones['despensa']['total'] +
+                $otros_pagos['otros_ingresos']['total'] + $percepciones['prima_vacacional']['gravado'] +
+                $percepciones['gratificacion']['gravado'] + $percepciones['aguinaldo']['gravado'] +
+                $percepciones['dia_festivo']['gravado'] + $percepciones['dia_descanso']['gravado'] +
+                $percepciones['horas_extras']['gravado'];
 
-            $total_deducciones = $total_isr + $total_imss + $total_infonavit + $total_fonacot + $total_pension_alimenticia +
-                $total_otros_descuentos + $total_descuento_comedor;
-            $neto_imss = $total_percepciones - $total_deducciones;
+            $neto_imss = $percepciones['total'] - $deducciones['total'];
 
-            $base_isn = $total_percepciones - $total_subsidio - $total_infonavit;
+            $base_isn = $percepciones['total'] - $otros_pagos['subsidios']['total'];
 
             $tasa_isn = "POR REVISAR";
             $importe_isn = "POR REVISAR";
@@ -1245,27 +1021,27 @@ class controlador_tg_manifiesto extends _ctl_base
                 'POR REVISAR',
                 $nomina['em_empleado_salario_diario_integrado'],
                 $sueldo,
-                $total_subsidio,
+                $otros_pagos['subsidios']['total'],
                 $percepciones['prima_dominical']['total'],
                 $percepciones['vacaciones']['total'],
                 $percepciones['septimo_dia']['total'],
                 $percepciones['compensacion']['total'],
                 $percepciones['despensa']['total'],
-                $total_otros_ingresos,
-                $deducciones['infonavit']['total'],
-                $montos_prima_vacacional['gravado'],
-                $montos_prima_vacacional['exento'],
-                $montos_gratificacion['gravado'],
-                $montos_gratificacion['exento'],
-                $montos_aguinaldo['gravado'],
-                $montos_aguinaldo['exento'],
-                $montos_dia_festivo['gravado'],
-                $montos_dia_festivo['exento'],
-                $montos_dia_descanso['gravado'],
-                $montos_dia_descanso['exento'],
-                $montos_horas_extras['gravado'],
-                $montos_horas_extras['exento'],
-                $total_percepciones,
+                $otros_pagos['otros_ingresos']['total'],
+                'POR REVISAR',
+                $percepciones['prima_vacacional']['gravado'],
+                $percepciones['prima_vacacional']['exento'],
+                $percepciones['gratificacion']['gravado'],
+                $percepciones['gratificacion']['exento'],
+                $percepciones['aguinaldo']['gravado'],
+                $percepciones['aguinaldo']['exento'],
+                $percepciones['dia_festivo']['gravado'],
+                $percepciones['dia_festivo']['exento'],
+                $percepciones['dia_descanso']['gravado'],
+                $percepciones['dia_descanso']['exento'],
+                $percepciones['horas_extras']['gravado'],
+                $percepciones['horas_extras']['exento'],
+                $percepciones['total'],
                 $base_gravable,
                 $deducciones['isr']['total'],
                 $deducciones['imss']['total'],
@@ -1274,7 +1050,7 @@ class controlador_tg_manifiesto extends _ctl_base
                 $deducciones['pension_alimenticia']['total'],
                 $deducciones['otros_descuentos']['total'],
                 $deducciones['descuento_comedor']['total'],
-                $total_deducciones,
+                $deducciones['total'],
                 $neto_imss,
                 "POR REVISAR",
                 $base_isn,
