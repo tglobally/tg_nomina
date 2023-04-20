@@ -621,10 +621,10 @@ class controlador_tg_manifiesto extends _ctl_base
         $filtro = array("tg_manifiesto.id", "com_sucursal.descripcion", "tg_manifiesto.fecha_pago");
 
         $datatables = new stdClass();
-        $datatables->type = "scroll";
+        //$datatables->type = "scroll";
         $datatables->columns = $columns;
         $datatables->filtro = $filtro;
-        $datatables->menu_active = true;
+        //$datatables->menu_active = true;
 
         return $datatables;
     }
