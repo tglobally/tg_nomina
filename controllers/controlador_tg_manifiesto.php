@@ -419,7 +419,7 @@ class controlador_tg_manifiesto extends _ctl_base
         $id_nominas = array_map('intval', explode(',', $_POST['descarga_comprimido']));
 
         $zip = new ZipArchive();
-        $nombreZip = 'Recibos por periodo.zip';
+        $nombreZip = 'Nominas.zip';
         $zip->open($nombreZip, ZipArchive::CREATE);
 
         foreach ($id_nominas as $nom_nomina_id) {
@@ -448,6 +448,7 @@ class controlador_tg_manifiesto extends _ctl_base
         header('Content-Length: ' . filesize($nombreZip));
         readfile($nombreZip);
 
+        unlink($nombreZip);
         exit;
     }
 

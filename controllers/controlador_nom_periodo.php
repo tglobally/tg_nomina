@@ -588,7 +588,7 @@ class controlador_nom_periodo extends \gamboamartin\nomina\controllers\controlad
         $id_nominas = array_map('intval', explode(',', $_POST['descarga_comprimido']));
 
         $zip = new ZipArchive();
-        $nombreZip = 'Recibos por periodo.zip';
+        $nombreZip = 'Nominas.zip';
         $zip->open($nombreZip, ZipArchive::CREATE);
 
         foreach ($id_nominas as $nom_nomina_id){
@@ -617,6 +617,7 @@ class controlador_nom_periodo extends \gamboamartin\nomina\controllers\controlad
         header('Content-Length: ' . filesize($nombreZip));
         readfile($nombreZip);
 
+        unlink($nombreZip);
         exit;
     }
 
