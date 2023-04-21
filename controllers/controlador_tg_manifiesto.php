@@ -805,53 +805,57 @@ class controlador_tg_manifiesto extends _ctl_base
         $tabla['startRow'] = 5;
         $tabla['startColumn'] = "A";
         $tabla['totales'] = [
-            ["columna" => 'N', 'valor' => 10],
-            ["columna" => 'O', 'valor' => 10],
-            ["columna" => 'P', 'valor' => 10],
-            ["columna" => 'Q', 'valor' => 10],
-            ["columna" => 'R', 'valor' => 10],
-            ["columna" => 'S', 'valor' => 10],
-            ["columna" => 'T', 'valor' => 10],
-            ["columna" => 'U', 'valor' => 10],
-            ["columna" => 'V', 'valor' => 10],
-            ["columna" => 'W', 'valor' => 10],
-            ["columna" => 'X', 'valor' => 10],
-            ["columna" => 'Y', 'valor' => 10],
-            ["columna" => 'Z', 'valor' => 10],
-            ["columna" => 'AA', 'valor' => 10],
-            ["columna" => 'AB', 'valor' => 10],
-            ["columna" => 'AC', 'valor' => 10],
-            ["columna" => 'AD', 'valor' => 10],
-            ["columna" => 'AE', 'valor' => 10],
-            ["columna" => 'AF', 'valor' => 10],
-            ["columna" => 'AG', 'valor' => 10],
-            ["columna" => 'AH', 'valor' => 10],
-            ["columna" => 'AI', 'valor' => 10],
-            ["columna" => 'AJ', 'valor' => 10],
-            ["columna" => 'AK', 'valor' => 10],
-            ["columna" => 'AL', 'valor' => 10],
-            ["columna" => 'AM', 'valor' => 10],
-            ["columna" => 'AN', 'valor' => 10],
-            ["columna" => 'AO', 'valor' => 10],
-            ["columna" => 'AP', 'valor' => 10],
-            ["columna" => 'AQ', 'valor' => 10],
-            ["columna" => 'AR', 'valor' => 10],
-            ["columna" => 'AS', 'valor' => 10],
-            ["columna" => 'AT', 'valor' => 10],
-            ["columna" => 'AU', 'valor' => 10],
-            ["columna" => 'AV', 'valor' => 10],
-            ["columna" => 'AW', 'valor' => 10],
-            ["columna" => 'AX', 'valor' => 10],
-            ["columna" => 'AY', 'valor' => 10],
-            ["columna" => 'AZ', 'valor' => 10]
+            ["columna" => 'N', 'valor' => 0],
+            ["columna" => 'O', 'valor' => 0],
+            ["columna" => 'P', 'valor' => 0],
+            ["columna" => 'Q', 'valor' => 0],
+            ["columna" => 'R', 'valor' => 0],
+            ["columna" => 'S', 'valor' => 0],
+            ["columna" => 'T', 'valor' => 0],
+            ["columna" => 'U', 'valor' => 0],
+            ["columna" => 'V', 'valor' => 0],
+            ["columna" => 'W', 'valor' => 0],
+            ["columna" => 'X', 'valor' => 0],
+            ["columna" => 'Y', 'valor' => 0],
+            ["columna" => 'Z', 'valor' => 0],
+            ["columna" => 'AA', 'valor' => 0],
+            ["columna" => 'AB', 'valor' => 0],
+            ["columna" => 'AC', 'valor' => 0],
+            ["columna" => 'AD', 'valor' => 0],
+            ["columna" => 'AE', 'valor' => 0],
+            ["columna" => 'AF', 'valor' => 0],
+            ["columna" => 'AG', 'valor' => 0],
+            ["columna" => 'AH', 'valor' => 0],
+            ["columna" => 'AI', 'valor' => 0],
+            ["columna" => 'AJ', 'valor' => 0],
+            ["columna" => 'AK', 'valor' => 0],
+            ["columna" => 'AL', 'valor' => 0],
+            ["columna" => 'AM', 'valor' => 0],
+            ["columna" => 'AN', 'valor' => 0],
+            ["columna" => 'AO', 'valor' => 0],
+            ["columna" => 'AP', 'valor' => 0],
+            ["columna" => 'AQ', 'valor' => 0],
+            ["columna" => 'AR', 'valor' => 0],
+            ["columna" => 'AS', 'valor' => 0],
+            ["columna" => 'AT', 'valor' => 0],
+            ["columna" => 'AU', 'valor' => 0],
+            ["columna" => 'AV', 'valor' => 0],
+            ["columna" => 'AW', 'valor' => 0],
+            ["columna" => 'AX', 'valor' => 0],
+            ["columna" => 'AY', 'valor' => 0],
+            ["columna" => 'AZ', 'valor' => 0]
         ];
 
 
         $tabla2['headers'] = ['PRIMA VACACIONAL (15 UMAS)', 'GRATIFICACION ( 30 UMAS )', 'AGUINALDO ( 15 UMAS )',
             'DIA FESTIVO', 'DESCANSO LABORADO', 'HORAS EXTRAS ( 5 UMAS POR SEMANA)'];
+        $tabla2['mergeheaders'] = array('PRIMA VACACIONAL (15 UMAS)' => 2, 'GRATIFICACION ( 30 UMAS )' => 2,
+            'AGUINALDO ( 15 UMAS )' => 2, 'DIA FESTIVO' => 2, 'DESCANSO LABORADO' => 2,
+            'HORAS EXTRAS ( 5 UMAS POR SEMANA)' => 2);
         $tabla2['data'] = array();
         $tabla2['startRow'] = 4;
         $tabla2['startColumn'] = "Z";
+
 
         return array($tabla2, $tabla);
     }
@@ -1064,6 +1068,59 @@ class controlador_tg_manifiesto extends _ctl_base
         return $registros;
     }
 
+    public function descarga_manifiesto(bool $header, bool $ws = false): array|stdClass
+    {
+        $manifiesto = (new tg_manifiesto($this->link))->registro(registro_id: $this->registro_id);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al obtener manifiesto', data: $manifiesto,
+                header: $header, ws: $ws);
+        }
+
+        $nominas = (new tg_manifiesto_periodo($this->link))->nominas_by_manifiesto(tg_manifiesto_id: $this->registro_id);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al obtener nominas del manifiesto', data: $nominas,
+                header: $header, ws: $ws);
+        }
+
+        $empresa = $manifiesto['org_sucursal_descripcion'] ?? "";
+
+        $fecha_inicio = date('d/m/Y', strtotime($manifiesto['tg_manifiesto_fecha_inicial_pago']));
+        $fecha_final = date('d/m/Y', strtotime($manifiesto['tg_manifiesto_fecha_final_pago']));
+
+        $periodo = "$fecha_inicio - $fecha_final";
+
+        $registros = $this->fill_data(nominas: $nominas, empresa: $empresa);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al maquetar datos', data: $registros);
+            print_r($error);
+            die('Error');
+        }
+
+        $data["REPORTE NOMINAS"] = $this->maqueta_salida(empresa: $empresa, periodo: $periodo, remunerados: 0,
+            total_registros: count($nominas), registros: $registros);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al maquetar salida de datos', data: $data);
+            print_r($error);
+            die('Error');
+        }
+
+        $name = "REPORTE DE NOMINAS_$empresa";
+
+        $resultado = (new exportador())->exportar_template(header: $header, path_base: $this->path_base, name: $name,
+            data: $data, styles: Reporte_Template::REPORTE_NOMINA);
+        if (errores::$error) {
+            $error = $this->errores->error('Error al generar xls', $resultado);
+            if (!$header) {
+                return $error;
+            }
+            print_r($error);
+            die('Error');
+        }
+
+        header('Location:' . $this->link_lista);
+        exit;
+    }
+
     public function descarga_nomina(bool $header, bool $ws = false): array|stdClass
     {
         $manifiesto = (new tg_manifiesto($this->link))->registro(registro_id: $this->registro_id);
@@ -1183,6 +1240,10 @@ class controlador_tg_manifiesto extends _ctl_base
         exit;
         //return $this->nominas;
     }
+
+
+
+
     /*public function descarga_nomina(bool $header, bool $ws = false): array|stdClass
     {
         $manifiesto = (new tg_manifiesto($this->link))->registro(registro_id: $this->registro_id);
