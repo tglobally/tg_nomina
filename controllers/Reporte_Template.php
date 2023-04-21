@@ -135,7 +135,7 @@ class Reporte_Template
                 'startColor' => array('rgb' => '002060')
             ),
             'alignment' => [
-                'horizontal' => 'right',
+                'horizontal' => 'center',
                 'vertical' => 'center',
             ]
         ],
