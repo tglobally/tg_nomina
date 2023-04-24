@@ -374,6 +374,29 @@ class controlador_tg_manifiesto extends _ctl_base
         return $campos_view;
     }
 
+    public function crea_nomina_unica(bool $header = true, bool $ws = false): array|string
+    {
+
+        $r_alta = $this->init_alta();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar alta', data: $r_alta, header: $header, ws: $ws);
+        }
+
+        $keys_selects = $this->init_selects_inputs();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar selects', data: $keys_selects, header: $header,
+                ws: $ws);
+        }
+
+        $inputs = $this->inputs(keys_selects: $keys_selects);
+        if (errores::$error) {
+            return $this->retorno_error(
+                mensaje: 'Error al obtener inputs', data: $inputs, header: $header, ws: $ws);
+        }
+
+        return $r_alta;
+    }
+
     public function descarga_pdf(bool $header, bool $ws = false)
     {
         if (!isset($_POST['descarga_pdf'])) {
