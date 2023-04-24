@@ -350,8 +350,10 @@ class controlador_tg_manifiesto extends _ctl_base
     protected function campos_view(): array
     {
         $keys = new stdClass();
-        $keys->inputs = array('descripcion', 'importe_gravado', 'importe_exento', 'razón social ');
-        $keys->fechas = array('fecha_envio', 'fecha_pago', 'fecha_inicial_pago', 'fecha_final_pago');
+        $keys->inputs = array('descripcion', 'importe_gravado', 'importe_exento', 'razón social ',
+            'nss', 'curp', 'rfc','folio','salario_diario','salario_diario_integrado','subtotal',
+            'descuento','total','num_dias_pagados');
+        $keys->fechas = array('fecha_envio', 'fecha_pago', 'fecha_inicial_pago', 'fecha_final_pago', 'fecha', 'fecha_inicio_rel_laboral');
         $keys->selects = array();
 
         $init_data = array();
@@ -365,6 +367,14 @@ class controlador_tg_manifiesto extends _ctl_base
         $init_data['nom_otro_pago'] = "gamboamartin\\nomina";
         $init_data['org_empresa'] = "gamboamartin\\organigrama";
         $init_data['org_sucursal'] = "gamboamartin\\organigrama";
+        $init_data['em_registro_patronal'] = "gamboamartin\\empleado";
+        $init_data['nom_periodo'] = "gamboamartin\\nomina";
+        $init_data['em_empleado'] = "gamboamartin\\empleado";
+        $init_data['org_puesto'] = "gamboamartin\\organigrama";
+        $init_data['nom_conf_empleado'] = "gamboamartin\\nomina";
+        $init_data['em_cuenta_bancaria'] = "gamboamartin\\empleado";
+        $init_data['cat_sat_tipo_nomina'] = "gamboamartin\\cat_sat";
+        $init_data['cat_sat_periodicidad_pago_nom'] = "gamboamartin\\cat_sat";
 
         $campos_view = $this->campos_view_base(init_data: $init_data, keys: $keys);
         if (errores::$error) {
@@ -685,6 +695,16 @@ class controlador_tg_manifiesto extends _ctl_base
         $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "nom_percepcion_id", label: "Percepción ", cols: 12);
         $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "nom_deduccion_id", label: "Deducción  ", cols: 12);
         $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "nom_otro_pago_id", label: "Otro Pago ", cols: 12);
+
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "em_registro_patronal_id", label: "Registro Patronal");
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "nom_periodo_id", label: "Periodo ");
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "em_empleado_id", label: "Empleado ", cols: 12);
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "org_puesto_id", label: "Puesto ");
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "nom_conf_empleado_id", label: "Conf Empleado ", cols: 12);
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "em_cuenta_bancaria_id", label: "Cuenta Bancaria ", cols: 12);
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "cat_sat_tipo_nomina_id", label: "Tipo nomina ");
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "cat_sat_periodicidad_pago_nom_id", label: "Perioricidad pago ");
+
         return $this->init_selects(keys_selects: $keys_selects, key: "tg_tipo_servicio_id", label: "Tipo Servicio");
     }
 
@@ -728,6 +748,79 @@ class controlador_tg_manifiesto extends _ctl_base
 
         $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'importe_exento',
             keys_selects: $keys_selects, place_holder: 'Importe Exento');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'rfc',
+            keys_selects: $keys_selects, place_holder: 'Rfc');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'nss',
+            keys_selects: $keys_selects, place_holder: 'Nss');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'curp',
+            keys_selects: $keys_selects, place_holder: 'Curp');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'folio',
+            keys_selects: $keys_selects, place_holder: 'Folio');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'fecha',
+            keys_selects: $keys_selects, place_holder: 'Fecha');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'fecha_inicio_rel_laboral',
+            keys_selects: $keys_selects, place_holder: 'Fecha inicio relacion laboral');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'num_dias_pagados',
+            keys_selects: $keys_selects, place_holder: 'Nº dias pagados');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'salario_diario',
+            keys_selects: $keys_selects, place_holder: 'Salario diario');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'salario_diario_integrado',
+            keys_selects: $keys_selects, place_holder: 'Salario diario integrado');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'subtotal',
+            keys_selects: $keys_selects, place_holder: 'Subtotal');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'descuento',
+            keys_selects: $keys_selects, place_holder: 'Descuento');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'total',
+            keys_selects: $keys_selects, place_holder: 'Total');
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
         }
