@@ -960,7 +960,7 @@ class controlador_tg_manifiesto extends _ctl_base
         return $salida;
     }
 
-    private function fill_data(array $nominas, string $empresa): array
+    private function fill_data(array $nominas, string $empresa, string $manifiesto_fecha_inicio, string $manifiesto_fecha_fin): array
     {
         $meses = array('ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO', 'JULIO', 'AGOSTO', 'SEPTIEMBRE',
             'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE');
@@ -1052,8 +1052,8 @@ class controlador_tg_manifiesto extends _ctl_base
                 return $this->errores->error(mensaje: 'Error al obtener totales de otros pagos', data: $otros_pagos);
             }
 
-            $fecha_inicio = DateTime::createFromFormat('d/m/Y', date('d/m/Y', strtotime($nomina['nom_nomina_fecha_inicial_pago'])));
-            $fecha_final = DateTime::createFromFormat('d/m/Y', date('d/m/Y', strtotime($nomina['nom_nomina_fecha_final_pago'])));
+            $fecha_inicio = DateTime::createFromFormat('d/m/Y', date('d/m/Y', strtotime($manifiesto_fecha_inicio)));
+            $fecha_final = DateTime::createFromFormat('d/m/Y', date('d/m/Y', strtotime($manifiesto_fecha_fin)));
 
             $periodo = $fecha_inicio->format('d/m/Y') . " - " . $fecha_final->format('d/m/Y');
 
@@ -1164,12 +1164,15 @@ class controlador_tg_manifiesto extends _ctl_base
 
         $periodo = "$fecha_inicio - $fecha_final";
 
-        $registros = $this->fill_data(nominas: $nominas, empresa: $empresa);
+        $registros = $this->fill_data(nominas: $nominas, empresa: $empresa,
+            manifiesto_fecha_inicio: $manifiesto['tg_manifiesto_fecha_inicial_pago'],manifiesto_fecha_fin:
+            $manifiesto['tg_manifiesto_fecha_final_pago']);
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al maquetar datos', data: $registros);
             print_r($error);
             die('Error');
         }
+
 
         $data["REPORTE NOMINAS"] = $this->maqueta_salida(empresa: $empresa, periodo: $periodo, remunerados: 0,
             total_registros: count($nominas), registros: $registros);
