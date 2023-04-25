@@ -12,18 +12,15 @@ namespace tglobally\tg_nomina\controllers;
 use base\controller\controler;
 use base\orm\inicializacion;
 use base\orm\modelo;
-use Cassandra\Date;
 use config\generales;
 use DateTime;
 use gamboamartin\comercial\models\com_sucursal;
 use gamboamartin\direccion_postal\models\dp_calle_pertenece;
-use gamboamartin\direccion_postal\models\dp_estado;
-use gamboamartin\empleado\models\em_empleado;
 use gamboamartin\empleado\models\em_registro_patronal;
 use gamboamartin\errores\errores;
 use gamboamartin\facturacion\models\fc_cfdi_sellado;
-use gamboamartin\im_registro_patronal\models\im_registro_patronal;
 use gamboamartin\nomina\models\calcula_nomina;
+use gamboamartin\nomina\models\em_empleado;
 use gamboamartin\nomina\models\nom_conf_empleado;
 use gamboamartin\nomina\models\nom_incidencia;
 use gamboamartin\nomina\models\nom_par_deduccion;
@@ -38,10 +35,8 @@ use gamboamartin\system\links_menu;
 use gamboamartin\template\html;
 use html\tg_manifiesto_html;
 use gamboamartin\documento\models\doc_documento;
-use IntlDateFormatter;
 use Mpdf\Mpdf;
 use PhpOffice\PhpSpreadsheet\Exception;
-use tglobally\tg_nomina\controllers\Reporte_Template;
 use tglobally\tg_nomina\models\em_cuenta_bancaria;
 use tglobally\tg_nomina\models\nom_nomina;
 use tglobally\tg_nomina\models\tg_manifiesto;
@@ -52,7 +47,6 @@ use PDO;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use stdClass;
-use Throwable;
 use ZipArchive;
 
 class controlador_tg_manifiesto extends _ctl_base
@@ -351,8 +345,8 @@ class controlador_tg_manifiesto extends _ctl_base
     {
         $keys = new stdClass();
         $keys->inputs = array('descripcion', 'importe_gravado', 'importe_exento', 'razón social ',
-            'nss', 'curp', 'rfc','folio','salario_diario','salario_diario_integrado','subtotal',
-            'descuento','total','num_dias_pagados');
+            'nss', 'curp', 'rfc', 'folio', 'salario_diario', 'salario_diario_integrado', 'subtotal',
+            'descuento', 'total', 'num_dias_pagados');
         $keys->fechas = array('fecha_envio', 'fecha_pago', 'fecha_inicial_pago', 'fecha_final_pago', 'fecha', 'fecha_inicio_rel_laboral');
         $keys->selects = array();
 
@@ -988,6 +982,8 @@ class controlador_tg_manifiesto extends _ctl_base
                 return $this->errores->error(mensaje: 'Error al obtener cliente de la nomina', data: $cliente_nomina);
             }
 
+            $campos['subsidio'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Subsidio');
             $campos['prima_dominical'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_percepcion.descripcion" => 'Prima Dominical');
             $campos['vacaciones'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
@@ -998,6 +994,10 @@ class controlador_tg_manifiesto extends _ctl_base
                 "nom_percepcion.descripcion" => 'Compensacion');
             $campos['despensa'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_percepcion.descripcion" => 'Despensa');
+            $campos['otros_ingresos'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Otros Ingresos');
+            $campos['devolucion_infonavit'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
+                "nom_percepcion.descripcion" => 'Devolucion Infonavit');
             $campos['prima_vacacional'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
                 "nom_percepcion.descripcion" => 'Prima Vacacional');
             $campos['gratificacion'] = array("nom_nomina_id" => $nomina['nom_nomina_id'],
@@ -1082,10 +1082,16 @@ class controlador_tg_manifiesto extends _ctl_base
                 $uuid = $timbrado->registros[0]['fc_cfdi_sellado_uuid'];
             }
 
+            $fi = (new em_empleado($this->link))->obten_factor(em_empleado_id: $nomina['em_empleado_id'],
+                fecha_inicio_rel: $nomina['em_empleado_fecha_inicio_rel_laboral']);
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener factor de ingracion', data: $fi);
+            }
+
             $registro = [
                 $nomina['fc_factura_folio'],
                 $nomina['em_empleado_id'],
-                $nomina['em_empleado_nombre_completo'],
+                $nomina['em_empleado_ap'] . ' ' . $nomina['em_empleado_am'] . ' ' . $nomina['em_empleado_nombre'],
                 $nomina['em_empleado_rfc'],
                 $nomina['em_empleado_nss'],
                 $nomina['em_registro_patronal_descripcion'],
@@ -1097,17 +1103,17 @@ class controlador_tg_manifiesto extends _ctl_base
                 $uuid,
                 (!empty($uuid)) ? 'TIMBRADO' : '',
                 $nomina['em_empleado_salario_diario'],
-                'POR REVISAR',
+                $fi,
                 $nomina['em_empleado_salario_diario_integrado'],
                 $sueldo,
-                $otros_pagos['subsidios']['total'],
+                $percepciones['subsidio']['total'],
                 $percepciones['prima_dominical']['total'],
                 $percepciones['vacaciones']['total'],
                 $percepciones['septimo_dia']['total'],
                 $percepciones['compensacion']['total'],
                 $percepciones['despensa']['total'],
-                $otros_pagos['otros_ingresos']['total'],
-                'POR REVISAR',
+                $percepciones['otros_ingresos']['total'],
+                $percepciones['devolucion_infonavit']['total'],
                 $percepciones['prima_vacacional']['gravado'],
                 $percepciones['prima_vacacional']['exento'],
                 $percepciones['gratificacion']['gravado'],
@@ -1165,8 +1171,7 @@ class controlador_tg_manifiesto extends _ctl_base
         $periodo = "$fecha_inicio - $fecha_final";
 
         $registros = $this->fill_data(nominas: $nominas, empresa: $empresa,
-            manifiesto_fecha_inicio: $manifiesto['tg_manifiesto_fecha_inicial_pago'],manifiesto_fecha_fin:
-            $manifiesto['tg_manifiesto_fecha_final_pago']);
+            manifiesto_fecha_inicio: $manifiesto['tg_manifiesto_fecha_inicial_pago'], manifiesto_fecha_fin: $manifiesto['tg_manifiesto_fecha_final_pago']);
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al maquetar datos', data: $registros);
             print_r($error);
@@ -1202,46 +1207,46 @@ class controlador_tg_manifiesto extends _ctl_base
     public function descarga_nomina(bool $header, bool $ws = false): array|stdClass
     {
         $manifiesto = (new tg_manifiesto($this->link))->registro(registro_id: $this->registro_id);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al obtener manifiesto',data:  $manifiesto,
-                header: $header,ws:$ws);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al obtener manifiesto', data: $manifiesto,
+                header: $header, ws: $ws);
         }
 
         $nominas = (new tg_manifiesto_periodo($this->link))->nominas_by_manifiesto(tg_manifiesto_id: $this->registro_id);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo',data:  $nominas,
-                header: $header,ws:$ws);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo', data: $nominas,
+                header: $header, ws: $ws);
         }
 
         $conceptos = (new nom_nomina($this->link))->obten_conceptos_nominas(nominas: $nominas);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo',data:  $conceptos,
-                header: $header,ws:$ws);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo', data: $conceptos,
+                header: $header, ws: $ws);
         }
 
         $exportador = (new exportador_eliminar(num_hojas: 3));
         $registros_xls = array();
         $registros_provisiones = array();
 
-        foreach ($nominas as $nomina){
+        foreach ($nominas as $nomina) {
             $row = (new nom_nomina($this->link))->maqueta_registros_excel(nom_nomina_id: $nomina['nom_nomina_id'],
                 conceptos_nomina: $conceptos);
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al maquetar datos de la nomina',data:  $row,
-                    header: $header,ws:$ws);
+            if (errores::$error) {
+                return $this->retorno_error(mensaje: 'Error al maquetar datos de la nomina', data: $row,
+                    header: $header, ws: $ws);
             }
 
             $provisiones = (new tg_provision($this->link))->maqueta_excel_provisiones(
                 nom_nomina_id: $nomina['nom_nomina_id']);
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al maquetar provisiones de la nomina',data:  $provisiones,
-                    header: $header,ws:$ws);
+            if (errores::$error) {
+                return $this->retorno_error(mensaje: 'Error al maquetar provisiones de la nomina', data: $provisiones,
+                    header: $header, ws: $ws);
             }
 
             $pagos = (new em_cuenta_bancaria($this->link))->maqueta_excel_pagos(data_general: $row);
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al maquetar pagos de la nomina',data:  $pagos,
-                    header: $header,ws:$ws);
+            if (errores::$error) {
+                return $this->retorno_error(mensaje: 'Error al maquetar pagos de la nomina', data: $pagos,
+                    header: $header, ws: $ws);
             }
 
             $registros_xls[] = $row;
@@ -1270,21 +1275,27 @@ class controlador_tg_manifiesto extends _ctl_base
         $registros_pagos_excel = array();
 
         foreach ($registros_xls as $row) {
-            $registros[] = array_combine(preg_replace(array_map(function($s){return "/^$s$/";},
-                array_keys($keys)),$keys, array_keys($row)), $row);
+            $registros[] = array_combine(preg_replace(array_map(function ($s) {
+                return "/^$s$/";
+            },
+                array_keys($keys)), $keys, array_keys($row)), $row);
         }
 
         foreach ($registros_provisiones as $row) {
-            $registros_provisiones_excel[] = array_combine(preg_replace(array_map(function($s){return "/^$s$/";},
-                array_keys($keys_provisiones)),$keys_provisiones, array_keys($row)), $row);
+            $registros_provisiones_excel[] = array_combine(preg_replace(array_map(function ($s) {
+                return "/^$s$/";
+            },
+                array_keys($keys_provisiones)), $keys_provisiones, array_keys($row)), $row);
         }
 
         foreach ($registros_pagos as $row) {
-            $registros_pagos_excel[] = array_combine(preg_replace(array_map(function($s){return "/^$s$/";},
-                array_keys($keys_pagos)),$keys_pagos, array_keys($row)), $row);
+            $registros_pagos_excel[] = array_combine(preg_replace(array_map(function ($s) {
+                return "/^$s$/";
+            },
+                array_keys($keys_pagos)), $keys_pagos, array_keys($row)), $row);
         }
 
-        $keys_hojas =  array();
+        $keys_hojas = array();
         $keys_hojas['nominas'] = new stdClass();
         $keys_hojas['nominas']->keys = $keys;
         $keys_hojas['nominas']->registros = $registros;
@@ -1295,12 +1306,12 @@ class controlador_tg_manifiesto extends _ctl_base
         $keys_hojas['pagos']->keys = $keys_pagos;
         $keys_hojas['pagos']->registros = $registros_pagos_excel;
 
-        $xls = $exportador->genera_xls(header: $header,name: $manifiesto["tg_manifiesto_descripcion"],
+        $xls = $exportador->genera_xls(header: $header, name: $manifiesto["tg_manifiesto_descripcion"],
             nombre_hojas: array("nominas", "provisionado", "pagos"), keys_hojas: $keys_hojas,
             path_base: $this->path_base);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al generar xls',data:  $xls, header: $header,
-                ws:$ws);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al generar xls', data: $xls, header: $header,
+                ws: $ws);
         }
 
         /* $resultado = $exportador->listado_base_xls(header: $header, name: $this->seccion, keys:  $keys,

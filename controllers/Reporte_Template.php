@@ -98,12 +98,20 @@ class Reporte_Template
     ];
 
     const REPORTE_NOMINA = [
+
         "A:BA" => [
             'alignment' => [
                 'horizontal' => 'center',
                 'vertical' => 'center',
             ]
         ],
+        "C" => [
+            'alignment' => [
+                'horizontal' => 'left',
+                'vertical' => 'center',
+            ]
+        ],
+
         "N:AZ" => [
             'numberFormat' => [
                 'formatCode' => "$#,##0.00;-$#,##0.00",
@@ -166,6 +174,7 @@ class Reporte_Template
                 'vertical' => 'center',
             ]
         ],
+
 
     ];
 
