@@ -14,6 +14,7 @@ use base\orm\inicializacion;
 use base\orm\modelo;
 use config\generales;
 use DateTime;
+use gamboamartin\cat_sat\models\cat_sat_isn;
 use gamboamartin\comercial\models\com_sucursal;
 use gamboamartin\direccion_postal\models\dp_calle_pertenece;
 use gamboamartin\empleado\models\em_registro_patronal;
@@ -1072,8 +1073,14 @@ class controlador_tg_manifiesto extends _ctl_base
 
             $base_isn = $percepciones['total'] - $otros_pagos['subsidios']['total'];
 
-            $tasa_isn = "POR REVISAR";
-            $importe_isn = "POR REVISAR";
+            $cat_sat_isn = (new cat_sat_isn($this->link))->registro(registro_id: $nomina['em_registro_patronal_cat_sat_isn_id'],
+                columnas: array("cat_sat_isn_porcentaje"));
+            if (errores::$error) {
+                return $this->errores->error(mensaje: 'Error al obtener cat_sat_isn', data: $cat_sat_isn);
+            }
+
+            $tasa_isn = $cat_sat_isn['cat_sat_isn_porcentaje'] / 100;
+            $importe_isn = $base_isn * $tasa_isn;
             $cliente = $cliente_nomina['com_sucursal_descripcion'];
 
             $uuid = "";
