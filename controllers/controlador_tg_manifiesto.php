@@ -1941,10 +1941,13 @@ class controlador_tg_manifiesto extends _ctl_base
                             }
                         }
                         if ($empleado_excel->horas_extras_dobles > 0) {
+                            $mitad_horas_ext = $empleado_excel->horas_extras_dobles/2;
+
                             $nom_par_percepcion_sep = array();
                             $nom_par_percepcion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
                             $nom_par_percepcion_sep['nom_percepcion_id'] = 13;
-                            $nom_par_percepcion_sep['importe_gravado'] = $empleado_excel->horas_extras_dobles;
+                            $nom_par_percepcion_sep['importe_gravado'] = $mitad_horas_ext;
+                            $nom_par_percepcion_sep['importe_exento'] = $mitad_horas_ext;
 
                             $r_alta_nom_par_percepcion = (new nom_par_percepcion($this->link))->alta_registro(registro: $nom_par_percepcion_sep);
                             if (errores::$error) {
