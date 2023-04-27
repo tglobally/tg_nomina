@@ -23,7 +23,7 @@ $url_icons = (new views())->url_icons;
                         </button>
                         <div class="dropdown-menu dropdown-menu-right">
                             <button type="submit" class="dropdown-item" name="btn_action_next"
-                                    value="ve_nominas" form="form_">
+                                    value="ve_nominas" form="form_genera_xmls">
                                 Generar XML
                             </button>
                             <button type="submit" class="dropdown-item" name="btn_action_next"
@@ -51,12 +51,12 @@ $url_icons = (new views())->url_icons;
                         </a>
                     </div>
                     <div class="col-sm-2">
-                        <form method="post" action="<?php echo $controlador->link_tg_manifiesto_agregar_percepcion; ?> "
-                              class="form-additional form_nominas " id="form_agregar_percepcion">
-                            <input id="agregar_percepcion" name="agregar_percepcion" type="hidden">
+                        <form method="post" action="<?php echo $controlador->link_tg_manifiesto_genera_xmls; ?> "
+                              class="form-additional form_nominas " id="form_genera_xmls">
+                            <input id="nominas_genera_xmls" name="nominas" type="hidden">
                             <div class="botones">
                                 <button type="submit" class="btn btn-info" name="btn_action_next"
-                                        value="exportar" form="form_agregar_percepcion">
+                                        value="exportar" form="form_genera_xmls">
                                     Generar XML
                                 </button>
                             </div>

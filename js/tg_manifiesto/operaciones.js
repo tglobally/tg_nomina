@@ -94,10 +94,34 @@ $(document).ready(function () {
     });
 
     $('.form_nominas').on('submit', function(e){
+        e.preventDefault();
+
         if(nominas_seleccionadas.length === 0) {
-            e.preventDefault();
             alert("Seleccione una nómina");
+            return;
         }
+
+        let url = get_url("tg_manifiesto", "genera_xmls", {});
+        var dataform = new FormData();
+        dataform.append('nominas', nominas_seleccionadas);
+
+        $.ajax({
+            async: true,
+            type: 'POST',
+            url: url,
+            data: dataform,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+
+                console.log(response)
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest)
+            }
+        });
+
+
     });
 
 });
