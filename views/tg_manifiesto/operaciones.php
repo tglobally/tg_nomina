@@ -30,10 +30,7 @@ $url_icons = (new views())->url_icons;
                                     value="ve_nominas" form="form_">
                                 Timbrar XML
                             </button>
-                            <button type="submit" class="dropdown-item" name="btn_action_next"
-                                    value="ve_nominas" form="form_">
-                                Ver XML
-                            </button>
+
 
                             <!--<a class="dropdown-item" href="#">Something else here</a>-->
                         </div>
@@ -132,7 +129,15 @@ $url_icons = (new views())->url_icons;
             </div>
         </div>
 
-
+        <div class="lista">
+            <div class="card">
+                <div class="card-header">
+                    <span class="text-header">Nominas Seleccionadas</span>
+                </div>
+                <div class="card-body tablas_nominas ">
+                </div>
+            </div>
+        </div>
 
     </div>
 </div>

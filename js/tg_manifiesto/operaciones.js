@@ -4,6 +4,7 @@ $(document).ready(function () {
     table_nom_nomina.search('').columns().search('').draw();
 
     var nominas_seleccionadas = [];
+    var datatables = [];
     var elementos_seleccionados = new Map();
 
     let inicializa_datatable = (identificador, columns, entidad, clase) => {
@@ -82,10 +83,25 @@ $(document).ready(function () {
         timer = setTimeout(() => {
             var selectedData = table_nom_nomina.rows('.selected').data().pluck('nom_nomina_id');
 
+            datatables.forEach((tabla) => {
+                tabla.clear();
+            });
+
             nominas_seleccionadas = [];
 
             selectedData.each(function (value, row, data) {
                 nominas_seleccionadas.push(value);
+
+                let url_percepcion = get_url("nom_nomina_documento", "get_documentos_nomina", {nom_nomina_id: value});
+
+                get_data(url_percepcion, function (rows) {
+                    var registros = rows.registros;
+                    console.log(registros);
+                });
+            });
+
+            datatables.forEach((tabla) => {
+                tabla.columns.adjust().draw();
             });
 
             $('#nominas_genera_xmls').val(nominas_seleccionadas);
