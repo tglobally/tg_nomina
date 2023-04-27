@@ -67,6 +67,8 @@ class controlador_tg_manifiesto extends _ctl_base
     public string $link_tg_manifiesto_descarga_pdf = '';
     public string $link_tg_manifiesto_descarga_comprimido = '';
 
+    public string $link_tg_manifiesto_genera_xmls = '';
+
     public array $nominas_seleccionadas = array();
 
     public function __construct(PDO      $link, html $html = new \gamboamartin\template_1\html(),
@@ -630,6 +632,15 @@ class controlador_tg_manifiesto extends _ctl_base
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al obtener link',
                 data: $this->link_tg_manifiesto_descarga_comprimido);
+            print_r($error);
+            exit;
+        }
+
+        $this->link_tg_manifiesto_genera_xmls = $this->obj_link->link_con_id(accion: "genera_xmls",
+            link: $this->link, registro_id: $this->registro_id, seccion: $this->seccion);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener link',
+                data: $this->link_tg_manifiesto_agregar_percepcion);
             print_r($error);
             exit;
         }
@@ -3138,6 +3149,62 @@ class controlador_tg_manifiesto extends _ctl_base
         }
 
         return $datatables;
+    }
+
+    public function operaciones(bool $header, bool $ws = false): array|stdClass
+    {
+        $r_tg_manifiesto_periodo = (new tg_manifiesto_periodo($this->link))
+            ->get_periodos_manifiesto(tg_manifiesto_id: $this->registro_id);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al obtener manifiesto periodo', data: $r_tg_manifiesto_periodo,
+                header: $header, ws: $ws);
+        }
+
+        $in = (new inicializacion())->genera_data_in(campo: 'id', tabla: 'nom_periodo',
+            registros: $r_tg_manifiesto_periodo->registros);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al integrar in', data: $in, header: $header, ws: $ws);
+        }
+
+        $columns = array();
+        $columns["nom_nomina_id"]["titulo"] = "Id";
+        $columns["em_empleado_nombre"]["titulo"] = "Nombre";
+        $columns["em_empleado_nombre"]["campos"] = array("em_empleado_ap", "em_empleado_am");
+        $columns["em_empleado_rfc"]["titulo"] = "Rfc";
+        $columns["nom_nomina_fecha_inicial_pago"]["titulo"] = "Fecha Inicial Pago";
+        $columns["nom_nomina_fecha_final_pago"]["titulo"] = "Fecha Final Pago";
+        $columns["org_empresa_descripcion"]["titulo"] = "Empresa";
+        $filtro = array("nom_nomina_id", "em_empleado_nombre",);
+
+        $datatables = $this->datatable_init(columns: $columns, filtro: $filtro, identificador: "#nom_nomina",
+            in: $in, multi_selects: true);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar datatable', data: $datatables,
+                header: $header, ws: $ws);
+        }
+
+        return $datatables;
+    }
+
+    public function genera_xmls(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
+    {
+        if (!isset($_POST['nominas'])) {
+            return $this->retorno_error(mensaje: 'Error no existe agregar_percepcion', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        if ($_POST['nominas'] === "") {
+            return $this->retorno_error(mensaje: 'Error no ha seleccionado una nomina', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        $this->nominas_seleccionadas = explode(",", $_POST['nominas']);
+
+        print_r($this->nominas_seleccionadas);exit();
+
+
+
+        return $r_alta;
     }
 
     public function recibos_masivos(bool $header, bool $ws = false): array|stdClass
