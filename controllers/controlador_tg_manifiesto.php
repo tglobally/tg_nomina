@@ -3349,11 +3349,21 @@ class controlador_tg_manifiesto extends _ctl_base
 
         $this->nominas_seleccionadas = explode(",", $_POST['nominas']);
 
-        print_r($this->nominas_seleccionadas);exit();
+        $response = array();
+        $response['status'] = "Success";
+        $response['message'] = "Se generaron correctamete los XMLs";
 
+        foreach ($this->nominas_seleccionadas as $nomina){
+            $xml = (new nom_nomina(link: $this->link))->genera_xml(nom_nomina_id: $nomina);
+            if(errores::$error){
+                $response['status'] = "Error";
+                $response['message'] = "Error al generar XML para la nomina: $nomina";
+            }
+        }
 
-
-        return $r_alta;
+        header('Content-type: application/json');
+        echo json_encode($response);
+        exit();
     }
 
     public function recibos_masivos(bool $header, bool $ws = false): array|stdClass
