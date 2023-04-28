@@ -16,58 +16,16 @@ $(document).ready(function () {
             info: false,
             columns: columns,
             columnDefs: [
-                {targets: 0, visible: false},
                 {
-                    targets: 3,
+                    targets: 1,
                     render: function (data, type, row, meta) {
-                        var input = document.createElement('input');
-                        input.setAttribute("type", "text");
-                        input.setAttribute("class", `input-accion ${clase + '_' + data[clase + '_id'] + '_importe_gravado'}`);
-                        input.setAttribute("name", "importe_gravado");
-                        input.setAttribute("value", data[entidad + "_importe_gravado"]);
-
-                        return input.outerHTML;
-                    }
-                },
-                {
-                    targets: 4,
-                    render: function (data, type, row, meta) {
-                        var input = document.createElement('input');
-                        input.setAttribute("type", "text");
-                        input.setAttribute("class", `input-accion ${clase + '_' + data[clase + '_id'] + '_importe_exento'}`);
-                        input.setAttribute("name", "importe_exento");
-                        input.setAttribute("value", data[entidad + "_importe_exento"]);
-
-                        return input.outerHTML;
-                    }
-                },
-                {
-                    targets: 5,
-                    render: function (data, type, row, meta) {
-                        return `<a role='button' title='Elimina' data-id='${data[entidad + "_id"]}' 
-                               class='btn btn-danger btn-sm delete-btn' style='margin-left: 2px; margin-bottom: 2px; '>Elimina</a>`;
+                        return `<a href="${row.doc_documento_ruta_relativa}" style="color: #198754;text-decoration: underline;" 
+                                   target="_blank">${row.doc_documento_nombre}</a>`;
                     }
                 }
             ],
             order: [[0, 'asc']],
             displayLength: 'All',
-            drawCallback: function (settings) {
-                var api = this.api();
-                var rows = api.rows({page: 'current'}).nodes();
-                var last = null;
-
-                api
-                    .column(0, {page: 'current'}).data()
-                    .each(function (group, i) {
-                        if (last !== group.nom_nomina_id) {
-                            var salida = `<b> NOMINA: </b> ${group.nom_nomina_id} - ${group.em_empleado_descripcion}`;
-                            $(rows)
-                                .eq(i)
-                                .before('<tr class="group"><td colspan="5">' + salida + '</td></tr>');
-                            last = group.nom_nomina_id;
-                        }
-                    });
-            },
         });
     };
 
@@ -81,7 +39,7 @@ $(document).ready(function () {
         }
 
         timer = setTimeout(() => {
-            var selectedData = table_nom_nomina.rows('.selected').data().pluck('nom_nomina_id');
+            var selectedData = table_nom_nomina.rows('.selected').data();
 
             datatables.forEach((tabla) => {
                 tabla.clear();
@@ -89,15 +47,31 @@ $(document).ready(function () {
 
             nominas_seleccionadas = [];
 
+            $('.tablas_nominas').empty();
+
             selectedData.each(function (value, row, data) {
-                nominas_seleccionadas.push(value);
+                nominas_seleccionadas.push(value.nom_nomina_id);
 
-                let url_percepcion = get_url("nom_nomina_documento", "get_documentos_nomina", {nom_nomina_id: value});
+                var contenedor = `<div class="col-md-12">
+                                            <div class="tabla_titulo"><span class="text-header">Nomina - ${value.em_empleado_nombre_completo}</span></div>
+                                            <table id="nomina_${value.nom_nomina_id}" class="datatables table table-striped "></table>
+                                         </div>`;
 
-                get_data(url_percepcion, function (rows) {
+                $('.tablas_nominas').append(contenedor);
+
+                var table = inicializa_datatable(`#nomina_${value.nom_nomina_id}`, [
+                    {data: 'doc_tipo_documento_codigo', title: "Tipo Documento"},
+                    {data: 'doc_documento_nombre', title: "Documento"},
+                ]);
+
+                let url = get_url("nom_nomina_documento", "get_documentos_nomina", {nom_nomina_id: value.nom_nomina_id});
+
+                get_data(url, function (rows) {
                     var registros = rows.registros;
-                    console.log(registros);
+                    table.rows.add(registros).draw();
                 });
+
+                nominas_seleccionadas.push(table);
             });
 
             datatables.forEach((tabla) => {
@@ -109,10 +83,10 @@ $(document).ready(function () {
         }, 1000);
     });
 
-    $('.form_nominas').on('submit', function(e){
+    $('.form_nominas').on('submit', function (e) {
         e.preventDefault();
 
-        if(nominas_seleccionadas.length === 0) {
+        if (nominas_seleccionadas.length === 0) {
             alert("Seleccione una nómina");
             return;
         }
