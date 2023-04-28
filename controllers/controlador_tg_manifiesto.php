@@ -2221,8 +2221,8 @@ class controlador_tg_manifiesto extends _ctl_base
             $mensaje->not_emisor_email = $emisor['not_emisor_email'];
             $mensaje->not_emisor_password = $emisor['not_emisor_password'];
             $mensaje->not_emisor_user_name = $emisor['not_emisor_user_name'];
-            $mensaje->not_receptor_email = $fc_receptor_email->registro[0]['not_receptor_email'];
-            $mensaje->not_receptor_alias = $fc_receptor_email->registro[0]['not_receptor_alias'];
+            $mensaje->not_receptor_email = $fc_receptor_email->registros[0]['not_receptor_email'];
+            $mensaje->not_receptor_alias = $fc_receptor_email->registros[0]['not_receptor_alias'];
             $mensaje->not_mensaje_asunto = "Recibo nomina";
             $mensaje->not_mensaje_mensaje = "Se envia recibo de nomina";
 
