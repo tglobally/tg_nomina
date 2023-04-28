@@ -15,10 +15,17 @@ use base\orm\modelo;
 use config\generales;
 use DateTime;
 use gamboamartin\cat_sat\models\cat_sat_isn;
+use gamboamartin\comercial\models\com_email_cte;
 use gamboamartin\comercial\models\com_sucursal;
 use gamboamartin\direccion_postal\models\dp_calle_pertenece;
 use gamboamartin\empleado\models\em_registro_patronal;
 use gamboamartin\errores\errores;
+use gamboamartin\facturacion\models\fc_factura;
+use gamboamartin\facturacion\models\fc_receptor_email;
+use gamboamartin\nomina\models\nom_nomina_documento;
+use gamboamartin\notificaciones\mail\_mail;
+use gamboamartin\notificaciones\models\not_emisor;
+use tglobally\tg_nomina\models\_email;
 use gamboamartin\facturacion\models\fc_cfdi_sellado;
 use gamboamartin\nomina\models\calcula_nomina;
 use gamboamartin\nomina\models\em_empleado;
@@ -2100,6 +2107,148 @@ class controlador_tg_manifiesto extends _ctl_base
         $link .= "&session_id=$this->session_id";
         header('Location:' . $link);
         exit;
+    }
+
+    public function envia_recibos(bool $header, bool $ws = false){
+        $manifiesto = (new tg_manifiesto($this->link))->registro(registro_id: $this->registro_id);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al obtener manifiesto', data: $manifiesto,
+                header: $header, ws: $ws);
+        }
+
+        $nominas = (new tg_manifiesto_periodo($this->link))->nominas_by_manifiesto(tg_manifiesto_id: $this->registro_id);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo', data: $nominas,
+                header: $header, ws: $ws);
+        }
+
+        $mails = array();
+        foreach ($nominas as $nomina){
+            $fc_factura_id = $nomina['fc_factura_id'];
+
+            $factura = (new fc_factura($this->link))->registro(registro_id: $fc_factura_id);
+            if (errores::$error) {
+                return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo', data: $factura,
+                    header: $header, ws: $ws);
+            }
+
+            $emisor = array();
+            if((int)$factura['org_empresa_id'] === 54){
+                $emisor = (new not_emisor($this->link))->registro(registro_id: 4);
+                if (errores::$error) {
+                    return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo', data: $emisor,
+                        header: $header, ws: $ws);
+                }
+            }
+
+            if((int)$factura['org_empresa_id'] === 36){
+                $emisor = (new not_emisor($this->link))->registro(registro_id: 7);
+                if (errores::$error) {
+                    return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo', data: $emisor,
+                        header: $header, ws: $ws);
+                }
+            }
+
+            if((int)$factura['org_empresa_id'] === 25){
+                $emisor = (new not_emisor($this->link))->registro(registro_id: 8);
+                if (errores::$error) {
+                    return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo', data: $emisor,
+                        header: $header, ws: $ws);
+                }
+            }
+
+            if((int)$factura['org_empresa_id'] === 30){
+                $emisor = (new not_emisor($this->link))->registro(registro_id: 5);
+                if (errores::$error) {
+                    return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo', data: $emisor,
+                        header: $header, ws: $ws);
+                }
+            }
+
+            $filtro['com_cliente.id'] = $factura['com_cliente_id'];
+            $com_email_cte = (new com_email_cte($this->link))->filtro_and(filtro: $filtro);
+            if (errores::$error) {
+                return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo', data: $com_email_cte,
+                    header: $header, ws: $ws);
+            }
+
+            $filtro_fac['com_email_cte.id'] = $com_email_cte->registros[0]['com_email_cte_id'];
+            $fc_receptor_email = (new fc_receptor_email($this->link))->filtro_and(filtro: $filtro_fac);
+            if (errores::$error) {
+                return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo', data: $fc_receptor_email,
+                    header: $header, ws: $ws);
+            }
+
+            if(!isset($emisor['not_emisor_host'])){
+                return $this->retorno_error(mensaje: 'Error no existe emisor', data: $fc_receptor_email,
+                    header: $header, ws: $ws);
+            }
+
+
+            $doc_tipo_documento_id = (new nom_nomina(link: $this->link))->doc_tipo_documento_id(extension: "pdf");
+            if (errores::$error) {
+                return $this->retorno_error(mensaje: 'Error al obtener factura documento', data: $doc_tipo_documento_id,
+                    header: $header, ws: $ws);
+            }
+
+            $filtro_pdf['nom_nomina.id'] = $nomina['nom_nomina_id'];
+            $filtro_pdf['doc_tipo_documento.id'] = $doc_tipo_documento_id;
+            $r_nom_nomina_documento_pdf = (new nom_nomina_documento(link: $this->link))->filtro_and(
+                filtro: $filtro_pdf);
+            if (errores::$error) {
+                return $this->retorno_error(mensaje: 'Error al obtener factura documento', data: $r_nom_nomina_documento_pdf,
+                     header: $header, ws: $ws);
+            }
+
+            $doc_tipo_documento_id = (new nom_nomina(link: $this->link))->doc_tipo_documento_id(extension: "xml");
+            if (errores::$error) {
+                return $this->retorno_error(mensaje: 'Error al obtener factura documento', data: $doc_tipo_documento_id,
+                    header: $header, ws: $ws);
+            }
+
+            $filtro_xml['nom_nomina.id'] = $nomina['nom_nomina_id'];
+            $filtro_xml['doc_tipo_documento.id'] = $doc_tipo_documento_id;
+            $r_nom_nomina_documento_xml = (new nom_nomina_documento(link: $this->link))->filtro_and(
+                filtro: $filtro_xml);
+            if (errores::$error) {
+                return $this->retorno_error(mensaje: 'Error al obtener factura documento', data: $r_nom_nomina_documento_xml,
+                     header: $header, ws: $ws);
+            }
+
+            $mensaje = new stdClass();
+            $mensaje->not_emisor_host = $emisor['not_emisor_host'];
+            $mensaje->not_emisor_port = $emisor['not_emisor_port'];
+            $mensaje->not_emisor_email = $emisor['not_emisor_email'];
+            $mensaje->not_emisor_password = $emisor['not_emisor_password'];
+            $mensaje->not_emisor_user_name = $emisor['not_emisor_user_name'];
+            $mensaje->not_receptor_email = $fc_receptor_email->registro[0]['not_receptor_email'];
+            $mensaje->not_receptor_alias = $fc_receptor_email->registro[0]['not_receptor_alias'];
+            $mensaje->not_mensaje_asunto = "Recibo nomina";
+            $mensaje->not_mensaje_mensaje = "Se envia recibo de nomina";
+
+            $adjuntos = array();
+            if($r_nom_nomina_documento_pdf->n_registros > 0){
+                if(file_exists($r_nom_nomina_documento_pdf->registros[0]['doc_documento_ruta_absoluta'])) {
+                    $adjuntos[0] = $r_nom_nomina_documento_pdf->registros[0];
+                    $adjuntos[0]['not_adjunto_descripcion'] = 'recibo';
+                }
+            }
+            if($r_nom_nomina_documento_xml->n_registros > 0) {
+                if(file_exists($r_nom_nomina_documento_xml->registros[0]['doc_documento_ruta_absoluta'])){
+                    $adjuntos[1] = $r_nom_nomina_documento_xml->registros[0];
+                    $adjuntos[1]['not_adjunto_descripcion'] = 'xml';
+                }
+            }
+
+            $mail = (new _mail())->envia(mensaje: $mensaje, adjuntos: $adjuntos);
+            if(errores::$error){
+                return $this->retorno_error(mensaje: 'Error al enviar mensaje',data:  $mail,header: $header, ws: $ws);
+            }
+            $mails[] = $mail;
+
+        }
+
+        return $mails;
     }
 
 
