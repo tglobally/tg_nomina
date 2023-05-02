@@ -100,11 +100,11 @@ class tg_manifiesto extends _modelo_parent{
 
         if (!isset($this->registro['descripcion'])) {
             $this->registro['descripcion'] = $fc_csd['org_empresa_rfc'].' ';
-            $this->registro['descripcion'] .= $this->registro['codigo'];
-        }
+                $this->registro['descripcion'] .= $this->registro['codigo'];
+            }
 
-        if (!isset($this->registro['descripcion_select'])) {
-            $this->registro['descripcion_select'] = $this->registro['codigo'].' ';
+            if (!isset($this->registro['descripcion_select'])) {
+                $this->registro['descripcion_select'] = $this->registro['codigo'].' ';
             $this->registro['descripcion_select'] .= $tg_sucursal_alianza['com_cliente_rfc'].' ';
             $this->registro['descripcion_select'] .= $fc_csd['org_empresa_rfc'];
         }
