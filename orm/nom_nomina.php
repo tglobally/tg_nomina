@@ -2,6 +2,7 @@
 
 namespace tglobally\tg_nomina\models;
 
+use base\orm\modelo;
 use config\pac;
 use gamboamartin\comercial\models\com_sucursal;
 use gamboamartin\comercial\models\com_tmp_cte_dp;
@@ -419,19 +420,19 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
                 mensaje: 'Error al obtener total percepciones', data: $total_percepciones);
         }
 
-        $percepciones =  $this->percepciones(nom_nomina_id: $nom_nomina->nom_nomina_id);
+        $percepciones = $this->percepciones(nom_nomina_id: $nom_nomina->nom_nomina_id);
         if (errores::$error) {
             return $this->error->error(
                 mensaje: 'Error al obtener percepciones', data: $percepciones);
         }
 
-        $deducciones =  $this->deducciones(nom_nomina_id: $nom_nomina->nom_nomina_id);
+        $deducciones = $this->deducciones(nom_nomina_id: $nom_nomina->nom_nomina_id);
         if (errores::$error) {
             return $this->error->error(
                 mensaje: 'Error al obtener deducciones', data: $deducciones);
         }
 
-        $otros_pagos =  $this->otros_pagos(nom_nomina_id: $nom_nomina->nom_nomina_id);
+        $otros_pagos = $this->otros_pagos(nom_nomina_id: $nom_nomina->nom_nomina_id);
         if (errores::$error) {
             return $this->error->error(
                 mensaje: 'Error al obtener otros_pagos', data: $otros_pagos);
@@ -439,7 +440,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
 
         $salida_percepciones = array();
 
-        foreach ($percepciones as $index => $percepcion){
+        foreach ($percepciones as $index => $percepcion) {
             $salida_percepciones[$index] = new stdClass();
             $salida_percepciones[$index]->tipo_percepcion = $percepcion['cat_sat_tipo_percepcion_nom_codigo'];
             $salida_percepciones[$index]->clave = $percepcion['nom_percepcion_codigo'];
@@ -468,7 +469,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
 
         $salida_deducciones = array();
 
-        foreach ($deducciones as $index => $deduccion){
+        foreach ($deducciones as $index => $deduccion) {
             $salida_deducciones[$index] = new stdClass();
             $salida_deducciones[$index]->tipo_deduccion = $deduccion['cat_sat_tipo_deduccion_nom_codigo'];
             $salida_deducciones[$index]->clave = $deduccion['nom_deduccion_codigo'];
@@ -483,7 +484,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
 
         $salida_otros_pagos = array();
 
-        foreach ($otros_pagos as $index => $otros_pago){
+        foreach ($otros_pagos as $index => $otros_pago) {
             $salida_otros_pagos[$index] = new stdClass();
             $salida_otros_pagos[$index]->tipo_otro_pago = $otros_pago['cat_sat_tipo_otro_pago_nom_codigo'];
             $salida_otros_pagos[$index]->clave = $otros_pago['nom_otro_pago_codigo'];
@@ -537,7 +538,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         }
 
         $fecha_cfdi = (new fechas())->fecha_cfdi(comprobante: $comprobante);
-        if(errores::$error){
+        if (errores::$error) {
             return $this->error->error(mensaje: 'Error al calcular fecha', data: $fecha_cfdi);
         }
 
@@ -553,6 +554,173 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         return json_encode($data);
     }
 
+    private function document_actions(string $json, stdClass $nom_nomina): bool|string|array|stdClass
+    {
+        $existe_nomina = (new nom_nomina_documento(link: $this->link))->existe(array('nom_nomina.id' => $nom_nomina->nom_nomina_id));
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al validar si existe documento', data: $existe_nomina);
+        }
+
+        $existe_factura = (new fc_factura_documento(link: $this->link))->existe(array('fc_factura.id' => $nom_nomina->fc_factura_id));
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al validar si existe documento', data: $existe_factura);
+        }
+
+        $ruta_archivos_tmp = (new fc_factura(link: $this->link))->genera_ruta_archivo_tmp();
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener ruta de archivos', data: $ruta_archivos_tmp);
+        }
+
+        $doc_tipo_documento_id = $this->doc_tipo_documento_id(extension: "json");
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al validar extension del documento', data: $doc_tipo_documento_id);
+        }
+
+        $file_xml_st = $ruta_archivos_tmp . '/' . $this->registro_id . '.json';
+        file_put_contents($file_xml_st, $json);
+
+        if (!$existe_nomina && !$existe_factura) {
+            $file['name'] = $file_xml_st;
+            $file['tmp_name'] = $file_xml_st;
+
+            $documento['doc_tipo_documento_id'] = $doc_tipo_documento_id;
+            $documento['descripcion'] = $ruta_archivos_tmp;
+
+            $documento = (new doc_documento(link: $this->link))->alta_documento(registro: $documento, file: $file);
+            if (errores::$error) {
+                return $this->error->error(mensaje: 'Error al guardar xml', data: $documento);
+            }
+
+            $nom_nomina_documento = array();
+            $nom_nomina_documento['nom_nomina_id'] = $nom_nomina->nom_nomina_id;
+            $nom_nomina_documento['doc_documento_id'] = $documento->registro_id;
+
+            $nom_nomina_documento = (new nom_nomina_documento(link: $this->link))->alta_registro(registro: $nom_nomina_documento);
+            if (errores::$error) {
+                return $this->error->error(mensaje: 'Error al dar de alta nomina documento', data: $nom_nomina_documento);
+            }
+
+            $fc_factura_documento = array();
+            $fc_factura_documento['fc_factura_id'] = $nom_nomina->fc_factura_id;
+            $fc_factura_documento['doc_documento_id'] = $documento->registro_id;
+
+            $fc_factura_documento = (new fc_factura_documento(link: $this->link))->alta_registro(registro: $fc_factura_documento);
+            if (errores::$error) {
+                return $this->error->error(mensaje: 'Error al dar de alta factura documento', data: $fc_factura_documento);
+            }
+
+        } else if ($existe_nomina && !$existe_factura) {
+            $nom_nomina_documento = (new nom_nomina_documento(link: $this->link))->filtro_and(
+                filtro: array('nom_nomina.id' => $nom_nomina->nom_nomina_id, "doc_tipo_documento.descripcion" => "json"));
+            if (errores::$error) {
+                return $this->error->error(mensaje: 'Error al obtener nomina documento', data: $nom_nomina_documento);
+            }
+
+            if ($nom_nomina_documento->n_registros > 1) {
+                return $this->error->error(mensaje: 'Error solo debe existir una nomina documento', data: $nom_nomina_documento);
+            }
+
+            $nomina_documento = $nom_nomina_documento->registros[0];
+
+            $doc_documento_id = $nomina_documento['doc_documento_id'];
+
+            $registro['descripcion'] = $ruta_archivos_tmp;
+            $registro['doc_tipo_documento_id'] = $doc_tipo_documento_id;
+            $_FILES['name'] = $file_xml_st;
+            $_FILES['tmp_name'] = $file_xml_st;
+
+            $documento = (new doc_documento(link: $this->link))->modifica_bd(registro: $registro, id: $doc_documento_id);
+            if (errores::$error) {
+                return $this->error->error(mensaje: 'Error  al modificar documento', data: $documento);
+            }
+
+            $fc_factura_documento = array();
+            $fc_factura_documento['fc_factura_id'] = $nom_nomina->fc_factura_id;
+            $fc_factura_documento['doc_documento_id'] = $documento->registro_id;
+
+            $fc_factura_documento = (new fc_factura_documento(link: $this->link))->alta_registro(registro: $fc_factura_documento);
+            if (errores::$error) {
+                return $this->error->error(mensaje: 'Error al dar de alta factura documento', data: $fc_factura_documento);
+            }
+        } else if (!$existe_nomina && $existe_factura){
+            $fc_factura_documento = (new fc_factura_documento(link: $this->link))->filtro_and(
+                filtro: array('fc_factura.id' => $nom_nomina->fc_factura_id, "doc_tipo_documento.descripcion" => "json"));
+            if (errores::$error) {
+                return $this->error->error(mensaje: 'Error al obtener nomina documento', data: $fc_factura_documento);
+            }
+
+            if ($fc_factura_documento->n_registros > 1) {
+                return $this->error->error(mensaje: 'Error solo debe existir una factura documento', data: $fc_factura_documento);
+            }
+
+            $factura_documento = $fc_factura_documento->registros[0];
+
+            $doc_documento_id = $factura_documento['doc_documento_id'];
+
+            $registro['descripcion'] = $ruta_archivos_tmp;
+            $registro['doc_tipo_documento_id'] = $doc_tipo_documento_id;
+            $_FILES['name'] = $file_xml_st;
+            $_FILES['tmp_name'] = $file_xml_st;
+
+            $documento = (new doc_documento(link: $this->link))->modifica_bd(registro: $registro, id: $doc_documento_id);
+            if (errores::$error) {
+                return $this->error->error(mensaje: 'Error  al modificar documento', data: $documento);
+            }
+
+            $nom_nomina_documento = array();
+            $nom_nomina_documento['nom_nomina_id'] = $nom_nomina->nom_nomina_id;
+            $nom_nomina_documento['doc_documento_id'] = $documento->registro_id;
+
+            $nom_nomina_documento = (new nom_nomina_documento(link: $this->link))->alta_registro(registro: $nom_nomina_documento);
+            if (errores::$error) {
+                return $this->error->error(mensaje: 'Error al dar de alta nomina documento', data: $nom_nomina_documento);
+            }
+        } else {
+            $nom_nomina_documento = (new nom_nomina_documento(link: $this->link))->filtro_and(
+                filtro: array('nom_nomina.id' => $nom_nomina->nom_nomina_id, "doc_tipo_documento.descripcion" => "json"));
+            if (errores::$error) {
+                return $this->error->error(mensaje: 'Error al obtener nomina documento', data: $nom_nomina_documento);
+            }
+
+            if ($nom_nomina_documento->n_registros > 1) {
+                return $this->error->error(mensaje: 'Error solo debe existir una nomina documento', data: $nom_nomina_documento);
+            }
+
+            $fc_factura_documento = (new fc_factura_documento(link: $this->link))->filtro_and(
+                filtro: array('fc_factura.id' => $nom_nomina->fc_factura_id, "doc_tipo_documento.descripcion" => "json"));
+            if (errores::$error) {
+                return $this->error->error(mensaje: 'Error al obtener nomina documento', data: $fc_factura_documento);
+            }
+
+            if ($fc_factura_documento->n_registros > 1) {
+                return $this->error->error(mensaje: 'Error solo debe existir una factura documento', data: $fc_factura_documento);
+            }
+
+            $nomina_documento = $nom_nomina_documento->registros[0];
+
+            $doc_documento_id = $nomina_documento['doc_documento_id'];
+
+            $registro['descripcion'] = $ruta_archivos_tmp;
+            $registro['doc_tipo_documento_id'] = $doc_tipo_documento_id;
+            $_FILES['name'] = $file_xml_st;
+            $_FILES['tmp_name'] = $file_xml_st;
+
+            $documento = (new doc_documento(link: $this->link))->modifica_bd(registro: $registro, id: $doc_documento_id);
+            if (errores::$error) {
+                return $this->error->error(mensaje: 'Error  al modificar documento', data: $documento);
+            }
+        }
+
+        $salida = new stdClass();
+        $salida->registro = (new doc_documento(link: $this->link))->registro(registro_id: $documento->registro_id);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error  al obtener documento', data: $documento);
+        }
+        $salida->file_xml_st = $file_xml_st;
+
+        return $salida;
+    }
+
     public function genera_json(stdClass $nom_nomina, string $tipo): array|stdClass
     {
         $json = $this->data_json(nom_nomina: $nom_nomina);
@@ -565,89 +733,14 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
             return $this->error->error(mensaje: 'Error al obtener ruta de archivos', data: $ruta_archivos_tmp);
         }
 
-        $documento = array();
-        $file = array();
-        $file_xml_st = $ruta_archivos_tmp . '/' . $this->registro_id . '.json';
-        file_put_contents($file_xml_st, $json);
-
-        $existe = (new fc_factura_documento(link: $this->link))->existe(array('fc_factura.id' => $nom_nomina->fc_factura_id));
+        $acciones_documento = $this->document_actions(json: $json, nom_nomina: $nom_nomina);
         if (errores::$error) {
-            return $this->error->error(mensaje: 'Error al validar si existe documento', data: $existe);
-        }
-
-        $doc_tipo_documento_id = $this->doc_tipo_documento_id(extension: "json");
-        if (errores::$error) {
-            return $this->error->error(mensaje: 'Error al validar extension del documento', data: $doc_tipo_documento_id);
-        }
-
-        if (!$existe) {
-
-            $file['name'] = $file_xml_st;
-            $file['tmp_name'] = $file_xml_st;
-
-            $documento['doc_tipo_documento_id'] = $doc_tipo_documento_id;
-            $documento['descripcion'] = $ruta_archivos_tmp;
-
-
-            $documento = (new doc_documento(link: $this->link))->alta_documento(registro: $documento, file: $file);
-            if (errores::$error) {
-                return $this->error->error(mensaje: 'Error al guardar xml', data: $documento);
-            }
-
-            $fc_factura_documento = array();
-            $fc_factura_documento['fc_factura_id'] = $nom_nomina->fc_factura_id;
-            $fc_factura_documento['doc_documento_id'] = $documento->registro_id;
-
-            $fc_factura_documento = (new fc_factura_documento(link: $this->link))->alta_registro(registro: $fc_factura_documento);
-            if (errores::$error) {
-                return $this->error->error(mensaje: 'Error al dar de alta factura documento', data: $fc_factura_documento);
-            }
-
-            $nom_nomina_documento = array();
-            $nom_nomina_documento['nom_nomina_id'] = $nom_nomina->nom_nomina_id;
-            $nom_nomina_documento['doc_documento_id'] = $documento->registro_id;
-            $nom_nomina_documento = (new nom_nomina_documento(link: $this->link))->alta_registro(registro: $nom_nomina_documento);
-            if (errores::$error) {
-                return $this->error->error(mensaje: 'Error al dar de alta nomina documento', data: $nom_nomina_documento);
-            }
-        } else {
-
-            $r_fc_factura_documento = (new fc_factura_documento(link: $this->link))->filtro_and(
-                filtro: array('fc_factura.id' => $nom_nomina->fc_factura_id));
-            if (errores::$error) {
-                return $this->error->error(mensaje: 'Error al obtener factura documento', data: $r_fc_factura_documento);
-            }
-
-            if ($r_fc_factura_documento->n_registros > 1) {
-                return $this->error->error(mensaje: 'Error solo debe existir una factura_documento', data: $r_fc_factura_documento);
-            }
-            if ($r_fc_factura_documento->n_registros === 0) {
-                return $this->error->error(mensaje: 'Error  debe existir al menos una factura_documento', data: $r_fc_factura_documento);
-            }
-            $fc_factura_documento = $r_fc_factura_documento->registros[0];
-
-            $doc_documento_id = $fc_factura_documento['doc_documento_id'];
-
-            $registro['descripcion'] = $ruta_archivos_tmp;
-            $registro['doc_tipo_documento_id'] = $doc_tipo_documento_id;
-            $_FILES['name'] = $file_xml_st;
-            $_FILES['tmp_name'] = $file_xml_st;
-
-            $documento = (new doc_documento(link: $this->link))->modifica_bd(registro: $registro, id: $doc_documento_id);
-            if (errores::$error) {
-                return $this->error->error(mensaje: 'Error  al modificar documento', data: $documento);
-            }
-
-
-            $documento->registro = (new doc_documento(link: $this->link))->registro(registro_id: $documento->registro_id);
-            if (errores::$error) {
-                return $this->error->error(mensaje: 'Error  al obtener documento', data: $documento);
-            }
+            return $this->error->error(mensaje: 'Error al ejecutar acciones para el documento', data: $acciones_documento);
         }
 
         $rutas = new stdClass();
-        $rutas->file_xml_st = $file_xml_st;
-        $rutas->doc_documento_ruta_absoluta = $documento->registro['doc_documento_ruta_absoluta'];
+        $rutas->file_xml_st = $acciones_documento->file_xml_st;
+        $rutas->doc_documento_ruta_absoluta = $acciones_documento->registro['doc_documento_ruta_absoluta'];
 
         return $rutas;
     }
@@ -681,6 +774,9 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         }
 
         $json_contenido = file_get_contents($json->doc_documento_ruta_absoluta);
+
+        print_r($json_contenido);
+        exit();
 
         $filtro_files['fc_csd.id'] = $nom_nomina->fc_factura_fc_csd_id;
         $r_fc_key_pem = (new fc_key_pem(link: $this->link))->filtro_and(filtro: $filtro_files);
