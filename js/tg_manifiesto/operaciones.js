@@ -70,8 +70,6 @@ $(document).ready(function () {
                     var registros = rows.registros;
                     table.rows.add(registros).draw();
                 });
-
-                nominas_seleccionadas.push(table);
             });
 
             datatables.forEach((tabla) => {
@@ -79,11 +77,12 @@ $(document).ready(function () {
             });
 
             $('#nominas_genera_xmls').val(nominas_seleccionadas);
+            $('#nominas_timbra_xmls').val(nominas_seleccionadas);
 
         }, 1000);
     });
 
-    $('.form_nominas').on('submit', function (e) {
+   $('.form_nominas').on('submit', function (e) {
         e.preventDefault();
 
         if (nominas_seleccionadas.length === 0) {
@@ -91,7 +90,8 @@ $(document).ready(function () {
             return;
         }
 
-        let url = get_url("tg_manifiesto", "genera_xmls", {});
+        let accion = $(this).data("accion");
+        let url = get_url("tg_manifiesto", accion, {});
         var dataform = new FormData();
         dataform.append('nominas', nominas_seleccionadas);
 
@@ -110,7 +110,6 @@ $(document).ready(function () {
                 console.log(XMLHttpRequest)
             }
         });
-
 
     });
 
