@@ -1969,7 +1969,7 @@ class controlador_tg_manifiesto extends _ctl_base
                             }
                         }
                         if ($empleado_excel->horas_extras_dobles > 0) {
-                            $mitad_horas_ext = $empleado_excel->horas_extras_dobles/2;
+                            $mitad_horas_ext = $empleado_excel->horas_extras_dobles / 2;
 
                             $nom_par_percepcion_sep = array();
                             $nom_par_percepcion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
@@ -2119,7 +2119,8 @@ class controlador_tg_manifiesto extends _ctl_base
         exit;
     }
 
-    public function envia_recibos(bool $header, bool $ws = false){
+    public function envia_recibos(bool $header, bool $ws = false)
+    {
         $manifiesto = (new tg_manifiesto($this->link))->registro(registro_id: $this->registro_id);
         if (errores::$error) {
             return $this->retorno_error(mensaje: 'Error al obtener manifiesto', data: $manifiesto,
@@ -2133,7 +2134,7 @@ class controlador_tg_manifiesto extends _ctl_base
         }
 
         $mails = array();
-        foreach ($nominas as $nomina){
+        foreach ($nominas as $nomina) {
             $fc_factura_id = $nomina['fc_factura_id'];
 
             $factura = (new fc_factura($this->link))->registro(registro_id: $fc_factura_id);
@@ -2143,7 +2144,7 @@ class controlador_tg_manifiesto extends _ctl_base
             }
 
             $emisor = array();
-            if((int)$factura['org_empresa_id'] === 54){
+            if ((int)$factura['org_empresa_id'] === 54) {
                 $emisor = (new not_emisor($this->link))->registro(registro_id: 4);
                 if (errores::$error) {
                     return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo', data: $emisor,
@@ -2151,7 +2152,7 @@ class controlador_tg_manifiesto extends _ctl_base
                 }
             }
 
-            if((int)$factura['org_empresa_id'] === 36){
+            if ((int)$factura['org_empresa_id'] === 36) {
                 $emisor = (new not_emisor($this->link))->registro(registro_id: 7);
                 if (errores::$error) {
                     return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo', data: $emisor,
@@ -2159,7 +2160,7 @@ class controlador_tg_manifiesto extends _ctl_base
                 }
             }
 
-            if((int)$factura['org_empresa_id'] === 25){
+            if ((int)$factura['org_empresa_id'] === 25) {
                 $emisor = (new not_emisor($this->link))->registro(registro_id: 8);
                 if (errores::$error) {
                     return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo', data: $emisor,
@@ -2167,7 +2168,7 @@ class controlador_tg_manifiesto extends _ctl_base
                 }
             }
 
-            if((int)$factura['org_empresa_id'] === 30){
+            if ((int)$factura['org_empresa_id'] === 30) {
                 $emisor = (new not_emisor($this->link))->registro(registro_id: 5);
                 if (errores::$error) {
                     return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo', data: $emisor,
@@ -2189,7 +2190,7 @@ class controlador_tg_manifiesto extends _ctl_base
                     header: $header, ws: $ws);
             }
 
-            if(!isset($emisor['not_emisor_host'])){
+            if (!isset($emisor['not_emisor_host'])) {
                 return $this->retorno_error(mensaje: 'Error no existe emisor', data: $fc_receptor_email,
                     header: $header, ws: $ws);
             }
@@ -2207,7 +2208,7 @@ class controlador_tg_manifiesto extends _ctl_base
                 filtro: $filtro_pdf);
             if (errores::$error) {
                 return $this->retorno_error(mensaje: 'Error al obtener factura documento', data: $r_nom_nomina_documento_pdf,
-                     header: $header, ws: $ws);
+                    header: $header, ws: $ws);
             }
 
             $doc_tipo_documento_id = (new nom_nomina(link: $this->link))->doc_tipo_documento_id(extension: "xml");
@@ -2222,7 +2223,7 @@ class controlador_tg_manifiesto extends _ctl_base
                 filtro: $filtro_xml);
             if (errores::$error) {
                 return $this->retorno_error(mensaje: 'Error al obtener factura documento', data: $r_nom_nomina_documento_xml,
-                     header: $header, ws: $ws);
+                    header: $header, ws: $ws);
             }
 
             $mensaje = new stdClass();
@@ -2237,22 +2238,22 @@ class controlador_tg_manifiesto extends _ctl_base
             $mensaje->not_mensaje_mensaje = "Se envia recibo de nomina";
 
             $adjuntos = array();
-            if($r_nom_nomina_documento_pdf->n_registros > 0){
-                if(file_exists($r_nom_nomina_documento_pdf->registros[0]['doc_documento_ruta_absoluta'])) {
+            if ($r_nom_nomina_documento_pdf->n_registros > 0) {
+                if (file_exists($r_nom_nomina_documento_pdf->registros[0]['doc_documento_ruta_absoluta'])) {
                     $adjuntos[0] = $r_nom_nomina_documento_pdf->registros[0];
                     $adjuntos[0]['not_adjunto_descripcion'] = 'recibo';
                 }
             }
-            if($r_nom_nomina_documento_xml->n_registros > 0) {
-                if(file_exists($r_nom_nomina_documento_xml->registros[0]['doc_documento_ruta_absoluta'])){
+            if ($r_nom_nomina_documento_xml->n_registros > 0) {
+                if (file_exists($r_nom_nomina_documento_xml->registros[0]['doc_documento_ruta_absoluta'])) {
                     $adjuntos[1] = $r_nom_nomina_documento_xml->registros[0];
                     $adjuntos[1]['not_adjunto_descripcion'] = 'xml';
                 }
             }
 
             $mail = (new _mail())->envia(mensaje: $mensaje, adjuntos: $adjuntos);
-            if(errores::$error){
-                return $this->retorno_error(mensaje: 'Error al enviar mensaje',data:  $mail,header: $header, ws: $ws);
+            if (errores::$error) {
+                return $this->retorno_error(mensaje: 'Error al enviar mensaje', data: $mail, header: $header, ws: $ws);
             }
             $mails[] = $mail;
 
@@ -3363,9 +3364,9 @@ class controlador_tg_manifiesto extends _ctl_base
         $response['status'] = "Success";
         $response['message'] = "Se generaron correctamete los XMLs";
 
-        foreach ($this->nominas_seleccionadas as $nomina){
+        foreach ($this->nominas_seleccionadas as $nomina) {
             $xml = (new nom_nomina(link: $this->link))->genera_xml(nom_nomina_id: $nomina);
-            if(errores::$error){
+            if (errores::$error) {
                 $response['status'] = "Error";
                 $response['message'] = "Error al generar XML para la nomina: $nomina";
             }
@@ -3394,17 +3395,22 @@ class controlador_tg_manifiesto extends _ctl_base
         $response['status'] = "Success";
         $response['message'] = "Se timbraron correctamete los XMLs";
 
-        $response['detalle'] = $this->nominas_seleccionadas;
-
-        foreach ($this->nominas_seleccionadas as $nomina){
+        foreach ($this->nominas_seleccionadas as $nomina) {
             $xml = (new nom_nomina(link: $this->link))->timbra_json(nom_nomina_id: $nomina);
 
-            $response['detalle'] = $xml;
-
-            if(errores::$error){
+            if (errores::$error) {
                 $response['status'] = "Error";
-                $response['message'] = "Error al timbrar XML para la nomina: $nomina";
-                $response['detalle'] = $xml['data']['data']['message'];
+                $response['title'] = "Error al timbrar XML para la nomina: $nomina";
+
+                if (isset($xml['data']['data'])) {
+                    $xml = $xml['data']['data'];
+
+                    $response['code'] = $xml['code'];
+                } else {
+                    $xml = $xml['data'];
+                }
+
+                $response['message'] = $xml['message'];
             }
         }
 
