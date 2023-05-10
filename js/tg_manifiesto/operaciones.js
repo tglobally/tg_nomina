@@ -101,22 +101,13 @@ $(document).ready(function () {
         var dataform = new FormData();
         dataform.append('nominas', nominas_seleccionadas);
 
-        $.ajax({
-            async: true,
-            type: 'POST',
-            url: url,
-            data: dataform,
-            contentType: false,
-            processData: false,
-            success: function (response) {
-
+        Loader.post('.login-body .container', url, dataform,
+            function (response) {
                 console.log(response)
-            },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                console.log(XMLHttpRequest)
-            }
-        });
-
+            }, function (XMLHttpRequest, textStatus, errorThrown) {
+                let response = XMLHttpRequest.responseText;
+                console.log(response)
+            });
     });
 
 });
