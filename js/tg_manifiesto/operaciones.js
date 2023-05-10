@@ -65,11 +65,17 @@ $(document).ready(function () {
                 ]);
 
                 let url = get_url("nom_nomina_documento", "get_documentos_nomina", {nom_nomina_id: value.nom_nomina_id});
+                var dataform = new FormData();
 
-                get_data(url, function (rows) {
-                    var registros = rows.registros;
-                    table.rows.add(registros).draw();
-                });
+                Loader.load('.tablas_nominas', url, dataform,
+                    function (response) {
+                        var registros = response.registros;
+                        table.rows.add(registros).draw();
+                    }, function (XMLHttpRequest, textStatus, errorThrown) {
+                        let response = XMLHttpRequest.responseText;
+                        console.log(response)
+                    });
+
             });
 
             datatables.forEach((tabla) => {
@@ -82,7 +88,7 @@ $(document).ready(function () {
         }, 1000);
     });
 
-   $('.form_nominas').on('submit', function (e) {
+    $('.form_nominas').on('submit', function (e) {
         e.preventDefault();
 
         if (nominas_seleccionadas.length === 0) {
