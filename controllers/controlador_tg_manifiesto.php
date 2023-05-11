@@ -2081,6 +2081,28 @@ class controlador_tg_manifiesto extends _ctl_base
                                 return $this->errores->error(mensaje: 'Error al insertar deduccion default', data: $r_alta_nom_par_deduccion);
                             }
                         }
+                        if ($empleado_excel->anticipo_nomina > 0) {
+                            $nom_par_deduccion_sep = array();
+                            $nom_par_deduccion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
+                            $nom_par_deduccion_sep['nom_deduccion_id'] = 9;
+                            $nom_par_deduccion_sep['importe_gravado'] = $empleado_excel->anticipo_nomina;
+
+                            $r_alta_nom_par_deduccion = (new nom_par_deduccion($this->link))->alta_registro(registro: $nom_par_deduccion_sep);
+                            if (errores::$error) {
+                                return $this->errores->error(mensaje: 'Error al insertar deduccion default', data: $r_alta_nom_par_deduccion);
+                            }
+                        }
+                        if ($empleado_excel->pension_alimenticia > 0) {
+                            $nom_par_deduccion_sep = array();
+                            $nom_par_deduccion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
+                            $nom_par_deduccion_sep['nom_deduccion_id'] = 11;
+                            $nom_par_deduccion_sep['importe_gravado'] = $empleado_excel->pension_alimenticia;
+
+                            $r_alta_nom_par_deduccion = (new nom_par_deduccion($this->link))->alta_registro(registro: $nom_par_deduccion_sep);
+                            if (errores::$error) {
+                                return $this->errores->error(mensaje: 'Error al insertar deduccion default', data: $r_alta_nom_par_deduccion);
+                            }
+                        }
                         if ($empleado_excel->descuentos > 0) {
                             $nom_par_deduccion_sep = array();
                             $nom_par_deduccion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
@@ -2644,6 +2666,46 @@ class controlador_tg_manifiesto extends _ctl_base
 
         return $columna;
     }
+    
+    public function obten_columna_anticipo_nomina(Spreadsheet $documento)
+    {
+        $totalDeHojas = $documento->getSheetCount();
+
+        $columna = -1;
+        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+            $hojaActual = $documento->getSheet($indiceHoja);
+            foreach ($hojaActual->getRowIterator() as $fila) {
+                foreach ($fila->getCellIterator() as $celda) {
+                    $valorRaw = $celda->getValue();
+                    if ($valorRaw === 'ANTICIPO DE NOMINA') {
+                        $columna = $celda->getColumn();
+                    }
+                }
+            }
+        }
+
+        return $columna;
+    }   
+    
+    public function obten_columna_pension_alimenticia(Spreadsheet $documento)
+    {
+        $totalDeHojas = $documento->getSheetCount();
+
+        $columna = -1;
+        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+            $hojaActual = $documento->getSheet($indiceHoja);
+            foreach ($hojaActual->getRowIterator() as $fila) {
+                foreach ($fila->getCellIterator() as $celda) {
+                    $valorRaw = $celda->getValue();
+                    if ($valorRaw === 'PENSION ALIMENTICIA') {
+                        $columna = $celda->getColumn();
+                    }
+                }
+            }
+        }
+
+        return $columna;
+    }
 
     public function obten_columna_descuentos(Spreadsheet $documento)
     {
@@ -2941,6 +3003,18 @@ class controlador_tg_manifiesto extends _ctl_base
             return $this->errores->error(mensaje: 'Error obtener columna de caja_ahorro',
                 data: $columna_caja_ahorro);
         }
+        
+        $columna_anticipo_nomina = $this->obten_columna_anticipo_nomina(documento: $documento);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error obtener columna de anticipo_nomina',
+                data: $columna_anticipo_nomina);
+        }
+
+        $columna_pension_alimenticia = $this->obten_columna_pension_alimenticia(documento: $documento);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error obtener columna de pension_alimenticia',
+                data: $columna_pension_alimenticia);
+        }
 
         $columna_descuentos = $this->obten_columna_descuentos(documento: $documento);
         if (errores::$error) {
@@ -2986,6 +3060,8 @@ class controlador_tg_manifiesto extends _ctl_base
                 $reg->despensa = 0;
                 $reg->seguro_vida = 0;
                 $reg->caja_ahorro = 0;
+                $reg->anticipo_nomina = 0;
+                $reg->pension_alimenticia = 0;
                 $reg->descuentos = 0;
                 $reg->horas_extras_dobles = 0;
                 $reg->horas_extras_triples = 0;
@@ -3094,6 +3170,22 @@ class controlador_tg_manifiesto extends _ctl_base
 
                     if (!is_numeric($reg->caja_ahorro)) {
                         $reg->caja_ahorro = 0;
+                    }
+                }
+                if ($columna_anticipo_nomina !== -1) {
+                    $anticipo_nomina = $hojaActual->getCell($columna_anticipo_nomina . $registro->fila)->getCalculatedValue();
+                    $reg->anticipo_nomina = trim((string)$anticipo_nomina);
+
+                    if (!is_numeric($reg->anticipo_nomina)) {
+                        $reg->anticipo_nomina = 0;
+                    }
+                }
+                if ($columna_pension_alimenticia !== -1) {
+                    $pension_alimenticia = $hojaActual->getCell($columna_pension_alimenticia . $registro->fila)->getCalculatedValue();
+                    $reg->pension_alimenticia = trim((string)$pension_alimenticia);
+
+                    if (!is_numeric($reg->pension_alimenticia)) {
+                        $reg->pension_alimenticia = 0;
                     }
                 }
                 if ($columna_descuentos !== -1) {
