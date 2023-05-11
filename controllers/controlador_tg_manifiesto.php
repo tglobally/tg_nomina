@@ -2037,6 +2037,17 @@ class controlador_tg_manifiesto extends _ctl_base
                                 return $this->errores->error(mensaje: 'Error al insertar percepcion default', data: $r_alta_nom_par_percepcion);
                             }
                         }
+                        if ($empleado_excel->productividad > 0) {
+                            $nom_par_percepcion_sep = array();
+                            $nom_par_percepcion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
+                            $nom_par_percepcion_sep['nom_percepcion_id'] = 23;
+                            $nom_par_percepcion_sep['importe_gravado'] = $empleado_excel->productividad;
+
+                            $r_alta_nom_par_percepcion = (new nom_par_percepcion($this->link))->alta_registro(registro: $nom_par_percepcion_sep);
+                            if (errores::$error) {
+                                return $this->errores->error(mensaje: 'Error al insertar percepcion default', data: $r_alta_nom_par_percepcion);
+                            }
+                        }
                         if ($empleado_excel->gratificacion > 0) {
                             $nom_par_percepcion_sep = array();
                             $nom_par_percepcion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
@@ -2053,6 +2064,17 @@ class controlador_tg_manifiesto extends _ctl_base
                             $nom_par_deduccion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
                             $nom_par_deduccion_sep['nom_deduccion_id'] = 5;
                             $nom_par_deduccion_sep['importe_gravado'] = $empleado_excel->seguro_vida;
+
+                            $r_alta_nom_par_deduccion = (new nom_par_deduccion($this->link))->alta_registro(registro: $nom_par_deduccion_sep);
+                            if (errores::$error) {
+                                return $this->errores->error(mensaje: 'Error al insertar deduccion default', data: $r_alta_nom_par_deduccion);
+                            }
+                        }
+                        if ($empleado_excel->caja_ahorro > 0) {
+                            $nom_par_deduccion_sep = array();
+                            $nom_par_deduccion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
+                            $nom_par_deduccion_sep['nom_deduccion_id'] = 8;
+                            $nom_par_deduccion_sep['importe_gravado'] = $empleado_excel->caja_ahorro;
 
                             $r_alta_nom_par_deduccion = (new nom_par_deduccion($this->link))->alta_registro(registro: $nom_par_deduccion_sep);
                             if (errores::$error) {
@@ -2543,6 +2565,26 @@ class controlador_tg_manifiesto extends _ctl_base
         return $columna;
     }
 
+    public function obten_columna_productividad(Spreadsheet $documento)
+    {
+        $totalDeHojas = $documento->getSheetCount();
+
+        $columna = -1;
+        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+            $hojaActual = $documento->getSheet($indiceHoja);
+            foreach ($hojaActual->getRowIterator() as $fila) {
+                foreach ($fila->getCellIterator() as $celda) {
+                    $valorRaw = $celda->getValue();
+                    if ($valorRaw === 'PRODUCTIVIDAD') {
+                        $columna = $celda->getColumn();
+                    }
+                }
+            }
+        }
+
+        return $columna;
+    }
+
     public function obten_columna_gratificacion(Spreadsheet $documento)
     {
         $totalDeHojas = $documento->getSheetCount();
@@ -2574,6 +2616,26 @@ class controlador_tg_manifiesto extends _ctl_base
                 foreach ($fila->getCellIterator() as $celda) {
                     $valorRaw = $celda->getValue();
                     if ($valorRaw === 'SEGURO DE VIDA') {
+                        $columna = $celda->getColumn();
+                    }
+                }
+            }
+        }
+
+        return $columna;
+    }
+
+    public function obten_columna_caja_ahorro(Spreadsheet $documento)
+    {
+        $totalDeHojas = $documento->getSheetCount();
+
+        $columna = -1;
+        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+            $hojaActual = $documento->getSheet($indiceHoja);
+            foreach ($hojaActual->getRowIterator() as $fila) {
+                foreach ($fila->getCellIterator() as $celda) {
+                    $valorRaw = $celda->getValue();
+                    if ($valorRaw === 'CAJA DE AHORRO') {
                         $columna = $celda->getColumn();
                     }
                 }
@@ -2855,6 +2917,12 @@ class controlador_tg_manifiesto extends _ctl_base
             return $this->errores->error(mensaje: 'Error obtener columna de ayuda transporte',
                 data: $columna_ayuda_transporte);
         }
+        
+        $columna_productividad = $this->obten_columna_productividad(documento: $documento);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error obtener columna de ayuda transporte',
+                data: $columna_productividad);
+        }
 
         $columna_gratificacion = $this->obten_columna_gratificacion(documento: $documento);
         if (errores::$error) {
@@ -2866,6 +2934,12 @@ class controlador_tg_manifiesto extends _ctl_base
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error obtener columna de seguro_vida',
                 data: $columna_seguro_vida);
+        }
+
+        $columna_caja_ahorro = $this->obten_columna_caja_ahorro(documento: $documento);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error obtener columna de caja_ahorro',
+                data: $columna_caja_ahorro);
         }
 
         $columna_descuentos = $this->obten_columna_descuentos(documento: $documento);
@@ -2911,6 +2985,7 @@ class controlador_tg_manifiesto extends _ctl_base
                 $reg->prima_vacacional = 0;
                 $reg->despensa = 0;
                 $reg->seguro_vida = 0;
+                $reg->caja_ahorro = 0;
                 $reg->descuentos = 0;
                 $reg->horas_extras_dobles = 0;
                 $reg->horas_extras_triples = 0;
@@ -2918,6 +2993,7 @@ class controlador_tg_manifiesto extends _ctl_base
                 $reg->premio_puntualidad = 0;
                 $reg->premio_asistencia = 0;
                 $reg->ayuda_transporte = 0;
+                $reg->productividad = 0;
                 $reg->gratificacion = 0;
                 $reg->monto_neto = 0;
                 $reg->monto_sueldo = 0;
@@ -3012,6 +3088,14 @@ class controlador_tg_manifiesto extends _ctl_base
                         $reg->seguro_vida = 0;
                     }
                 }
+                if ($columna_caja_ahorro !== -1) {
+                    $caja_ahorro = $hojaActual->getCell($columna_caja_ahorro . $registro->fila)->getCalculatedValue();
+                    $reg->caja_ahorro = trim((string)$caja_ahorro);
+
+                    if (!is_numeric($reg->caja_ahorro)) {
+                        $reg->caja_ahorro = 0;
+                    }
+                }
                 if ($columna_descuentos !== -1) {
                     $descuentos = $hojaActual->getCell($columna_descuentos . $registro->fila)->getCalculatedValue();
                     $reg->descuentos = trim((string)$descuentos);
@@ -3066,6 +3150,14 @@ class controlador_tg_manifiesto extends _ctl_base
 
                     if (!is_numeric($reg->ayuda_transporte)) {
                         $reg->ayuda_transporte = 0;
+                    }
+                }
+                if ($columna_productividad !== -1) {
+                    $productividad = $hojaActual->getCell($columna_productividad . $registro->fila)->getCalculatedValue();
+                    $reg->productividad = trim((string)$productividad);
+
+                    if (!is_numeric($reg->productividad)) {
+                        $reg->productividad = 0;
                     }
                 }
                 if ($columna_gratificacion !== -1) {
