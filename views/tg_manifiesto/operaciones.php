@@ -24,11 +24,11 @@ $url_icons = (new views())->url_icons;
                         <div class="dropdown-menu dropdown-menu-right">
                             <button type="submit" class="dropdown-item" name="btn_action_next"
                                     value="ve_nominas" form="form_genera_xmls">
-                                Generar XML
+                                Generar Documentos
                             </button>
                             <button type="submit" class="dropdown-item" name="btn_action_next"
                                     value="ve_nominas" form="form_timbra_xmls">
-                                Timbrar XML
+                                Timbrar Documentos
                             </button>
 
 
@@ -54,7 +54,7 @@ $url_icons = (new views())->url_icons;
                             <div class="botones">
                                 <button type="submit" class="btn btn-info" name="btn_action_next"
                                         value="exportar" form="form_genera_xmls">
-                                    Generar XML
+                                    Generar Documentos
                                 </button>
                             </div>
                         </form>
@@ -67,20 +67,7 @@ $url_icons = (new views())->url_icons;
                             <div class="botones">
                                 <button type="submit" class="btn btn-info" name="btn_action_next"
                                         value="exportar" form="form_timbra_xmls">
-                                    Timbrar XML
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="col-sm-2">
-                        <form method="post" action="<?php echo $controlador->link_tg_manifiesto_agregar_otro_pago; ?> "
-                              class="form-additional form_nominas " id="form_agregar_otro_pago">
-                            <input id="agregar_otro_pago" name="agregar_otro_pago" type="hidden">
-                            <div class="botones">
-                                <button type="submit" class="btn btn-info" name="btn_action_next"
-                                        value="exportar" form="form_agregar_otro_pago">
-                                    Ver XML
+                                    Timbrar Documentos
                                 </button>
                             </div>
                         </form>

@@ -103,7 +103,57 @@ $(document).ready(function () {
 
         Loader.post('.login-body .container', url, dataform,
             function (response) {
-                console.log(response)
+                let status = 'info';
+                let body = '';
+
+                if(response.status == "Error"){
+                    status = 'danger';
+                    let title = response.title;
+                    let code = response.code;
+                    let message = response.message;
+
+                    body = `<h4 class="alert-heading"><strong>${title}</strong></h4><hr>`;
+                    body += `<strong>Error ${code} :</strong> ${message}`;
+                }else if(response.status == "Success"){
+                    status = 'success';
+                    body = response.message;
+
+                    $(".tablas_nominas").empty();
+
+                    nominas_seleccionadas.forEach(function (value, row, data) {
+
+                        var contenedor = `<div class="col-md-12">
+                                            <div class="tabla_titulo"><span class="text-header">Nomina - ${value}</span></div>
+                                            <table id="nomina_${value}" class="datatables table table-striped "></table>
+                                         </div>`;
+
+                        $('.tablas_nominas').append(contenedor);
+
+                        var table = inicializa_datatable(`#nomina_${value}`, [
+                            {data: 'doc_tipo_documento_codigo', title: "Tipo Documento"},
+                            {data: 'doc_documento_nombre', title: "Documento"},
+                        ]);
+
+                        let url = get_url("nom_nomina_documento", "get_documentos_nomina", {nom_nomina_id: value});
+                        var dataform = new FormData();
+
+                        Loader.load('.tablas_nominas', url, dataform,
+                            function (response) {
+                                var registros = response.registros;
+                                table.rows.add(registros).draw();
+                            }, function (XMLHttpRequest, textStatus, errorThrown) {
+                                let response = XMLHttpRequest.responseText;
+                                console.log(response)
+                            });
+
+                    });
+                }
+
+                let alert = `<div class="alert alert-${status} alert-fixed">${body}</div>`
+                $( '.login-body' ).append(alert);
+                setTimeout(function () {
+                    $('.alert').alert('close');
+                }, 10000);
             }, function (XMLHttpRequest, textStatus, errorThrown) {
                 let response = XMLHttpRequest.responseText;
                 console.log(response)
