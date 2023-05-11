@@ -3393,23 +3393,21 @@ class controlador_tg_manifiesto extends _ctl_base
 
         $response = array();
         $response['status'] = "Success";
-        $response['message'] = "Se timbraron correctamete los XMLs";
+        $response['message'] = "Se timbraron correctamente los documentos";
 
         foreach ($this->nominas_seleccionadas as $nomina) {
             $xml = (new nom_nomina(link: $this->link))->timbra_json(nom_nomina_id: $nomina);
-
             if (errores::$error) {
                 $response['status'] = "Error";
                 $response['title'] = "Error al timbrar XML para la nomina: $nomina";
 
                 if (isset($xml['data']['data'])) {
                     $xml = $xml['data']['data'];
-
                     $response['code'] = $xml['code'];
                 } else {
-                    $xml = $xml['data'];
+                    $xml['message'] = $xml['mensaje_limpio'];
+                    $response['code'] = '';
                 }
-
                 $response['message'] = $xml['message'];
             }
         }
