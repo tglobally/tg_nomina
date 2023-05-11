@@ -873,7 +873,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
     {
         $nom_nomina = $this->registro(registro_id: $nom_nomina_id, retorno_obj: true);
         if (errores::$error) {
-            return $this->error->error(mensaje: 'Error al obtener nomina', data: $nom_nomina);
+            return $this->error->error(mensaje: 'No se pudo obtener la nomina', data: $nom_nomina);
         }
 
         /*$permite_transaccion = (new fc_factura($this->link))->verifica_permite_transaccion(registro_id: $nom_nomina->fc_factura_id);
@@ -883,23 +883,23 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
 
         $timbrada = (new fc_cfdi_sellado($this->link))->existe(filtro: array('fc_factura.id' => $nom_nomina->fc_factura_id));
         if (errores::$error) {
-            return $this->error->error(mensaje: 'Error al validar si la nomina esta timbrada', data: $timbrada);
+            return $this->error->error(mensaje: 'No se pudo validar si la nomina esta timbrada', data: $timbrada);
         }
 
         if ($timbrada) {
-            return $this->error->error(mensaje: 'Error: la nomina ya ha sido timbrada', data: $timbrada);
+            return $this->error->error(mensaje: 'La nomina ya ha sido timbrada', data: $timbrada);
         }
 
         $tipo = (new pac())->tipo;
 
         $json = $this->genera_json(nom_nomina: $nom_nomina, tipo: $tipo);
         if (errores::$error) {
-            return $this->error->error(mensaje: 'Error al generar JSON', data: $json);
+            return $this->error->error(mensaje: 'No se pudo generar el archivo JSON', data: $json);
         }
 
         $xml = $this->genera_xml_v2(nom_nomina: $nom_nomina);
         if (errores::$error) {
-            return $this->error->error(mensaje: 'Error al generar XML', data: $xml);
+            return $this->error->error(mensaje: 'No se pudo generar el archivo XML', data: $xml);
         }
 
         $json_contenido = file_get_contents($json->doc_documento_ruta_absoluta);
@@ -907,11 +907,11 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         $filtro_files['fc_csd.id'] = $nom_nomina->fc_factura_fc_csd_id;
         $r_fc_key_pem = (new fc_key_pem(link: $this->link))->filtro_and(filtro: $filtro_files);
         if (errores::$error) {
-            return $this->error->error(mensaje: 'Error al obtener key', data: $r_fc_key_pem);
+            return $this->error->error(mensaje: 'No se pudo obtener key', data: $r_fc_key_pem);
         }
 
         if ($r_fc_key_pem->n_registros === 0) {
-            return $this->error->error(mensaje: 'Error no existe un key pem asignado', data: $r_fc_key_pem);
+            return $this->error->error(mensaje: 'No existe un key pem asignado', data: $r_fc_key_pem);
         }
 
         $ruta_key_pem = '';
@@ -921,7 +921,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
 
         $r_fc_cer_pem = (new fc_cer_pem(link: $this->link))->filtro_and(filtro: $filtro_files);
         if (errores::$error) {
-            return $this->error->error(mensaje: 'Error al obtener cer', data: $r_fc_cer_pem);
+            return $this->error->error(mensaje: 'No se pudo obtener cer', data: $r_fc_cer_pem);
         }
         $ruta_cer_pem = '';
         if ((int)$r_fc_cer_pem->n_registros === 1) {
@@ -932,7 +932,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         $json_timbrado = (new timbra())->timbra(contenido_xml: $json_contenido, id_comprobante: '',
             ruta_cer_pem: $ruta_cer_pem, ruta_key_pem: $ruta_key_pem, pac_prov: $pac_prov);
         if (errores::$error) {
-            return $this->error->error(mensaje: 'Error al timbrar XML', data: $json_timbrado);
+            return $this->error->error(mensaje: 'No se pudo timbrar el archivo', data: $json_timbrado);
         }
 
         file_put_contents(filename: $xml->doc_documento_ruta_absoluta, data: $json_timbrado->xml_sellado);
@@ -945,18 +945,18 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         $alta_qr = $this->guarda_documento(directorio: "codigos_qr", extension: "jpg", contenido: $qr_code,
             fc_factura_id: $nom_nomina->fc_factura_id, nom_nomina_id: $nom_nomina_id);
         if (errores::$error) {
-            return $this->error->error(mensaje: 'Error al guardar QR', data: $alta_qr);
+            return $this->error->error(mensaje: 'No se pudo guardar QR', data: $alta_qr);
         }
 
         $alta_txt = $this->guarda_documento(directorio: "textos", extension: "txt", contenido: $json_timbrado->txt,
             fc_factura_id: $nom_nomina->fc_factura_id, nom_nomina_id: $nom_nomina_id);
         if (errores::$error) {
-            return $this->error->error(mensaje: 'Error al guardar TXT', data: $alta_txt);
+            return $this->error->error(mensaje: 'No se pudo guardar TXT', data: $alta_txt);
         }
 
         $datos_xml = $this->get_datos_xml_v2(ruta_xml: $xml->doc_documento_ruta_absoluta);
         if (errores::$error) {
-            return $this->error->error(mensaje: 'Error al obtener datos del XML', data: $datos_xml);
+            return $this->error->error(mensaje: 'No se pudo obtener datos del XML', data: $datos_xml);
         }
 
         $cfdi_sellado = (new fc_cfdi_sellado($this->link))->maqueta_datos(codigo: $datos_xml['cfdi_comprobante']['NoCertificado'],
@@ -968,12 +968,12 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
             complemento_tfd_sello_cfd: $datos_xml['tfd']['SelloCFD'], complemento_tfd_sello_sat: $datos_xml['tfd']['SelloSAT'],
             uuid: $datos_xml['tfd']['UUID'], complemento_tfd_tfd: "", cadena_complemento_sat: $json_timbrado->txt);
         if (errores::$error) {
-            return $this->error->error(mensaje: 'Error al maquetar datos para cfdi sellado', data: $cfdi_sellado);
+            return $this->error->error(mensaje: 'No se pudo maquetar datos para cfdi sellado', data: $cfdi_sellado);
         }
 
         $alta = (new fc_cfdi_sellado($this->link))->alta_registro(registro: $cfdi_sellado);
         if (errores::$error) {
-            return $this->error->error(mensaje: 'Error al dar de alta cfdi sellado', data: $alta);
+            return $this->error->error(mensaje: 'No se pudo dar de alta cfdi sellado', data: $alta);
         }
 
         /*$r_alta_factura_etapa = (new pr_proceso(link: $this->link))->inserta_etapa(adm_accion: __FUNCTION__, fecha: '',
@@ -986,4 +986,39 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         return $cfdi_sellado;
     }
 
+    public function genera_documentos(int $nom_nomina_id): array|stdClass
+    {
+        $nom_nomina = $this->registro(registro_id: $nom_nomina_id, retorno_obj: true);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'No se pudo obtener la nomina', data: $nom_nomina);
+        }
+
+        /*$permite_transaccion = (new fc_factura($this->link))->verifica_permite_transaccion(registro_id: $nom_nomina->fc_factura_id);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error verificar transaccion', data: $permite_transaccion);
+        }*/
+
+        $timbrada = (new fc_cfdi_sellado($this->link))->existe(filtro: array('fc_factura.id' => $nom_nomina->fc_factura_id));
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'No se pudo validar si la nomina esta timbrada', data: $timbrada);
+        }
+
+        if ($timbrada) {
+            return $this->error->error(mensaje: 'La nomina ya ha sido timbrada', data: $timbrada);
+        }
+
+        $tipo = (new pac())->tipo;
+
+        $json = $this->genera_json(nom_nomina: $nom_nomina, tipo: $tipo);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'No se pudo generar el archivo JSON', data: $json);
+        }
+
+        $xml = $this->genera_xml_v2(nom_nomina: $nom_nomina);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'No se pudo generar el archivo XML', data: $xml);
+        }
+
+        return $json;
+    }
 }
