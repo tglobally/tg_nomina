@@ -3362,13 +3362,13 @@ class controlador_tg_manifiesto extends _ctl_base
 
         $response = array();
         $response['status'] = "Success";
-        $response['message'] = "Se generaron correctamete los XMLs";
+        $response['message'] = "Se generaron correctamete los documentos";
 
         foreach ($this->nominas_seleccionadas as $nomina) {
-            $xml = (new nom_nomina(link: $this->link))->genera_xml(nom_nomina_id: $nomina);
+            $xml = (new nom_nomina(link: $this->link))->genera_documentos(nom_nomina_id: $nomina);
             if (errores::$error) {
                 $response['status'] = "Error";
-                $response['message'] = "Error al generar XML para la nomina: $nomina";
+                $response['message'] = "Error al generar los documentos para las nominas: $nomina";
             }
         }
 

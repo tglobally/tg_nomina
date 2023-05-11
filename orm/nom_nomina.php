@@ -986,4 +986,39 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         return $cfdi_sellado;
     }
 
+    public function genera_documentos(int $nom_nomina_id): array|stdClass
+    {
+        $nom_nomina = $this->registro(registro_id: $nom_nomina_id, retorno_obj: true);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'No se pudo obtener la nomina', data: $nom_nomina);
+        }
+
+        /*$permite_transaccion = (new fc_factura($this->link))->verifica_permite_transaccion(registro_id: $nom_nomina->fc_factura_id);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error verificar transaccion', data: $permite_transaccion);
+        }*/
+
+        $timbrada = (new fc_cfdi_sellado($this->link))->existe(filtro: array('fc_factura.id' => $nom_nomina->fc_factura_id));
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'No se pudo validar si la nomina esta timbrada', data: $timbrada);
+        }
+
+        if ($timbrada) {
+            return $this->error->error(mensaje: 'La nomina ya ha sido timbrada', data: $timbrada);
+        }
+
+        $tipo = (new pac())->tipo;
+
+        $json = $this->genera_json(nom_nomina: $nom_nomina, tipo: $tipo);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'No se pudo generar el archivo JSON', data: $json);
+        }
+
+        $xml = $this->genera_xml_v2(nom_nomina: $nom_nomina);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'No se pudo generar el archivo XML', data: $xml);
+        }
+
+        return $json;
+    }
 }
