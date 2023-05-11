@@ -1968,6 +1968,18 @@ class controlador_tg_manifiesto extends _ctl_base
                                 return $this->errores->error(mensaje: 'Error al insertar percepcion default', data: $r_alta_nom_par_percepcion);
                             }
                         }
+                        
+                        if ($empleado_excel->actividades_culturales > 0) {
+                            $nom_par_percepcion_sep = array();
+                            $nom_par_percepcion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
+                            $nom_par_percepcion_sep['nom_percepcion_id'] = 21;
+                            $nom_par_percepcion_sep['importe_exento'] = $empleado_excel->actividades_culturales;
+
+                            $r_alta_nom_par_percepcion = (new nom_par_percepcion($this->link))->alta_registro(registro: $nom_par_percepcion_sep);
+                            if (errores::$error) {
+                                return $this->errores->error(mensaje: 'Error al insertar percepcion default', data: $r_alta_nom_par_percepcion);
+                            }
+                        }
                         if ($empleado_excel->horas_extras_dobles > 0) {
                             $mitad_horas_ext = $empleado_excel->horas_extras_dobles / 2;
 
@@ -2467,6 +2479,26 @@ class controlador_tg_manifiesto extends _ctl_base
         return $columna;
     }
 
+    public function obten_columna_actividades_culturales(Spreadsheet $documento)
+    {
+        $totalDeHojas = $documento->getSheetCount();
+
+        $columna = -1;
+        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+            $hojaActual = $documento->getSheet($indiceHoja);
+            foreach ($hojaActual->getRowIterator() as $fila) {
+                foreach ($fila->getCellIterator() as $celda) {
+                    $valorRaw = $celda->getValue();
+                    if ($valorRaw === 'ACTIVIDADES CULTURALES') {
+                        $columna = $celda->getColumn();
+                    }
+                }
+            }
+        }
+
+        return $columna;
+    }
+
     public function obten_columna_horas_extras_dobles(Spreadsheet $documento)
     {
         $totalDeHojas = $documento->getSheetCount();
@@ -2943,6 +2975,12 @@ class controlador_tg_manifiesto extends _ctl_base
             return $this->errores->error(mensaje: 'Error obtener columna de despensa',
                 data: $columna_despensa);
         }
+        
+        $columna_actividades_culturales = $this->obten_columna_actividades_culturales(documento: $documento);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error obtener columna de actividades_culturales',
+                data: $columna_actividades_culturales);
+        }
 
         $columna_horas_extras_dobles = $this->obten_columna_horas_extras_dobles(documento: $documento);
         if (errores::$error) {
@@ -3058,6 +3096,7 @@ class controlador_tg_manifiesto extends _ctl_base
 
                 $reg->prima_vacacional = 0;
                 $reg->despensa = 0;
+                $reg->actividades_culturales = 0;
                 $reg->seguro_vida = 0;
                 $reg->caja_ahorro = 0;
                 $reg->anticipo_nomina = 0;
@@ -3154,6 +3193,14 @@ class controlador_tg_manifiesto extends _ctl_base
 
                     if (!is_numeric($reg->despensa)) {
                         $reg->despensa = 0;
+                    }
+                }
+                if ($columna_actividades_culturales !== -1) {
+                    $actividades_culturales = $hojaActual->getCell($columna_actividades_culturales . $registro->fila)->getCalculatedValue();
+                    $reg->actividades_culturales = trim((string)$actividades_culturales);
+
+                    if (!is_numeric($reg->actividades_culturales)) {
+                        $reg->actividades_culturales = 0;
                     }
                 }
                 if ($columna_seguro_vida !== -1) {
