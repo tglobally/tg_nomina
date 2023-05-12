@@ -3633,13 +3633,25 @@ class controlador_tg_manifiesto extends _ctl_base
 
         $this->nominas_seleccionadas = explode(",", $_POST['nominas']);
 
-        $response = array();
-        $response['status'] = "Success";
-        $response['message'] = $this->nominas_seleccionadas;
+        $nominas = new stdClass();
+        foreach ($this->nominas_seleccionadas as $nomina) {
+            $data = (new nom_nomina($this->link))->registro(registro_id: $nomina);
+            if (errores::$error) {
+                $error = $this->errores->error(mensaje: 'Error al obtener recibo de nomina', data: $data);
+                print_r($error);
+                die('Error');
+            }
 
-        header('Content-type: application/json');
-        echo json_encode($response);
-        exit();
+            $nominas->registros[] = $data;
+        }
+
+        $r_nomina = (new nom_nomina($this->link))->descarga_recibo_nomina_zip(nom_nominas: $nominas);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener recibo de nomina', data: $r_nomina);
+            print_r($error);
+            die('Error');
+        }
+        exit;
     }
 
     public function timbra_xmls(bool $header = true, bool $ws = false, array $not_actions = array()): array|string

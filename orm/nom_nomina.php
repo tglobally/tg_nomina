@@ -1019,6 +1019,8 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
             return $this->error->error(mensaje: 'No se pudo generar el archivo XML', data: $xml);
         }
 
+
+
         return $json;
     }
 }

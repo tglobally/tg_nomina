@@ -75,7 +75,7 @@ $url_icons = (new views())->url_icons;
 
                     <div class="col-sm-2">
                         <form method="post" action="<?php echo $controlador->link_tg_manifiesto_exportar_documentos; ?> "
-                              class="form-additional form_nominas " id="form_exportar_documentos" data-accion="exportar_documentos">
+                              class="form-additional " id="form_exportar_documentos">
                             <input id="nominas_exportar_documentos" name="nominas" type="hidden">
                             <div class="botones">
                                 <button type="submit" class="btn btn-info" name="btn_action_next"
