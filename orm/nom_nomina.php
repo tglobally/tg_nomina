@@ -1047,12 +1047,28 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
             $r_pdf = $this->crea_pdf_recibo_nomina(nom_nomina_id: $nomina->nom_nomina_id ,pdf: $pdf);
             $archivo_pdf = $pdf->Output('','S');
 
-            $xml = $this->genera_xml_v2(nom_nomina: $nomina);
+            $timbrada = (new fc_cfdi_sellado($this->link))->existe(filtro: array('fc_factura.id' => $nomina->fc_factura_id));
             if (errores::$error) {
-                return $this->error->error(mensaje: 'No se pudo generar el archivo XML', data: $xml);
+                return $this->error->error(mensaje: 'No se pudo validar si la nomina esta timbrada', data: $timbrada);
             }
 
-            $archivo_xml = file_get_contents($xml->doc_documento_ruta_absoluta);
+            if ($timbrada) {
+                $xml_documento = (new nom_nomina_documento(link: $this->link))->filtro_and(
+                    filtro: array('nom_nomina.id' => $nomina->nom_nomina_id, "doc_tipo_documento.descripcion" => "xml_cfdi_nomina"),limit: 1);
+                if (errores::$error) {
+                    return $this->error->error(mensaje: 'Error al obtener nomina documento', data: $xml_documento);
+                }
+
+                $archivo_xml = file_get_contents($xml_documento->registros[0]['doc_documento_ruta_absoluta']);
+
+            } else {
+                $xml = $this->genera_xml_v2(nom_nomina: $nomina);
+                if (errores::$error) {
+                    return $this->error->error(mensaje: 'No se pudo generar el archivo XML', data: $xml);
+                }
+
+                $archivo_xml = file_get_contents($xml->doc_documento_ruta_absoluta);
+            }
 
             $zip->addFromString($nomina->nom_nomina_descripcion.$contador.'.pdf', $archivo_pdf);
             $zip->addFromString($nomina->nom_nomina_descripcion.$contador.'.xml', $archivo_xml);
