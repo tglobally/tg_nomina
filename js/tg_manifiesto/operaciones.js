@@ -84,7 +84,7 @@ $(document).ready(function () {
 
             $('#nominas_genera_xmls').val(nominas_seleccionadas);
             $('#nominas_timbra_xmls').val(nominas_seleccionadas);
-
+            $('#nominas_exportar_documentos').val(nominas_seleccionadas);
         }, 1000);
     });
 
@@ -106,7 +106,7 @@ $(document).ready(function () {
                 let status = 'info';
                 let body = '';
 
-                if(response.status == "Error"){
+                if (response.status == "Error") {
                     status = 'danger';
                     let title = response.title;
                     let code = response.code;
@@ -114,43 +114,45 @@ $(document).ready(function () {
 
                     body = `<h4 class="alert-heading"><strong>${title}</strong></h4><hr>`;
                     body += `<strong>Error ${code} :</strong> ${message}`;
-                }else if(response.status == "Success"){
+                } else if (response.status == "Success") {
                     status = 'success';
                     body = response.message;
 
-                    $(".tablas_nominas").empty();
+                    if (accion !== "exportar_documentos"){
+                        $(".tablas_nominas").empty();
 
-                    nominas_seleccionadas.forEach(function (value, row, data) {
+                        nominas_seleccionadas.forEach(function (value, row, data) {
 
-                        var contenedor = `<div class="col-md-12">
+                            var contenedor = `<div class="col-md-12">
                                             <div class="tabla_titulo"><span class="text-header">Nomina - ${value}</span></div>
                                             <table id="nomina_${value}" class="datatables table table-striped "></table>
                                          </div>`;
 
-                        $('.tablas_nominas').append(contenedor);
+                            $('.tablas_nominas').append(contenedor);
 
-                        var table = inicializa_datatable(`#nomina_${value}`, [
-                            {data: 'doc_tipo_documento_codigo', title: "Tipo Documento"},
-                            {data: 'doc_documento_nombre', title: "Documento"},
-                        ]);
+                            var table = inicializa_datatable(`#nomina_${value}`, [
+                                {data: 'doc_tipo_documento_codigo', title: "Tipo Documento"},
+                                {data: 'doc_documento_nombre', title: "Documento"},
+                            ]);
 
-                        let url = get_url("nom_nomina_documento", "get_documentos_nomina", {nom_nomina_id: value});
-                        var dataform = new FormData();
+                            let url = get_url("nom_nomina_documento", "get_documentos_nomina", {nom_nomina_id: value});
+                            var dataform = new FormData();
 
-                        Loader.load('.tablas_nominas', url, dataform,
-                            function (response) {
-                                var registros = response.registros;
-                                table.rows.add(registros).draw();
-                            }, function (XMLHttpRequest, textStatus, errorThrown) {
-                                let response = XMLHttpRequest.responseText;
-                                console.log(response)
-                            });
+                            Loader.load('.tablas_nominas', url, dataform,
+                                function (response) {
+                                    var registros = response.registros;
+                                    table.rows.add(registros).draw();
+                                }, function (XMLHttpRequest, textStatus, errorThrown) {
+                                    let response = XMLHttpRequest.responseText;
+                                    console.log(response)
+                                });
 
-                    });
+                        });
+                    }
                 }
 
                 let alert = `<div class="alert alert-${status} alert-fixed">${body}</div>`
-                $( '.login-body' ).append(alert);
+                $('.login-body').append(alert);
                 setTimeout(function () {
                     $('.alert').alert('close');
                 }, 10000);

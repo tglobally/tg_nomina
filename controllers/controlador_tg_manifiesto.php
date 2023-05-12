@@ -77,6 +77,8 @@ class controlador_tg_manifiesto extends _ctl_base
     public string $link_tg_manifiesto_genera_xmls = '';
     public string $link_tg_manifiesto_timbra_xmls = '';
 
+    public string $link_tg_manifiesto_exportar_documentos = '';
+
     public array $nominas_seleccionadas = array();
 
     public function __construct(PDO      $link, html $html = new \gamboamartin\template_1\html(),
@@ -658,6 +660,15 @@ class controlador_tg_manifiesto extends _ctl_base
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al obtener link',
                 data: $this->link_tg_manifiesto_timbra_xmls);
+            print_r($error);
+            exit;
+        }
+
+        $this->link_tg_manifiesto_exportar_documentos = $this->obj_link->link_con_id(accion: "exportar_documentos",
+            link: $this->link, registro_id: $this->registro_id, seccion: $this->seccion);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener link',
+                data: $this->link_tg_manifiesto_exportar_documentos);
             print_r($error);
             exit;
         }
@@ -3602,6 +3613,29 @@ class controlador_tg_manifiesto extends _ctl_base
                 $response['message'] = "Error al generar los documentos para las nominas: $nomina";
             }
         }
+
+        header('Content-type: application/json');
+        echo json_encode($response);
+        exit();
+    }
+
+    public function exportar_documentos(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
+    {
+        if (!isset($_POST['nominas'])) {
+            return $this->retorno_error(mensaje: 'Error no existe nominas', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        if ($_POST['nominas'] === "") {
+            return $this->retorno_error(mensaje: 'Error no ha seleccionado una nomina', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        $this->nominas_seleccionadas = explode(",", $_POST['nominas']);
+
+        $response = array();
+        $response['status'] = "Success";
+        $response['message'] = $this->nominas_seleccionadas;
 
         header('Content-type: application/json');
         echo json_encode($response);
