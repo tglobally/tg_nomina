@@ -3635,7 +3635,7 @@ class controlador_tg_manifiesto extends _ctl_base
 
         $nominas = new stdClass();
         foreach ($this->nominas_seleccionadas as $nomina) {
-            $data = (new nom_nomina($this->link))->registro(registro_id: $nomina);
+            $data = (new nom_nomina($this->link))->registro(registro_id: $nomina,retorno_obj: true);
             if (errores::$error) {
                 $error = $this->errores->error(mensaje: 'Error al obtener recibo de nomina', data: $data);
                 print_r($error);
@@ -3645,7 +3645,7 @@ class controlador_tg_manifiesto extends _ctl_base
             $nominas->registros[] = $data;
         }
 
-        $r_nomina = (new nom_nomina($this->link))->descarga_recibo_nomina_zip(nom_nominas: $nominas);
+        $r_nomina = (new nom_nomina($this->link))->descarga_recibo_nomina_zip_v2(nom_nominas: $nominas);
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al obtener recibo de nomina', data: $r_nomina);
             print_r($error);
