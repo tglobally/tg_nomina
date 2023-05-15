@@ -1201,7 +1201,7 @@ class controlador_tg_manifiesto extends _ctl_base
             $total_otros_descuentos += $deducciones['otros_descuentos']['total'];
         }
 
-        $totales = array_fill(0, '47', '');
+        $totales = array_fill(0, '53', '');
         $totales[23] = $total_otros_ingresos;
         $totales[37] = $total_percepciones;
         $totales[44] = $total_otros_descuentos;
