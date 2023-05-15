@@ -32,14 +32,14 @@ $(document).ready(function () {
 
     let timer = null;
 
-    $('#nom_nomina').on('click', 'tbody td:first-child', function (event) {
+    $('#nom_nomina').on('click', 'thead:first-child, tbody', function () {
 
         if (timer) {
             clearTimeout(timer);
         }
 
         timer = setTimeout(() => {
-            var selectedData = table_nom_nomina.rows('.selected').data();
+            var rows_selected = table_nom_nomina.rows('.selected').data();
 
             datatables.forEach((tabla) => {
                 tabla.clear();
@@ -49,7 +49,7 @@ $(document).ready(function () {
 
             $('.tablas_nominas').empty();
 
-            selectedData.each(function (value, row, data) {
+            rows_selected.each(function (value, row, data) {
                 nominas_seleccionadas.push(value.nom_nomina_id);
 
                 var contenedor = `<div class="col-md-12">
