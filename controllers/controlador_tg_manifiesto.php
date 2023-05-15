@@ -2417,6 +2417,26 @@ class controlador_tg_manifiesto extends _ctl_base
         }
 
         return $columna;
+    }    
+    
+    public function obten_columna_haberes(Spreadsheet $documento)
+    {
+        $totalDeHojas = $documento->getSheetCount();
+
+        $columna = -1;
+        for ($indiceHoja = 0; $indiceHoja < $totalDeHojas; $indiceHoja++) {
+            $hojaActual = $documento->getSheet($indiceHoja);
+            foreach ($hojaActual->getRowIterator() as $fila) {
+                foreach ($fila->getCellIterator() as $celda) {
+                    $valorRaw = $celda->getValue();
+                    if ($valorRaw === 'HABERES') {
+                        $columna = $celda->getColumn();
+                    }
+                }
+            }
+        }
+
+        return $columna;
     }
 
     public function obten_columna_monto_neto(Spreadsheet $documento)
@@ -2951,6 +2971,12 @@ class controlador_tg_manifiesto extends _ctl_base
             return $this->errores->error(mensaje: 'Error obtener columna de compensacion',
                 data: $columna_compensacion);
         }
+        
+        $columna_haberes = $this->obten_columna_haberes(documento: $documento);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error obtener columna de haberes',
+                data: $columna_haberes);
+        }
 
         $columna_monto_neto = $this->obten_columna_monto_neto(documento: $documento);
         if (errores::$error) {
@@ -3093,6 +3119,7 @@ class controlador_tg_manifiesto extends _ctl_base
                 $reg->vacaciones = 0;
                 $reg->dias_descanso_laborado = 0;
                 $reg->compensacion = 0;
+                $reg->haberes = 0;
 
                 $reg->prima_vacacional = 0;
                 $reg->despensa = 0;
@@ -3159,6 +3186,14 @@ class controlador_tg_manifiesto extends _ctl_base
 
                     if (!is_numeric($reg->compensacion)) {
                         $reg->compensacion = 0;
+                    }
+                }
+                if ($columna_haberes !== -1) {
+                    $haberes = $hojaActual->getCell($columna_haberes . $registro->fila)->getCalculatedValue();
+                    $reg->haberes = trim((string)$haberes);
+
+                    if (!is_numeric($reg->haberes)) {
+                        $reg->haberes = 0;
                     }
                 }
                 if ($columna_monto_neto !== -1) {
