@@ -1000,6 +1000,10 @@ class controlador_tg_manifiesto extends _ctl_base
             'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE');
 
         $registros = array();
+        $total_deducciones = 0;
+        $total_percepciones = 0;
+        $total_otros_ingresos = 0;
+        $total_otros_descuentos = 0;
 
         foreach ($nominas as $nomina) {
             $org_sucursal_estado = (new dp_calle_pertenece($this->link))->registro(registro_id: $nomina['org_sucursal_dp_calle_pertenece_id']);
@@ -1190,7 +1194,20 @@ class controlador_tg_manifiesto extends _ctl_base
                 $cliente
             ];
             $registros[] = $registro;
+
+            $total_deducciones += $deducciones['total'];
+            $total_percepciones += $percepciones['total'];
+            $total_otros_ingresos += $percepciones['otros_ingresos']['total'];
+            $total_otros_descuentos += $deducciones['otros_descuentos']['total'];
         }
+
+        $totales = array_fill(0, '47', '');
+        $totales[23] = $total_otros_ingresos;
+        $totales[37] = $total_percepciones;
+        $totales[44] = $total_otros_descuentos;
+        $totales[46] = $total_deducciones;
+
+        $registros[] = $totales;
 
         return $registros;
     }
