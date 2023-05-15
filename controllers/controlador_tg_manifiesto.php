@@ -77,6 +77,8 @@ class controlador_tg_manifiesto extends _ctl_base
     public string $link_tg_manifiesto_genera_xmls = '';
     public string $link_tg_manifiesto_timbra_xmls = '';
 
+    public string $link_tg_manifiesto_exportar_documentos = '';
+
     public array $nominas_seleccionadas = array();
 
     public function __construct(PDO      $link, html $html = new \gamboamartin\template_1\html(),
@@ -662,6 +664,15 @@ class controlador_tg_manifiesto extends _ctl_base
             exit;
         }
 
+        $this->link_tg_manifiesto_exportar_documentos = $this->obj_link->link_con_id(accion: "exportar_documentos",
+            link: $this->link, registro_id: $this->registro_id, seccion: $this->seccion);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener link',
+                data: $this->link_tg_manifiesto_exportar_documentos);
+            print_r($error);
+            exit;
+        }
+
         return $this->link_tg_manifiesto_periodo_alta_bd;
     }
 
@@ -989,6 +1000,10 @@ class controlador_tg_manifiesto extends _ctl_base
             'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE');
 
         $registros = array();
+        $total_deducciones = 0;
+        $total_percepciones = 0;
+        $total_otros_ingresos = 0;
+        $total_otros_descuentos = 0;
 
         foreach ($nominas as $nomina) {
             $org_sucursal_estado = (new dp_calle_pertenece($this->link))->registro(registro_id: $nomina['org_sucursal_dp_calle_pertenece_id']);
@@ -1179,7 +1194,20 @@ class controlador_tg_manifiesto extends _ctl_base
                 $cliente
             ];
             $registros[] = $registro;
+
+            $total_deducciones += $deducciones['total'];
+            $total_percepciones += $percepciones['total'];
+            $total_otros_ingresos += $percepciones['otros_ingresos']['total'];
+            $total_otros_descuentos += $deducciones['otros_descuentos']['total'];
         }
+
+        $totales = array_fill(0, '53', '');
+        $totales[23] = $total_otros_ingresos;
+        $totales[37] = $total_percepciones;
+        $totales[44] = $total_otros_descuentos;
+        $totales[46] = $total_deducciones;
+
+        $registros[] = $totales;
 
         return $registros;
     }
@@ -3641,6 +3669,41 @@ class controlador_tg_manifiesto extends _ctl_base
         header('Content-type: application/json');
         echo json_encode($response);
         exit();
+    }
+
+    public function exportar_documentos(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
+    {
+        if (!isset($_POST['nominas'])) {
+            return $this->retorno_error(mensaje: 'Error no existe nominas', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        if ($_POST['nominas'] === "") {
+            return $this->retorno_error(mensaje: 'Error no ha seleccionado una nomina', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        $this->nominas_seleccionadas = explode(",", $_POST['nominas']);
+
+        $nominas = new stdClass();
+        foreach ($this->nominas_seleccionadas as $nomina) {
+            $data = (new nom_nomina($this->link))->registro(registro_id: $nomina,retorno_obj: true);
+            if (errores::$error) {
+                $error = $this->errores->error(mensaje: 'Error al obtener recibo de nomina', data: $data);
+                print_r($error);
+                die('Error');
+            }
+
+            $nominas->registros[] = $data;
+        }
+
+        $r_nomina = (new nom_nomina($this->link))->descarga_recibo_nomina_zip_v2(nom_nominas: $nominas);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener recibo de nomina', data: $r_nomina);
+            print_r($error);
+            die('Error');
+        }
+        exit;
     }
 
     public function timbra_xmls(bool $header = true, bool $ws = false, array $not_actions = array()): array|string

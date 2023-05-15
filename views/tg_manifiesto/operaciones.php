@@ -73,6 +73,19 @@ $url_icons = (new views())->url_icons;
                         </form>
                     </div>
 
+                    <div class="col-sm-2">
+                        <form method="post" action="<?php echo $controlador->link_tg_manifiesto_exportar_documentos; ?> "
+                              class="form-additional " id="form_exportar_documentos">
+                            <input id="nominas_exportar_documentos" name="nominas" type="hidden">
+                            <div class="botones">
+                                <button type="submit" class="btn btn-info" name="btn_action_next"
+                                        value="exportar" form="form_exportar_documentos">
+                                    Exportar Documentos
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
                     <!--<div class="col-sm-2">
                         <form method="post" action="<?php echo $controlador->link_tg_manifiesto_descarga_pdf; ?> "
                               class="form-additional form_nominas " id="form_descarga_pdf">
