@@ -2267,80 +2267,81 @@ class controlador_tg_manifiesto extends _ctl_base
                     header: $header, ws: $ws);
             }
 
-            $filtro_fac['com_email_cte.id'] = $com_email_cte->registros[0]['com_email_cte_id'];
-            $fc_receptor_email = (new fc_receptor_email($this->link))->filtro_and(filtro: $filtro_fac);
-            if (errores::$error) {
-                return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo', data: $fc_receptor_email,
-                    header: $header, ws: $ws);
-            }
-
-            if (!isset($emisor['not_emisor_host'])) {
-                return $this->retorno_error(mensaje: 'Error no existe emisor', data: $fc_receptor_email,
-                    header: $header, ws: $ws);
-            }
-
-
-            $doc_tipo_documento_id = (new nom_nomina(link: $this->link))->doc_tipo_documento_id(extension: "pdf");
-            if (errores::$error) {
-                return $this->retorno_error(mensaje: 'Error al obtener factura documento', data: $doc_tipo_documento_id,
-                    header: $header, ws: $ws);
-            }
-
-            $filtro_pdf['nom_nomina.id'] = $nomina['nom_nomina_id'];
-            $filtro_pdf['doc_tipo_documento.id'] = $doc_tipo_documento_id;
-            $r_nom_nomina_documento_pdf = (new nom_nomina_documento(link: $this->link))->filtro_and(
-                filtro: $filtro_pdf);
-            if (errores::$error) {
-                return $this->retorno_error(mensaje: 'Error al obtener factura documento', data: $r_nom_nomina_documento_pdf,
-                    header: $header, ws: $ws);
-            }
-
-            $doc_tipo_documento_id = (new nom_nomina(link: $this->link))->doc_tipo_documento_id(extension: "xml");
-            if (errores::$error) {
-                return $this->retorno_error(mensaje: 'Error al obtener factura documento', data: $doc_tipo_documento_id,
-                    header: $header, ws: $ws);
-            }
-
-            $filtro_xml['nom_nomina.id'] = $nomina['nom_nomina_id'];
-            $filtro_xml['doc_tipo_documento.id'] = $doc_tipo_documento_id;
-            $r_nom_nomina_documento_xml = (new nom_nomina_documento(link: $this->link))->filtro_and(
-                filtro: $filtro_xml);
-            if (errores::$error) {
-                return $this->retorno_error(mensaje: 'Error al obtener factura documento', data: $r_nom_nomina_documento_xml,
-                    header: $header, ws: $ws);
-            }
-
-            $mensaje = new stdClass();
-            $mensaje->not_emisor_host = $emisor['not_emisor_host'];
-            $mensaje->not_emisor_port = $emisor['not_emisor_port'];
-            $mensaje->not_emisor_email = $emisor['not_emisor_email'];
-            $mensaje->not_emisor_password = $emisor['not_emisor_password'];
-            $mensaje->not_emisor_user_name = $emisor['not_emisor_user_name'];
-            $mensaje->not_receptor_email = $fc_receptor_email->registros[0]['not_receptor_email'];
-            $mensaje->not_receptor_alias = $fc_receptor_email->registros[0]['not_receptor_alias'];
-            $mensaje->not_mensaje_asunto = "Recibo nomina";
-            $mensaje->not_mensaje_mensaje = "Se envia recibo de nomina";
-
-            $adjuntos = array();
-            if ($r_nom_nomina_documento_pdf->n_registros > 0) {
-                if (file_exists($r_nom_nomina_documento_pdf->registros[0]['doc_documento_ruta_absoluta'])) {
-                    $adjuntos[0] = $r_nom_nomina_documento_pdf->registros[0];
-                    $adjuntos[0]['not_adjunto_descripcion'] = 'recibo';
+            if($com_email_cte->n_registros > 0) {
+                $filtro_fac['com_email_cte.id'] = $com_email_cte->registros[0]['com_email_cte_id'];
+                $fc_receptor_email = (new fc_receptor_email($this->link))->filtro_and(filtro: $filtro_fac);
+                if (errores::$error) {
+                    return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo', data: $fc_receptor_email,
+                        header: $header, ws: $ws);
                 }
-            }
-            if ($r_nom_nomina_documento_xml->n_registros > 0) {
-                if (file_exists($r_nom_nomina_documento_xml->registros[0]['doc_documento_ruta_absoluta'])) {
-                    $adjuntos[1] = $r_nom_nomina_documento_xml->registros[0];
-                    $adjuntos[1]['not_adjunto_descripcion'] = 'xml';
+
+                if (!isset($emisor['not_emisor_host'])) {
+                    return $this->retorno_error(mensaje: 'Error no existe emisor', data: $fc_receptor_email,
+                        header: $header, ws: $ws);
                 }
-            }
 
-            $mail = (new _mail())->envia(mensaje: $mensaje, adjuntos: $adjuntos);
-            if (errores::$error) {
-                return $this->retorno_error(mensaje: 'Error al enviar mensaje', data: $mail, header: $header, ws: $ws);
-            }
-            $mails[] = $mail;
 
+                $doc_tipo_documento_id = (new nom_nomina(link: $this->link))->doc_tipo_documento_id(extension: "pdf");
+                if (errores::$error) {
+                    return $this->retorno_error(mensaje: 'Error al obtener factura documento', data: $doc_tipo_documento_id,
+                        header: $header, ws: $ws);
+                }
+
+                $filtro_pdf['nom_nomina.id'] = $nomina['nom_nomina_id'];
+                $filtro_pdf['doc_tipo_documento.id'] = $doc_tipo_documento_id;
+                $r_nom_nomina_documento_pdf = (new nom_nomina_documento(link: $this->link))->filtro_and(
+                    filtro: $filtro_pdf);
+                if (errores::$error) {
+                    return $this->retorno_error(mensaje: 'Error al obtener factura documento', data: $r_nom_nomina_documento_pdf,
+                        header: $header, ws: $ws);
+                }
+
+                $doc_tipo_documento_id = (new nom_nomina(link: $this->link))->doc_tipo_documento_id(extension: "xml");
+                if (errores::$error) {
+                    return $this->retorno_error(mensaje: 'Error al obtener factura documento', data: $doc_tipo_documento_id,
+                        header: $header, ws: $ws);
+                }
+
+                $filtro_xml['nom_nomina.id'] = $nomina['nom_nomina_id'];
+                $filtro_xml['doc_tipo_documento.id'] = $doc_tipo_documento_id;
+                $r_nom_nomina_documento_xml = (new nom_nomina_documento(link: $this->link))->filtro_and(
+                    filtro: $filtro_xml);
+                if (errores::$error) {
+                    return $this->retorno_error(mensaje: 'Error al obtener factura documento', data: $r_nom_nomina_documento_xml,
+                        header: $header, ws: $ws);
+                }
+
+                $mensaje = new stdClass();
+                $mensaje->not_emisor_host = $emisor['not_emisor_host'];
+                $mensaje->not_emisor_port = $emisor['not_emisor_port'];
+                $mensaje->not_emisor_email = $emisor['not_emisor_email'];
+                $mensaje->not_emisor_password = $emisor['not_emisor_password'];
+                $mensaje->not_emisor_user_name = $emisor['not_emisor_user_name'];
+                $mensaje->not_receptor_email = $fc_receptor_email->registros[0]['not_receptor_email'];
+                $mensaje->not_receptor_alias = $fc_receptor_email->registros[0]['not_receptor_alias'];
+                $mensaje->not_mensaje_asunto = "Recibo nomina";
+                $mensaje->not_mensaje_mensaje = "Se envia recibo de nomina";
+
+                $adjuntos = array();
+                if ($r_nom_nomina_documento_pdf->n_registros > 0) {
+                    if (file_exists($r_nom_nomina_documento_pdf->registros[0]['doc_documento_ruta_absoluta'])) {
+                        $adjuntos[0] = $r_nom_nomina_documento_pdf->registros[0];
+                        $adjuntos[0]['not_adjunto_descripcion'] = 'recibo.pdf';
+                    }
+                }
+                if ($r_nom_nomina_documento_xml->n_registros > 0) {
+                    if (file_exists($r_nom_nomina_documento_xml->registros[0]['doc_documento_ruta_absoluta'])) {
+                        $adjuntos[1] = $r_nom_nomina_documento_xml->registros[0];
+                        $adjuntos[1]['not_adjunto_descripcion'] = 'recibo.xml';
+                    }
+                }
+
+                $mail = (new _mail())->envia(mensaje: $mensaje, adjuntos: $adjuntos);
+                if (errores::$error) {
+                    return $this->retorno_error(mensaje: 'Error al enviar mensaje', data: $mail, header: $header, ws: $ws);
+                }
+                $mails[] = $mail;
+            }
         }
 
         return $mails;
