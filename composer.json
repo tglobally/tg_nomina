@@ -63,7 +63,7 @@
     "gamboa.martin/xml_cfdi_4":"^2.0.0",
     "gamboa.martin/nomina": "^1.0.0",
     "gamboa.martin/empleado": "^2.0.0",
-    "gamboa.martin/im_registro_patronal": "^2.0.0",
+    "gamboa.martin/im_registro_patronal": "^3.0.0",
     "gamboa.martin/notificaciones": "^1.0.0",
     "tglobally/template_tg": "^4.0.0"
   },
