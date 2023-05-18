@@ -15,7 +15,7 @@ class em_cuenta_bancaria extends \gamboamartin\empleado\models\em_cuenta_bancari
         $datos['cuenta'] = "'".$data_general['cuenta'];
         $datos['clabe'] = "'".$data_general['clabe'];
         $datos['banco'] = $data_general['banco'];
-        $datos['subsidio'] = $data_general['subsidio'];
+        //$datos['subsidio'] = $data_general['subsidio'];
 
         return $datos;
     }
