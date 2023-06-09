@@ -1996,6 +1996,17 @@ class controlador_tg_manifiesto extends _ctl_base
                                 return $this->errores->error(mensaje: 'Error al insertar percepcion default', data: $r_alta_nom_par_percepcion);
                             }
                         }
+                        if ($empleado_excel->haberes > 0) {
+                            $nom_par_percepcion_sep = array();
+                            $nom_par_percepcion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
+                            $nom_par_percepcion_sep['nom_percepcion_id'] = 22;
+                            $nom_par_percepcion_sep['importe_exento'] = $empleado_excel->haberes;
+
+                            $r_alta_nom_par_percepcion = (new nom_par_percepcion($this->link))->alta_registro(registro: $nom_par_percepcion_sep);
+                            if (errores::$error) {
+                                return $this->errores->error(mensaje: 'Error al insertar percepcion default', data: $r_alta_nom_par_percepcion);
+                            }
+                        }
                         
                         if ($empleado_excel->actividades_culturales > 0) {
                             $nom_par_percepcion_sep = array();
