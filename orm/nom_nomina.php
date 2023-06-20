@@ -212,27 +212,27 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
             return $this->error->error(mensaje: 'Error al validar fc_factura', data: $valida);
         }
 
-        $total = (new fc_factura($this->link))->total(fc_factura_id: $fc_factura->fc_factura_id);
+       /* $total = (new fc_factura($this->link))->total(modelo_partida: ,name_entidad: '',registro_id: $fc_factura->fc_factura_id);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al obtener total', data: $total);
         }
 
-        $sub_total = (new fc_factura($this->link))->sub_total(fc_factura_id: $fc_factura->fc_factura_id);
+        $sub_total = (new fc_factura($this->link))->sub_total(modelo_partida: $this,name_entidad: '',registro_id: $fc_factura->fc_factura_id);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al obtener sub_total', data: $sub_total);
-        }
+        }*/
 
-        $descuento = (new fc_factura($this->link))->get_factura_descuento(fc_factura_id: $fc_factura->fc_factura_id);
+        $descuento = (new fc_factura($this->link))->get_factura_descuento(registro_id: $fc_factura->fc_factura_id);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al obtener descuento', data: $descuento);
         }
 
         $comprobante = new stdClass();
         $comprobante->Moneda = $fc_factura->cat_sat_moneda_codigo;
-        $comprobante->Total = number_format((float)$total, 2, '.', '');
+        //$comprobante->Total = number_format((float)$total, 2, '.', '');
         $comprobante->Exportacion = $fc_factura->fc_factura_exportacion;
         $comprobante->TipoDeComprobante = $fc_factura->cat_sat_tipo_de_comprobante_codigo;
-        $comprobante->SubTotal = number_format((float)$sub_total, 2, '.', '');
+        //$comprobante->SubTotal = number_format((float)$sub_total, 2, '.', '');
         $comprobante->LugarExpedicion = $fc_factura->dp_cp_descripcion;
         $comprobante->Fecha = $fc_factura->fc_factura_fecha;
         $comprobante->Folio = $fc_factura->fc_factura_folio;
@@ -964,13 +964,14 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         }
 
         $cfdi_sellado = (new fc_cfdi_sellado($this->link))->maqueta_datos(codigo: $datos_xml['cfdi_comprobante']['NoCertificado'],
-            descripcion: $datos_xml['cfdi_comprobante']['NoCertificado'], fc_factura_id: $nom_nomina->fc_factura_id,
+            descripcion: $datos_xml['cfdi_comprobante']['NoCertificado'],
             comprobante_sello: $datos_xml['cfdi_comprobante']['Sello'], comprobante_certificado: $datos_xml['cfdi_comprobante']['Certificado'],
             comprobante_no_certificado: $datos_xml['cfdi_comprobante']['NoCertificado'], complemento_tfd_sl: "",
             complemento_tfd_fecha_timbrado: $datos_xml['tfd']['FechaTimbrado'],
             complemento_tfd_no_certificado_sat: $datos_xml['tfd']['NoCertificadoSAT'], complemento_tfd_rfc_prov_certif: $datos_xml['tfd']['RfcProvCertif'],
             complemento_tfd_sello_cfd: $datos_xml['tfd']['SelloCFD'], complemento_tfd_sello_sat: $datos_xml['tfd']['SelloSAT'],
-            uuid: $datos_xml['tfd']['UUID'], complemento_tfd_tfd: "", cadena_complemento_sat: $json_timbrado->txt);
+            uuid: $datos_xml['tfd']['UUID'], complemento_tfd_tfd: "", cadena_complemento_sat: $json_timbrado->txt,key_entidad_id: '',
+            registro_id: $nom_nomina->fc_factura_id);
         if (errores::$error) {
             return $this->error->error(mensaje: 'No se pudo maquetar datos para cfdi sellado', data: $cfdi_sellado);
         }

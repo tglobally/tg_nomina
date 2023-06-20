@@ -3682,6 +3682,36 @@ class controlador_tg_manifiesto extends _ctl_base
         echo json_encode($response);
         exit();
     }
+    public function genera_xmls_v33(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
+    {
+        if (!isset($_POST['nominas'])) {
+            return $this->retorno_error(mensaje: 'Error no existe nominas', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        if ($_POST['nominas'] === "") {
+            return $this->retorno_error(mensaje: 'Error no ha seleccionado una nomina', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        $this->nominas_seleccionadas = explode(",", $_POST['nominas']);
+
+        $response = array();
+        $response['status'] = "Success";
+        $response['message'] = "Se generaron correctamete los documentos";
+
+        foreach ($this->nominas_seleccionadas as $nomina) {
+            $xml = (new nom_nomina(link: $this->link))->genera_documentos(nom_nomina_id: $nomina);
+            if (errores::$error) {
+                $response['status'] = "Error";
+                $response['message'] = "Error al generar los documentos para las nominas: $nomina";
+            }
+        }
+
+        header('Content-type: application/json');
+        echo json_encode($response);
+        exit();
+    }
 
     public function exportar_documentos(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
     {
@@ -3738,6 +3768,48 @@ class controlador_tg_manifiesto extends _ctl_base
 
         foreach ($this->nominas_seleccionadas as $nomina) {
             $xml = (new nom_nomina(link: $this->link))->timbra_xml(nom_nomina_id: $nomina);
+
+            if (errores::$error) {
+                $response['status'] = "Error";
+                $response['title'] = "Error al timbrar XML para la nomina: $nomina";
+
+                if (isset($xml['data']['data'])) {
+                    $xml = $xml['data']['data'];
+                    $response['code'] = $xml['code'];
+                } else {
+                    $xml['message'] = $xml['mensaje_limpio'];
+                    $response['code'] = '';
+                }
+                $response['message'] = $xml['message'];
+                break;
+            }
+        }
+
+        header('Content-type: application/json');
+        echo json_encode($response);
+        exit();
+    }
+
+    public function timbra_xmls_v33(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
+    {
+        if (!isset($_POST['nominas'])) {
+            return $this->retorno_error(mensaje: 'Error no existe nominas', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        if ($_POST['nominas'] === "") {
+            return $this->retorno_error(mensaje: 'Error no ha seleccionado una nomina', data: $_POST, header: $header,
+                ws: $ws);
+        }
+
+        $this->nominas_seleccionadas = explode(",", $_POST['nominas']);
+
+        $response = array();
+        $response['status'] = "Success";
+        $response['message'] = "Se timbraron correctamente los documentos";
+
+        foreach ($this->nominas_seleccionadas as $nomina) {
+            $xml = (new nom_nomina(link: $this->link))->timbra_xml_v33(nom_nomina_id: $nomina);
 
             if (errores::$error) {
                 $response['status'] = "Error";
