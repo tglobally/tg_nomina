@@ -76,6 +76,7 @@ class controlador_tg_manifiesto extends _ctl_base
 
     public string $link_tg_manifiesto_genera_xmls = '';
     public string $link_tg_manifiesto_timbra_xmls = '';
+    public string $link_tg_manifiesto_timbra_xmls_v33 = '';
 
     public string $link_tg_manifiesto_exportar_documentos = '';
 
@@ -660,6 +661,15 @@ class controlador_tg_manifiesto extends _ctl_base
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al obtener link',
                 data: $this->link_tg_manifiesto_timbra_xmls);
+            print_r($error);
+            exit;
+        }
+
+        $this->link_tg_manifiesto_timbra_xmls_v33 = $this->obj_link->link_con_id(accion: "timbra_xmls_v33",
+            link: $this->link, registro_id: $this->registro_id, seccion: $this->seccion);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener link',
+                data: $this->link_tg_manifiesto_timbra_xmls_v33);
             print_r($error);
             exit;
         }

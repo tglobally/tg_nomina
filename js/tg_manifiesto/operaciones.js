@@ -84,6 +84,7 @@ $(document).ready(function () {
 
             $('#nominas_genera_xmls').val(nominas_seleccionadas);
             $('#nominas_timbra_xmls').val(nominas_seleccionadas);
+            $('#nominas_timbra_xmls_v33').val(nominas_seleccionadas);
             $('#nominas_exportar_documentos').val(nominas_seleccionadas);
         }, 1000);
     });

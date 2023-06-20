@@ -86,6 +86,20 @@ $url_icons = (new views())->url_icons;
                         </form>
                     </div>
 
+                    <div class="col-sm-2">
+                        <form method="post" action="<?php echo $controlador->link_tg_manifiesto_timbra_xmls_v33; ?> "
+                              class="form-additional form_nominas " id="form_timbra_xmls_v33" data-accion="timbra_xmls_v33">
+                            <input id="nominas_timbra_xmls_v33" name="nominas" type="hidden">
+                            <div class="botones">
+                                <button type="submit" class="btn btn-info" name="btn_action_next"
+                                        value="exportar" form="form_timbra_xmls_v33">
+                                    Timbrar Documentos XML 3.3
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+
                     <!--<div class="col-sm-2">
                         <form method="post" action="<?php echo $controlador->link_tg_manifiesto_descarga_pdf; ?> "
                               class="form-additional form_nominas " id="form_descarga_pdf">
