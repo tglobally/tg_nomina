@@ -1053,6 +1053,8 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
                 return $this->error->error(mensaje: 'No se pudo validar si la nomina esta timbrada', data: $timbrada);
             }
 
+            $ruta_xml = '';
+            $archivo_xml = '';
             if ($timbrada) {
                 $xml_documento = (new nom_nomina_documento(link: $this->link))->filtro_and(
                     filtro: array('nom_nomina.id' => $nomina->nom_nomina_id, "doc_tipo_documento.descripcion" => "xml_cfdi_nomina"),limit: 1);
@@ -1060,6 +1062,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
                     return $this->error->error(mensaje: 'Error al obtener nomina documento', data: $xml_documento);
                 }
 
+                $ruta_xml = $xml_documento->registros[0]['doc_documento_ruta_absoluta'];
                 $archivo_xml = file_get_contents($xml_documento->registros[0]['doc_documento_ruta_absoluta']);
 
             } else {
@@ -1069,11 +1072,16 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
                     return $this->error->error(mensaje: 'Error al obtener nomina documento', data: $xml_documento);
                 }
 
-                $archivo_xml = file_get_contents($xml_documento->registros[0]['doc_documento_ruta_absoluta']);
+                if($xml_documento->n_registros > 0){
+                    $ruta_xml = $xml_documento->registros[0]['doc_documento_ruta_absoluta'];
+                    $archivo_xml = file_get_contents($xml_documento->registros[0]['doc_documento_ruta_absoluta']);
+                }
             }
 
             $zip->addFromString($nomina->nom_nomina_descripcion.$contador.'.pdf', $archivo_pdf);
-            $zip->addFromString($nomina->nom_nomina_descripcion.$contador.'.xml', $archivo_xml);
+            if($ruta_xml !== ''){
+                $zip->addFromString($nomina->nom_nomina_descripcion.$contador.'.xml', $archivo_xml);
+            }
             $contador ++;
         }
 
