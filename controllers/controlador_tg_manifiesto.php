@@ -3821,8 +3821,9 @@ class controlador_tg_manifiesto extends _ctl_base
         foreach ($this->nominas_seleccionadas as $nomina) {
             $xml = (new nom_nomina(link: $this->link))->timbra_xml_v33(nom_nomina_id: $nomina);
 
-            if (errores::$error) {
-                $response['status'] = "Error";
+           /* if (errores::$error) {
+                continue;
+                /*$response['status'] = "Error";
                 $response['title'] = "Error al timbrar XML para la nomina: $nomina";
 
                 if (isset($xml['data']['data'])) {
@@ -3834,7 +3835,7 @@ class controlador_tg_manifiesto extends _ctl_base
                 }
                 $response['message'] = $xml['message'];
                 break;
-            }
+            }*/
         }
 
         header('Content-type: application/json');
