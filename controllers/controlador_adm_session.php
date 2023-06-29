@@ -23,7 +23,7 @@ class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_
     public array $secciones = array("nom_nomina", "nom_periodo", "nom_conf_factura", "nom_conf_nomina", "tg_tipo_servicio",
         "tg_manifiesto", "tg_manifiesto_periodo", "tg_tipo_provision", "tg_provision" , "tg_conf_provision" , "tg_layout",
         "tg_tipo_column", "tg_column", "nom_clasificacion", "tg_agrupador", "tg_conf_manifiesto",
-        "tg_empleado_agrupado", "nom_conf_empleado");
+        "tg_empleado_agrupado", "nom_conf_empleado", "em_empleado");
     public array $links_catalogos = array();
 
     public stdClass $links;
@@ -92,6 +92,9 @@ class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_
 
         $this->links_catalogos["nom_conf_empleado"]["titulo"] = "Conf. Empleado";
         $this->links_catalogos["nom_conf_empleado"]["subtitulo"] = "Catálogo";
+
+        $this->links_catalogos["em_empleado"]["titulo"] = "Empleados";
+        $this->links_catalogos["em_empleado"]["subtitulo"] = "Catálogo";
     }
 
 
