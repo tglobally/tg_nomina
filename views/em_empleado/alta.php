@@ -7,6 +7,7 @@
 
         <div class="  form-main" id="form">
             <form method="post" action="<?php echo $controlador->link_alta_bd; ?>" class="form-additional">
+                <?php echo $controlador->inputs->nom_conf_nomina_id; ?>
                 <?php echo $controlador->inputs->codigo; ?>
                 <?php echo $controlador->inputs->nombre; ?>
                 <?php echo $controlador->inputs->ap; ?>
