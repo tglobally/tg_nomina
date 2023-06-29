@@ -15,8 +15,11 @@
                 <?php echo $controlador->inputs->fecha_final_pago; ?>
                 <?php echo $controlador->inputs->fecha_envio; ?>
                 <?php echo $controlador->inputs->fecha_pago; ?>
-
-
+                <div class="control-group col-sm-6">
+                    <div class="controls">
+                        <input type="checkbox" name="aplica_ajuste_mensual" value="activo"><label>Aplica Ajuste Mensual</label>
+                    </div>
+                </div>
                 <div class="buttons col-md-12">
                     <div class="col-md-6">
                         <button type="submit" class="btn btn-info btn-guarda col-md-12 " name="btn_action_next" value="modifica">Guarda</button>
