@@ -19,7 +19,7 @@ class controlador_em_empleado extends \tglobally\tg_empleado\controllers\control
     {
         $keys = new stdClass();
         $keys->inputs = array('codigo', 'descripcion', 'nombre', 'ap', 'am',  'rfc', 'curp', 'nss', 'salario_diario',
-            'salario_diario_integrado','com_sucursal','org_sucursal', 'salario_total','correo');
+            'salario_diario_integrado','com_sucursal','org_sucursal', 'salario_total','correo', 'num_cuenta', 'clabe');
         $keys->telefonos = array('telefono');
         $keys->fechas = array('fecha_inicio_rel_laboral', 'fecha_inicio', 'fecha_final');
         $keys->selects = array();
@@ -40,6 +40,7 @@ class controlador_em_empleado extends \tglobally\tg_empleado\controllers\control
         $init_data['em_empleado'] = "gamboamartin\\empleado";
         $init_data['em_registro_patronal'] = "gamboamartin\\empleado";
         $init_data['com_sucursal'] = "gamboamartin\\comercial";
+        $init_data['bn_sucursal'] = "gamboamartin\\banco";
 
 
         $campos_view = $this->campos_view_base(init_data: $init_data, keys: $keys);
@@ -60,6 +61,9 @@ class controlador_em_empleado extends \tglobally\tg_empleado\controllers\control
         $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "nom_conf_nomina_id", label: "Conf. Nomina",
             cols: 12);
 
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "bn_sucursal_id", label: "Banco",
+            cols: 12);
+
         return $keys_selects;
     }
 
@@ -68,6 +72,28 @@ class controlador_em_empleado extends \tglobally\tg_empleado\controllers\control
     {
         $keys_selects = $this->key_select(cols: $cols, con_registros: $con_registros, filtro: $filtro, key: $key,
             keys_selects: $keys_selects, id_selected: $id_selected, label: $label);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        return $keys_selects;
+    }
+
+    protected function key_selects_txt(array $keys_selects): array
+    {
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'num_cuenta',
+            keys_selects: $keys_selects, place_holder: 'Número Cuenta');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'clabe',
+            keys_selects: $keys_selects, place_holder: 'Clabe');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = parent::key_selects_txt($keys_selects);
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
         }

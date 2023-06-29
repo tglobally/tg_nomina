@@ -31,6 +31,10 @@
                 <?php echo $controlador->inputs->salario_diario; ?>
                 <?php echo $controlador->inputs->salario_diario_integrado; ?>
                 <?php echo $controlador->inputs->salario_total; ?>
+                <?php echo $controlador->inputs->bn_sucursal_id; ?>
+                <?php echo $controlador->inputs->num_cuenta; ?>
+                <?php echo $controlador->inputs->clabe; ?>
+
                 <div class="buttons col-md-12">
                     <div class="col-md-6">
                         <button type="submit" class="btn btn-info btn-guarda col-md-12 " name="btn_action_next" value="modifica">Guarda</button>

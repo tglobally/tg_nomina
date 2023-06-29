@@ -3,7 +3,6 @@
 namespace tglobally\tg_nomina\models;
 
 use gamboamartin\errores\errores;
-use PDO;
 use stdClass;
 
 class em_empleado extends \tglobally\tg_empleado\models\em_empleado {
