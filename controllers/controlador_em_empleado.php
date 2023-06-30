@@ -1,7 +1,11 @@
 <?php
 namespace tglobally\tg_nomina\controllers;
 
+use gamboamartin\banco\models\bn_sucursal;
+use gamboamartin\documento\models\doc_documento;
 use gamboamartin\errores\errores;
+use gamboamartin\nomina\models\nom_conf_nomina;
+use gamboamartin\plugins\Importador;
 use PDO;
 use stdClass;
 use tglobally\tg_nomina\models\em_empleado;
@@ -99,6 +103,120 @@ class controlador_em_empleado extends \tglobally\tg_empleado\controllers\control
         }
 
         return $keys_selects;
+    }
+
+    public function lee_archivo(bool $header, bool $ws = false)
+    {
+        $doc_documento_modelo = new doc_documento($this->link);
+        $doc_documento_modelo->registro['descripcion'] = "Alta empleados ". rand();
+        $doc_documento_modelo->registro['descripcion_select'] = rand();
+        $doc_documento_modelo->registro['doc_tipo_documento_id'] = 1;
+        $doc_documento = $doc_documento_modelo->alta_bd(file: $_FILES['archivo']);
+        if (errores::$error) {
+            $error =  $this->errores->error(mensaje: 'Error al dar de alta el documento', data: $doc_documento);
+            if(!$header){
+                return $error;
+            }
+            print_r($error);
+            die('Error');
+        }
+
+        $columnas = array("CODIGO", "NOMBRE", "APELLIDO PATERNO", "APELLIDO MATERNO", "TELEFONO", "CURP", "RFC",
+            "NSS", "FECHA DE INGRESO", "SALARIO DIARIO", "FACTOR DE INTEGRACION", "SALARIO DIARIO INTEGRADO",
+            "BANCO", "NUMERO DE CUENTA", "CLABE", "NOMINA");
+        $fechas = array("FECHA DE INGRESO");
+
+        $empleados_excel = Importador::getInstance()
+            ->leer_registros(ruta_absoluta: $doc_documento->registro['doc_documento_ruta_absoluta'], columnas: $columnas,
+                fechas: $fechas);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al leer archivo de anticipos', data: $empleados_excel);
+            if (!$header) {
+                return $error;
+            }
+            print_r($error);
+            die('Error');
+        }
+
+        $this->link->beginTransaction();
+
+        foreach ($empleados_excel as $empleado){
+            $empleado = (array)$empleado;
+
+            $registros_empleado['codigo'] = $empleado['CODIGO'];
+            $registros_empleado['nombre'] = $empleado['NOMBRE'];
+            $registros_empleado['ap'] = $empleado['APELLIDO PATERNO'];
+            $registros_empleado['am'] = $empleado['APELLIDO MATERNO'];
+            $registros_empleado['telefono'] = $empleado['TELEFONO'];
+            $registros_empleado['curp'] = $empleado['CURP'];
+            $registros_empleado['rfc'] = $empleado['RFC'];
+            $registros_empleado['nss'] = $empleado['NSS'];
+            $registros_empleado['fecha_inicio_rel_laboral'] = $empleado['FECHA DE INGRESO'];
+            $registros_empleado['salario_diario'] = $empleado['SALARIO DIARIO'];
+
+            $filtro_nom_conf_nomina['nom_conf_nomina.descripcion_select'] = strtoupper($empleado['NOMINA']);
+            $nom_conf_nomina = (new nom_conf_nomina($this->link))->filtro_and(columnas: array('nom_conf_nomina_id'),
+                filtro: $filtro_nom_conf_nomina, limit: 1);
+            if (errores::$error) {
+                $error = $this->errores->error(mensaje: 'Error al obtener la conf. de nomina', data: $nom_conf_nomina);
+                if (!$header) {
+                    return $error;
+                }
+                print_r($error);
+                die('Error');
+            }
+
+            if ($nom_conf_nomina->n_registros <= 0){
+                $error = $this->errores->error(mensaje: 'Error no existe la conf. de nomina', data: $empleado['NOMINA']);
+                if (!$header) {
+                    return $error;
+                }
+                print_r($error);
+                die('Error');
+            }
+
+            $filtro_bn_sucursal['bn_sucursal.descripcion'] = strtoupper($empleado['BANCO']);
+            $bn_sucursal = (new bn_sucursal($this->link))->filtro_and(columnas: array('bn_sucursal_id'),
+                filtro: $filtro_bn_sucursal, limit: 1);
+            if (errores::$error) {
+                $error = $this->errores->error(mensaje: 'Error al obtener banco', data: $bn_sucursal);
+                if (!$header) {
+                    return $error;
+                }
+                print_r($error);
+                die('Error');
+            }
+
+            if ($bn_sucursal->n_registros <= 0){
+                $error = $this->errores->error(mensaje: 'Error no existe el banco', data: $empleado['BANCO']);
+                if (!$header) {
+                    return $error;
+                }
+                print_r($error);
+                die('Error');
+            }
+
+            $registros_empleado['nom_conf_nomina_id'] = $nom_conf_nomina->registros[0]['nom_conf_nomina_id'];
+            $registros_empleado['bn_sucursal_id'] = $bn_sucursal->registros[0]['bn_sucursal_id'];
+            $registros_empleado['num_cuenta'] = $empleado['NUMERO DE CUENTA'];
+            $registros_empleado['clabe'] = $empleado['CLABE'];
+
+            $alta_empleado = (new em_empleado($this->link))->alta_registro(registro: $registros_empleado);
+            if (errores::$error) {
+                $this->link->rollBack();
+                $error = $this->errores->error(mensaje: 'Error al dar de alta empleado', data: $alta_empleado);
+                if (!$header) {
+                    return $error;
+                }
+                print_r($error);
+                die('Error');
+            }
+        }
+
+        $this->link->commit();
+
+        header('Location:' . $this->link_lista);
+        exit;
     }
 
 }
