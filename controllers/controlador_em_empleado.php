@@ -68,6 +68,9 @@ class controlador_em_empleado extends \tglobally\tg_empleado\controllers\control
         $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "bn_sucursal_id", label: "Banco",
             cols: 12);
 
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "com_sucursal_id", label: "Cliente",
+            cols: 12);
+
         return $keys_selects;
     }
 
