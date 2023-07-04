@@ -126,7 +126,7 @@ class controlador_em_empleado extends \tglobally\tg_empleado\controllers\control
 
         $columnas = array("CODIGO", "NOMBRE", "APELLIDO PATERNO", "APELLIDO MATERNO", "TELEFONO", "CURP", "RFC",
             "NSS", "FECHA DE INGRESO", "SALARIO DIARIO", "FACTOR DE INTEGRACION", "SALARIO DIARIO INTEGRADO",
-            "BANCO", "NUMERO DE CUENTA", "CLABE", "NOMINA");
+            "BANCO", "NUMERO DE CUENTA", "CLABE", "NOMINA", "CLIENTE");
         $fechas = array("FECHA DE INGRESO");
 
         $empleados_excel = Importador::getInstance()
@@ -199,6 +199,7 @@ class controlador_em_empleado extends \tglobally\tg_empleado\controllers\control
                 die('Error');
             }
 
+            $registros_empleado['com_sucursal_id'] = $empleado['CLIENTE'];
             $registros_empleado['nom_conf_nomina_id'] = $nom_conf_nomina->registros[0]['nom_conf_nomina_id'];
             $registros_empleado['bn_sucursal_id'] = $bn_sucursal->registros[0]['bn_sucursal_id'];
             $registros_empleado['num_cuenta'] = $empleado['NUMERO DE CUENTA'];
