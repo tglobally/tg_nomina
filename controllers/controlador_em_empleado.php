@@ -268,14 +268,16 @@ class controlador_em_empleado extends \tglobally\tg_empleado\controllers\control
 
     public function nominas(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
     {
-        $seccion = "tg_empleado_sucursal";
+        $seccion = "nom_nomina";
 
         $data_view = new stdClass();
-        $data_view->names = array('Id', 'Código', 'RFC Cliente', 'Razón Social Client', 'Sucursal Cliente', 'Acciones');
-        $data_view->keys_data = array($seccion . "_id", $seccion . '_codigo', 'com_cliente_rfc', 'com_cliente_razon_social',
-            'com_sucursal_descripcion');
+        $data_view->names = array('Id', 'Fecha Inicio', 'Fecha Final', 'Fecha Pago', 'Percepcion Total', 'Otro Pago Total',
+            'Deduccion Total', 'Total', 'Tipo Nomina', 'RFC Empresa');
+        $data_view->keys_data = array($seccion . "_id",$seccion . "_fecha_inicial_pago",$seccion . "_fecha_final_pago",
+            $seccion . "_fecha_pago",$seccion . "_total_percepcion_total",$seccion . "_total_otro_pago_total",
+            $seccion . "_total_deduccion_total",$seccion . "_total","cat_sat_tipo_nomina_descripcion","org_empresa_rfc");
         $data_view->key_actions = 'acciones';
-        $data_view->namespace_model = 'tglobally\\tg_empleado\\models';
+        $data_view->namespace_model = 'gamboamartin\\nomina\\models';
         $data_view->name_model_children = $seccion;
 
         $contenido_table = $this->contenido_children(data_view: $data_view, next_accion: __FUNCTION__,
