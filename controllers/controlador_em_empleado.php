@@ -266,4 +266,26 @@ class controlador_em_empleado extends \tglobally\tg_empleado\controllers\control
         exit;
     }
 
+    public function nominas(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
+    {
+        $seccion = "tg_empleado_sucursal";
+
+        $data_view = new stdClass();
+        $data_view->names = array('Id', 'Código', 'RFC Cliente', 'Razón Social Client', 'Sucursal Cliente', 'Acciones');
+        $data_view->keys_data = array($seccion . "_id", $seccion . '_codigo', 'com_cliente_rfc', 'com_cliente_razon_social',
+            'com_sucursal_descripcion');
+        $data_view->key_actions = 'acciones';
+        $data_view->namespace_model = 'tglobally\\tg_empleado\\models';
+        $data_view->name_model_children = $seccion;
+
+        $contenido_table = $this->contenido_children(data_view: $data_view, next_accion: __FUNCTION__,
+            not_actions: $not_actions);
+        if (errores::$error) {
+            return $this->retorno_error(
+                mensaje: 'Error al obtener tbody', data: $contenido_table, header: $header, ws: $ws);
+        }
+
+        return $contenido_table;
+    }
+
 }
