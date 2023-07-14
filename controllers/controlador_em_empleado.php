@@ -25,7 +25,7 @@ class controlador_em_empleado extends \tglobally\tg_empleado\controllers\control
         $keys->inputs = array('codigo', 'descripcion', 'nombre', 'ap', 'am',  'rfc', 'curp', 'nss', 'salario_diario',
             'salario_diario_integrado','com_sucursal','org_sucursal', 'salario_total','correo', 'num_cuenta', 'clabe');
         $keys->telefonos = array('telefono');
-        $keys->fechas = array('fecha_inicio_rel_laboral', 'fecha_inicio', 'fecha_final');
+        $keys->fechas = array('fecha_inicio_rel_laboral', 'fecha_inicio', 'fecha_final', 'fecha_antiguedad');
         $keys->selects = array();
 
         $init_data = array();
@@ -125,9 +125,9 @@ class controlador_em_empleado extends \tglobally\tg_empleado\controllers\control
         }
 
         $columnas = array("CODIGO", "NOMBRE", "APELLIDO PATERNO", "APELLIDO MATERNO", "TELEFONO", "CURP", "RFC",
-            "NSS", "FECHA DE INGRESO", "SALARIO DIARIO", "FACTOR DE INTEGRACION", "SALARIO DIARIO INTEGRADO",
+            "NSS", "FECHA DE INGRESO", "FECHA ANTIGUEDAD","SALARIO DIARIO", "FACTOR DE INTEGRACION", "SALARIO DIARIO INTEGRADO",
             "BANCO", "NUMERO DE CUENTA", "CLABE", "NOMINA", "CLIENTE");
-        $fechas = array("FECHA DE INGRESO");
+        $fechas = array("FECHA DE INGRESO", "FECHA ANTIGUEDAD");
 
         $empleados_excel = Importador::getInstance()
             ->leer_registros(ruta_absoluta: $doc_documento->registro['doc_documento_ruta_absoluta'], columnas: $columnas,
@@ -155,6 +155,7 @@ class controlador_em_empleado extends \tglobally\tg_empleado\controllers\control
             $registros_empleado['rfc'] = $empleado['RFC'];
             $registros_empleado['nss'] = $empleado['NSS'];
             $registros_empleado['fecha_inicio_rel_laboral'] = $empleado['FECHA DE INGRESO'];
+            $registros_empleado['fecha_antiguedad'] = $empleado['FECHA ANTIGUEDAD'];
             $registros_empleado['salario_diario'] = $empleado['SALARIO DIARIO'];
 
             $filtro_nom_conf_nomina['nom_conf_nomina.descripcion_select'] = strtoupper($empleado['NOMINA']);
