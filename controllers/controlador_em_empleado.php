@@ -12,11 +12,53 @@ use tglobally\tg_nomina\models\em_empleado;
 
 class controlador_em_empleado extends \tglobally\tg_empleado\controllers\controlador_em_empleado {
 
+    public string $link_em_empleado_nominas = '';
+
     public function __construct(PDO $link, stdClass $paths_conf = new stdClass())
     {
         parent::__construct($link, $paths_conf);
 
         $this->modelo = new em_empleado($link);
+
+        $this->link_em_empleado_nominas = $this->obj_link->link_con_id(accion: "nominas",link: $this->link,
+            registro_id: $this->registro_id,seccion: "em_empleado");
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener link',
+                data: $this->link_em_empleado_nominas);
+            print_r($error);
+            exit;
+        }
+
+        $sidebar = $this->init_sidebar();
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al inicializar sidebar', data: $sidebar);
+            print_r($error);
+            die('Error');
+        }
+    }
+
+    public function init_sidebar(): stdClass|array
+    {
+        $menu_items = parent::init_sidebar();
+
+        $menu_items->nominas = $this->menu_item(menu_item_titulo: "Nominas", link: $this->link_em_empleado_nominas);
+
+        $menu_items->nominas['menu_seccion_active'] = true;
+        $menu_items->nominas['menu_lateral_active'] = true;
+
+        $this->sidebar['modifica']['menu'][] = $menu_items->nominas;
+        $this->sidebar['fiscales']['menu'][] = $menu_items->nominas;
+        $this->sidebar['imss']['menu'][] = $menu_items->nominas;
+        $this->sidebar['cuenta_bancaria']['menu'][] = $menu_items->nominas;
+        $this->sidebar['anticipo']['menu'][] = $menu_items->nominas;
+        $this->sidebar['asigna_sucursal']['menu'][] = $menu_items->nominas;
+
+        $this->sidebar['nominas']['titulo'] = "Nominas";
+        $this->sidebar['nominas']['stepper_active'] = true;
+        $this->sidebar['nominas']['menu'] = array($menu_items->modifica, $menu_items->fiscales, $menu_items->imss,
+            $menu_items->cuenta_bancaria, $menu_items->anticipo, $menu_items->asigna_cliente, $menu_items->nominas);
+
+        return  $menu_items;
     }
 
     protected function campos_view(): array
