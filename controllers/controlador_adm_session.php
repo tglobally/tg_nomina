@@ -20,7 +20,15 @@ class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_
     public string $include_menu = '';
     public string $mensaje_html = '';
 
+    public array $secciones = array("nom_nomina", "nom_periodo", "nom_conf_factura", "nom_conf_nomina", "tg_tipo_servicio",
+        "tg_manifiesto", "tg_manifiesto_periodo", "tg_tipo_provision", "tg_provision" , "tg_conf_provision" , "tg_layout",
+        "tg_tipo_column", "tg_column", "nom_clasificacion", "tg_agrupador", "tg_conf_manifiesto",
+        "tg_empleado_agrupado", "nom_conf_empleado", "em_empleado",'em_cuenta_bancaria','em_registro_patronal');
+    public array $links_catalogos = array();
+
+    public stdClass $links;
     public string $link_inicio = '';
+
 
     public function __construct(PDO $link, stdClass $paths_conf = new stdClass())
     {
@@ -28,6 +36,39 @@ class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_
 
         $this->titulo_pagina = "Inicio Sesion";
         $this->seccion_titulo = "Inicio";
+        
+        $this->links_catalogos["tg_layout"]["titulo"] = "Layout";
+        $this->links_catalogos["tg_layout"]["subtitulo"] = "Catálogo";
+
+        $this->links_catalogos["tg_tipo_column"]["titulo"] = "Tipo Column";
+        $this->links_catalogos["tg_tipo_column"]["subtitulo"] = "Catálogo";
+
+        $this->links_catalogos["tg_column"]["titulo"] = "Column";
+        $this->links_catalogos["tg_column"]["subtitulo"] = "Catálogo";
+
+        $this->links_catalogos["nom_clasificacion"]["titulo"] = "Clasificacion";
+        $this->links_catalogos["nom_clasificacion"]["subtitulo"] = "Catálogo";
+
+        $this->links_catalogos["tg_agrupador"]["titulo"] = "Agrupador";
+        $this->links_catalogos["tg_agrupador"]["subtitulo"] = "Catálogo";
+
+        $this->links_catalogos["tg_conf_manifiesto"]["titulo"] = "Conf. Manifiesto";
+        $this->links_catalogos["tg_conf_manifiesto"]["subtitulo"] = "Catálogo";
+
+        $this->links_catalogos["tg_empleado_agrupado"]["titulo"] = "Empleado Agrupado";
+        $this->links_catalogos["tg_empleado_agrupado"]["subtitulo"] = "Catálogo";
+
+        $this->links_catalogos["nom_conf_empleado"]["titulo"] = "Conf. Empleado";
+        $this->links_catalogos["nom_conf_empleado"]["subtitulo"] = "Catálogo";
+
+        $this->links_catalogos["em_empleado"]["titulo"] = "Empleados";
+        $this->links_catalogos["em_empleado"]["subtitulo"] = "Catálogo";
+
+        $this->links_catalogos["em_cuenta_bancaria"]["titulo"] = "Cuentas Bancarias";
+        $this->links_catalogos["em_cuenta_bancaria"]["subtitulo"] = "Catálogo";
+
+        $this->links_catalogos["em_registro_patronal"]["titulo"] = "Registro Patronal";
+        $this->links_catalogos["em_registro_patronal"]["subtitulo"] = "Catálogo";
 
         $this->link_inicio = "./index.php?seccion=adm_session&accion=inicio&session_id=<$this->session_id";
     }
