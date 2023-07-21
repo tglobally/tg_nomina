@@ -20,81 +20,16 @@ class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_
     public string $include_menu = '';
     public string $mensaje_html = '';
 
-    public array $secciones = array("nom_nomina", "nom_periodo", "nom_conf_factura", "nom_conf_nomina", "tg_tipo_servicio",
-        "tg_manifiesto", "tg_manifiesto_periodo", "tg_tipo_provision", "tg_provision" , "tg_conf_provision" , "tg_layout",
-        "tg_tipo_column", "tg_column", "nom_clasificacion", "tg_agrupador", "tg_conf_manifiesto",
-        "tg_empleado_agrupado", "nom_conf_empleado", "em_empleado");
-    public array $links_catalogos = array();
-
-    public stdClass $links;
+    public string $link_inicio = '';
 
     public function __construct(PDO $link, stdClass $paths_conf = new stdClass())
     {
         parent::__construct($link, $paths_conf);
 
-        $this->links = (new links_menu(link: $link, registro_id: $this->registro_id))->genera_links($this);
-        if (errores::$error) {
-            $error = $this->errores->error(mensaje: 'Error al inicializar links', data: $this->links);
-            print_r($error);
-            die('Error');
-        }
+        $this->titulo_pagina = "Inicio Sesion";
+        $this->seccion_titulo = "Inicio";
 
-        $this->links_catalogos["nom_nomina"]["titulo"] = "Nominas";
-        $this->links_catalogos["nom_nomina"]["subtitulo"] = "Catálogo";
-
-        $this->links_catalogos["nom_periodo"]["titulo"] = "Periodos";
-        $this->links_catalogos["nom_periodo"]["subtitulo"] = "Catálogo";
-
-        $this->links_catalogos["nom_conf_factura"]["titulo"] = "Conf. Factura";
-        $this->links_catalogos["nom_conf_factura"]["subtitulo"] = "Catálogo";
-
-        $this->links_catalogos["nom_conf_nomina"]["titulo"] = "Conf. Nomina";
-        $this->links_catalogos["nom_conf_nomina"]["subtitulo"] = "Catálogo";
-
-        $this->links_catalogos["tg_tipo_servicio"]["titulo"] = "Tipo Servicio";
-        $this->links_catalogos["tg_tipo_servicio"]["subtitulo"] = "Catálogo";
-
-        $this->links_catalogos["tg_manifiesto"]["titulo"] = "Manifiesto";
-        $this->links_catalogos["tg_manifiesto"]["subtitulo"] = "Catálogo";
-
-        $this->links_catalogos["tg_manifiesto_periodo"]["titulo"] = "Manifiesto Periodo";
-        $this->links_catalogos["tg_manifiesto_periodo"]["subtitulo"] = "Catálogo";
-
-        $this->links_catalogos["tg_tipo_provision"]["titulo"] = "Tipo Provision";
-        $this->links_catalogos["tg_tipo_provision"]["subtitulo"] = "Catálogo";
-
-        $this->links_catalogos["tg_provision"]["titulo"] = "Provisiones";
-        $this->links_catalogos["tg_provision"]["subtitulo"] = "Catálogo";
-
-        $this->links_catalogos["tg_conf_provision"]["titulo"] = "Conf. Provision";
-        $this->links_catalogos["tg_conf_provision"]["subtitulo"] = "Catálogo";
-
-        $this->links_catalogos["tg_layout"]["titulo"] = "Layout";
-        $this->links_catalogos["tg_layout"]["subtitulo"] = "Catálogo";
-
-        $this->links_catalogos["tg_tipo_column"]["titulo"] = "Tipo Column";
-        $this->links_catalogos["tg_tipo_column"]["subtitulo"] = "Catálogo";
-
-        $this->links_catalogos["tg_column"]["titulo"] = "Column";
-        $this->links_catalogos["tg_column"]["subtitulo"] = "Catálogo";
-
-        $this->links_catalogos["nom_clasificacion"]["titulo"] = "Clasificacion";
-        $this->links_catalogos["nom_clasificacion"]["subtitulo"] = "Catálogo";
-
-        $this->links_catalogos["tg_agrupador"]["titulo"] = "Agrupador";
-        $this->links_catalogos["tg_agrupador"]["subtitulo"] = "Catálogo";
-
-        $this->links_catalogos["tg_conf_manifiesto"]["titulo"] = "Conf. Manifiesto";
-        $this->links_catalogos["tg_conf_manifiesto"]["subtitulo"] = "Catálogo";
-
-        $this->links_catalogos["tg_empleado_agrupado"]["titulo"] = "Empleado Agrupado";
-        $this->links_catalogos["tg_empleado_agrupado"]["subtitulo"] = "Catálogo";
-
-        $this->links_catalogos["nom_conf_empleado"]["titulo"] = "Conf. Empleado";
-        $this->links_catalogos["nom_conf_empleado"]["subtitulo"] = "Catálogo";
-
-        $this->links_catalogos["em_empleado"]["titulo"] = "Empleados";
-        $this->links_catalogos["em_empleado"]["subtitulo"] = "Catálogo";
+        $this->link_inicio = "./index.php?seccion=adm_session&accion=inicio&session_id=<$this->session_id";
     }
 
 
@@ -110,23 +45,6 @@ class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_
 
         return array();
 
-    }
-
-    public function get_link(string $seccion, string $accion = "lista"): array|string
-    {
-        if (!property_exists($this->links, $seccion)) {
-            $error = $this->errores->error(mensaje: "Error no existe la seccion: $seccion", data: $seccion);
-            print_r($error);
-            die('Error');
-        }
-
-        if (!property_exists($this->links->$seccion, $accion)) {
-            $error = $this->errores->error(mensaje: 'Error no existe la accion', data: $accion);
-            print_r($error);
-            die('Error');
-        }
-
-        return $this->links->$seccion->$accion;
     }
 
     /**
@@ -149,47 +67,11 @@ class controlador_adm_session extends \gamboamartin\controllers\controlador_adm_
             return $this->retorno_error(mensaje:  'Error al generar template',data: $template, header: $header, ws: $ws);
         }
 
-        $this->links_catalogos = $this->inicializar_links();
-        if(errores::$error){
-            return $this->errores->error(mensaje: 'Error al inicializar links', data: $this->links_catalogos);
-        }
-
         $this->include_menu = (new generales())->path_base;
         $this->include_menu .= 'templates/inicio.php';
+        $this->titulo_pagina = "Inicio";
 
         return $template;
-    }
-
-    public function inicializar_links(): array
-    {
-        foreach ($this->secciones as $link => $valor){
-
-            $seccion = $valor;
-            $accion = "lista";
-
-            if (!is_numeric($link)){
-                $seccion = $link;
-                $accion = $valor;
-            }
-
-            if (!array_key_exists($seccion,$this->links_catalogos)){
-                $this->links_catalogos[$seccion] = array();
-            }
-
-            if (!array_key_exists("titulo",$this->links_catalogos[$seccion])){
-                $this->links_catalogos[$seccion]["titulo"] = $seccion;
-            }
-
-            if (!array_key_exists("subtitulo",$this->links_catalogos[$seccion])){
-                $this->links_catalogos[$seccion]["subtitulo"] = $accion;
-            }
-
-            $this->links_catalogos[$seccion]["link"] = $this->get_link(seccion: $seccion,accion: $accion);
-            if(errores::$error){
-                return $this->errores->error(mensaje: 'Error al obtener link', data: $this->links);
-            }
-        }
-        return $this->links_catalogos;
     }
 
     /**
