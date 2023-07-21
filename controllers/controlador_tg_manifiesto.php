@@ -99,6 +99,13 @@ class controlador_tg_manifiesto extends _ctl_base
         parent::__construct(html: $html_, link: $link, modelo: $modelo, obj_link: $obj_link, datatables: $datatables,
             paths_conf: $paths_conf);
 
+        $acciones = $this->define_acciones_menu(acciones: array("alta" => $this->link_alta));
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al integrar acciones para el menu', data: $acciones);
+            print_r($error);
+            die('Error');
+        }
+
         $configuraciones = $this->init_configuraciones();
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al inicializar configuraciones', data: $configuraciones);
@@ -352,6 +359,8 @@ class controlador_tg_manifiesto extends _ctl_base
                 mensaje: 'Error al obtener inputs', data: $inputs, header: $header, ws: $ws);
         }
 
+        $this->titulo_accion = "Alta Manifiesto";
+
         return $r_alta;
     }
 
@@ -523,6 +532,8 @@ class controlador_tg_manifiesto extends _ctl_base
     {
         $this->seccion_titulo = 'Manifiestos';
         $this->titulo_lista = 'Registro de Manifiestos';
+        $this->titulo_pagina = "Nominas - Manifiestos";
+        $this->titulo_accion = "Listado de Manifiestos";
 
         $this->lista_get_data = true;
 
@@ -699,10 +710,9 @@ class controlador_tg_manifiesto extends _ctl_base
         $filtro = array("tg_manifiesto.id", "com_sucursal.descripcion", "tg_manifiesto.fecha_pago");
 
         $datatables = new stdClass();
-        //$datatables->type = "scroll";
         $datatables->columns = $columns;
         $datatables->filtro = $filtro;
-        //$datatables->menu_active = true;
+        $datatables->menu_active = true;
 
         return $datatables;
     }
@@ -896,6 +906,7 @@ class controlador_tg_manifiesto extends _ctl_base
         if (errores::$error) {
             return $this->retorno_error(mensaje: 'Error al integrar base', data: $base, header: $header, ws: $ws);
         }
+        $this->titulo_accion = "Modifica Manifiesto";
 
         return $r_modifica;
     }
