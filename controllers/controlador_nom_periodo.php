@@ -36,7 +36,17 @@ class controlador_nom_periodo extends \gamboamartin\nomina\controllers\controlad
     public function __construct(PDO $link, stdClass $paths_conf = new stdClass()){
         $html_base = new html();
         parent::__construct( link: $link, html: $html_base);
-        $this->titulo_lista = 'Periodos';
+
+        $this->seccion_titulo = 'Periodos';
+        $this->titulo_pagina = "Nominas - Periodos";
+        $this->titulo_accion = "Periodos";
+
+        $acciones = $this->define_acciones_menu(acciones: array("alta" => $this->link_alta));
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al integrar acciones para el menu', data: $acciones);
+            print_r($error);
+            die('Error');
+        }
 
         $campos_view['filtro_fecha_inicio'] = array('type' => 'dates');
         $campos_view['filtro_fecha_final'] = array('type' => 'dates');
