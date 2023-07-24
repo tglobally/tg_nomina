@@ -15,31 +15,32 @@ class controlador_nom_clasificacion extends \gamboamartin\nomina\controllers\con
         parent::__construct( link: $link, html: $html_base);
         $this->titulo_lista = 'Clasificación';
 
-        $this->sidebar['lista']['titulo'] = "Clasificacion";
-        $this->sidebar['lista']['menu'] = array(
-            $this->menu_item(menu_item_titulo: "Alta", link: $this->link_alta,menu_seccion_active: true,
-                menu_lateral_active: true));
+        $this->seccion_titulo = 'Clasificación';
+        $this->titulo_pagina = "Nominas - Clasificación";
+        $this->titulo_accion = "Clasificación";
 
-        $this->sidebar['alta']['titulo'] = "Alta Clasificacion";
-        $this->sidebar['alta']['stepper_active'] = true;
-        $this->sidebar['alta']['menu'] = array(
-            $this->menu_item(menu_item_titulo: "Alta", link: $this->link_alta,menu_lateral_active: true));
-
-        $this->sidebar['modifica']['titulo'] = "Modifica Clasificacion";
-        $this->sidebar['modifica']['stepper_active'] = true;
-        $this->sidebar['modifica']['menu'] = array(
-            $this->menu_item(menu_item_titulo: "Modifica", link: $this->link_alta,menu_lateral_active: true));
+        $acciones = $this->define_acciones_menu(acciones: array("alta" => $this->link_alta));
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al integrar acciones para el menu', data: $acciones);
+            print_r($error);
+            die('Error');
+        }
 
     }
 
-    public function menu_item(string $menu_item_titulo, string $link, bool $menu_seccion_active = false,bool $menu_lateral_active = false): array
+    protected function init_datatable(): stdClass
     {
-        $menu_item = array();
-        $menu_item['menu_item'] = $menu_item_titulo;
-        $menu_item['menu_seccion_active'] = $menu_seccion_active;
-        $menu_item['link'] = $link;
-        $menu_item['menu_lateral_active'] = $menu_lateral_active;
+        $columns["nom_clasificacion_id"]["titulo"] = "Id";
+        $columns["nom_clasificacion_codigo"]["titulo"] = "Cod";
+        $columns["nom_clasificacion_descripcion"]["titulo"] = "Observaciones";
 
-        return $menu_item;
+        $filtro = array("nom_clasificacion.id", "nom_clasificacion.codigo", "nom_clasificacion.descripcion");
+
+        $datatables = new stdClass();
+        $datatables->columns = $columns;
+        $datatables->filtro = $filtro;
+        $datatables->menu_active = true;
+
+        return $datatables;
     }
 }
