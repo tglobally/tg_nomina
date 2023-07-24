@@ -36,22 +36,17 @@ class controlador_tg_tipo_provision extends _ctl_base
         parent::__construct(html: $html_, link: $link, modelo: $modelo, obj_link: $obj_link, datatables: $datatables,
             paths_conf: $paths_conf);
 
-        $this->titulo_lista = 'Tipo Servicio';
+        $this->seccion_titulo = 'Tipo Provisiones';
+        $this->titulo_pagina = "Nominas - Tipo Provisiones";
+        $this->titulo_accion = "Tipo Provisiones";
 
-        $this->sidebar['lista']['titulo'] = "Tipo de Provisión";
-        $this->sidebar['lista']['menu'] = array(
-            $this->menu_item(menu_item_titulo: "Alta", link: $this->link_alta, menu_seccion_active: true,
-                menu_lateral_active: true));
+        $acciones = $this->define_acciones_menu(acciones: array("alta" => $this->link_alta));
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al integrar acciones para el menu', data: $acciones);
+            print_r($error);
+            die('Error');
+        }
 
-        $this->sidebar['alta']['titulo'] = "Alta Tipo de Provisión";
-        $this->sidebar['alta']['stepper_active'] = true;
-        $this->sidebar['alta']['menu'] = array(
-            $this->menu_item(menu_item_titulo: "Alta", link: $this->link_alta, menu_lateral_active: true));
-
-        $this->sidebar['modifica']['titulo'] = "Modifica Tipo de Provisión";
-        $this->sidebar['modifica']['stepper_active'] = true;
-        $this->sidebar['modifica']['menu'] = array(
-            $this->menu_item(menu_item_titulo: "Modifica", link: $this->link_alta, menu_lateral_active: true));
     }
 
     public function alta(bool $header, bool $ws = false): array|string
@@ -106,6 +101,7 @@ class controlador_tg_tipo_provision extends _ctl_base
         $datatables = new stdClass();
         $datatables->columns = $columns;
         $datatables->filtro = $filtro;
+        $datatables->menu_active = true;
 
         return $datatables;
     }

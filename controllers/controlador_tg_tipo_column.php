@@ -1,6 +1,7 @@
 <?php
 namespace tglobally\tg_nomina\controllers;
 
+use gamboamartin\errores\errores;
 use gamboamartin\system\links_menu;
 use gamboamartin\system\system;
 use gamboamartin\template\html;
@@ -16,9 +17,44 @@ class controlador_tg_tipo_column extends system {
         $modelo = new tg_tipo_column(link: $link);
         $html_ = new tg_tipo_column_html(html: $html);
         $obj_link = new links_menu(link: $link, registro_id: $this->registro_id);
-        parent::__construct(html:$html_, link: $link,modelo:  $modelo, obj_link: $obj_link, paths_conf: $paths_conf);
 
-        $this->titulo_lista = 'Layout';
+
+        $datatables = $this->init_datatable();
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al inicializar datatable', data: $datatables);
+            print_r($error);
+            die('Error');
+        }
+
+        parent::__construct(html: $html_, link: $link, modelo: $modelo, obj_link: $obj_link, datatables: $datatables,
+            paths_conf: $paths_conf);
+
+        $this->seccion_titulo = 'Tipo Column';
+        $this->titulo_pagina = "Nominas - Tipo Column";
+        $this->titulo_accion = "Tipo Column";
+
+        $acciones = $this->define_acciones_menu(acciones: array("alta" => $this->link_alta));
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al integrar acciones para el menu', data: $acciones);
+            print_r($error);
+            die('Error');
+        }
+    }
+
+    private function init_datatable(): stdClass
+    {
+        $columns["tg_tipo_column_id"]["titulo"] = "Id";
+        $columns["tg_tipo_column_codigo"]["titulo"] = "Código";
+        $columns["tg_tipo_column_descripcion"]["titulo"] = "Tipo Column";
+
+        $filtro = array("tg_tipo_column.id", "tg_tipo_column.codigo", "tg_tipo_column.descripcion");
+
+        $datatables = new stdClass();
+        $datatables->columns = $columns;
+        $datatables->filtro = $filtro;
+        $datatables->menu_active = true;
+
+        return $datatables;
     }
 
 }
