@@ -18,9 +18,27 @@ class controlador_tg_column extends _ctl_base {
         $modelo = new tg_column(link: $link);
         $html_ = new tg_column_html(html: $html);
         $obj_link = new links_menu(link: $link, registro_id: $this->registro_id);
-        parent::__construct(html:$html_, link: $link,modelo:  $modelo, obj_link: $obj_link, paths_conf: $paths_conf);
 
-        $this->titulo_lista = 'Column';
+        $datatables = $this->init_datatable();
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al inicializar datatable', data: $datatables);
+            print_r($error);
+            die('Error');
+        }
+
+        parent::__construct(html: $html_, link: $link, modelo: $modelo, obj_link: $obj_link, datatables: $datatables,
+            paths_conf: $paths_conf);
+
+        $this->seccion_titulo = 'Column';
+        $this->titulo_pagina = "Nominas - Column";
+        $this->titulo_accion = "Column";
+
+        $acciones = $this->define_acciones_menu(acciones: array("alta" => $this->link_alta));
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al integrar acciones para el menu', data: $acciones);
+            print_r($error);
+            die('Error');
+        }
     }
 
     public function alta(bool $header, bool $ws = false): array|string
@@ -61,6 +79,21 @@ class controlador_tg_column extends _ctl_base {
         }
 
         return $campos_view;
+    }
+
+    private function init_datatable(): stdClass
+    {
+        $columns["tg_column_id"]["titulo"] = "Id";
+        $columns["tg_column_descripcion"]["titulo"] = "Descripción ";
+
+        $filtro = array("tg_column.id", "tg_column.descripcion");
+
+        $datatables = new stdClass();
+        $datatables->columns = $columns;
+        $datatables->filtro = $filtro;
+        $datatables->menu_active = true;
+
+        return $datatables;
     }
 
     private function init_selects(array $keys_selects, string $key, string $label, int $id_selected = -1, int $cols = 6,
