@@ -1,17 +1,5 @@
 <?php /** @var \tglobally\tg_nomina\controllers\controlador_nom_periodo $controlador */ ?>
-<?php
-
-use config\views;
-$url_icons = (new views())->url_icons;
-?>
-
-<?php include 'templates/nom_periodo/nominas/secciones.php'; ?>
-<div class="col-md-9 formulario">
-    <div class="col-lg-12">
-
-        <h3 class="text-center titulo-form">Hola, <?php echo $controlador->datos_session_usuario['adm_usuario_user']; ?> </h3>
-
-        <div class="lista">
+<div class="lista">
             <div class="card">
                 <div class="card-header">
                     <span class="text-header">Nominas</span>
@@ -49,16 +37,7 @@ $url_icons = (new views())->url_icons;
                             </tbody>
                         </table>
                     </div>
-                    <div class="col-sm-3">
-                        <a href="index.php?seccion=nom_periodo&accion=lista&session_id=<?php echo $controlador->session_id; ?>"
-                           class="btn btn-info btn-guarda col-md-12"><i class="icon-edit"></i>Regresar
-                        </a>
-                    </div>
                 </div>
             </div>
         </div>
-
-
-    </div>
-</div>
 
