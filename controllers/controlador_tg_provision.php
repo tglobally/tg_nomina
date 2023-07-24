@@ -41,9 +41,9 @@ class controlador_tg_provision extends _ctl_base
             die('Error');
         }
 
-        $sidebar = $this->init_sidebar();
+        $acciones = $this->define_acciones_menu(acciones: array("alta" => $this->link_alta));
         if (errores::$error) {
-            $error = $this->errores->error(mensaje: 'Error al inicializar sidebar', data: $sidebar);
+            $error = $this->errores->error(mensaje: 'Error al integrar acciones para el menu', data: $acciones);
             print_r($error);
             die('Error');
         }
@@ -94,8 +94,11 @@ class controlador_tg_provision extends _ctl_base
 
     protected function init_configuraciones(): controler
     {
-        $this->seccion_titulo = 'Provisiones';
         $this->titulo_lista = 'Registro de Provisiones';
+        $this->seccion_titulo = 'Provisiones';
+        $this->titulo_pagina = "Nominas - Provisiones";
+        $this->titulo_accion = "Provisiones";
+
 
         $this->lista_get_data = true;
 
@@ -114,6 +117,7 @@ class controlador_tg_provision extends _ctl_base
         $datatables = new stdClass();
         $datatables->columns = $columns;
         $datatables->filtro = $filtro;
+        $datatables->menu_active = true;
 
         return $datatables;
     }
@@ -137,31 +141,6 @@ class controlador_tg_provision extends _ctl_base
         return $this->init_selects(keys_selects: $keys_selects, key: "nom_nomina_id", label: "Nómina");
     }
 
-    private function init_sidebar(): stdClass|array
-    {
-        $menu_items = new stdClass();
-
-        $menu_items->lista = $this->menu_item(menu_item_titulo: "Inicio", link: $this->link_lista);
-        $menu_items->alta = $this->menu_item(menu_item_titulo: "Alta", link: $this->link_alta);
-        $menu_items->modifica = $this->menu_item(menu_item_titulo: "Modifica", link: $this->link_modifica);
-
-        $menu_items->lista['menu_seccion_active'] = true;
-        $menu_items->lista['menu_lateral_active'] = true;
-        $menu_items->alta['menu_seccion_active'] = true;
-        $menu_items->alta['menu_lateral_active'] = true;
-        $menu_items->modifica['menu_lateral_active'] = true;
-
-        $this->sidebar['lista']['titulo'] = "Provisiones";
-        $this->sidebar['lista']['menu'] = array($menu_items->alta);
-
-        $this->sidebar['alta']['titulo'] = "Provisiones";
-        $this->sidebar['alta']['menu'] = array($menu_items->alta);
-
-        $this->sidebar['modifica']['titulo'] = "Provisiones";
-        $this->sidebar['modifica']['menu'] = array($menu_items->modifica);
-
-        return $menu_items;
-    }
 
     protected function key_selects_txt(array $keys_selects): array
     {
@@ -203,16 +182,5 @@ class controlador_tg_provision extends _ctl_base
         }
 
         return $r_modifica;
-    }
-
-    public function menu_item(string $menu_item_titulo, string $link, bool $menu_seccion_active = false, bool $menu_lateral_active = false): array
-    {
-        $menu_item = array();
-        $menu_item['menu_item'] = $menu_item_titulo;
-        $menu_item['menu_seccion_active'] = $menu_seccion_active;
-        $menu_item['link'] = $link;
-        $menu_item['menu_lateral_active'] = $menu_lateral_active;
-
-        return $menu_item;
     }
 }
