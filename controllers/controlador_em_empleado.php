@@ -29,36 +29,38 @@ class controlador_em_empleado extends \tglobally\tg_empleado\controllers\control
             exit;
         }
 
-        $sidebar = $this->init_sidebar();
+        $this->seccion_titulo = 'Empleados';
+        $this->titulo_pagina = "Nominas - Empleados";
+        $this->titulo_accion = "Empleados";
+
+        $acciones = $this->define_acciones_menu(acciones: array("alta" => $this->link_alta,
+            "importar" => $this->link_em_empleado_sube_archivo, "reportes" => $this->link_em_empleado_reportes));
         if (errores::$error) {
-            $error = $this->errores->error(mensaje: 'Error al inicializar sidebar', data: $sidebar);
+            $error = $this->errores->error(mensaje: 'Error al integrar acciones para el menu', data: $acciones);
             print_r($error);
             die('Error');
         }
     }
 
-    public function init_sidebar(): stdClass|array
+    protected function init_datatable(): stdClass
     {
-        $menu_items = parent::init_sidebar();
+        $columns["em_empleado_id"]["titulo"] = "Id";
+        $columns["em_empleado_nombre"]["titulo"] = "Nombre";
+        $columns["em_empleado_nombre"]["campos"] = array("em_empleado_ap","em_empleado_am");
+        $columns["em_empleado_rfc"]["titulo"] = "Rfc";
+        $columns["em_empleado_nss"]["titulo"] = "NSS";
+        $columns["org_puesto_descripcion"]["titulo"] = "Puesto";
+        $columns["em_empleado_n_cuentas_bancarias"]["titulo"] = "Cuentas Bancarias";
 
-        $menu_items->nominas = $this->menu_item(menu_item_titulo: "Nominas", link: $this->link_em_empleado_nominas);
+        $filtro = array("em_empleado.id","em_empleado.nombre","em_empleado.ap","em_empleado.am","em_empleado.rfc",
+            "em_empleado_nombre_completo","em_empleado_nombre_completo_inv", "em_empleado.nss","org_puesto.descripcion");
 
-        $menu_items->nominas['menu_seccion_active'] = true;
-        $menu_items->nominas['menu_lateral_active'] = true;
+        $datatables = new stdClass();
+        $datatables->columns = $columns;
+        $datatables->filtro = $filtro;
+        $datatables->menu_active = true;
 
-        $this->sidebar['modifica']['menu'][] = $menu_items->nominas;
-        $this->sidebar['fiscales']['menu'][] = $menu_items->nominas;
-        $this->sidebar['imss']['menu'][] = $menu_items->nominas;
-        $this->sidebar['cuenta_bancaria']['menu'][] = $menu_items->nominas;
-        $this->sidebar['anticipo']['menu'][] = $menu_items->nominas;
-        $this->sidebar['asigna_sucursal']['menu'][] = $menu_items->nominas;
-
-        $this->sidebar['nominas']['titulo'] = "Nominas";
-        $this->sidebar['nominas']['stepper_active'] = true;
-        $this->sidebar['nominas']['menu'] = array($menu_items->modifica, $menu_items->fiscales, $menu_items->imss,
-            $menu_items->cuenta_bancaria, $menu_items->anticipo, $menu_items->asigna_cliente, $menu_items->nominas);
-
-        return  $menu_items;
+        return $datatables;
     }
 
     protected function campos_view(): array
