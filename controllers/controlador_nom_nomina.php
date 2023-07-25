@@ -15,28 +15,21 @@ class controlador_nom_nomina extends \gamboamartin\nomina\controllers\controlado
         $html_base = new html();
         parent::__construct( link: $link, html: $html_base);
 
-
         $this->modelo = new nom_nomina($this->link);
 
-        $this->titulo_lista = 'Nominas';
+        $this->seccion_titulo = 'Nominas';
+        $this->titulo_pagina = "Nominas";
+        $this->titulo_accion = "Nominas";
 
         $hd = "index.php?seccion=nom_nomina&accion=crea_nomina&session_id=$this->session_id";
         $this->link_crea_nomina = $hd;
 
-        $this->sidebar['lista']['titulo'] = "Nomina";
-        $this->sidebar['lista']['menu'] = array(
-            $this->menu_item(menu_item_titulo: "Crea nomina", link: $this->link_crea_nomina,menu_seccion_active: true,
-                menu_lateral_active: true));
-
-        $this->sidebar['crea_nomina']['titulo'] = "Alta Nomina";
-        $this->sidebar['crea_nomina']['stepper_active'] = true;
-        $this->sidebar['crea_nomina']['menu'] = array(
-            $this->menu_item(menu_item_titulo: "Crea Nomina", link: $this->link_crea_nomina,menu_lateral_active: true));
-
-        $this->sidebar['modifica']['titulo'] = "Modifica Nomina";
-        $this->sidebar['modifica']['stepper_active'] = true;
-        $this->sidebar['modifica']['menu'] = array(
-            $this->menu_item(menu_item_titulo: "Modifica", link: $this->link_modifica,menu_lateral_active: true));
+        $acciones = $this->define_acciones_menu(acciones: array("alta" => $this->link_crea_nomina));
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al integrar acciones para el menu', data: $acciones);
+            print_r($error);
+            die('Error');
+        }
 
         $this->params_actions = new stdClass();
         $this->params_actions->modifica = new stdClass();
@@ -47,6 +40,35 @@ class controlador_nom_nomina extends \gamboamartin\nomina\controllers\controlado
         $this->params_actions->modifica->em_empleado_id->cols = 12;
 
         $this->lista_get_data = true;
+    }
+
+    protected function init_datatable(): stdClass
+    {
+        $columns = array();
+        $columns['nom_nomina_id']['titulo'] = 'Id';
+        $columns['em_empleado_rfc']['titulo'] = 'RFC';
+        $columns['em_empleado_nombre']['titulo'] = 'Nombre';
+        $columns['em_empleado_ap']['titulo'] = 'AP';
+        $columns['em_empleado_am']['titulo'] = 'AM';
+        $columns['nom_nomina_fecha_inicial_pago']['titulo'] = 'F Ini';
+        $columns['nom_nomina_fecha_final_pago']['titulo'] = 'F Ini';
+        $columns['nom_nomina_fecha_pago']['titulo'] = 'F Pago';
+        $columns['nom_nomina_total_percepcion_total']['titulo'] = 'Percepcion Total';
+        $columns['nom_nomina_total_otro_pago_total']['titulo'] = 'Otro Pago Total';
+        $columns['nom_nomina_total_deduccion_total']['titulo'] = 'Deduccion Total';
+        $columns['nom_nomina_total']['titulo'] = 'Total';
+        $columns['cat_sat_tipo_nomina_descripcion']['titulo'] = 'Tipo Nom';
+        $columns['org_empresa_rfc']['titulo'] = 'RFC Empresa';
+
+        $filtro = array("em_empleado.rfc", "em_empleado.nombre", "nom_nomina.fecha_inicial_pago", "nom_nomina.fecha_final_pago",
+            "nom_nomina.fecha_pago", "nom_periodo.codigo", "cat_sat_tipo_nomina.descripcion", "org_empresa.rfc");
+
+        $datatables = new stdClass();
+        $datatables->columns = $columns;
+        $datatables->filtro = $filtro;
+        $datatables->menu_active = true;
+
+        return $datatables;
     }
 
     public function lista(bool $header, bool $ws = false): array
