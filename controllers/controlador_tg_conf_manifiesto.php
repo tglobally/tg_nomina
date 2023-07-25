@@ -27,40 +27,29 @@ class controlador_tg_conf_manifiesto extends _ctl_base {
         $html_ = new tg_conf_manifiesto_html(html: $html);
         $obj_link = new links_menu(link: $link, registro_id:$this->registro_id);
 
+        $datatables = $this->init_datatable();
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al inicializar datatable', data: $datatables);
+            print_r($error);
+            die('Error');
+        }
 
-        $datatables = new stdClass();
-        $datatables->columns = array();
-        $datatables->columns['tg_conf_manifiesto_id']['titulo'] = 'Id';
-        $datatables->columns['tg_conf_manifiesto_codigo']['titulo'] = 'Cod';
-        $datatables->columns['tg_conf_manifiesto_descripcion']['titulo'] = 'Observaciones';
+        parent::__construct(html: $html_, link: $link, modelo: $modelo, obj_link: $obj_link, datatables: $datatables,
+            paths_conf: $paths_conf);
 
-        $datatables->filtro = array();
-        $datatables->filtro[] = 'tg_conf_manifiesto.id';
-        $datatables->filtro[] = 'tg_conf_manifiesto.codigo';
-        $datatables->filtro[] = 'tg_conf_manifiesto.descripcion';
+        $this->seccion_titulo = 'Conf. Manifiesto';
+        $this->titulo_pagina = "Nominas - Conf. Manifiesto";
+        $this->titulo_accion = "Conf. Manifiesto";
 
-
-        parent::__construct(html:$html_, link: $link,modelo:  $modelo, obj_link: $obj_link,
-            datatables: $datatables, paths_conf: $paths_conf);
-
-        $this->titulo_lista = 'Clasificacion';
+        $acciones = $this->define_acciones_menu(acciones: array("alta" => $this->link_alta));
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al integrar acciones para el menu', data: $acciones);
+            print_r($error);
+            die('Error');
+        }
 
         $this->lista_get_data = true;
 
-        $this->sidebar['lista']['titulo'] = "Conf Manifiesto";
-        $this->sidebar['lista']['menu'] = array(
-            $this->menu_item(menu_item_titulo: "Alta", link: $this->link_alta, menu_seccion_active: true,
-                menu_lateral_active: true));
-
-        $this->sidebar['alta']['titulo'] = "Alta Conf Manifiesto";
-        $this->sidebar['alta']['stepper_active'] = true;
-        $this->sidebar['alta']['menu'] = array(
-            $this->menu_item(menu_item_titulo: "Alta", link: $this->link_alta, menu_lateral_active: true));
-
-        $this->sidebar['modifica']['titulo'] = "Modifica Conf Manifiesto";
-        $this->sidebar['modifica']['stepper_active'] = true;
-        $this->sidebar['modifica']['menu'] = array(
-            $this->menu_item(menu_item_titulo: "Modifica", link: $this->link_modifica, menu_lateral_active: true));
     }
 
     public function alta(bool $header, bool $ws = false): array|string
@@ -104,6 +93,22 @@ class controlador_tg_conf_manifiesto extends _ctl_base {
         }
 
         return $campos_view;
+    }
+
+    private function init_datatable(): stdClass
+    {
+        $columns["tg_conf_manifiesto_id"]["titulo"] = "Id";
+        $columns["tg_conf_manifiesto_codigo"]["titulo"] = "Cod";
+        $columns["tg_conf_manifiesto_descripcion"]["titulo"] = "Observaciones";
+
+        $filtro = array("tg_conf_manifiesto.id", "tg_conf_manifiesto.codigo", "tg_conf_manifiesto.descripcion");
+
+        $datatables = new stdClass();
+        $datatables->columns = $columns;
+        $datatables->filtro = $filtro;
+        $datatables->menu_active = true;
+
+        return $datatables;
     }
 
     private function init_selects(array $keys_selects, string $key, string $label, int $id_selected = -1, int $cols = 6,

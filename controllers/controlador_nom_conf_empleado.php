@@ -33,12 +33,34 @@ class controlador_nom_conf_empleado extends \gamboamartin\nomina\controllers\con
             die('Error');
         }
 
-        $sidebar = $this->init_sidebar();
+        $this->seccion_titulo = 'Conf. Empleado';
+        $this->titulo_pagina = "Nominas - Conf. Empleado";
+        $this->titulo_accion = "Conf. Empleado";
+
+        $acciones = $this->define_acciones_menu(acciones: array("alta" => $this->link_alta));
         if (errores::$error) {
-            $error = $this->errores->error(mensaje: 'Error al inicializar sidebar', data: $sidebar);
+            $error = $this->errores->error(mensaje: 'Error al integrar acciones para el menu', data: $acciones);
             print_r($error);
             die('Error');
         }
+    }
+
+    protected function init_datatable(): stdClass
+    {
+        $columns["nom_conf_empleado_id"]["titulo"] = "Id";
+        $columns["em_empleado_nombre"]["titulo"] = "Empleado";
+        $columns["em_empleado_nombre"]["campos"] = array("em_empleado_ap", "em_empleado_am");
+        $columns["em_cuenta_bancaria_num_cuenta"]["titulo"] = "Num. Cuenta";
+        $columns["nom_conf_nomina_id"]["titulo"] = "Nómina";
+
+        $filtro = array("nom_conf_empleado.id");
+
+        $datatables = new stdClass();
+        $datatables->columns = $columns;
+        $datatables->filtro = $filtro;
+        $datatables->menu_active = true;
+
+        return $datatables;
     }
 
     protected function init_links(): array|string

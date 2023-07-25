@@ -1,26 +1,14 @@
 <?php /** @var tglobally\tg_nomina\controllers\controlador_nom_conf_nomina $controlador */ ?>
-<?php include $controlador->include_menu_secciones; ?>
-<div class="col-md-9 formulario">
-    <div class="col-lg-12">
 
-        <h3 class="text-center titulo-form">Hola, <?php echo $controlador->datos_session_usuario['adm_usuario_user']; ?> </h3>
+<form class="row g-3" method="post" action="<?php echo $controlador->link_alta_bd; ?>">
 
+    <?php echo $controlador->inputs->cat_sat_tipo_nomina_id; ?>
+    <?php echo $controlador->inputs->cat_sat_periodicidad_pago_nom_id; ?>
+    <?php echo $controlador->inputs->nom_conf_factura_id; ?>
+    <?php echo $controlador->inputs->descripcion; ?>
 
-        <div class="  form-main" id="form">
-            <form method="post" action="./index.php?seccion=nom_conf_nomina&accion=alta_bd&session_id=<?php echo $controlador->session_id; ?>" class="form-additional">
-                <?php echo $controlador->inputs->cat_sat_tipo_nomina_id; ?>
-                <?php echo $controlador->inputs->cat_sat_periodicidad_pago_nom_id; ?>
-                <?php echo $controlador->inputs->nom_conf_factura_id; ?>
-                <?php echo $controlador->inputs->descripcion; ?>
-                <div class="buttons col-md-12">
-                    <div class="col-md-6">
-                        <button type="submit" class="btn btn-info btn-guarda col-md-12 " >Guarda</button>
-                    </div>
-                    <div class="col-md-6">
-                        <a href="index.php?seccion=<?php echo $controlador->tabla; ?>&accion=lista&session_id=<?php echo $controlador->session_id; ?>"  class="btn btn-info btn-guarda col-md-12 ">Regresar</a>
-                    </div>
-                </div>
-            </form>
-        </div>
+    <div class="col-12 d-flex justify-content-end">
+        <button type="submit" class="btn btn-primary" name="btn_action_next">Registrar</button>
     </div>
-</div>
+</form>
+
