@@ -43,88 +43,44 @@ class tg_provision extends _modelo_parent {
     }
 
     public function maqueta_excel_provisiones(int $nom_nomina_id){
-
         $filtro = array();
         $filtro['nom_nomina.id']  = $nom_nomina_id;
-        $filtro['nom_percepcion.descripcion'] = "Prima Vacacional";
-        $registro_prima_vacacional = $this->filtro_and(filtro: $filtro,limit: 1,);
+        $provisiones = $this->filtro_and(filtro: $filtro);
         if(errores::$error){
-            return $this->error->error(mensaje: 'Error al obtener provisiones de nomina',data:  $registro_prima_vacacional);
+            return $this->error->error(mensaje: 'Error al obtener provisiones de nomina',data:  $provisiones);
         }
 
-        $filtro = array();
-        $filtro['nom_nomina.id']  = $nom_nomina_id;
-        $filtro['nom_percepcion.descripcion'] = "Vacaciones";
-        $registro_vacaciones = $this->filtro_and(filtro: $filtro,limit: 1);
+        $registro = (new nom_nomina(link: $this->link))->registro(registro_id: $nom_nomina_id);
         if(errores::$error){
-            return $this->error->error(mensaje: 'Error al obtener provisiones de nomina',data:  $registro_vacaciones);
+            return $this->error->error(mensaje: 'Error al obtener codigo de empleado',data:  $registro);
         }
-
-        $filtro = array();
-        $filtro['nom_nomina.id']  = $nom_nomina_id;
-        $filtro['nom_percepcion.descripcion'] = "Aguinaldo";
-        $registro_aguinaldo = $this->filtro_and(filtro: $filtro,limit: 1);
-        if(errores::$error){
-            return $this->error->error(mensaje: 'Error al obtener provisiones de nomina',data:  $registro_aguinaldo);
-        }
-
-        $filtro = array();
-        $filtro['nom_nomina.id']  = $nom_nomina_id;
-        $filtro['nom_percepcion.descripcion'] = "Prima Antiguedad";
-        $registro_prima_antiguedad = $this->filtro_and(filtro: $filtro,limit: 1);
-        if(errores::$error){
-            return $this->error->error(mensaje: 'Error al obtener provisiones de nomina',data:  $registro_aguinaldo);
-        }
-
-        $filtro = array();
-        $filtro['nom_nomina.id'] = $nom_nomina_id;
-        $filtro['nom_nomina.em_empleado_id'] = "Codigo";
-        $registro_codigo= $this->filtro_and(filtro: $filtro,limit: 1);
-        if(errores::$error){
-            return $this->error->error(mensaje: 'Error al obtener codigo de empleado',data:  $registro_codigo);
-        }
-
-        $filtro = array();
-        $filtro['nom_nomina.id']  = $nom_nomina_id;
-        $filtro['nom_nomina.em_empleado_id'] = "Nombre Completo";
-        $registro_nombre_completo = $this->filtro_and(filtro: $filtro,limit: 1);
-        if(errores::$error){
-            return $this->error->error(mensaje: 'Error al obtener provisiones de nomina',data:  $registro_nombre_completo);
-        }
-
-        $prima_vacacional = "";
-        $vacaciones = "";
-        $aguinaldo = "";
-        $prima_antiguedad = "";
-        $nombre_completo = "";
-        $codigo = "";
-
-        if ($registro_prima_vacacional->n_registros > 0){
-            $prima_vacacional = $registro_prima_vacacional->registros[0]['tg_provision_monto'];
-        }
-
-        if ($registro_vacaciones->n_registros > 0){
-            $vacaciones = $registro_vacaciones->registros[0]['tg_provision_monto'];
-        }
-
-        if ($registro_aguinaldo->n_registros > 0){
-            $aguinaldo = $registro_aguinaldo->registros[0]['tg_provision_monto'];
-        }
-
-        if ($registro_prima_antiguedad->n_registros > 0){
-            $prima_antiguedad = $registro_prima_antiguedad->registros[0]['tg_provision_monto'];
-        }
-
-        $total_provisionado = (int)$prima_vacacional + (int)$vacaciones + (int)$aguinaldo + (int)$prima_antiguedad;
 
         $datos = array();
-        $datos['codigo'] = $codigo;
-        $datos['nombre_completo'] = $nombre_completo;
-        $datos['prima_vacacional'] = $prima_vacacional;
-        $datos['vacaciones'] = $vacaciones;
-        $datos['aguinaldo'] = $aguinaldo;
-        $datos['prima_antiguedad'] = $prima_antiguedad;
-        $datos['total_provisionado'] = $total_provisionado;
+
+        $datos['id_remunerado'] = $registro['em_empleado_codigo'];
+        $datos['nombre_completo'] = $registro['em_empleado_nombre'].' ';
+        $datos['nombre_completo'] .= $registro['em_empleado_ap'].' ';
+        $datos['nombre_completo'] .= $registro['em_empleado_am'];
+        $datos['departamento'] = $registro['org_departamento_descripcion'];
+        $datos['registro_patronal'] = $registro['em_registro_patronal_descripcion'];
+
+        $datos['prima_vacacional'] = 0;
+        $datos['vacaciones'] = 0;
+        $datos['aguinaldo'] = 0;
+        $datos['prima_antiguedad'] = 0;
+
+        $total = 0;
+        foreach ($provisiones->registros as $provision) {
+            foreach ($datos as $desc_prov => $dato){
+                $descripcion_prov = $provision['tg_tipo_provision_descripcion'];
+
+                if($descripcion_prov === $desc_prov){
+                    $datos[$descripcion_prov] = $provision['tg_provision_monto'];
+                    $total += $datos[$descripcion_prov];
+                }
+            }
+        }
+        $datos['total_provicionado'] = $total;
 
         return $datos;
     }

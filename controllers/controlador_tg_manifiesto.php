@@ -1380,18 +1380,18 @@ class controlador_tg_manifiesto extends _ctl_base
         }
 
         $keys_hojas = array();
-        $keys_hojas['nominas'] = new stdClass();
-        $keys_hojas['nominas']->keys = $keys;
-        $keys_hojas['nominas']->registros = $registros;
-        $keys_hojas['provisionado'] = new stdClass();
-        $keys_hojas['provisionado']->keys = $keys_provisiones;
-        $keys_hojas['provisionado']->registros = $registros_provisiones_excel;
-        $keys_hojas['pagos'] = new stdClass();
-        $keys_hojas['pagos']->keys = $keys_pagos;
-        $keys_hojas['pagos']->registros = $registros_pagos_excel;
+        $keys_hojas['NOMINAS'] = new stdClass();
+        $keys_hojas['NOMINAS']->keys = $keys;
+        $keys_hojas['NOMINAS']->registros = $registros;
+        $keys_hojas['CENTRO DE COSTO'] = new stdClass();
+        $keys_hojas['CENTRO DE COSTO']->keys = $keys_provisiones;
+        $keys_hojas['CENTRO DE COSTO']->registros = $registros_provisiones_excel;
+        $keys_hojas['PAGOS'] = new stdClass();
+        $keys_hojas['PAGOS']->keys = $keys_pagos;
+        $keys_hojas['PAGOS']->registros = $registros_pagos_excel;
 
         $xls = $exportador->genera_xls(header: $header, name: $manifiesto["tg_manifiesto_descripcion"],
-            nombre_hojas: array("nominas", "provisionado", "pagos"), keys_hojas: $keys_hojas,
+            nombre_hojas: array("NOMINAS", "CENTRO DE COSTO", "PAGOS"), keys_hojas: $keys_hojas,
             path_base: $this->path_base);
         if (errores::$error) {
             return $this->retorno_error(mensaje: 'Error al generar xls', data: $xls, header: $header,
