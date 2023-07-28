@@ -3,6 +3,8 @@ namespace tglobally\tg_nomina\models;
 
 use base\orm\_modelo_parent;
 use gamboamartin\errores\errores;
+use gamboamartin\nomina\models\nom_conf_comision;
+use gamboamartin\nomina\models\nom_par_percepcion;
 use PDO;
 use stdClass;
 
@@ -81,6 +83,27 @@ class tg_provision extends _modelo_parent {
             }
         }
         $datos['total_provicionado'] = $total;
+
+        $suma_percepcion = (new nom_nomina(link: $this->link))->total_percepciones_monto(nom_nomina_id: $nom_nomina_id);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener la suma de percepciones',
+                data: $registro);
+        }
+
+        $datos['suma_percepcion'] = $suma_percepcion + $datos['total_provicionado'];
+
+        /*$filtro['nom_nomina.id']  = $nom_nomina_id;
+        $r_nom_par_percepcion = (new nom_conf_comision($this->link))->filtro_and(filtro: $filtro);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener percepcion',data:  $r_nom_par_percepcion);
+        }*/
+
+        $factor = .03;
+
+        $datos['factor_de_servicio'] = $suma_percepcion * $factor;
+        $datos['subtotal'] = $datos['suma_percepcion'] + $datos['factor_de_servicio'];
+        $datos['iva'] = $datos['subtotal'] * .16;
+        $datos['total'] = $datos['subtotal'] + $datos['iva'];
 
         return $datos;
     }
