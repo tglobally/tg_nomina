@@ -66,6 +66,42 @@ class tg_provision extends _modelo_parent {
         $datos['departamento'] = $registro['org_departamento_descripcion'];
         $datos['registro_patronal'] = $registro['em_registro_patronal_descripcion'];
 
+        $suma_base_gravable = (new nom_nomina(link: $this->link))->total_percepciones_gravado(nom_nomina_id: $nom_nomina_id);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener la suma de percepciones',
+                data: $registro);
+        }
+
+        $suma_base_gravable += (new nom_nomina(link: $this->link))->total_otros_pagos_gravado(nom_nomina_id: $nom_nomina_id);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener la suma de otros pagos',
+                data: $registro);
+        }
+
+        $suma_imss = (new nom_nomina(link: $this->link))->obten_sumatoria_imss(nom_nomina_id: $nom_nomina_id);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener la suma de imss',
+                data: $registro);
+        }
+
+        $suma_infonavit = (new nom_nomina(link: $this->link))->obten_infonavit(nom_nomina_id: $nom_nomina_id);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener infonavit',
+                data: $registro);
+        }
+
+        $suma_rcv = (new nom_nomina(link: $this->link))->obten_rcv(nom_nomina_id: $nom_nomina_id);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener la suma de rcv',
+                data: $registro);
+        }
+        $datos['imss'] = $suma_imss;
+        $datos['rcv'] = $suma_rcv;
+        $datos['infonavit'] = $suma_infonavit;
+        $datos['isn'] = $suma_base_gravable * .03;
+
+        $datos['total_impuesto'] = $datos['imss'] +  $datos['rcv'] + $datos['infonavit'] + $datos['isn'];
+
         $datos['prima_vacacional'] = 0;
         $datos['vacaciones'] = 0;
         $datos['aguinaldo'] = 0;
@@ -90,7 +126,13 @@ class tg_provision extends _modelo_parent {
                 data: $registro);
         }
 
-        $datos['suma_percepcion'] = $suma_percepcion + $datos['total_provicionado'];
+        $subsidio = (new nom_nomina(link: $this->link))->total_otros_pagos_activo(nom_nomina_id: $nom_nomina_id);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener la suma de otros pagos',
+                data: $registro);
+        }
+
+        $datos['suma_percepcion'] = $suma_percepcion + $datos['total_provicionado'] + $datos['total_impuesto'] - $subsidio;
 
         /*$filtro['nom_nomina.id']  = $nom_nomina_id;
         $r_nom_par_percepcion = (new nom_conf_comision($this->link))->filtro_and(filtro: $filtro);
