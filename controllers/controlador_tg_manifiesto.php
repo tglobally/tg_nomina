@@ -1385,6 +1385,14 @@ class controlador_tg_manifiesto extends _ctl_base
         $keys_hojas['NOMINAS']->registros = $registros;
         $keys_hojas['NOMINAS']->inicio_fila_encabezado = 4;
         $keys_hojas['NOMINAS']->inicio_fila_contenido = 5;
+
+        $keys_hojas['NOMINAS']->empresa = $manifiesto['org_empresa_razon_social'];
+        $keys_hojas['NOMINAS']->cliente = $manifiesto['com_cliente_razon_social'];
+        $keys_hojas['NOMINAS']->periodo = $manifiesto['tg_manifiesto_fecha_inicial_pago'] .' '.
+            $manifiesto['tg_manifiesto_fecha_final_pago'];
+        $keys_hojas['NOMINAS']->folio = $manifiesto['tg_manifiesto_id'];
+        $keys_hojas['NOMINAS']->fecha_emision = date('Y-m-d');
+
         $keys_hojas['CENTRO DE COSTO'] = new stdClass();
         $keys_hojas['CENTRO DE COSTO']->keys = $keys_provisiones;
         $keys_hojas['CENTRO DE COSTO']->registros = $registros_provisiones_excel;
@@ -1398,7 +1406,7 @@ class controlador_tg_manifiesto extends _ctl_base
 
         $xls = $exportador->genera_xls(header: $header, name: $manifiesto["tg_manifiesto_descripcion"],
             nombre_hojas: array("NOMINAS", "CENTRO DE COSTO", "PAGOS"), keys_hojas: $keys_hojas,
-            path_base: $this->path_base);
+            path_base: $this->path_base,  color_contenido: 'DCE6FF', color_encabezado: '0070C0');
         if (errores::$error) {
             return $this->retorno_error(mensaje: 'Error al generar xls', data: $xls, header: $header,
                 ws: $ws);

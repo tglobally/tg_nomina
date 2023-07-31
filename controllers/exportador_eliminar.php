@@ -74,8 +74,8 @@ class exportador_eliminar
 
     public function genera_xls(bool  $header, string $name, array $nombre_hojas, array $keys_hojas, string $path_base,
                                array $size_columnas = array(), array $centers = array(), array $moneda = array(),
-                               array $moneda_sin_decimal = array(), string $color_contenido = 'DCE6FF',
-                               string $color_encabezado = '0070C0'): array|string
+                               array $moneda_sin_decimal = array(), string $color_contenido = 'FFFFFF',
+                               string $color_encabezado = 'FFFFFF'): array|string
     {
         if(trim($name) === ''){
             $error = $this->error->error('Error al $name no puede venir vacio', $name);
