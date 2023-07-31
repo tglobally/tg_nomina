@@ -191,7 +191,8 @@ class exportador_eliminar
             }
 
             $genera_encabezados = (new datos())->genera_encabezados(columnas: $this->columnas, index: $index,
-                keys: $keys_hojas[$nombre_hoja]->keys, libro: $libro, color_contenido: $color_encabezado);
+                keys: $keys_hojas[$nombre_hoja]->keys, libro: $libro, color_contenido: $color_encabezado,
+                inicio_fila: $keys_hojas[$nombre_hoja]->inicio_fila_encabezado);
             if (errores::$error) {
                 $error = $this->error->error('Error al generar $genera_encabezados', $genera_encabezados);
                 if (!$header) {
@@ -203,7 +204,8 @@ class exportador_eliminar
 
             $llenado = (new datos())->llena_libro_xls(columnas: $this->columnas, estilo_contenido: $this->estilo_contenido,
                 estilos: $this->estilos, index: $index, keys: $keys_hojas[$nombre_hoja]->keys, libro: $libro, path_base: $path_base,
-                registros: $keys_hojas[$nombre_hoja]->registros, totales: array(),color_contenido: $color_contenido);
+                registros: $keys_hojas[$nombre_hoja]->registros, totales: array(),color_contenido: $color_contenido,
+                inicio_fila: $keys_hojas[$nombre_hoja]->inicio_fila_contenido);
             if (errores::$error) {
                 $error = $this->error->error('Error al generar $llenado', $llenado);
                 if (!$header) {

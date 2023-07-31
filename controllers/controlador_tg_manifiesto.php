@@ -1383,12 +1383,18 @@ class controlador_tg_manifiesto extends _ctl_base
         $keys_hojas['NOMINAS'] = new stdClass();
         $keys_hojas['NOMINAS']->keys = $keys;
         $keys_hojas['NOMINAS']->registros = $registros;
+        $keys_hojas['NOMINAS']->inicio_fila_encabezado = 4;
+        $keys_hojas['NOMINAS']->inicio_fila_contenido = 5;
         $keys_hojas['CENTRO DE COSTO'] = new stdClass();
         $keys_hojas['CENTRO DE COSTO']->keys = $keys_provisiones;
         $keys_hojas['CENTRO DE COSTO']->registros = $registros_provisiones_excel;
+        $keys_hojas['CENTRO DE COSTO']->inicio_fila_encabezado = 1;
+        $keys_hojas['CENTRO DE COSTO']->inicio_fila_contenido = 2;
         $keys_hojas['PAGOS'] = new stdClass();
         $keys_hojas['PAGOS']->keys = $keys_pagos;
         $keys_hojas['PAGOS']->registros = $registros_pagos_excel;
+        $keys_hojas['PAGOS']->inicio_fila_encabezado = 1;
+        $keys_hojas['PAGOS']->inicio_fila_contenido = 2;
 
         $xls = $exportador->genera_xls(header: $header, name: $manifiesto["tg_manifiesto_descripcion"],
             nombre_hojas: array("NOMINAS", "CENTRO DE COSTO", "PAGOS"), keys_hojas: $keys_hojas,
