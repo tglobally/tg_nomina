@@ -190,6 +190,20 @@ class exportador_eliminar
                 die('Error');
             }
 
+            if(isset($keys_hojas[$nombre_hoja]->datos_documento)){
+                $libro->setActiveSheetIndex($index)->setCellValue('A1', 'EMPRESA:');
+                $libro->setActiveSheetIndex($index)->setCellValue('B1', $keys_hojas[$nombre_hoja]->datos_documento['empresa']);
+                $libro->setActiveSheetIndex($index)->setCellValue('C1', 'FOLIO:');
+                $libro->setActiveSheetIndex($index)->setCellValue('D1', $keys_hojas[$nombre_hoja]->datos_documento['folio']);
+                $libro->setActiveSheetIndex($index)->setCellValue('A2', 'CLIENTE:');
+                $libro->setActiveSheetIndex($index)->setCellValue('B2', $keys_hojas[$nombre_hoja]->datos_documento['cliente']);
+                $libro->setActiveSheetIndex($index)->setCellValue('C2', 'FECHA EMISION:');
+                $libro->setActiveSheetIndex($index)->setCellValue('D2', $keys_hojas[$nombre_hoja]->datos_documento['fecha_emision']);
+
+                $libro->setActiveSheetIndex($index)->setCellValue('A3', 'PERIODO: ');
+                $libro->setActiveSheetIndex($index)->setCellValue('B3', $keys_hojas[$nombre_hoja]->datos_documento['periodo']);
+            }
+
             $genera_encabezados = (new datos())->genera_encabezados(columnas: $this->columnas, index: $index,
                 keys: $keys_hojas[$nombre_hoja]->keys, libro: $libro, color_contenido: $color_encabezado,
                 inicio_fila: $keys_hojas[$nombre_hoja]->inicio_fila_encabezado);

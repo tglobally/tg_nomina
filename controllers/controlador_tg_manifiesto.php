@@ -1386,12 +1386,15 @@ class controlador_tg_manifiesto extends _ctl_base
         $keys_hojas['NOMINAS']->inicio_fila_encabezado = 4;
         $keys_hojas['NOMINAS']->inicio_fila_contenido = 5;
 
-        $keys_hojas['NOMINAS']->empresa = $manifiesto['org_empresa_razon_social'];
-        $keys_hojas['NOMINAS']->cliente = $manifiesto['com_cliente_razon_social'];
-        $keys_hojas['NOMINAS']->periodo = $manifiesto['tg_manifiesto_fecha_inicial_pago'] .' '.
+        $datos_documentos = array();
+        $datos_documentos['empresa'] = $manifiesto['org_empresa_razon_social'];
+        $datos_documentos['cliente'] = $manifiesto['com_cliente_razon_social'];
+        $datos_documentos['periodo'] = $manifiesto['tg_manifiesto_fecha_inicial_pago'] .' - '.
             $manifiesto['tg_manifiesto_fecha_final_pago'];
-        $keys_hojas['NOMINAS']->folio = $manifiesto['tg_manifiesto_id'];
-        $keys_hojas['NOMINAS']->fecha_emision = date('Y-m-d');
+        $datos_documentos['folio'] = $manifiesto['tg_manifiesto_id'];
+        $datos_documentos['fecha_emision'] = date('Y-m-d');
+
+        $keys_hojas['NOMINAS']->datos_documento = $datos_documentos;
 
         $keys_hojas['CENTRO DE COSTO'] = new stdClass();
         $keys_hojas['CENTRO DE COSTO']->keys = $keys_provisiones;
