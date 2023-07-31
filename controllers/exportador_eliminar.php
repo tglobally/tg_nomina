@@ -8,6 +8,7 @@ use gamboamartin\plugins\exportador\estilos;
 use gamboamartin\plugins\exportador\output;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use Throwable;
 
@@ -192,21 +193,51 @@ class exportador_eliminar
 
             if(isset($keys_hojas[$nombre_hoja]->datos_documento)){
                 $libro->setActiveSheetIndex($index)->setCellValue('A1', 'EMPRESA:');
+                $libro->getActiveSheet()->getStyle('A1')->getFill()
+                    ->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB($color_encabezado);
+                $libro->getActiveSheet()->getStyle('A1')->getFont()->getColor()->setRGB('FFFFFF');
+                $libro->getActiveSheet()->getStyle('A1')->applyFromArray($this->estilo_titulos);
+
                 $libro->setActiveSheetIndex($index)->setCellValue('B1', $keys_hojas[$nombre_hoja]->datos_documento['empresa']);
                 $libro->setActiveSheetIndex($index)->setCellValue('C1', 'FOLIO:');
+                $libro->getActiveSheet()->getStyle('C1')->getFill()
+                    ->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB($color_encabezado);
+                $libro->getActiveSheet()->getStyle('C1')->getFont()->getColor()->setRGB('FFFFFF');
+                $libro->getActiveSheet()->getStyle('C1')->applyFromArray($this->estilo_titulos);
+
                 $libro->setActiveSheetIndex($index)->setCellValue('D1', $keys_hojas[$nombre_hoja]->datos_documento['folio']);
                 $libro->setActiveSheetIndex($index)->setCellValue('A2', 'CLIENTE:');
+                $libro->getActiveSheet()->getStyle('A2')->getFill()
+                    ->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB($color_encabezado);
+                $libro->getActiveSheet()->getStyle('A2')->getFont()->getColor()->setRGB('FFFFFF');
+                $libro->getActiveSheet()->getStyle('A2')->applyFromArray($this->estilo_titulos);
+
                 $libro->setActiveSheetIndex($index)->setCellValue('B2', $keys_hojas[$nombre_hoja]->datos_documento['cliente']);
                 $libro->setActiveSheetIndex($index)->setCellValue('C2', 'FECHA EMISION:');
+                $libro->getActiveSheet()->getStyle('C2')->getFill()
+                    ->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB($color_encabezado);
+                $libro->getActiveSheet()->getStyle('C2')->getFont()->getColor()->setRGB('FFFFFF');
+                $libro->getActiveSheet()->getStyle('C2')->applyFromArray($this->estilo_titulos);
+
                 $libro->setActiveSheetIndex($index)->setCellValue('D2', $keys_hojas[$nombre_hoja]->datos_documento['fecha_emision']);
 
                 $libro->setActiveSheetIndex($index)->setCellValue('A3', 'PERIODO: ');
+                $libro->getActiveSheet()->getStyle('A3')->getFill()
+                    ->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB($color_encabezado);
+                $libro->getActiveSheet()->getStyle('A3')->getFont()->getColor()->setRGB('FFFFFF');
+                $libro->getActiveSheet()->getStyle('A3')->applyFromArray($this->estilo_titulos);
+
                 $libro->setActiveSheetIndex($index)->setCellValue('B3', $keys_hojas[$nombre_hoja]->datos_documento['periodo']);
+                $libro->getActiveSheet()->getStyle('C3')->getFill()
+                    ->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB($color_encabezado);
+
+                $libro->getActiveSheet()->getStyle('A4:ZZ4')->applyFromArray($this->estilo_titulos);
+
             }
 
             $genera_encabezados = (new datos())->genera_encabezados(columnas: $this->columnas, index: $index,
                 keys: $keys_hojas[$nombre_hoja]->keys, libro: $libro, color_contenido: $color_encabezado,
-                inicio_fila: $keys_hojas[$nombre_hoja]->inicio_fila_encabezado);
+                inicio_fila: $keys_hojas[$nombre_hoja]->inicio_fila_encabezado,color_texto: 'FFFFFF');
             if (errores::$error) {
                 $error = $this->error->error('Error al generar $genera_encabezados', $genera_encabezados);
                 if (!$header) {
@@ -229,14 +260,16 @@ class exportador_eliminar
                 die('Error');
             }
 
-            $estilos_titulo = (new estilos())->asigna_estilos_titulo(estilo_titulos: $this->estilo_titulos, libro: $libro);
-            if (isset($estilos_titulo['error'])) {
-                $error = $this->error->error('Error al aplicar $estilos_titulo', $estilos_titulo);
-                if (!$header) {
-                    return $error;
+            if($nombre_hoja !== 'NOMINAS') {
+                $estilos_titulo = (new estilos())->asigna_estilos_titulo(estilo_titulos: $this->estilo_titulos, libro: $libro);
+                if (isset($estilos_titulo['error'])) {
+                    $error = $this->error->error('Error al aplicar $estilos_titulo', $estilos_titulo);
+                    if (!$header) {
+                        return $error;
+                    }
+                    print_r($error);
+                    die('Error');
                 }
-                print_r($error);
-                die('Error');
             }
 
             $autosize = (new estilos())->aplica_autosize(columnas: $this->columnas, keys: $keys_hojas[$nombre_hoja]->keys,
