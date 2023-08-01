@@ -26,6 +26,7 @@ use gamboamartin\xml_cfdi_4\fechas;
 use gamboamartin\xml_cfdi_4\timbra;
 use Mpdf\Mpdf;
 use stdClass;
+use tglobally\tg_cliente\models\tg_cliente_empresa;
 use Throwable;
 use ZipArchive;
 
@@ -60,6 +61,20 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
 
     public function conf_provisiones_acciones(int $em_empleado_id, int $nom_nomina_id, string $fecha): array|stdClass
     {
+        $filtro_empleado['tg_empleado_sucursal.em_empleado_id'] = $em_empleado_id;
+        $empleado = (new tg_empleado_sucursal($this->link))->filtro_and(filtro: $filtro_empleado);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener cliente del empleado', data: $empleado);
+        }
+
+        if ($empleado->n_registros > 0){
+            $filtro_empleado['tg_cliente_empresa.com_sucursal_id'] = $empleado->registros[0]['com_sucursal_id'];
+            $empleado_provisiones = (new tg_cliente_empresa($this->link))->filtro_and();
+            if (errores::$error) {
+                return $this->error->error(mensaje: 'Error al obtener cliente del empleado', data: $empleado);
+            }
+        }
+
         $data = $this->get_tg_conf_provisiones(em_empleado_id: $em_empleado_id, fecha: $fecha);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al obtener conf. de provisiones del empleado', data: $data);
