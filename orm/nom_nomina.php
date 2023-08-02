@@ -27,6 +27,8 @@ use gamboamartin\xml_cfdi_4\timbra;
 use Mpdf\Mpdf;
 use stdClass;
 use tglobally\tg_cliente\models\tg_cliente_empresa;
+use tglobally\tg_cliente\models\tg_cliente_empresa_provisiones;
+use tglobally\tg_cliente\models\tg_conf_provisiones_cliente;
 use Throwable;
 use ZipArchive;
 
@@ -35,6 +37,8 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
 
     public function alta_bd(): array|stdClass
     {
+        $conf_empl = $this->registro['nom_conf_empleado_id'];
+
         $movimiento = (new im_movimiento($this->link))->filtro_and(filtro: array("em_empleado.id" => $this->registro['em_empleado_id']),
             limit: 1, order: array("im_movimiento_id" => "DESC"));
         if (errores::$error) {
@@ -51,7 +55,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         }
 
         $acciones = $this->conf_provisiones_acciones(em_empleado_id: $this->registro['em_empleado_id'],
-            nom_nomina_id: $alta->registro_id, fecha: $this->registro['fecha_pago']);
+            nom_nomina_id: $alta->registro_id, fecha: $this->registro['fecha_pago'], conf_empl: $conf_empl);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al ejecutar acciones de conf. de provisiones', data: $acciones);
         }
@@ -59,7 +63,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         return $alta;
     }
 
-    public function conf_provisiones_acciones(int $em_empleado_id, int $nom_nomina_id, string $fecha): array|stdClass
+    public function conf_provisiones_acciones(int $em_empleado_id, int $nom_nomina_id, string $fecha, string $conf_empl): array|stdClass
     {
         $filtro_empleado['tg_empleado_sucursal.em_empleado_id'] = $em_empleado_id;
         $empleado = (new tg_empleado_sucursal($this->link))->filtro_and(filtro: $filtro_empleado);
@@ -67,16 +71,36 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
             return $this->error->error(mensaje: 'Error al obtener cliente del empleado', data: $empleado);
         }
 
-
         if ($empleado->n_registros > 0){
-            $filtro_provisiones['tg_cliente_empresa.com_sucursal_id'] = $empleado->registros[0]['com_sucursal_id'];
-            $filtro_provisiones['tg_cliente_empresa.org_sucursal_id'] = $empleado->registros[0]['fc_csd_org_sucursal_id'];
-            $provisiones = (new tg_cliente_empresa($this->link))->filtro_and(filtro: $filtro_provisiones);
+            $filtro_conf['tg_cliente_empresa.com_sucursal_id'] = $empleado->registros[0]['com_sucursal_id'];
+            $filtro_conf['tg_cliente_empresa.org_sucursal_id'] = $empleado->registros[0]['fc_csd_org_sucursal_id'];
+            $filtro_conf['tg_conf_provisiones_cliente.estado'] = "activo";
+            $conf = (new tg_conf_provisiones_cliente($this->link))->filtro_and(filtro: $filtro_conf);
+            if (errores::$error) {
+                return $this->error->error(mensaje: 'Error al obtener conf. cliente del empleado', data: $conf);
+            }
+
+            $filtro_provisiones['tg_cliente_empresa_provisiones.tg_cliente_empresa_id'] = $conf->registros[0]['tg_cliente_empresa_id'];
+            $provisiones = (new tg_cliente_empresa_provisiones($this->link))->filtro_and(filtro: $filtro_provisiones);
             if (errores::$error) {
                 return $this->error->error(mensaje: 'Error al obtener cliente del empleado', data: $provisiones);
             }
 
-
+            foreach ($provisiones->registros as $provision){
+                $registro_provision['nom_conf_empleado_id'] = $conf_empl;
+                $registro_provision['tg_tipo_provision_id'] = $provision['tg_tipo_provision_id'];
+                $registro_provision['descripcion'] = $provision['tg_tipo_provision_descripcion'];
+                $registro_provision['codigo'] = (new tg_conf_provision($this->link))->get_codigo_aleatorio();
+                $registro_provision['codigo_bis'] = $registro_provision['codigo'];
+                $registro_provision['monto'] = 0;
+                $registro_provision['fecha_inicio'] = $this->registro['fecha_inicial_pago'];
+                $registro_provision['fecha_fin'] = $this->registro['fecha_final_pago'];
+                $alta = (new tg_conf_provision($this->link))->alta_registro(registro: $registro_provision);
+                if (errores::$error) {
+                    $this->link->rollBack();
+                    return $this->error->error(mensaje: 'Error al dar de alta provision cliente', data: $alta);
+                }
+            }
         }
 
         $data = $this->get_tg_conf_provisiones(em_empleado_id: $em_empleado_id, fecha: $fecha);
