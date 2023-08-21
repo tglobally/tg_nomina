@@ -133,6 +133,8 @@ class tg_manifiesto extends _modelo_parent{
             unset($this->registro['tg_cte_alianza_id']);
         }
 
+        $this->registro['fecha_envio'] = date("Y/m/d");
+
         $r_alta_bd = parent::alta_bd(keys_integra_ds: $keys_integra_ds);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al dar de alta manifiesto',data: $r_alta_bd);

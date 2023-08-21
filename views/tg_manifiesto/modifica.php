@@ -5,10 +5,11 @@
     <?php echo $controlador->inputs->com_sucursal_id; ?>
     <?php echo $controlador->inputs->org_sucursal_id; ?>
     <?php echo $controlador->inputs->tg_tipo_servicio_id; ?>
+    <?php echo $controlador->inputs->fecha_pago; ?>
     <?php echo $controlador->inputs->fecha_inicial_pago; ?>
     <?php echo $controlador->inputs->fecha_final_pago; ?>
     <?php echo $controlador->inputs->fecha_envio; ?>
-    <?php echo $controlador->inputs->fecha_pago; ?>
+
 
     <div class="col-12 d-flex justify-content-end">
         <button type="submit" class="btn btn-primary" name="btn_action_next">Actualizar</button>
