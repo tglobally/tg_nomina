@@ -1485,7 +1485,9 @@ class controlador_tg_manifiesto extends _ctl_base
              die('Error');
          }*/
 
-
+        $link = "./index.php?seccion=tg_manifiesto&accion=lista&registro_id=" . $this->registro_id;
+        $link .= "&session_id=$this->session_id";
+        header('Location:' . $link);
         exit;
         //return $this->nominas;
     }
@@ -2305,7 +2307,8 @@ class controlador_tg_manifiesto extends _ctl_base
             }
         }
 
-        $link = "./index.php?seccion=tg_manifiesto&accion=lista&registro_id=" . $this->registro_id;
+
+        $link = "./index.php?seccion=tg_manifiesto&accion=descarga_nomina&registro_id=" . $this->registro_id;
         $link .= "&session_id=$this->session_id";
         header('Location:' . $link);
         exit;
