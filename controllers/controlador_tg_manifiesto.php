@@ -1319,6 +1319,7 @@ class controlador_tg_manifiesto extends _ctl_base
         $registros_xls = array();
         $registros_provisiones = array();
         $acumulado_dep = array();
+        $cont_dep = 0;
 
         foreach ($nominas as $nomina) {
             $row = (new nom_nomina($this->link))->maqueta_registros_excel(nom_nomina_id: $nomina['nom_nomina_id'],
@@ -1356,6 +1357,7 @@ class controlador_tg_manifiesto extends _ctl_base
                         $acumulado_dep[$nomina['org_departamento_descripcion']] += $suma_percepcion;
                     }else{
                         $acumulado_dep[$nomina['org_departamento_descripcion']] = $suma_percepcion;
+                        $cont_dep++;
                     }
                 }
             }
@@ -1422,8 +1424,32 @@ class controlador_tg_manifiesto extends _ctl_base
         $keys_hojas['CENTRO DE COSTO'] = new stdClass();
         $keys_hojas['CENTRO DE COSTO']->keys = $keys_provisiones;
         $keys_hojas['CENTRO DE COSTO']->registros = $registros_provisiones_excel;
-        $keys_hojas['CENTRO DE COSTO']->inicio_fila_encabezado = 1;
-        $keys_hojas['CENTRO DE COSTO']->inicio_fila_contenido = 2;
+        $keys_hojas['CENTRO DE COSTO']->inicio_fila_encabezado = 12 + $cont_dep;
+        $keys_hojas['CENTRO DE COSTO']->inicio_fila_contenido = 13 + $cont_dep;
+        
+        $datos_provisiones = array();
+        $datos_provisiones['PERCEPCIONES'] = 0;
+        $datos_provisiones['CUOTAS PATRONALES'] = 0;
+        $datos_provisiones['PROVISIONES'] = 0;
+        $datos_provisiones['FACTOR DE SERVICIO'] = 0;
+        $datos_provisiones['SUBTOTAL'] = 0;
+        $datos_provisiones['IVA'] = 0;
+        $datos_provisiones['FACTOR TOTAL'] = 0;
+
+        foreach ($registros_provisiones as $registro_provision){
+            $datos_provisiones['PERCEPCIONES'] += $registro_provision['suma_percepcion'];
+            $datos_provisiones['CUOTAS PATRONALES'] += $registro_provision['total_impuesto'];
+            $datos_provisiones['PROVISIONES'] += $registro_provision['total_provicionado'];
+            $datos_provisiones['FACTOR DE SERVICIO'] += $registro_provision['factor_de_servicio'];
+            $datos_provisiones['SUBTOTAL'] += $registro_provision['subtotal'];
+            $datos_provisiones['IVA'] += $registro_provision['iva'];
+            $datos_provisiones['FACTOR TOTAL'] += $registro_provision['total'];
+        }
+
+        $keys_hojas['CENTRO DE COSTO']->desgloce_departamento = 'DESGLOSE POR DEPARTAMENTO | FOLIO: '.$manifiesto['tg_manifiesto_id'];
+        $keys_hojas['CENTRO DE COSTO']->desgloce_cliente = 'DESGLOSE POR CLIENTE | FOLIO: '.$manifiesto['tg_manifiesto_id'];
+        $keys_hojas['CENTRO DE COSTO']->acumulado_dep = $acumulado_dep;
+        $keys_hojas['CENTRO DE COSTO']->totales_costos = $datos_provisiones;
 
         $keys_hojas['PAGOS'] = new stdClass();
         $keys_hojas['PAGOS']->keys = $keys_pagos;

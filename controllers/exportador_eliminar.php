@@ -235,6 +235,41 @@ class exportador_eliminar
 
             }
 
+            if(isset($keys_hojas[$nombre_hoja]->acumulado_dep)){
+                $libro->setActiveSheetIndex($index)->setCellValue('A1', $keys_hojas[$nombre_hoja]->desgloce_departamento);
+                $libro->getActiveSheet()->getStyle('A1')->getFill()
+                    ->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB($color_encabezado);
+                $libro->getActiveSheet()->getStyle('A1')->getFont()->getColor()->setRGB('FFFFFF');
+                $libro->getActiveSheet()->getStyle('A1')->applyFromArray($this->estilo_titulos);
+
+                $libro->setActiveSheetIndex($index)->setCellValue('A2', 'DEPARTAMENTO');
+                $libro->getActiveSheet()->getStyle('A2')->getFill()
+                    ->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB($color_encabezado);
+                $libro->getActiveSheet()->getStyle('A2')->getFont()->getColor()->setRGB('FFFFFF');
+                $libro->getActiveSheet()->getStyle('A2')->applyFromArray($this->estilo_titulos);
+
+                $libro->setActiveSheetIndex($index)->setCellValue('B2', 'NETO PAGADO');
+                $libro->getActiveSheet()->getStyle('B2')->getFill()
+                    ->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB($color_encabezado);
+                $libro->getActiveSheet()->getStyle('B2')->getFont()->getColor()->setRGB('FFFFFF');
+                $libro->getActiveSheet()->getStyle('B2')->applyFromArray($this->estilo_titulos);
+
+                $cont = 3;
+                foreach ($keys_hojas[$nombre_hoja]->acumulado_dep as $acumulado => $valor){
+                    $libro->setActiveSheetIndex($index)->setCellValue('A'.$cont, $acumulado);
+                    $libro->setActiveSheetIndex($index)->setCellValue('B'.$cont, $valor);
+                    $cont++;
+                }
+
+                $cont++;
+
+                foreach ($keys_hojas[$nombre_hoja]->totales_costos as $total_costo => $valor){
+                    $libro->setActiveSheetIndex($index)->setCellValue('A'.$cont, $total_costo);
+                    $libro->setActiveSheetIndex($index)->setCellValue('B'.$cont, $valor);
+                    $cont++;
+                }
+            }
+
             $genera_encabezados = (new datos())->genera_encabezados(columnas: $this->columnas, index: $index,
                 keys: $keys_hojas[$nombre_hoja]->keys, libro: $libro, color_contenido: $color_encabezado,
                 inicio_fila: $keys_hojas[$nombre_hoja]->inicio_fila_encabezado,color_texto: 'FFFFFF');
@@ -245,14 +280,6 @@ class exportador_eliminar
                 }
                 print_r($error);
                 die('Error');
-            }
-
-            foreach($keys_hojas[$nombre_hoja]->registros as $registro) {
-                if(!is_array($registro)){
-                    return $this->error->error('Error registro debe ser un array',$registro);
-                }
-
-                $fila++;
             }
 
             $llenado = (new datos())->llena_libro_xls(columnas: $this->columnas, estilo_contenido: $this->estilo_contenido,
