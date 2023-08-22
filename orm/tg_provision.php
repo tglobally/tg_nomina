@@ -100,8 +100,10 @@ class tg_provision extends _modelo_parent {
         $datos['rcv'] = $suma_rcv;
         $datos['infonavit'] = $suma_infonavit;
         $datos['isn'] = $suma_base_gravable * .03;
+        $datos['isn_adicional'] = $suma_base_gravable * .03;
 
-        $datos['total_impuesto'] = $datos['imss'] +  $datos['rcv'] + $datos['infonavit'] + $datos['isn'];
+        $datos['total_impuesto'] = $datos['imss'] +  $datos['rcv'] + $datos['infonavit'] + $datos['isn'] +
+            $datos['isn_adicional'] ;
 
         $datos['prima_vacacional'] = 0;
         $datos['vacaciones'] = 0;
