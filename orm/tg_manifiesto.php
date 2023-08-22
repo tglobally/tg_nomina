@@ -3,6 +3,7 @@ namespace tglobally\tg_nomina\models;
 
 use base\orm\_modelo_parent;
 
+use config\generales;
 use gamboamartin\comercial\models\com_sucursal;
 use gamboamartin\documento\models\doc_documento;
 use gamboamartin\empleado\models\em_registro_patronal;
@@ -17,11 +18,14 @@ use gamboamartin\nomina\models\nom_par_deduccion;
 use gamboamartin\nomina\models\nom_par_percepcion;
 use gamboamartin\nomina\models\nom_percepcion;
 use gamboamartin\nomina\models\nom_periodo;
+use gamboamartin\organigrama\models\org_departamento;
 use gamboamartin\organigrama\models\org_sucursal;
 use PDO;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use stdClass;
+use tglobally\tg_nomina\controllers\controlador_tg_manifiesto;
+use tglobally\tg_nomina\controllers\exportador_eliminar;
 
 class tg_manifiesto extends _modelo_parent{
 
@@ -197,7 +201,196 @@ class tg_manifiesto extends _modelo_parent{
             return $this->error->error(mensaje: 'Error al dar de alta manifiesto_periodo',data:  $sube_manifiesto);
         }
 
+        $descarga_nomina = $this->descarga_nomina($r_alta_bd->registro_id);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al dar de alta manifiesto_periodo',data:  $descarga_nomina);
+        }
+
         return $r_alta_bd;
+    }
+
+    public function descarga_nomina($registro_id)
+    {
+        $manifiesto = (new tg_manifiesto($this->link))->registro(registro_id: $registro_id);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener manifiesto', data: $manifiesto);
+        }
+
+        $nominas = (new tg_manifiesto_periodo($this->link))->nominas_by_manifiesto(tg_manifiesto_id: $registro_id);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener nominas del periodo', data: $nominas);
+        }
+
+        $conceptos = (new nom_nomina($this->link))->obten_conceptos_nominas(nominas: $nominas);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener nominas del periodo', data: $conceptos);
+        }
+
+        $departametos = (new org_departamento($this->link))->registros();
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener nominas del periodo', data: $conceptos);
+        }
+
+        $exportador = (new exportador_eliminar(num_hojas: 3));
+        $registros_xls = array();
+        $registros_provisiones = array();
+        $acumulado_dep = array();
+        $cont_dep = 0;
+        $total = 0;
+
+        foreach ($nominas as $nomina) {
+            $row = (new nom_nomina($this->link))->maqueta_registros_excel(nom_nomina_id: $nomina['nom_nomina_id'],
+                conceptos_nomina: $conceptos);
+            if (errores::$error) {
+                return $this->error->error(mensaje: 'Error al maquetar datos de la nomina', data: $row);
+            }
+
+            $provisiones = (new tg_provision($this->link))->maqueta_excel_provisiones(
+                nom_nomina_id: $nomina['nom_nomina_id']);
+            if (errores::$error) {
+                return $this->error->error(mensaje: 'Error al maquetar provisiones de la nomina', data: $provisiones);
+            }
+
+            $pagos = (new em_cuenta_bancaria($this->link))->maqueta_excel_pagos(data_general: $row);
+            if (errores::$error) {
+                return $this->error->error(mensaje: 'Error al maquetar pagos de la nomina', data: $pagos);
+            }
+            $registros_xls[] = $row;
+            $registros_provisiones[] = $provisiones;
+            $registros_pagos[] = $pagos;
+
+            $suma_percepcion = (new nom_nomina($this->link))->total_percepciones_gravado(nom_nomina_id: $nomina['nom_nomina_id']);
+            if (errores::$error) {
+                return $this->error->error(mensaje: 'Error al obtener la suma de percepciones',
+                    data: $nomina);
+            }
+
+            foreach ($departametos as $departameto){
+                if($departameto['org_departamento_id'] === $nomina['org_departamento_id']){
+                    if(isset($acumulado_dep[$nomina['org_departamento_descripcion']])){
+                        $acumulado_dep[$nomina['org_departamento_descripcion']] += $suma_percepcion;
+                    }else{
+                        $acumulado_dep[$nomina['org_departamento_descripcion']] = $suma_percepcion;
+                        $cont_dep++;
+                    }
+                }
+            }
+
+            $total += $suma_percepcion;
+        }
+
+        $keys = array();
+        $keys_provisiones = array();
+        $keys_pagos = array();
+
+        foreach (array_keys($registros_xls[0]) as $key) {
+            $keys[$key] = strtoupper(str_replace('_', ' ', $key));
+        }
+
+        foreach (array_keys($registros_provisiones[0]) as $key) {
+            $keys_provisiones[$key] = strtoupper(str_replace('_', ' ', $key));
+        }
+
+        foreach (array_keys($registros_pagos[0]) as $key) {
+            $keys_pagos[$key] = strtoupper(str_replace('_', ' ', $key));
+        }
+
+        $registros = array();
+        $registros_provisiones_excel = array();
+        $registros_pagos_excel = array();
+
+        foreach ($registros_xls as $row) {
+            $registros[] = array_combine(preg_replace(array_map(function ($s) {
+                return "/^$s$/";
+            },
+                array_keys($keys)), $keys, array_keys($row)), $row);
+        }
+
+        foreach ($registros_provisiones as $row) {
+            $registros_provisiones_excel[] = array_combine(preg_replace(array_map(function ($s) {
+                return "/^$s$/";
+            },
+                array_keys($keys_provisiones)), $keys_provisiones, array_keys($row)), $row);
+        }
+
+        foreach ($registros_pagos as $row) {
+            $registros_pagos_excel[] = array_combine(preg_replace(array_map(function ($s) {
+                return "/^$s$/";
+            },
+                array_keys($keys_pagos)), $keys_pagos, array_keys($row)), $row);
+        }
+
+        $keys_hojas = array();
+        $keys_hojas['NOMINAS'] = new stdClass();
+        $keys_hojas['NOMINAS']->keys = $keys;
+        $keys_hojas['NOMINAS']->registros = $registros;
+        $keys_hojas['NOMINAS']->inicio_fila_encabezado = 4;
+        $keys_hojas['NOMINAS']->inicio_fila_contenido = 5;
+
+        $datos_documentos = array();
+        $datos_documentos['empresa'] = $manifiesto['org_empresa_razon_social'];
+        $datos_documentos['cliente'] = $manifiesto['com_cliente_razon_social'];
+        $datos_documentos['periodo'] = $manifiesto['tg_manifiesto_fecha_inicial_pago'] .' - '.
+            $manifiesto['tg_manifiesto_fecha_final_pago'];
+        $datos_documentos['folio'] = $manifiesto['tg_manifiesto_id'];
+        $datos_documentos['fecha_emision'] = date('Y-m-d');
+
+        $keys_hojas['NOMINAS']->datos_documento = $datos_documentos;
+
+        $keys_hojas['CENTRO DE COSTO'] = new stdClass();
+        $keys_hojas['CENTRO DE COSTO']->keys = $keys_provisiones;
+        $keys_hojas['CENTRO DE COSTO']->registros = $registros_provisiones_excel;
+        $keys_hojas['CENTRO DE COSTO']->inicio_fila_encabezado = 12 + $cont_dep;
+        $keys_hojas['CENTRO DE COSTO']->inicio_fila_contenido = 13 + $cont_dep;
+
+        $datos_provisiones = array();
+        $datos_provisiones['PERCEPCIONES'] = 0;
+        $datos_provisiones['CUOTAS PATRONALES'] = 0;
+        $datos_provisiones['PROVISIONES'] = 0;
+        $datos_provisiones['FACTOR DE SERVICIO'] = 0;
+        $datos_provisiones['SUBTOTAL'] = 0;
+        $datos_provisiones['IVA'] = 0;
+        $datos_provisiones['FACTOR TOTAL'] = 0;
+
+        foreach ($registros_provisiones as $registro_provision){
+            $datos_provisiones['PERCEPCIONES'] += $registro_provision['suma_percepcion'];
+            $datos_provisiones['CUOTAS PATRONALES'] += $registro_provision['total_impuesto'];
+            $datos_provisiones['PROVISIONES'] += $registro_provision['total_provicionado'];
+            $datos_provisiones['FACTOR DE SERVICIO'] += $registro_provision['factor_de_servicio'];
+            $datos_provisiones['SUBTOTAL'] += $registro_provision['subtotal'];
+            $datos_provisiones['IVA'] += $registro_provision['iva'];
+            $datos_provisiones['FACTOR TOTAL'] += $registro_provision['total'];
+        }
+
+        $keys_hojas['CENTRO DE COSTO']->desgloce_departamento = 'DESGLOSE POR DEPARTAMENTO | FOLIO: '.$manifiesto['tg_manifiesto_id'];
+        $keys_hojas['CENTRO DE COSTO']->acumulado_dep = $acumulado_dep;
+
+        $acumulado_cli = array();
+        $acumulado_cli[$manifiesto['com_cliente_razon_social']] = $total;
+        $keys_hojas['CENTRO DE COSTO']->desgloce_cliente = 'DESGLOSE POR CLIENTE | FOLIO: '.$manifiesto['tg_manifiesto_id'];
+        $keys_hojas['CENTRO DE COSTO']->acumulado_cli = $acumulado_cli;
+
+        $keys_hojas['CENTRO DE COSTO']->totales_costos = $datos_provisiones;
+
+        $keys_hojas['PAGOS'] = new stdClass();
+        $keys_hojas['PAGOS']->keys = $keys_pagos;
+        $keys_hojas['PAGOS']->registros = $registros_pagos_excel;
+        $keys_hojas['PAGOS']->inicio_fila_encabezado = 1;
+        $keys_hojas['PAGOS']->inicio_fila_contenido = 2;
+
+        $xls = $exportador->genera_xls(header: true, name: $manifiesto["tg_manifiesto_descripcion"],
+            nombre_hojas: array("NOMINAS", "CENTRO DE COSTO", "PAGOS"), keys_hojas: $keys_hojas,
+            path_base: (new generales())->path_base,  color_contenido: 'DCE6FF', color_encabezado: '0070C0');
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al generar xls', data: $xls);
+        }
+        $controlador = new controlador_tg_manifiesto($this->link);
+
+        $link = "./index.php?seccion=tg_manifiesto&accion=lista&registro_id=" . $this->registro_id;
+        $link .= "&session_id=$controlador->session_id";
+        header('Location:' . $link);
+
+        return $xls;
     }
 
     public function obten_columna_faltas(Spreadsheet $documento)
