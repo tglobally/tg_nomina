@@ -1320,6 +1320,7 @@ class controlador_tg_manifiesto extends _ctl_base
         $registros_provisiones = array();
         $acumulado_dep = array();
         $cont_dep = 0;
+        $total = 0;
 
         foreach ($nominas as $nomina) {
             $row = (new nom_nomina($this->link))->maqueta_registros_excel(nom_nomina_id: $nomina['nom_nomina_id'],
@@ -1345,7 +1346,7 @@ class controlador_tg_manifiesto extends _ctl_base
             $registros_provisiones[] = $provisiones;
             $registros_pagos[] = $pagos;
 
-            $suma_percepcion = (new nom_nomina($this->link))->total_percepciones_monto(nom_nomina_id: $nomina['nom_nomina_id']);
+            $suma_percepcion = (new nom_nomina($this->link))->total_percepciones_gravado(nom_nomina_id: $nomina['nom_nomina_id']);
             if (errores::$error) {
                 return $this->retorno_error(mensaje: 'Error al obtener la suma de percepciones',
                     data: $nomina, header: $header, ws: $ws);
@@ -1361,6 +1362,8 @@ class controlador_tg_manifiesto extends _ctl_base
                     }
                 }
             }
+
+            $total += $suma_percepcion;
         }
 
         $keys = array();
@@ -1426,7 +1429,7 @@ class controlador_tg_manifiesto extends _ctl_base
         $keys_hojas['CENTRO DE COSTO']->registros = $registros_provisiones_excel;
         $keys_hojas['CENTRO DE COSTO']->inicio_fila_encabezado = 12 + $cont_dep;
         $keys_hojas['CENTRO DE COSTO']->inicio_fila_contenido = 13 + $cont_dep;
-        
+
         $datos_provisiones = array();
         $datos_provisiones['PERCEPCIONES'] = 0;
         $datos_provisiones['CUOTAS PATRONALES'] = 0;
@@ -1447,8 +1450,13 @@ class controlador_tg_manifiesto extends _ctl_base
         }
 
         $keys_hojas['CENTRO DE COSTO']->desgloce_departamento = 'DESGLOSE POR DEPARTAMENTO | FOLIO: '.$manifiesto['tg_manifiesto_id'];
-        $keys_hojas['CENTRO DE COSTO']->desgloce_cliente = 'DESGLOSE POR CLIENTE | FOLIO: '.$manifiesto['tg_manifiesto_id'];
         $keys_hojas['CENTRO DE COSTO']->acumulado_dep = $acumulado_dep;
+
+        $acumulado_cli = array();
+        $acumulado_cli[$manifiesto['com_cliente_razon_social']] = $total;
+        $keys_hojas['CENTRO DE COSTO']->desgloce_cliente = 'DESGLOSE POR CLIENTE | FOLIO: '.$manifiesto['tg_manifiesto_id'];
+        $keys_hojas['CENTRO DE COSTO']->acumulado_cli = $acumulado_cli;
+
         $keys_hojas['CENTRO DE COSTO']->totales_costos = $datos_provisiones;
 
         $keys_hojas['PAGOS'] = new stdClass();

@@ -65,6 +65,7 @@ class tg_provision extends _modelo_parent {
         $datos['nombre_completo'] .= $registro['em_empleado_am'];
         $datos['departamento'] = $registro['org_departamento_descripcion'];
         $datos['registro_patronal'] = $registro['em_registro_patronal_descripcion'];
+        $datos['ubicacion'] = $registro['dp_estado_descripcion'];
 
         $suma_base_gravable = (new nom_nomina(link: $this->link))->total_percepciones_gravado(nom_nomina_id: $nom_nomina_id);
         if (errores::$error) {
