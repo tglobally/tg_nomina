@@ -8,6 +8,7 @@ use gamboamartin\plugins\exportador\estilos;
 use gamboamartin\plugins\exportador\output;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use Throwable;
@@ -257,7 +258,17 @@ class exportador_eliminar
                 $cont = 3;
                 foreach ($keys_hojas[$nombre_hoja]->acumulado_dep as $acumulado => $valor){
                     $libro->setActiveSheetIndex($index)->setCellValue('A'.$cont, $acumulado);
+                    $libro->getActiveSheet()->getStyle('A'.$cont)->getFill()
+                        ->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('E4E4E4');
+                    $libro->getActiveSheet()->getStyle('A'.$cont)->getBorders()->getOutline()
+                        ->setBorderStyle(Border::BORDER_THIN);
+
                     $libro->setActiveSheetIndex($index)->setCellValue('B'.$cont, $valor);
+                    $libro->getActiveSheet()->getStyle('B'.$cont)->getFill()
+                        ->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('A6E8FB');
+                    $libro->getActiveSheet()->getStyle('B'.$cont)->getBorders()->getOutline()
+                        ->setBorderStyle(Border::BORDER_THIN);
+
                     $cont++;
                 }
 
@@ -265,7 +276,29 @@ class exportador_eliminar
 
                 foreach ($keys_hojas[$nombre_hoja]->totales_costos as $total_costo => $valor){
                     $libro->setActiveSheetIndex($index)->setCellValue('A'.$cont, $total_costo);
+                    $libro->getActiveSheet()->getStyle('A'.$cont)->getFill()
+                        ->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('E4E4E4');
+                    $libro->getActiveSheet()->getStyle('A'.$cont)->getBorders()->getOutline()
+                        ->setBorderStyle(Border::BORDER_THIN);
+
                     $libro->setActiveSheetIndex($index)->setCellValue('B'.$cont, $valor);
+                    $libro->getActiveSheet()->getStyle('B'.$cont)->getFill()
+                        ->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('FAE61D');
+                    $libro->getActiveSheet()->getStyle('B'.$cont)->getBorders()->getOutline()
+                        ->setBorderStyle(Border::BORDER_THIN);
+
+                    if($total_costo === 'FACTOR TOTAL'){
+                        $libro->getActiveSheet()->getStyle('A'.$cont)->getFill()
+                            ->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('0041A0');
+                        $libro->getActiveSheet()->getStyle('A'.$cont)->applyFromArray($this->estilo_titulos);
+                        $libro->getActiveSheet()->getStyle('A'.$cont)->getFont()->getColor()->setRGB('FFFFFF');
+
+                        $libro->getActiveSheet()->getStyle('B'.$cont)->getFill()
+                            ->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('0041A0');
+                        $libro->getActiveSheet()->getStyle('B'.$cont)->applyFromArray($this->estilo_titulos);
+                        $libro->getActiveSheet()->getStyle('B'.$cont)->getFont()->getColor()->setRGB('FFFFFF');
+                    }
+
                     $cont++;
                 }
             }
@@ -292,7 +325,16 @@ class exportador_eliminar
                 $cont = 3;
                 foreach ($keys_hojas[$nombre_hoja]->acumulado_cli as $acumulado => $valor){
                     $libro->setActiveSheetIndex($index)->setCellValue('D'.$cont, $acumulado);
+                    $libro->getActiveSheet()->getStyle('D'.$cont)->getFill()
+                        ->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('E4E4E4');
+                    $libro->getActiveSheet()->getStyle('D'.$cont)->getBorders()->getOutline()
+                        ->setBorderStyle(Border::BORDER_THIN);
+
                     $libro->setActiveSheetIndex($index)->setCellValue('E'.$cont, $valor);
+                    $libro->getActiveSheet()->getStyle('E'.$cont)->getFill()
+                        ->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('A6E8FB');
+                    $libro->getActiveSheet()->getStyle('E'.$cont)->getBorders()->getOutline()
+                        ->setBorderStyle(Border::BORDER_THIN);
                     $cont++;
                 }
 
@@ -300,7 +342,30 @@ class exportador_eliminar
 
                 foreach ($keys_hojas[$nombre_hoja]->totales_costos as $total_costo => $valor){
                     $libro->setActiveSheetIndex($index)->setCellValue('D'.$cont, $total_costo);
+                    $libro->getActiveSheet()->getStyle('D'.$cont)->getFill()
+                        ->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('E4E4E4');
+                    $libro->getActiveSheet()->getStyle('D'.$cont)->getBorders()->getOutline()
+                        ->setBorderStyle(Border::BORDER_THIN);
+
+
                     $libro->setActiveSheetIndex($index)->setCellValue('E'.$cont, $valor);
+                    $libro->getActiveSheet()->getStyle('E'.$cont)->getFill()
+                        ->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('FAE61D');
+                    $libro->getActiveSheet()->getStyle('E'.$cont)->getBorders()->getOutline()
+                        ->setBorderStyle(Border::BORDER_THIN);
+
+                    if($total_costo === 'FACTOR TOTAL'){
+                        $libro->getActiveSheet()->getStyle('D'.$cont)->getFill()
+                            ->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('0041A0');
+                        $libro->getActiveSheet()->getStyle('D'.$cont)->applyFromArray($this->estilo_titulos);
+                        $libro->getActiveSheet()->getStyle('D'.$cont)->getFont()->getColor()->setRGB('FFFFFF');
+
+                        $libro->getActiveSheet()->getStyle('E'.$cont)->getFill()
+                            ->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('0041A0');
+                        $libro->getActiveSheet()->getStyle('E'.$cont)->applyFromArray($this->estilo_titulos);
+                        $libro->getActiveSheet()->getStyle('E'.$cont)->getFont()->getColor()->setRGB('FFFFFF');
+                    }
+
                     $cont++;
                 }
             }
