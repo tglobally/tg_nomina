@@ -247,6 +247,14 @@ class exportador_eliminar
                 die('Error');
             }
 
+            foreach($keys_hojas[$nombre_hoja]->registros as $registro) {
+                if(!is_array($registro)){
+                    return $this->error->error('Error registro debe ser un array',$registro);
+                }
+
+                $fila++;
+            }
+
             $llenado = (new datos())->llena_libro_xls(columnas: $this->columnas, estilo_contenido: $this->estilo_contenido,
                 estilos: $this->estilos, index: $index, keys: $keys_hojas[$nombre_hoja]->keys, libro: $libro, path_base: $path_base,
                 registros: $keys_hojas[$nombre_hoja]->registros, totales: array(),color_contenido: $color_contenido,

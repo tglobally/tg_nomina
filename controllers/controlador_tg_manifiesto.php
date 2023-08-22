@@ -25,6 +25,7 @@ use gamboamartin\facturacion\models\fc_receptor_email;
 use gamboamartin\nomina\models\nom_nomina_documento;
 use gamboamartin\notificaciones\mail\_mail;
 use gamboamartin\notificaciones\models\not_emisor;
+use gamboamartin\organigrama\models\org_departamento;
 use tglobally\tg_nomina\models\_email;
 use gamboamartin\facturacion\models\fc_cfdi_sellado;
 use gamboamartin\nomina\models\calcula_nomina;
@@ -1308,9 +1309,16 @@ class controlador_tg_manifiesto extends _ctl_base
                 header: $header, ws: $ws);
         }
 
+        $departametos = (new org_departamento($this->link))->registros();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al obtener nominas del periodo', data: $conceptos,
+                header: $header, ws: $ws);
+        }
+
         $exportador = (new exportador_eliminar(num_hojas: 3));
         $registros_xls = array();
         $registros_provisiones = array();
+        $acumulado_dep = array();
 
         foreach ($nominas as $nomina) {
             $row = (new nom_nomina($this->link))->maqueta_registros_excel(nom_nomina_id: $nomina['nom_nomina_id'],
@@ -1332,10 +1340,25 @@ class controlador_tg_manifiesto extends _ctl_base
                 return $this->retorno_error(mensaje: 'Error al maquetar pagos de la nomina', data: $pagos,
                     header: $header, ws: $ws);
             }
-
             $registros_xls[] = $row;
             $registros_provisiones[] = $provisiones;
             $registros_pagos[] = $pagos;
+
+            $suma_percepcion = (new nom_nomina($this->link))->total_percepciones_monto(nom_nomina_id: $nomina['nom_nomina_id']);
+            if (errores::$error) {
+                return $this->retorno_error(mensaje: 'Error al obtener la suma de percepciones',
+                    data: $nomina, header: $header, ws: $ws);
+            }
+
+            foreach ($departametos as $departameto){
+                if($departameto['org_departamento_id'] === $nomina['org_departamento_id']){
+                    if(isset($acumulado_dep[$nomina['org_departamento_descripcion']])){
+                        $acumulado_dep[$nomina['org_departamento_descripcion']] += $suma_percepcion;
+                    }else{
+                        $acumulado_dep[$nomina['org_departamento_descripcion']] = $suma_percepcion;
+                    }
+                }
+            }
         }
 
         $keys = array();
@@ -1401,6 +1424,7 @@ class controlador_tg_manifiesto extends _ctl_base
         $keys_hojas['CENTRO DE COSTO']->registros = $registros_provisiones_excel;
         $keys_hojas['CENTRO DE COSTO']->inicio_fila_encabezado = 1;
         $keys_hojas['CENTRO DE COSTO']->inicio_fila_contenido = 2;
+
         $keys_hojas['PAGOS'] = new stdClass();
         $keys_hojas['PAGOS']->keys = $keys_pagos;
         $keys_hojas['PAGOS']->registros = $registros_pagos_excel;
@@ -1414,6 +1438,7 @@ class controlador_tg_manifiesto extends _ctl_base
             return $this->retorno_error(mensaje: 'Error al generar xls', data: $xls, header: $header,
                 ws: $ws);
         }
+
 
         /* $resultado = $exportador->listado_base_xls(header: $header, name: $this->seccion, keys:  $keys,
              path_base: $this->path_base,registros:  $registros,totales:  array());
