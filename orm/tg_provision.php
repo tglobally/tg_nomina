@@ -139,8 +139,8 @@ class tg_provision extends _modelo_parent {
         $datos['imss'] = $suma_imss;
         $datos['rcv'] = $suma_rcv;
         $datos['infonavit'] = $suma_infonavit;
-        $datos['isn'] = $suma_base_gravable * .03 * $porcentaje;
-        $datos['isn_adicional'] = $datos['isn'] * .03;
+        $datos['isn'] = $suma_base_gravable * $porcentaje;
+        $datos['isn_adicional'] = $datos['isn'] * $porcentaje;
 
         $datos['total_impuesto'] = $datos['imss'] +  $datos['rcv'] + $datos['infonavit'] + $datos['isn'] +
             $datos['isn_adicional'] ;
@@ -183,10 +183,9 @@ class tg_provision extends _modelo_parent {
             return $this->error->error(mensaje: 'Error al obtener percepcion',data:  $r_nom_par_percepcion);
         }*/
 
-        $factor = .03;
         $porcentaje = 100/$conf->registros[0]['tg_conf_comision_porcentaje'];
 
-        $datos['factor_de_servicio'] = $suma_percepcion * $factor * $porcentaje;
+        $datos['factor_de_servicio'] = $suma_percepcion * $porcentaje;
         $datos['subtotal'] = $datos['suma_percepcion'] + $datos['factor_de_servicio'];
         $datos['iva'] = $datos['subtotal'] * .16;
         $datos['total'] = $datos['subtotal'] + $datos['iva'];
