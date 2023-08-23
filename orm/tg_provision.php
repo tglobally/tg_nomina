@@ -57,6 +57,18 @@ class tg_provision extends _modelo_parent {
             return $this->error->error(mensaje: 'Error al obtener codigo de empleado',data:  $registro);
         }
 
+        $filtro = array();
+        $filtro['tg_conf_comision.com_sucursal_id']  = $registro['fc_factura_com_sucursal_id'];
+        $conf = (new tg_conf_comision(link: $this->link))->filtro_and(filtro: $filtro);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener configuraciones de comision',data:  $conf);
+        }
+
+        if($conf->n_registros <= 0 ){
+            return $this->error->error(mensaje: "Error no existe una conf. valida para el cliente: ".$registro['fc_factura_com_sucursal_id'],
+                data:  $conf);
+        }
+
         $datos = array();
 
         $datos['id_remunerado'] = $registro['em_empleado_codigo'];
@@ -66,6 +78,7 @@ class tg_provision extends _modelo_parent {
         $datos['departamento'] = $registro['org_departamento_descripcion'];
         $datos['registro_patronal'] = $registro['em_registro_patronal_descripcion'];
         $datos['ubicacion'] = $registro['dp_estado_descripcion'];
+
 
         $suma_base_gravable = (new nom_nomina(link: $this->link))->total_percepciones_gravado(nom_nomina_id: $nom_nomina_id);
         if (errores::$error) {
@@ -144,8 +157,9 @@ class tg_provision extends _modelo_parent {
         }*/
 
         $factor = .03;
+        $porcentaje = $conf->registros[0]['tg_conf_comision_porcentaje'];
 
-        $datos['factor_de_servicio'] = $suma_percepcion * $factor;
+        $datos['factor_de_servicio'] = $suma_percepcion * $factor * $porcentaje;
         $datos['subtotal'] = $datos['suma_percepcion'] + $datos['factor_de_servicio'];
         $datos['iva'] = $datos['subtotal'] * .16;
         $datos['total'] = $datos['subtotal'] + $datos['iva'];
