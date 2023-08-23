@@ -2,9 +2,11 @@
 namespace tglobally\tg_nomina\models;
 
 use base\orm\_modelo_parent;
+use gamboamartin\cat_sat\models\cat_sat_isn;
 use gamboamartin\errores\errores;
 use gamboamartin\nomina\models\nom_conf_comision;
 use gamboamartin\nomina\models\nom_par_percepcion;
+use gamboamartin\organigrama\models\org_empresa;
 use PDO;
 use stdClass;
 
@@ -55,6 +57,16 @@ class tg_provision extends _modelo_parent {
         $registro = (new nom_nomina(link: $this->link))->registro(registro_id: $nom_nomina_id);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener codigo de empleado',data:  $registro);
+        }
+
+        $empresa = (new org_empresa($this->link))->registro(registro_id: $registro['org_empresa_id']);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener empresa',data:  $empresa);
+        }
+
+        $isn = (new cat_sat_isn($this->link))->filtro_and(filtro: array("cat_sat_isn.dp_estado_id" => $empresa['dp_estado_id']));
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener isn',data:  $isn);
         }
 
         $fecha = date("Y/m/d");
@@ -120,11 +132,15 @@ class tg_provision extends _modelo_parent {
             return $this->error->error(mensaje: 'Error al obtener la suma de rcv',
                 data: $registro);
         }
+
+        $porcentaje = $isn->registros[0]['cat_sat_isn_porcentaje']=== 0 ?  100 : $isn->registros[0]['cat_sat_isn_porcentaje'];
+        $porcentaje /= 100;
+
         $datos['imss'] = $suma_imss;
         $datos['rcv'] = $suma_rcv;
         $datos['infonavit'] = $suma_infonavit;
-        $datos['isn'] = $suma_base_gravable * .03;
-        $datos['isn_adicional'] = $suma_base_gravable * .03;
+        $datos['isn'] = $suma_base_gravable * .03 * $porcentaje;
+        $datos['isn_adicional'] = $datos['isn'] * .03;
 
         $datos['total_impuesto'] = $datos['imss'] +  $datos['rcv'] + $datos['infonavit'] + $datos['isn'] +
             $datos['isn_adicional'] ;
@@ -168,7 +184,7 @@ class tg_provision extends _modelo_parent {
         }*/
 
         $factor = .03;
-        $porcentaje = $conf->registros[0]['tg_conf_comision_porcentaje'];
+        $porcentaje = 100/$conf->registros[0]['tg_conf_comision_porcentaje'];
 
         $datos['factor_de_servicio'] = $suma_percepcion * $factor * $porcentaje;
         $datos['subtotal'] = $datos['suma_percepcion'] + $datos['factor_de_servicio'];
