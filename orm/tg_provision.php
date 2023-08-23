@@ -57,9 +57,20 @@ class tg_provision extends _modelo_parent {
             return $this->error->error(mensaje: 'Error al obtener codigo de empleado',data:  $registro);
         }
 
+        $fecha = date("Y/m/d");
+
         $filtro = array();
         $filtro['tg_conf_comision.com_sucursal_id']  = $registro['fc_factura_com_sucursal_id'];
-        $conf = (new tg_conf_comision(link: $this->link))->filtro_and(filtro: $filtro);
+        $filtro_especial[0][$fecha]['operador'] = '>=';
+        $filtro_especial[0][$fecha]['valor'] = 'tg_conf_comision.fecha_inicio';
+        $filtro_especial[0][$fecha]['comparacion'] = 'AND';
+        $filtro_especial[0][$fecha]['valor_es_campo'] = true;
+
+        $filtro_especial[1][$fecha]['operador'] = '<=';
+        $filtro_especial[1][$fecha]['valor'] = 'tg_conf_comision.fecha_fin';
+        $filtro_especial[1][$fecha]['comparacion'] = 'AND';
+        $filtro_especial[1][$fecha]['valor_es_campo'] = true;
+        $conf = (new tg_conf_comision(link: $this->link))->filtro_and(filtro: $filtro,filtro_especial: $filtro_especial);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener configuraciones de comision',data:  $conf);
         }
