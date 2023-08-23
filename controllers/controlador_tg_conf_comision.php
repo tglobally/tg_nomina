@@ -81,37 +81,67 @@ class controlador_tg_conf_comision extends _ctl_base
         parent::__construct(html: $html_, link: $link, modelo: $modelo, obj_link: $obj_link, datatables: $datatables,
             paths_conf: $paths_conf);
 
+        $acciones = $this->define_acciones_menu(acciones: array("alta" => $this->link_alta));
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al integrar acciones para el menu', data: $acciones);
+            print_r($error);
+            die('Error');
+        }
 
+        $configuraciones = $this->init_configuraciones();
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al inicializar configuraciones', data: $configuraciones);
+            print_r($error);
+            die('Error');
+        }
+    }
+
+    public function alta(bool $header, bool $ws = false): array|string
+    {
+        $r_alta = $this->init_alta();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar alta', data: $r_alta, header: $header, ws: $ws);
+        }
+
+        $keys_selects = $this->init_selects_inputs();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar selects', data: $keys_selects, header: $header,
+                ws: $ws);
+        }
+        $this->row_upd->fecha_inicio = date('Y-m-d');
+        $this->row_upd->fecha_fin = date('Y-m-d');
+        $this->row_upd->porcentaje = 0;
+
+        $inputs = $this->inputs(keys_selects: $keys_selects);
+        if (errores::$error) {
+            return $this->retorno_error(
+                mensaje: 'Error al obtener inputs', data: $inputs, header: $header, ws: $ws);
+        }
+
+        return $r_alta;
+    }
+
+    private function init_configuraciones(): controler
+    {
+        $this->seccion_titulo = 'Configuracion Comision';
+        $this->titulo_lista = 'Registro Conf. Comisiones';
+        $this->titulo_pagina = "Nominas - Conf. Comisiones";
+        $this->titulo_accion = "Conf. Comisiones";
+
+        $this->lista_get_data = true;
+
+        return $this;
     }
 
     protected function campos_view(): array
     {
         $keys = new stdClass();
-        $keys->inputs = array('descripcion', 'importe_gravado', 'importe_exento', 'razón social ',
-            'nss', 'curp', 'rfc', 'folio', 'salario_diario', 'salario_diario_integrado', 'subtotal',
-            'descuento', 'total', 'num_dias_pagados');
-        $keys->fechas = array('fecha_envio', 'fecha_pago', 'fecha_inicial_pago', 'fecha_final_pago', 'fecha', 'fecha_inicio_rel_laboral');
+        $keys->inputs = array('descripcion', 'porcentaje');
+        $keys->fechas = array('fecha_inicio', 'fecha_fin');
         $keys->selects = array();
 
         $init_data = array();
         $init_data['com_sucursal'] = "gamboamartin\\comercial";
-        $init_data['tg_cte_alianza'] = "tglobally\\tg_nomina";
-        $init_data['fc_csd'] = "gamboamartin\\facturacion";
-        $init_data['tg_tipo_servicio'] = "tglobally\\tg_nomina";
-        $init_data['nom_nomina'] = "gamboamartin\\nomina";
-        $init_data['nom_percepcion'] = "gamboamartin\\nomina";
-        $init_data['nom_deduccion'] = "gamboamartin\\nomina";
-        $init_data['nom_otro_pago'] = "gamboamartin\\nomina";
-        $init_data['org_empresa'] = "gamboamartin\\organigrama";
-        $init_data['org_sucursal'] = "gamboamartin\\organigrama";
-        $init_data['em_registro_patronal'] = "gamboamartin\\empleado";
-        $init_data['nom_periodo'] = "gamboamartin\\nomina";
-        $init_data['em_empleado'] = "gamboamartin\\empleado";
-        $init_data['org_puesto'] = "gamboamartin\\organigrama";
-        $init_data['nom_conf_empleado'] = "gamboamartin\\nomina";
-        $init_data['em_cuenta_bancaria'] = "gamboamartin\\empleado";
-        $init_data['cat_sat_tipo_nomina'] = "gamboamartin\\cat_sat";
-        $init_data['cat_sat_periodicidad_pago_nom'] = "gamboamartin\\cat_sat";
 
         $campos_view = $this->campos_view_base(init_data: $init_data, keys: $keys);
         if (errores::$error) {
@@ -121,19 +151,16 @@ class controlador_tg_conf_comision extends _ctl_base
         return $campos_view;
     }
 
-
-
     private function init_datatable(): stdClass
     {
-        $columns["tg_manifiesto_id"]["titulo"] = "Id";
-        $columns["com_sucursal_descripcion"]["titulo"] = "Sucursal";
-        $columns["tg_manifiesto_fecha_envio"]["titulo"] = "Fecha Envío";
-        $columns["tg_manifiesto_fecha_pago"]["titulo"] = "Fecha Pago";
-        $columns["tg_manifiesto_fecha_inicial_pago"]["titulo"] = "Fecha Incial Pago";
-        $columns["tg_manifiesto_fecha_final_pago"]["titulo"] = "Fecha Final Pago";
-        $columns["tg_manifiesto_n_nominas"]["titulo"] = "Nóminas ";
+        $columns["tg_conf_comision_id"]["titulo"] = "Id";
+        $columns["com_sucursal_descripcion"]["titulo"] = "Cliente";
+        $columns["tg_conf_comision_porcentaje"]["titulo"] = "Porcentaje";
+        $columns["tg_conf_comision_fecha_inicio"]["titulo"] = "Fecha Inicio";
+        $columns["tg_conf_comision_fecha_fin"]["titulo"] = "Fecha Fin";
 
-        $filtro = array("tg_manifiesto.id", "com_sucursal.descripcion", "tg_manifiesto.fecha_pago");
+        $filtro = array("tg_conf_comision.id", "com_sucursal.descripcion", "tg_conf_comision.porcentaje",
+            "tg_conf_comision.fecha_inicio", "tg_conf_comision.fecha_fin");
 
         $datatables = new stdClass();
         $datatables->columns = $columns;
@@ -168,143 +195,34 @@ class controlador_tg_conf_comision extends _ctl_base
 
     public function init_selects_inputs(): array
     {
-        $keys_selects = $this->init_selects(keys_selects: array(), key: "tg_cte_alianza_id", label: "Alianza");
-        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "com_sucursal_id", label: "Cliente");
-        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "fc_csd_id", label: "CSD", cols: 6);
-        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "org_sucursal_id", label: "Empresa", cols: 6);
-        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "nom_percepcion_id", label: "Percepción ", cols: 12);
-        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "nom_deduccion_id", label: "Deducción  ", cols: 12);
-        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "nom_otro_pago_id", label: "Otro Pago ", cols: 12);
-
-        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "em_registro_patronal_id", label: "Registro Patronal");
-        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "nom_periodo_id", label: "Periodo ");
-        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "em_empleado_id", label: "Empleado ", cols: 12);
-        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "org_puesto_id", label: "Puesto ");
-        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "nom_conf_empleado_id", label: "Conf Empleado ", cols: 12);
-        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "em_cuenta_bancaria_id", label: "Cuenta Bancaria ", cols: 12);
-        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "cat_sat_tipo_nomina_id", label: "Tipo nomina ");
-        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "cat_sat_periodicidad_pago_nom_id", label: "Perioricidad pago ");
-
-        return $this->init_selects(keys_selects: $keys_selects, key: "tg_tipo_servicio_id", label: "Tipo Servicio");
+        return $this->init_selects(keys_selects: array(), key: "com_sucursal_id", label: "Cliente", cols: 12);
     }
 
     protected function key_selects_txt(array $keys_selects): array
     {
-        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 12, key: 'descripcion',
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 8, key: 'descripcion',
             keys_selects: $keys_selects, place_holder: 'Descripción');
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
         }
 
-        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'fecha_envio',
-            keys_selects: $keys_selects, place_holder: 'Fecha Envío');
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'fecha_inicio',
+            keys_selects: $keys_selects, place_holder: 'Fecha Inicio');
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
         }
 
-        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'fecha_pago',
-            keys_selects: $keys_selects, place_holder: 'Fecha Pago');
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'fecha_fin',
+            keys_selects: $keys_selects, place_holder: 'Fecha Fin');
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
         }
 
-        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'fecha_inicial_pago',
-            keys_selects: $keys_selects, place_holder: 'Fecha Incial Pago');
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 4, key: 'porcentaje',
+            keys_selects: $keys_selects, place_holder: 'Porcentaje');
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
         }
-
-        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'fecha_final_pago',
-            keys_selects: $keys_selects, place_holder: 'Fecha Final');
-        if (errores::$error) {
-            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
-        }
-
-        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'importe_gravado',
-            keys_selects: $keys_selects, place_holder: 'Importe Gravado');
-        if (errores::$error) {
-            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
-        }
-
-        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'importe_exento',
-            keys_selects: $keys_selects, place_holder: 'Importe Exento');
-        if (errores::$error) {
-            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
-        }
-
-
-        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'rfc',
-            keys_selects: $keys_selects, place_holder: 'Rfc');
-        if (errores::$error) {
-            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
-        }
-
-        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'nss',
-            keys_selects: $keys_selects, place_holder: 'Nss');
-        if (errores::$error) {
-            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
-        }
-
-        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'curp',
-            keys_selects: $keys_selects, place_holder: 'Curp');
-        if (errores::$error) {
-            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
-        }
-
-        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'folio',
-            keys_selects: $keys_selects, place_holder: 'Folio');
-        if (errores::$error) {
-            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
-        }
-
-        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'fecha',
-            keys_selects: $keys_selects, place_holder: 'Fecha');
-        if (errores::$error) {
-            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
-        }
-
-        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'fecha_inicio_rel_laboral',
-            keys_selects: $keys_selects, place_holder: 'Fecha inicio relacion laboral');
-        if (errores::$error) {
-            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
-        }
-
-        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'num_dias_pagados',
-            keys_selects: $keys_selects, place_holder: 'Nº dias pagados');
-        if (errores::$error) {
-            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
-        }
-
-        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'salario_diario',
-            keys_selects: $keys_selects, place_holder: 'Salario diario');
-        if (errores::$error) {
-            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
-        }
-
-        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'salario_diario_integrado',
-            keys_selects: $keys_selects, place_holder: 'Salario diario integrado');
-        if (errores::$error) {
-            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
-        }
-
-        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'subtotal',
-            keys_selects: $keys_selects, place_holder: 'Subtotal');
-        if (errores::$error) {
-            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
-        }
-
-        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'descuento',
-            keys_selects: $keys_selects, place_holder: 'Descuento');
-        if (errores::$error) {
-            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
-        }
-
-        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'total',
-            keys_selects: $keys_selects, place_holder: 'Total');
-        if (errores::$error) {
-            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
-        }
-
 
         return $keys_selects;
     }
@@ -323,10 +241,7 @@ class controlador_tg_conf_comision extends _ctl_base
                 ws: $ws);
         }
 
-        $keys_selects['tg_tipo_servicio_id']->id_selected = $this->registro['tg_tipo_servicio_id'];
         $keys_selects['com_sucursal_id']->id_selected = $this->registro['com_sucursal_id'];
-        $keys_selects['org_sucursal_id']->id_selected = $this->registro['org_sucursal_id'];
-        $keys_selects['tg_cte_alianza_id']->id_selected = $this->registro['tg_cte_alianza_id'];
 
         $base = $this->base_upd(keys_selects: $keys_selects, params: array(), params_ajustados: array());
         if (errores::$error) {
