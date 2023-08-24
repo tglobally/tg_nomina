@@ -193,7 +193,7 @@ class tg_provision extends _modelo_parent {
 
         $porcentaje = $conf->registros[0]['tg_conf_comision_porcentaje']/100;
 
-        $datos['factor_de_servicio'] = $suma_percepcion * $porcentaje;
+        $datos['factor_de_servicio'] = $datos['suma_percepcion']  * $porcentaje;
         $datos['subtotal'] = $datos['suma_percepcion'] + $datos['factor_de_servicio'];
         $datos['iva'] = $datos['subtotal'] * .16;
         $datos['total'] = $datos['subtotal'] + $datos['iva'];
