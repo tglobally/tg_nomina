@@ -29,6 +29,7 @@ use stdClass;
 use tglobally\tg_cliente\models\tg_cliente_empresa;
 use tglobally\tg_cliente\models\tg_cliente_empresa_provisiones;
 use tglobally\tg_cliente\models\tg_conf_provisiones_cliente;
+use tglobally\tg_empleado\models\tg_conf_provisiones_empleado;
 use Throwable;
 use ZipArchive;
 
@@ -71,17 +72,18 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
             return $this->error->error(mensaje: 'Error al obtener cliente del empleado', data: $empleado);
         }
 
-        if ($empleado->n_registros > 0){
-            $filtro_conf['tg_cliente_empresa.com_sucursal_id'] = $empleado->registros[0]['com_sucursal_id'];
-            $filtro_conf['tg_cliente_empresa.org_sucursal_id'] = $empleado->registros[0]['fc_csd_org_sucursal_id'];
-            $filtro_conf['tg_conf_provisiones_cliente.estado'] = "activo";
-            $conf = (new tg_conf_provisiones_cliente($this->link))->filtro_and(filtro: $filtro_conf);
+        /*if ($empleado->n_registros > 0){
+            $filtro_conf['tg_conf_provision.com_sucursal_id'] = $empleado->registros[0]['com_sucursal_id'];
+            $filtro_conf['tg_conf_provision.org_sucursal_id'] = $empleado->registros[0]['fc_csd_org_sucursal_id'];
+            $filtro_conf['tg_conf_provision.estado'] = "activo";
+            $conf = (new tg_conf_provision($this->link))->filtro_and(filtro: $filtro_conf);
             if (errores::$error) {
                 return $this->error->error(mensaje: 'Error al obtener conf. cliente del empleado', data: $conf);
             }
 
-            $filtro_provisiones['tg_cliente_empresa_provisiones.tg_cliente_empresa_id'] = $conf->registros[0]['tg_cliente_empresa_id'];
-            $provisiones = (new tg_cliente_empresa_provisiones($this->link))->filtro_and(filtro: $filtro_provisiones);
+            $filtro_provisiones['tg_conf_provisiones_empleado.tg_conf_provision_id'] = $conf->registros[0]['tg_conf_provision_id'];
+            $filtro_provisiones['tg_conf_provisiones_empleado.em_empleado_id'] = $em_empleado_id;
+            $provisiones = (new tg_conf_provisiones_empleado($this->link))->filtro_and(filtro: $filtro_provisiones);
             if (errores::$error) {
                 return $this->error->error(mensaje: 'Error al obtener cliente del empleado', data: $provisiones);
             }
@@ -101,9 +103,9 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
                     return $this->error->error(mensaje: 'Error al dar de alta provision cliente', data: $alta);
                 }
             }
-        }
+        }*/
 
-        $data = $this->get_tg_conf_provisiones(em_empleado_id: $em_empleado_id, fecha: $fecha);
+        $data = $this->get_tg_conf_provisiones(empleado: $empleado, em_empleado_id: $em_empleado_id);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al obtener conf. de provisiones del empleado', data: $data);
         }
@@ -121,35 +123,30 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
                 return $this->error->error(mensaje: 'Error al dar de alta conf. de provisiones del empleado',
                     data: $alta_provision);
             }
-
         }
 
         return $data;
     }
 
-    public function get_tg_conf_provisiones(int $em_empleado_id, string $fecha): array|stdClass
+    public function get_tg_conf_provisiones(stdClass $empleado, int $em_empleado_id): array|stdClass
     {
-        if ($em_empleado_id <= 0) {
-            return $this->error->error(mensaje: 'Error $em_empleado_id debe ser mayor a 0', data: $em_empleado_id);
-        }
 
-        $filtro['em_empleado.id'] = $this->registro['em_empleado_id'];
-        $filtro_especial[0][$fecha]['operador'] = '>=';
-        $filtro_especial[0][$fecha]['valor'] = 'tg_conf_provision.fecha_inicio';
-        $filtro_especial[0][$fecha]['comparacion'] = 'AND';
-        $filtro_especial[0][$fecha]['valor_es_campo'] = true;
-
-        $filtro_especial[1][$fecha]['operador'] = '<=';
-        $filtro_especial[1][$fecha]['valor'] = 'tg_conf_provision.fecha_fin';
-        $filtro_especial[1][$fecha]['comparacion'] = 'AND';
-        $filtro_especial[1][$fecha]['valor_es_campo'] = true;
-
-        $conf = (new tg_conf_provision($this->link))->filtro_and(filtro: $filtro, filtro_especial: $filtro_especial);
+        $filtro_conf['tg_conf_provision.com_sucursal_id'] = $empleado->registros[0]['com_sucursal_id'];
+        $filtro_conf['tg_conf_provision.org_sucursal_id'] = $empleado->registros[0]['org_sucursal_id'];
+        $filtro_conf['tg_conf_provision.estado'] = "activo";
+        $conf = (new tg_conf_provision($this->link))->filtro_and(filtro: $filtro_conf);
         if (errores::$error) {
-            return $this->error->error(mensaje: 'Error al filtrar conf. de provisiones del empleado', data: $conf);
+            return $this->error->error(mensaje: 'Error al obtener conf. cliente del empleado', data: $conf);
         }
 
-        return $conf;
+        $filtro_provisiones['tg_conf_provisiones_empleado.tg_conf_provision_id'] = $conf->registros[0]['tg_conf_provision_id'];
+        $filtro_provisiones['tg_conf_provisiones_empleado.em_empleado_id'] = $em_empleado_id;
+        $provisiones = (new tg_conf_provisiones_empleado($this->link))->filtro_and(filtro: $filtro_provisiones);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener cliente del empleado', data: $provisiones);
+        }
+
+        return $provisiones;
     }
 
     public function maqueta_data_provision(array $tg_conf_provision, int $nom_nomina_id): array|stdClass
@@ -159,7 +156,29 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         $data['descripcion'] = $tg_conf_provision['tg_conf_provision_descripcion'] . $nom_nomina_id;
         $data['tg_tipo_provision_id'] = $tg_conf_provision['tg_tipo_provision_id'];
         $data['nom_nomina_id'] = $nom_nomina_id;
-        $data['monto'] = $tg_conf_provision['tg_conf_provision_monto'];
+
+        $monto = 0.0;
+
+        switch ($tg_conf_provision['tg_tipo_provision_descripcion']){
+            case "PRIMA VACACIONAL":
+                $monto = 0.0;
+                break;
+            case "VACACIONES":
+                $monto = $tg_conf_provision['em_empleado_salario_diario'] * 20;
+                $monto /= 365;
+                $monto *= 7;
+                break;
+            case "PRIMA DE ANTIGÜEDAD":
+                $monto = 0.0;
+                break;
+            case "GRATIFICACIÓN ANUAL (AGUINALDO)":
+                $monto = $tg_conf_provision['em_empleado_salario_diario'] * 15;
+                $monto /= 365;
+                $monto *= 7;
+                break;
+        }
+
+        $data['monto'] = $monto;
 
         return $data;
     }
