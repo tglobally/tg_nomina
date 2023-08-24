@@ -9,6 +9,7 @@ use gamboamartin\nomina\models\nom_par_percepcion;
 use gamboamartin\organigrama\models\org_empresa;
 use PDO;
 use stdClass;
+use tglobally\tg_cliente\models\com_sucursal;
 
 class tg_provision extends _modelo_parent {
 
@@ -59,12 +60,18 @@ class tg_provision extends _modelo_parent {
             return $this->error->error(mensaje: 'Error al obtener codigo de empleado',data:  $registro);
         }
 
-        $empresa = (new org_empresa($this->link))->registro(registro_id: $registro['org_empresa_id']);
-        if(errores::$error){
-            return $this->error->error(mensaje: 'Error al obtener empresa',data:  $empresa);
+        $filtro_empleado['tg_empleado_sucursal.em_empleado_id'] = $registro['em_empleado_id'];
+        $empleado = (new tg_empleado_sucursal($this->link))->filtro_and(filtro: $filtro_empleado);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener cliente del empleado', data: $empleado);
         }
 
-        $isn = (new cat_sat_isn($this->link))->filtro_and(filtro: array("cat_sat_isn.dp_estado_id" => $empresa['dp_estado_id']));
+        $cliente = (new com_sucursal($this->link))->registro(registro_id: $empleado->registros[0]['com_sucursal_id']);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener cliente',data:  $cliente);
+        }
+
+        $isn = (new cat_sat_isn($this->link))->filtro_and(filtro: array("cat_sat_isn.dp_estado_id" => $cliente['dp_estado_id']));
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener isn',data:  $isn);
         }
@@ -100,8 +107,7 @@ class tg_provision extends _modelo_parent {
         $datos['nombre_completo'] .= $registro['em_empleado_am'];
         $datos['departamento'] = $registro['org_departamento_descripcion'];
         $datos['registro_patronal'] = $registro['em_registro_patronal_descripcion'];
-        $datos['ubicacion'] = $empresa['dp_estado_descripcion'];
-
+        $datos['ubicacion'] = $cliente['dp_estado_descripcion'];
 
         $suma_base_gravable = (new nom_nomina(link: $this->link))->total_percepciones_gravado(nom_nomina_id: $nom_nomina_id);
         if (errores::$error) {
@@ -133,14 +139,16 @@ class tg_provision extends _modelo_parent {
                 data: $registro);
         }
 
-        $porcentaje = $isn->registros[0]['cat_sat_isn_porcentaje']=== 0 ?  100 : $isn->registros[0]['cat_sat_isn_porcentaje'];
+        $porcentaje = $isn->registros[0]['cat_sat_isn_porcentaje_isn']=== 0 ?  100 : $isn->registros[0]['cat_sat_isn_porcentaje_isn'];
         $porcentaje /= 100;
+
+        $factor = $isn->registros[0]['cat_sat_isn_factor_isn_adicional'];
 
         $datos['imss'] = $suma_imss;
         $datos['rcv'] = $suma_rcv;
         $datos['infonavit'] = $suma_infonavit;
         $datos['isn'] = $suma_base_gravable * $porcentaje;
-        $datos['isn_adicional'] = $datos['isn'] * $porcentaje;
+        $datos['isn_adicional'] = $datos['isn'] * $factor;
 
         $datos['total_impuesto'] = $datos['imss'] +  $datos['rcv'] + $datos['infonavit'] + $datos['isn'] +
             $datos['isn_adicional'] ;
@@ -183,7 +191,7 @@ class tg_provision extends _modelo_parent {
             return $this->error->error(mensaje: 'Error al obtener percepcion',data:  $r_nom_par_percepcion);
         }*/
 
-        $porcentaje = 100/$conf->registros[0]['tg_conf_comision_porcentaje'];
+        $porcentaje = $conf->registros[0]['tg_conf_comision_porcentaje']/100;
 
         $datos['factor_de_servicio'] = $suma_percepcion * $porcentaje;
         $datos['subtotal'] = $datos['suma_percepcion'] + $datos['factor_de_servicio'];
