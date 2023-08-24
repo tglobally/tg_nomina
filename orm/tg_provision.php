@@ -153,10 +153,10 @@ class tg_provision extends _modelo_parent {
         $datos['total_impuesto'] = $datos['imss'] +  $datos['rcv'] + $datos['infonavit'] + $datos['isn'] +
             $datos['isn_adicional'] ;
 
-        $datos['prima_vacacional'] = 0;
-        $datos['vacaciones'] = 0;
-        $datos['aguinaldo'] = 0;
-        $datos['prima_antiguedad'] = 0;
+        $datos['PRIMA VACACIONAL'] = 0;
+        $datos['VACACIONES'] = 0;
+        $datos['PRIMA DE ANTIGÜEDAD'] = 0;
+        $datos['GRATIFICACIÓN ANUAL (AGUINALDO)'] = 0;
 
         $total = 0;
         foreach ($provisiones->registros as $provision) {
