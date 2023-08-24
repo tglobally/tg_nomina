@@ -152,7 +152,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
     public function maqueta_data_provision(array $tg_conf_provision, int $nom_nomina_id): array|stdClass
     {
         $data = array();
-        $data['codigo'] = $tg_conf_provision['tg_conf_provision_codigo'] . $nom_nomina_id;
+        $data['codigo'] = $this->get_codigo_aleatorio() . $nom_nomina_id;
         $data['descripcion'] = $tg_conf_provision['tg_conf_provision_descripcion'] . $nom_nomina_id;
         $data['tg_tipo_provision_id'] = $tg_conf_provision['tg_tipo_provision_id'];
         $data['nom_nomina_id'] = $nom_nomina_id;
