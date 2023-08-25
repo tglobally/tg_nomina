@@ -144,14 +144,14 @@ class tg_provision extends _modelo_parent {
 
         $factor = $isn->registros[0]['cat_sat_isn_factor_isn_adicional'];
 
-        $datos['imss'] = $suma_imss;
-        $datos['rcv'] = $suma_rcv;
-        $datos['infonavit'] = $suma_infonavit;
-        $datos['isn'] = $suma_base_gravable * $porcentaje;
-        $datos['isn_adicional'] = $datos['isn'] * $factor;
+        $datos['imss'] = round($suma_imss,2);
+        $datos['rcv'] = round($suma_rcv,2);
+        $datos['infonavit'] = round($suma_infonavit,2);
+        $datos['isn'] = round($suma_base_gravable * $porcentaje,2);
+        $datos['isn_adicional'] = round($datos['isn'] * $factor,2);
 
-        $datos['total_impuesto'] = $datos['imss'] +  $datos['rcv'] + $datos['infonavit'] + $datos['isn'] +
-            $datos['isn_adicional'] ;
+        $datos['total_impuesto'] = round($datos['imss'] +  $datos['rcv'] + $datos['infonavit'] + $datos['isn'] +
+            $datos['isn_adicional'],2);
 
         $datos['PRIMA VACACIONAL'] = 0;
         $datos['VACACIONES'] = 0;
@@ -164,12 +164,12 @@ class tg_provision extends _modelo_parent {
                 $descripcion_prov = $provision['tg_tipo_provision_descripcion'];
 
                 if($descripcion_prov === $desc_prov){
-                    $datos[$descripcion_prov] = $provision['tg_provision_monto'];
+                    $datos[$descripcion_prov] = round($provision['tg_provision_monto'],2);
                     $total += $datos[$descripcion_prov];
                 }
             }
         }
-        $datos['total_provicionado'] = $total;
+        $datos['total_provicionado'] = round($total,2);
 
         $suma_percepcion = (new nom_nomina(link: $this->link))->total_percepciones_monto(nom_nomina_id: $nom_nomina_id);
         if (errores::$error) {
@@ -183,7 +183,8 @@ class tg_provision extends _modelo_parent {
                 data: $registro);
         }
 
-        $datos['suma_percepcion'] = $suma_percepcion + $datos['total_provicionado'] + $datos['total_impuesto'] - $subsidio;
+        $datos['suma_percepcion'] = round($suma_percepcion + $datos['total_provicionado'] +
+            $datos['total_impuesto'] - $subsidio,2);
 
         /*$filtro['nom_nomina.id']  = $nom_nomina_id;
         $r_nom_par_percepcion = (new nom_conf_comision($this->link))->filtro_and(filtro: $filtro);
@@ -193,10 +194,10 @@ class tg_provision extends _modelo_parent {
 
         $porcentaje = $conf->registros[0]['tg_conf_comision_porcentaje']/100;
 
-        $datos['factor_de_servicio'] = $datos['suma_percepcion']  * $porcentaje;
-        $datos['subtotal'] = $datos['suma_percepcion'] + $datos['factor_de_servicio'];
-        $datos['iva'] = $datos['subtotal'] * .16;
-        $datos['total'] = $datos['subtotal'] + $datos['iva'];
+        $datos['factor_de_servicio'] = round($datos['suma_percepcion']  * $porcentaje,2);
+        $datos['subtotal'] = round($datos['suma_percepcion'] + $datos['factor_de_servicio'],2);
+        $datos['iva'] = round($datos['subtotal'] * .16,2);
+        $datos['total'] = round($datos['subtotal'] + $datos['iva'],2);
 
         return $datos;
     }

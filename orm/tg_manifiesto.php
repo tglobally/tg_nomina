@@ -200,12 +200,12 @@ class tg_manifiesto extends _modelo_parent{
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al dar de alta manifiesto_periodo',data:  $sube_manifiesto);
         }
-
+/*
         $descarga_nomina = $this->descarga_nomina($r_alta_bd->registro_id);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al dar de alta manifiesto_periodo',data:  $descarga_nomina);
         }
-
+*/
         return $r_alta_bd;
     }
 
