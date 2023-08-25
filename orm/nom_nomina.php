@@ -16,6 +16,8 @@ use gamboamartin\facturacion\models\fc_factura;
 use gamboamartin\facturacion\models\fc_factura_documento;
 use gamboamartin\facturacion\models\fc_key_pem;
 use gamboamartin\facturacion\models\fc_partida;
+use gamboamartin\im_registro_patronal\models\im_conf_pres_empresa;
+use gamboamartin\im_registro_patronal\models\im_detalle_conf_prestaciones;
 use gamboamartin\im_registro_patronal\models\im_movimiento;
 use gamboamartin\nomina\controllers\xml_nom;
 use gamboamartin\nomina\models\nom_nomina_documento;
@@ -72,39 +74,6 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
             return $this->error->error(mensaje: 'Error al obtener cliente del empleado', data: $empleado);
         }
 
-        /*if ($empleado->n_registros > 0){
-            $filtro_conf['tg_conf_provision.com_sucursal_id'] = $empleado->registros[0]['com_sucursal_id'];
-            $filtro_conf['tg_conf_provision.org_sucursal_id'] = $empleado->registros[0]['fc_csd_org_sucursal_id'];
-            $filtro_conf['tg_conf_provision.estado'] = "activo";
-            $conf = (new tg_conf_provision($this->link))->filtro_and(filtro: $filtro_conf);
-            if (errores::$error) {
-                return $this->error->error(mensaje: 'Error al obtener conf. cliente del empleado', data: $conf);
-            }
-
-            $filtro_provisiones['tg_conf_provisiones_empleado.tg_conf_provision_id'] = $conf->registros[0]['tg_conf_provision_id'];
-            $filtro_provisiones['tg_conf_provisiones_empleado.em_empleado_id'] = $em_empleado_id;
-            $provisiones = (new tg_conf_provisiones_empleado($this->link))->filtro_and(filtro: $filtro_provisiones);
-            if (errores::$error) {
-                return $this->error->error(mensaje: 'Error al obtener cliente del empleado', data: $provisiones);
-            }
-
-            foreach ($provisiones->registros as $provision){
-                $registro_provision['nom_conf_empleado_id'] = $conf_empl;
-                $registro_provision['tg_tipo_provision_id'] = $provision['tg_tipo_provision_id'];
-                $registro_provision['descripcion'] = $provision['tg_tipo_provision_descripcion'];
-                $registro_provision['codigo'] = (new tg_conf_provision($this->link))->get_codigo_aleatorio();
-                $registro_provision['codigo_bis'] = $registro_provision['codigo'];
-                $registro_provision['monto'] = 0;
-                $registro_provision['fecha_inicio'] = $this->registro['fecha_inicial_pago'];
-                $registro_provision['fecha_fin'] = $this->registro['fecha_final_pago'];
-                $alta = (new tg_conf_provision($this->link))->alta_registro(registro: $registro_provision);
-                if (errores::$error) {
-                    $this->link->rollBack();
-                    return $this->error->error(mensaje: 'Error al dar de alta provision cliente', data: $alta);
-                }
-            }
-        }*/
-
         $data = $this->get_tg_conf_provisiones(empleado: $empleado, em_empleado_id: $em_empleado_id);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al obtener conf. de provisiones del empleado', data: $data);
@@ -157,6 +126,24 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         $data['tg_tipo_provision_id'] = $tg_conf_provision['tg_tipo_provision_id'];
         $data['nom_nomina_id'] = $nom_nomina_id;
 
+        $filtro['im_conf_pres_empresa.org_empresa_id'] = $tg_conf_provision['org_sucursal_org_empresa_id'];
+        $pres_empresa = (new im_conf_pres_empresa($this->link))->filtro_and(filtro: $filtro);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener prestacion empresa', data: $pres_empresa);
+        }
+
+        $inicio = new \DateTime($tg_conf_provision['em_empleado_fecha_inicio_rel_laboral']);
+        $ahora = new \DateTime(date("Y-m-d"));
+        $diferencia = $ahora->diff($inicio);
+
+        $filtro = array();
+        $filtro['im_detalle_conf_prestaciones.im_conf_prestaciones_id'] = $pres_empresa->registros[0]['im_conf_prestaciones_id'];
+        $filtro['im_detalle_conf_prestaciones.n_year'] = $diferencia->y;
+        $detalle = (new im_detalle_conf_prestaciones($this->link))->filtro_and(filtro: $filtro);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener prestaciones', data: $detalle);
+        }
+
         $monto = 0.0;
 
         switch ($tg_conf_provision['tg_tipo_provision_descripcion']){
@@ -164,7 +151,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
                 $monto = 0.0;
                 break;
             case "VACACIONES":
-                $monto = $tg_conf_provision['em_empleado_salario_diario'] * 20;
+                $monto = $tg_conf_provision['em_empleado_salario_diario'] * $detalle->registros[0]['im_detalle_conf_prestaciones_n_dias_vacaciones'];
                 $monto /= 365;
                 $monto *= 7;
                 break;
@@ -172,7 +159,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
                 $monto = 0.0;
                 break;
             case "GRATIFICACIÓN ANUAL (AGUINALDO)":
-                $monto = $tg_conf_provision['em_empleado_salario_diario'] * 15;
+                $monto = $tg_conf_provision['em_empleado_salario_diario'] * $detalle->registros[0]['im_detalle_conf_prestaciones_n_dias_aguinaldo'];
                 $monto /= 365;
                 $monto *= 7;
                 break;
