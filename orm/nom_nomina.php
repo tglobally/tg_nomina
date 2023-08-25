@@ -5,6 +5,7 @@ namespace tglobally\tg_nomina\models;
 use base\orm\modelo;
 use config\generales;
 use config\pac;
+use gamboamartin\cat_sat\models\cat_sat_isn;
 use gamboamartin\comercial\models\com_sucursal;
 use gamboamartin\comercial\models\com_tmp_cte_dp;
 use gamboamartin\documento\models\doc_documento;
@@ -63,8 +64,61 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
             return $this->error->error(mensaje: 'Error al ejecutar acciones de conf. de provisiones', data: $acciones);
         }
 
+        $acciones_isn = $this->acciones_isn(nom_nomina_id: $alta->registro_id,em_empleado_id: $this->registro['em_empleado_id']);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al ejecutar acciones de isn', data: $acciones_isn);
+        }
+
         return $alta;
     }
+
+    public function acciones_isn(int $nom_nomina_id, $em_empleado_id): array|stdClass
+    {
+        $filtro_empleado['tg_empleado_sucursal.em_empleado_id'] = $em_empleado_id;
+        $empleado = (new tg_empleado_sucursal($this->link))->filtro_and(filtro: $filtro_empleado);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener cliente del empleado', data: $empleado);
+        }
+
+        $cliente = (new com_sucursal($this->link))->registro(registro_id: $empleado->registros[0]['com_sucursal_id']);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener cliente',data:  $cliente);
+        }
+
+        $isn = (new cat_sat_isn($this->link))->filtro_and(filtro: array("cat_sat_isn.dp_estado_id" => $cliente['dp_estado_id']));
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener isn',data:  $isn);
+        }
+
+        $suma_base_gravable = (new nom_nomina(link: $this->link))->total_percepciones_gravado(nom_nomina_id: $nom_nomina_id);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener la suma de percepciones',
+                data: $suma_base_gravable);
+        }
+
+        $porcentaje = $isn->registros[0]['cat_sat_isn_porcentaje_isn']=== 0 ?  100 : $isn->registros[0]['cat_sat_isn_porcentaje_isn'];
+        $porcentaje /= 100;
+
+        $factor = $isn->registros[0]['cat_sat_isn_factor_isn_adicional'];
+
+        $monto_isn = $suma_base_gravable * $porcentaje;
+        $isn_adicional = $monto_isn * $factor;
+
+
+        $registro['descripcion'] = "M$nom_nomina_id$em_empleado_id";
+        $registro['codigo'] = $this->get_codigo_aleatorio();
+        $registro['cat_sat_isn_id'] = $isn->registros[0]['cat_sat_isn_id'];
+        $registro['nom_nomina_id'] = $nom_nomina_id;
+        $registro['monto_isn'] = $monto_isn;
+        $registro['isn_adicional'] = $isn_adicional;
+        $alta = (new tg_manifiesto_calculado($this->link))->alta_registro(registro: $registro);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al dar de alta calculos de', data: $alta);
+        }
+
+        return $alta;
+    }
+
 
     public function conf_provisiones_acciones(int $em_empleado_id, int $nom_nomina_id, string $fecha, string $conf_empl): array|stdClass
     {
