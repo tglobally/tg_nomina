@@ -21,6 +21,7 @@ use gamboamartin\im_registro_patronal\models\im_conf_pres_empresa;
 use gamboamartin\im_registro_patronal\models\im_detalle_conf_prestaciones;
 use gamboamartin\im_registro_patronal\models\im_movimiento;
 use gamboamartin\nomina\controllers\xml_nom;
+use gamboamartin\nomina\models\nom_conf_empleado;
 use gamboamartin\nomina\models\nom_nomina_documento;
 use gamboamartin\plugins\files;
 use gamboamartin\proceso\models\pr_proceso;
@@ -57,6 +58,18 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al insertar nomina', data: $alta);
         }
+
+        /*$nom_conf_empleado = $this->registro_por_id(entidad: new nom_conf_empleado($this->link),
+            id: $this->registro['nom_conf_empleado_id']);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al generar registros de conf factura',
+                data: $nom_conf_empleado);
+        }
+
+        $dias = $this->calculo_dias_pagados(nom_conf_empleado: $nom_conf_empleado);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al calcular los dias pagados', data: $dias);
+        }*/
 
         $acciones = $this->conf_provisiones_acciones(em_empleado_id: $this->registro['em_empleado_id'],
             nom_nomina_id: $alta->registro_id, fecha: $this->registro['fecha_pago'], conf_empl: $conf_empl);
