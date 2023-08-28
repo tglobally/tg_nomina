@@ -246,7 +246,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
 
         $filtro = array();
         $filtro['im_detalle_conf_prestaciones.im_conf_prestaciones_id'] = $pres_empresa->registros[0]['im_conf_prestaciones_id'];
-        $filtro['im_detalle_conf_prestaciones.n_year'] = $diferencia->y;
+        $filtro['im_detalle_conf_prestaciones.n_year'] = $diferencia->y + 1;
         $detalle = (new im_detalle_conf_prestaciones($this->link))->filtro_and(filtro: $filtro);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al obtener prestaciones', data: $detalle);
