@@ -23,6 +23,7 @@ use gamboamartin\im_registro_patronal\models\im_movimiento;
 use gamboamartin\nomina\controllers\xml_nom;
 use gamboamartin\nomina\models\nom_conf_empleado;
 use gamboamartin\nomina\models\nom_nomina_documento;
+use gamboamartin\nomina\models\nom_par_percepcion;
 use gamboamartin\plugins\files;
 use gamboamartin\proceso\models\pr_proceso;
 use gamboamartin\xml_cfdi_4\cfdis;
@@ -33,6 +34,7 @@ use stdClass;
 use tglobally\tg_cliente\models\tg_cliente_empresa;
 use tglobally\tg_cliente\models\tg_cliente_empresa_provisiones;
 use tglobally\tg_cliente\models\tg_conf_provisiones_cliente;
+use tglobally\tg_empleado\models\tg_conf_percepcion_empleado;
 use tglobally\tg_empleado\models\tg_conf_provisiones_empleado;
 use Throwable;
 use ZipArchive;
@@ -76,6 +78,12 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al ejecutar acciones de conf. de provisiones', data: $acciones);
         }
+
+        /*$acciones = $this->conf_percepciones_acciones(em_empleado_id: $this->registro['em_empleado_id'],
+            nom_nomina_id: $alta->registro_id, fecha: $this->registro['fecha_pago'], conf_empl: $conf_empl);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al ejecutar acciones de conf. de provisiones', data: $acciones);
+        }*/
 
         $acciones_isn = $this->acciones_isn(nom_nomina_id: $alta->registro_id,em_empleado_id: $this->registro['em_empleado_id']);
         if (errores::$error) {
@@ -164,6 +172,39 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         return $data;
     }
 
+    public function conf_percepciones_acciones(int $em_empleado_id, int $nom_nomina_id, string $fecha, string $conf_empl): array|stdClass
+    {
+        $filtro_empleado['tg_empleado_sucursal.em_empleado_id'] = $em_empleado_id;
+        $empleado = (new tg_empleado_sucursal($this->link))->filtro_and(filtro: $filtro_empleado);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener cliente del empleado', data: $empleado);
+        }
+
+        $filtro_conf['tg_conf_percepcion.com_sucursal_id'] = $empleado->registros[0]['com_sucursal_id'];
+        $filtro_conf['tg_conf_percepcion_empleado.em_empleado_id'] = $em_empleado_id;
+        $filtro_conf['tg_conf_percepcion.estado'] = "activo";
+        $conf = (new tg_conf_percepcion_empleado($this->link))->filtro_and(filtro: $filtro_conf);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener conf. cliente del empleado', data: $conf);
+        }
+
+        foreach ($conf->registros as $configuracion) {
+            $datos = $this->maqueta_data_percepcion(tg_conf_provision: $configuracion, nom_nomina_id: $nom_nomina_id);
+            if (errores::$error) {
+                return $this->error->error(mensaje: 'Error al maquetar datos de conf. de percepcion del empleado',
+                    data: $datos);
+            }
+
+            $alta_percepcion = (new nom_par_percepcion($this->link))->alta_registro(registro: $datos);
+            if (errores::$error) {
+                return $this->error->error(mensaje: 'Error al dar de alta conf. de percepcion del empleado',
+                    data: $alta_percepcion);
+            }
+        }
+
+        return $conf;
+    }
+
     public function get_tg_conf_provisiones(stdClass $empleado, int $em_empleado_id): array|stdClass
     {
 
@@ -233,6 +274,20 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         }
 
         $data['monto'] = $monto;
+
+        return $data;
+    }
+
+    public function maqueta_data_percepcion(array $tg_conf_provision, int $nom_nomina_id): array|stdClass
+    {
+        $data = array();
+        $data['codigo'] = $this->get_codigo_aleatorio() . $nom_nomina_id;
+        $data['descripcion'] = $tg_conf_provision['tg_conf_percepcion_empleado_descripcion'] . $nom_nomina_id;
+        $data['tg_tipo_provision_id'] = $tg_conf_provision['tg_conf_percepcion_empleado_id'];
+        $data['nom_nomina_id'] = $nom_nomina_id;
+        $data['nom_percepcion_id'] = $tg_conf_provision['tg_conf_percepcion_empleado_nom_percepcion_id'];
+        $data['importe_gravado'] =  $tg_conf_provision['tg_conf_percepcion_empleado_monto'];
+        $data['importe_exento'] = $tg_conf_provision['tg_conf_percepcion_empleado_monto'];
 
         return $data;
     }
