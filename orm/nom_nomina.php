@@ -291,8 +291,8 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         $data['descripcion'] = $tg_conf_provision['tg_conf_percepcion_empleado_descripcion'] . $nom_nomina_id;
         $data['nom_nomina_id'] = $nom_nomina_id;
         $data['nom_percepcion_id'] = $tg_conf_provision['tg_conf_percepcion_empleado_nom_percepcion_id'];
-        $data['importe_gravado'] =  $tg_conf_provision['tg_conf_percepcion_empleado_monto'];
-        $data['importe_exento'] = $tg_conf_provision['tg_conf_percepcion_empleado_monto'];
+        $data['importe_gravado'] =  0;
+        $data['importe_exento'] = $tg_conf_provision['tg_conf_percepcion_empleado_monto'] * 7;
 
         return $data;
     }
