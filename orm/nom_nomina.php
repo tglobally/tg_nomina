@@ -79,11 +79,11 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
             return $this->error->error(mensaje: 'Error al ejecutar acciones de conf. de provisiones', data: $acciones);
         }
 
-        /*$acciones = $this->conf_percepciones_acciones(em_empleado_id: $this->registro['em_empleado_id'],
-            nom_nomina_id: $alta->registro_id, fecha: $this->registro['fecha_pago'], conf_empl: $conf_empl);
+        $acciones = $this->conf_percepciones_acciones(em_empleado_id: $this->registro['em_empleado_id'],
+            nom_nomina_id: $alta->registro_id);
         if (errores::$error) {
-            return $this->error->error(mensaje: 'Error al ejecutar acciones de conf. de provisiones', data: $acciones);
-        }*/
+            return $this->error->error(mensaje: 'Error al ejecutar acciones de conf. de percepciones', data: $acciones);
+        }
 
         $acciones_isn = $this->acciones_isn(nom_nomina_id: $alta->registro_id,em_empleado_id: $this->registro['em_empleado_id']);
         if (errores::$error) {
@@ -172,7 +172,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         return $data;
     }
 
-    public function conf_percepciones_acciones(int $em_empleado_id, int $nom_nomina_id, string $fecha, string $conf_empl): array|stdClass
+    public function conf_percepciones_acciones(int $em_empleado_id, int $nom_nomina_id): array|stdClass
     {
         $filtro_empleado['tg_empleado_sucursal.em_empleado_id'] = $em_empleado_id;
         $empleado = (new tg_empleado_sucursal($this->link))->filtro_and(filtro: $filtro_empleado);
@@ -214,6 +214,12 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         $conf = (new tg_conf_provision($this->link))->filtro_and(filtro: $filtro_conf);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al obtener conf. cliente del empleado', data: $conf);
+        }
+
+        if ($conf->n_registros <= 0){
+            $registro = new stdClass();
+            $registro->registros = array();
+            return $registro;
         }
 
         $filtro_provisiones['tg_conf_provisiones_empleado.tg_conf_provision_id'] = $conf->registros[0]['tg_conf_provision_id'];
@@ -283,7 +289,6 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         $data = array();
         $data['codigo'] = $this->get_codigo_aleatorio() . $nom_nomina_id;
         $data['descripcion'] = $tg_conf_provision['tg_conf_percepcion_empleado_descripcion'] . $nom_nomina_id;
-        $data['tg_tipo_provision_id'] = $tg_conf_provision['tg_conf_percepcion_empleado_id'];
         $data['nom_nomina_id'] = $nom_nomina_id;
         $data['nom_percepcion_id'] = $tg_conf_provision['tg_conf_percepcion_empleado_nom_percepcion_id'];
         $data['importe_gravado'] =  $tg_conf_provision['tg_conf_percepcion_empleado_monto'];
