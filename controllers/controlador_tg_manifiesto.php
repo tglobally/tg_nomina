@@ -1291,7 +1291,7 @@ class controlador_tg_manifiesto extends _ctl_base
 
     public function descarga_nomina(bool $header, bool $ws = false): array|stdClass
     {
-        $manifiesto = (new tg_manifiesto($this->link))->registro(registro_id: $this->registro_id);
+        /*$manifiesto = (new tg_manifiesto($this->link))->registro(registro_id: $this->registro_id);
         if (errores::$error) {
             return $this->retorno_error(mensaje: 'Error al obtener manifiesto', data: $manifiesto,
                 header: $header, ws: $ws);
@@ -1471,8 +1471,13 @@ class controlador_tg_manifiesto extends _ctl_base
         if (errores::$error) {
             return $this->retorno_error(mensaje: 'Error al generar xls', data: $xls, header: $header,
                 ws: $ws);
-        }
+        }*/
 
+        $res = (new tg_manifiesto($this->link))->descarga_nomina($this->registro_id);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al generar xls', data: $res, header: $header,
+                ws: $ws);
+        }
 
         /* $resultado = $exportador->listado_base_xls(header: $header, name: $this->seccion, keys:  $keys,
              path_base: $this->path_base,registros:  $registros,totales:  array());

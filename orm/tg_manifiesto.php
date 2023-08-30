@@ -320,6 +320,25 @@ class tg_manifiesto extends _modelo_parent{
                 array_keys($keys_pagos)), $keys_pagos, array_keys($row)), $row);
         }
 
+        $keys_provisiones_sum =  array('IMSS','RCV','INFONAVIT','ISN','ISN ADICIONAL','TOTAL IMPUESTO',
+            'PRIMA VACACIONAL','VACACIONES','PRIMA DE ANTIGÜEDAD','GRATIFICACIÓN ANUAL (AGUINALDO)',
+            'TOTAL PROVICIONADO','SUMA PERCEPCION','FACTOR DE SERVICIO','SUBTOTAL','IVA','TOTAL');
+        $totales = array();
+        foreach ($registros_provisiones_excel as $empleado) {
+            foreach ($empleado as $campo => $valor) {
+                foreach ($keys_provisiones_sum as $key) {
+                    if ($key === $campo) {
+                        if (!isset($totales[$key])) {
+                            $totales[$key] = floatval($valor);
+                        } else {
+                            $totales[$key] += floatval($valor);
+                        }
+                    }
+                }
+            }
+        }
+        $registros_provisiones_excel[] = $totales;
+
         $keys_hojas = array();
         $keys_hojas['NOMINAS'] = new stdClass();
         $keys_hojas['NOMINAS']->keys = $keys;
