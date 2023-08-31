@@ -67,7 +67,7 @@ class controlador_em_empleado extends \tglobally\tg_empleado\controllers\control
     {
         $keys = new stdClass();
         $keys->inputs = array('codigo', 'descripcion', 'nombre', 'ap', 'am',  'rfc', 'curp', 'nss', 'salario_diario',
-            'salario_diario_integrado','com_sucursal','org_sucursal', 'salario_total','correo', 'num_cuenta', 'clabe');
+            'salario_diario_integrado','com_sucursal','org_sucursal', 'salario_total','correo', 'num_cuenta', 'clabe', 'monto');
         $keys->telefonos = array('telefono');
         $keys->fechas = array('fecha_inicio_rel_laboral', 'fecha_inicio', 'fecha_final', 'fecha_antiguedad');
         $keys->selects = array();
@@ -89,7 +89,8 @@ class controlador_em_empleado extends \tglobally\tg_empleado\controllers\control
         $init_data['em_registro_patronal'] = "gamboamartin\\empleado";
         $init_data['com_sucursal'] = "gamboamartin\\comercial";
         $init_data['bn_sucursal'] = "gamboamartin\\banco";
-
+        $init_data['org_sucursal'] = "gamboamartin\\organigrama";
+        $init_data['nom_percepcion'] = "gamboamartin\\nomina";
 
         $campos_view = $this->campos_view_base(init_data: $init_data, keys: $keys);
         if (errores::$error) {
