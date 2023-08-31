@@ -73,6 +73,10 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
             return $this->error->error(mensaje: 'Error al calcular los dias pagados', data: $dias);
         }*/
 
+        if(!isset($this->registro['num_dias_pagados']) && $this->registro['num_dias_pagados'] <= 0){
+            return $this->error->error(mensaje: 'Error num_dias_pagados no tiene el formato correcto', data: $this->registro);
+        }
+
         $acciones = $this->conf_provisiones_acciones(em_empleado_id: $this->registro['em_empleado_id'],
             nom_nomina_id: $alta->registro_id, fecha: $this->registro['fecha_pago'], conf_empl: $conf_empl);
         if (errores::$error) {
@@ -80,7 +84,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         }
 
         $acciones = $this->conf_percepciones_acciones(em_empleado_id: $this->registro['em_empleado_id'],
-            nom_nomina_id: $alta->registro_id);
+            nom_nomina_id: $alta->registro_id, num_dias_pagados: $this->registro['num_dias_pagados']);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al ejecutar acciones de conf. de percepciones', data: $acciones);
         }
@@ -172,7 +176,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         return $data;
     }
 
-    public function conf_percepciones_acciones(int $em_empleado_id, int $nom_nomina_id): array|stdClass
+    public function conf_percepciones_acciones(int $em_empleado_id, int $nom_nomina_id, int $num_dias_pagados): array|stdClass
     {
         $filtro_empleado['tg_empleado_sucursal.em_empleado_id'] = $em_empleado_id;
         $empleado = (new tg_empleado_sucursal($this->link))->filtro_and(filtro: $filtro_empleado);
@@ -189,7 +193,8 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         }
 
         foreach ($conf->registros as $configuracion) {
-            $datos = $this->maqueta_data_percepcion(tg_conf_provision: $configuracion, nom_nomina_id: $nom_nomina_id);
+            $datos = $this->maqueta_data_percepcion(tg_conf_provision: $configuracion, nom_nomina_id: $nom_nomina_id,
+                num_dias_pagados: $num_dias_pagados);
             if (errores::$error) {
                 return $this->error->error(mensaje: 'Error al maquetar datos de conf. de percepcion del empleado',
                     data: $datos);
@@ -284,7 +289,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         return $data;
     }
 
-    public function maqueta_data_percepcion(array $tg_conf_provision, int $nom_nomina_id): array|stdClass
+    public function maqueta_data_percepcion(array $tg_conf_provision, int $nom_nomina_id, int $num_dias_pagados): array|stdClass
     {
         $data = array();
         $data['codigo'] = $this->get_codigo_aleatorio() . $nom_nomina_id;
@@ -292,7 +297,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         $data['nom_nomina_id'] = $nom_nomina_id;
         $data['nom_percepcion_id'] = $tg_conf_provision['tg_conf_percepcion_empleado_nom_percepcion_id'];
         $data['importe_gravado'] =  0;
-        $data['importe_exento'] = $tg_conf_provision['tg_conf_percepcion_empleado_monto'] * 7;
+        $data['importe_exento'] = $tg_conf_provision['tg_conf_percepcion_empleado_monto'] * $num_dias_pagados;
 
         return $data;
     }
