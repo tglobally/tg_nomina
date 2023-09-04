@@ -5,6 +5,7 @@ use gamboamartin\errores\errores;
 use gamboamartin\system\links_menu;
 use gamboamartin\system\system;
 use gamboamartin\template\html;
+use html\tg_contrato_html;
 use html\tg_layout_html;
 use tglobally\tg_nomina\models\tg_contrato;
 use tglobally\tg_nomina\models\tg_layout;
@@ -16,7 +17,7 @@ class controlador_tg_contrato extends system {
     public function __construct(PDO $link, html $html = new \gamboamartin\template_1\html(),
                                 stdClass $paths_conf = new stdClass()){
         $modelo = new tg_contrato(link: $link);
-        $html_ = new tg_layout_html(html: $html);
+        $html_ = new tg_contrato_html(html: $html);
         $obj_link = new links_menu(link: $link, registro_id: $this->registro_id);
 
         $datatables = $this->init_datatable();
