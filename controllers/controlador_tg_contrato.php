@@ -84,7 +84,7 @@ class controlador_tg_contrato extends _ctl_base {
     public function init_selects_inputs(): array
     {
         $keys_selects = $this->init_selects(keys_selects: array(), key: "com_sucursal_id", label: "Cliente");
-        $keys_selects = $this->init_selects(keys_selects: array(), key: "org_sucursal_id", label: "Empresa");
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "org_sucursal_id", label: "Empresa");
         return $this->init_selects(keys_selects: $keys_selects, key: "em_empleado_id", label: "Empleado");
     }
 
