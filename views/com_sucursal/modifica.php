@@ -6,7 +6,6 @@
     <?php echo $controlador->inputs->codigo; ?>
     <?php echo $controlador->inputs->nombre_contacto; ?>
     <?php echo $controlador->inputs->com_cliente_id; ?>
-    <?php echo $controlador->inputs->tg_tipo_provision_id; ?>
     <?php echo $controlador->inputs->dp_pais_id; ?>
     <?php echo $controlador->inputs->dp_estado_id; ?>
     <?php echo $controlador->inputs->dp_municipio_id; ?>
