@@ -2,13 +2,14 @@
 
 <form class="row g-3" method="post" action="<?php echo $controlador->link_modifica_bd; ?>">
 
-    <?php echo $controlador->inputs->com_sucursal_id; ?>
-    <?php echo $controlador->inputs->org_sucursal_id; ?>
-    <?php echo $controlador->inputs->tg_tipo_servicio_id; ?>
-    <?php echo $controlador->inputs->fecha_pago; ?>
-    <?php echo $controlador->inputs->fecha_inicial_pago; ?>
-    <?php echo $controlador->inputs->fecha_final_pago; ?>
-    <?php echo $controlador->inputs->fecha_envio; ?>
+    <?php echo $controlador->inputs->descripcion; ?>
+
+    <div class="control-group col-12">
+        <label class="control-label" for="archivo">Archivo Nomina</label>
+        <div class="controls">
+            <input type="file" class="form-control" id="archivo" name="archivo" multiple/>
+        </div>
+    </div>
 
 
     <div class="col-12 d-flex justify-content-end">
