@@ -273,9 +273,13 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
 
         $monto = 0.0;
 
+
         switch ($tg_conf_provision['tg_tipo_provision_descripcion']){
             case "PRIMA VACACIONAL":
-                $monto = 0.0;
+                $monto = $tg_conf_provision['em_empleado_salario_diario'] * $detalle->registros[0]['im_detalle_conf_prestaciones_n_dias_vacaciones'];
+                $monto *= 0.25;
+                $monto /= 365;
+                $monto *= $this->registro['num_dias_pagados'];
                 break;
             case "VACACIONES":
                 $monto = $tg_conf_provision['em_empleado_salario_diario'] * $detalle->registros[0]['im_detalle_conf_prestaciones_n_dias_vacaciones'];
@@ -283,7 +287,11 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
                 $monto *= $dias_laborados;
                 break;
             case "PRIMA DE ANTIGÜEDAD":
-                $monto = 0.0;
+                $monto = 414.88;
+                $_12year = 12 * $diferencia->y + 1;;
+                $monto *= $_12year;
+                $monto /= 365;
+                $monto *= $this->registro['num_dias_pagados'];
                 break;
             case "GRATIFICACIÓN ANUAL (AGUINALDO)":
                 $monto = $tg_conf_provision['em_empleado_salario_diario'] * $detalle->registros[0]['im_detalle_conf_prestaciones_n_dias_aguinaldo'];
