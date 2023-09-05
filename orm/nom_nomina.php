@@ -62,7 +62,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         }
 
         $nom_conf_empleado = $this->registro_por_id(entidad: new nom_conf_empleado($this->link),
-            id: $this->registro['nom_conf_empleado_id']);
+            id: $conf_empl);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al generar registros de conf factura',
                 data: $nom_conf_empleado);
