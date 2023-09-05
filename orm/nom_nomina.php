@@ -251,6 +251,10 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
             return $this->error->error(mensaje: 'Error al obtener prestacion empresa', data: $pres_empresa);
         }
 
+        if ($pres_empresa->n_registros <= 0){
+            return $this->error->error(mensaje: 'Error no existe una conf. para im_conf_pres_empresa', data: $pres_empresa);
+        }
+
         $inicio = new \DateTime($tg_conf_provision['em_empleado_fecha_inicio_rel_laboral']);
         $ahora = new \DateTime(date("Y-m-d"));
         $diferencia = $ahora->diff($inicio);
