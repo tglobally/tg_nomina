@@ -48,7 +48,7 @@ class tg_contrato extends modelo{
             return $this->error->error(mensaje: 'Error al dar de alta el documento', data: $doc_documento);
         }
 
-        $this->registro['doc_documento_id'] = $doc_documento['registro_id'];
+        $this->registro['doc_documento_id'] = $doc_documento->registro_id;
 
         $r_alta_bd = parent::alta_bd();
         if(errores::$error){
