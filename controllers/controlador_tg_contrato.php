@@ -77,14 +77,15 @@ class controlador_tg_contrato extends _ctl_base {
 
     public function genera_contrato_bd(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
     {
-        
+
     }
 
 
     public function init_selects_inputs(): array
     {
-        $keys_selects = $this->init_selects(keys_selects: array(), key: "org_sucursal_id", label: "Alianza");
-        return $this->init_selects(keys_selects: $keys_selects, key: "em_empleado_id", label: "Cliente");
+        $keys_selects = $this->init_selects(keys_selects: array(), key: "com_sucursal_id", label: "Cliente");
+        $keys_selects = $this->init_selects(keys_selects: array(), key: "org_sucursal_id", label: "Empresa");
+        return $this->init_selects(keys_selects: $keys_selects, key: "em_empleado_id", label: "Empleado");
     }
 
     private function init_selects(array $keys_selects, string $key, string $label, int $id_selected = -1, int $cols = 6,
