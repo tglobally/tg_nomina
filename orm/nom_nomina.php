@@ -83,6 +83,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al ejecutar acciones de conf. de provisiones', data: $acciones);
         }
+        
 
         $acciones = $this->conf_percepciones_acciones(em_empleado_id: $this->registro['em_empleado_id'],
             nom_nomina_id: $alta->registro_id, num_dias_pagados: $dias->dias_pagados_reales_sep);
