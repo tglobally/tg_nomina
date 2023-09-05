@@ -61,7 +61,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
             return $this->error->error(mensaje: 'Error al insertar nomina', data: $alta);
         }
 
-        /*$nom_conf_empleado = $this->registro_por_id(entidad: new nom_conf_empleado($this->link),
+        $nom_conf_empleado = $this->registro_por_id(entidad: new nom_conf_empleado($this->link),
             id: $this->registro['nom_conf_empleado_id']);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al generar registros de conf factura',
@@ -71,7 +71,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         $dias = $this->calculo_dias_pagados(nom_conf_empleado: $nom_conf_empleado);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al calcular los dias pagados', data: $dias);
-        }*/
+        }
 
         if(!isset($this->registro['num_dias_pagados']) && $this->registro['num_dias_pagados'] <= 0){
             return $this->error->error(mensaje: 'Error num_dias_pagados no tiene el formato correcto', data: $this->registro);
