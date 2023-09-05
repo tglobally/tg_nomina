@@ -73,18 +73,19 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
             return $this->error->error(mensaje: 'Error al calcular los dias pagados', data: $dias);
         }
 
-        if(!isset($this->registro['num_dias_pagados']) && $this->registro['num_dias_pagados'] <= 0){
+        if(!isset($dias->dias_pagados_reales_sep) && $dias->dias_pagados_reales_sep <= 0){
             return $this->error->error(mensaje: 'Error num_dias_pagados no tiene el formato correcto', data: $this->registro);
         }
 
         $acciones = $this->conf_provisiones_acciones(em_empleado_id: $this->registro['em_empleado_id'],
-            nom_nomina_id: $alta->registro_id, fecha: $this->registro['fecha_pago'], conf_empl: $conf_empl);
+            nom_nomina_id: $alta->registro_id, fecha: $this->registro['fecha_pago'], conf_empl: $conf_empl,
+            dias_laborados: $dias->dias_pagados_reales_sep);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al ejecutar acciones de conf. de provisiones', data: $acciones);
         }
 
         $acciones = $this->conf_percepciones_acciones(em_empleado_id: $this->registro['em_empleado_id'],
-            nom_nomina_id: $alta->registro_id, num_dias_pagados: $this->registro['num_dias_pagados']);
+            nom_nomina_id: $alta->registro_id, num_dias_pagados: $dias->dias_pagados_reales_sep);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al ejecutar acciones de conf. de percepciones', data: $acciones);
         }
@@ -145,7 +146,8 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
     }
 
 
-    public function conf_provisiones_acciones(int $em_empleado_id, int $nom_nomina_id, string $fecha, string $conf_empl): array|stdClass
+    public function conf_provisiones_acciones(int $em_empleado_id, int $nom_nomina_id, string $fecha, string $conf_empl,
+                                              int $dias_laborados): array|stdClass
     {
         $filtro_empleado['tg_empleado_sucursal.em_empleado_id'] = $em_empleado_id;
         $empleado = (new tg_empleado_sucursal($this->link))->filtro_and(filtro: $filtro_empleado);
@@ -160,7 +162,8 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
 
         foreach ($data->registros as $configuracion) {
 
-            $datos = $this->maqueta_data_provision(tg_conf_provision: $configuracion, nom_nomina_id: $nom_nomina_id);
+            $datos = $this->maqueta_data_provision(tg_conf_provision: $configuracion, nom_nomina_id: $nom_nomina_id,
+                dias_laborados: $dias_laborados);
             if (errores::$error) {
                 return $this->error->error(mensaje: 'Error al maquetar datos de conf. de provisiones del empleado',
                     data: $datos);
@@ -237,7 +240,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         return $provisiones;
     }
 
-    public function maqueta_data_provision(array $tg_conf_provision, int $nom_nomina_id): array|stdClass
+    public function maqueta_data_provision(array $tg_conf_provision, int $nom_nomina_id, int $dias_laborados): array|stdClass
     {
         $data = array();
         $data['codigo'] = $this->get_codigo_aleatorio() . $nom_nomina_id;
@@ -276,7 +279,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
             case "VACACIONES":
                 $monto = $tg_conf_provision['em_empleado_salario_diario'] * $detalle->registros[0]['im_detalle_conf_prestaciones_n_dias_vacaciones'];
                 $monto /= 365;
-                $monto *= 7;
+                $monto *= $dias_laborados;
                 break;
             case "PRIMA DE ANTIGÜEDAD":
                 $monto = 0.0;
@@ -284,7 +287,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
             case "GRATIFICACIÓN ANUAL (AGUINALDO)":
                 $monto = $tg_conf_provision['em_empleado_salario_diario'] * $detalle->registros[0]['im_detalle_conf_prestaciones_n_dias_aguinaldo'];
                 $monto /= 365;
-                $monto *= 7;
+                $monto *= $dias_laborados;
                 break;
         }
 
