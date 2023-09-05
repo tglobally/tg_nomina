@@ -2,17 +2,15 @@
 namespace tglobally\tg_nomina\controllers;
 
 use gamboamartin\errores\errores;
+use gamboamartin\system\_ctl_base;
 use gamboamartin\system\links_menu;
-use gamboamartin\system\system;
 use gamboamartin\template\html;
 use html\tg_contrato_html;
-use html\tg_layout_html;
 use tglobally\tg_nomina\models\tg_contrato;
-use tglobally\tg_nomina\models\tg_layout;
 use PDO;
 use stdClass;
 
-class controlador_tg_contrato extends system {
+class controlador_tg_contrato extends _ctl_base {
 
     public function __construct(PDO $link, html $html = new \gamboamartin\template_1\html(),
                                 stdClass $paths_conf = new stdClass()){
@@ -56,4 +54,42 @@ class controlador_tg_contrato extends system {
         return $datatables;
     }
 
+    public function genera_contrato(bool $header = true, bool $ws = false){
+        $r_alta = $this->init_alta();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar alta', data: $r_alta, header: $header, ws: $ws);
+        }
+
+        $keys_selects = $this->init_selects_inputs();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar selects', data: $keys_selects, header: $header,
+                ws: $ws);
+        }
+
+        $inputs = $this->inputs(keys_selects: $keys_selects);
+        if (errores::$error) {
+            return $this->retorno_error(
+                mensaje: 'Error al obtener inputs', data: $inputs, header: $header, ws: $ws);
+        }
+
+        return $r_alta;
+    }
+
+    public function init_selects_inputs(): array
+    {
+        $keys_selects = $this->init_selects(keys_selects: array(), key: "org_sucursal_id", label: "Alianza");
+        return $this->init_selects(keys_selects: $keys_selects, key: "em_empleado_id", label: "Cliente");
+    }
+
+    private function init_selects(array $keys_selects, string $key, string $label, int $id_selected = -1, int $cols = 6,
+                                  bool  $con_registros = true, array $filtro = array()): array
+    {
+        $keys_selects = $this->key_select(cols: $cols, con_registros: $con_registros, filtro: $filtro, key: $key,
+            keys_selects: $keys_selects, id_selected: $id_selected, label: $label);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        return $keys_selects;
+    }
 }
