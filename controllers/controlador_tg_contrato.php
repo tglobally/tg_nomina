@@ -75,6 +75,12 @@ class controlador_tg_contrato extends _ctl_base {
         return $r_alta;
     }
 
+    public function genera_contrato_bd(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
+    {
+        
+    }
+
+
     public function init_selects_inputs(): array
     {
         $keys_selects = $this->init_selects(keys_selects: array(), key: "org_sucursal_id", label: "Alianza");
