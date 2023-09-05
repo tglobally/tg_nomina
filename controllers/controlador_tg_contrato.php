@@ -29,9 +29,9 @@ class controlador_tg_contrato extends system {
 
         parent::__construct(html: $html_, link: $link, modelo: $modelo, obj_link: $obj_link, datatables: $datatables,
             paths_conf: $paths_conf);
-        $this->seccion_titulo = 'Layout';
-        $this->titulo_pagina = "Nominas - Layout";
-        $this->titulo_accion = "Layout";
+        $this->seccion_titulo = 'Contrato';
+        $this->titulo_pagina = "Nominas - Contrato";
+        $this->titulo_accion = "Contrato";
 
         $acciones = $this->define_acciones_menu(acciones: array("alta" => $this->link_alta));
         if (errores::$error) {
@@ -43,10 +43,10 @@ class controlador_tg_contrato extends system {
 
     private function init_datatable(): stdClass
     {
-        $columns["tg_layout_id"]["titulo"] = "Id";
-        $columns["tg_layout_descripcion"]["titulo"] = "Descripción ";
+        $columns["tg_contrato_id"]["titulo"] = "Id";
+        $columns["tg_contrato_descripcion"]["titulo"] = "Descripción ";
 
-        $filtro = array("tg_layout.id", "tg_layout.descripcion");
+        $filtro = array("tg_contrato.id", "tg_contrato.descripcion");
 
         $datatables = new stdClass();
         $datatables->columns = $columns;
