@@ -24,6 +24,8 @@ class tg_contrato extends modelo{
 
     public function alta_bd(): array|stdClass
     {
+        $this->registro['codigo'] = $this->get_codigo_aleatorio() . $this->registro['descripcion'];
+
         if (!isset($this->registro['descripcion_select'])) {
             $this->registro['descripcion_select'] = $this->registro['descripcion'];
         }
