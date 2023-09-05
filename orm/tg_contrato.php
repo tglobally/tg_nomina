@@ -3,6 +3,7 @@ namespace tglobally\tg_nomina\models;
 
 use base\orm\modelo;
 
+use gamboamartin\documento\models\doc_documento;
 use gamboamartin\errores\errores;
 
 use PDO;
@@ -35,6 +36,17 @@ class tg_contrato extends modelo{
             $this->registro['alias'] = $this->registro['codigo'];
             $this->registro['alias'] .= $this->registro['descripcion'];
         }
+
+        $doc_documento_modelo = new doc_documento($this->link);
+        $doc_documento_modelo->registro['descripcion'] = $this->registro['descripcion'];
+        $doc_documento_modelo->registro['descripcion_select'] = $this->registro['descripcion_select'];
+        $doc_documento_modelo->registro['doc_tipo_documento_id'] = 13;
+        $doc_documento = $doc_documento_modelo->alta_bd(file: $_FILES['archivo']);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al dar de alta el documento', data: $doc_documento);
+        }
+
+        $this->registro['doc_documento_id'] = $doc_documento['registro_id'];
 
         $r_alta_bd = parent::alta_bd();
         if(errores::$error){
