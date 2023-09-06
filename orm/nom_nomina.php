@@ -259,13 +259,13 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
             return $this->error->error(mensaje: 'Error no existe una conf. para im_conf_pres_empresa', data: $pres_empresa);
         }
 
-        $inicio = new \DateTime($tg_conf_provision['em_empleado_fecha_inicio_rel_laboral']);
+        $inicio = new \DateTime($tg_conf_provision['em_empleado_fecha_antiguedad']);
         $ahora = new \DateTime(date("Y-m-d"));
         $diferencia = $ahora->diff($inicio);
 
         $filtro = array();
         $filtro['im_detalle_conf_prestaciones.im_conf_prestaciones_id'] = $pres_empresa->registros[0]['im_conf_prestaciones_id'];
-        $filtro['im_detalle_conf_prestaciones.n_year'] = $diferencia->y + 1;
+        $filtro['im_detalle_conf_prestaciones.n_year'] = $diferencia->y;
         $detalle = (new im_detalle_conf_prestaciones($this->link))->filtro_and(filtro: $filtro);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al obtener prestaciones', data: $detalle);
@@ -273,13 +273,12 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
 
         $monto = 0.0;
 
-
         switch ($tg_conf_provision['tg_tipo_provision_descripcion']){
             case "PRIMA VACACIONAL":
                 $monto = $tg_conf_provision['em_empleado_salario_diario'] * $detalle->registros[0]['im_detalle_conf_prestaciones_n_dias_vacaciones'];
-                $monto *= 0.25;
                 $monto /= 365;
-                $monto *= $dias_laborados;
+                $monto *= $this->registro['num_dias_pagados'];
+                $monto *= 0.25;
                 break;
             case "VACACIONES":
                 $monto = $tg_conf_provision['em_empleado_salario_diario'] * $detalle->registros[0]['im_detalle_conf_prestaciones_n_dias_vacaciones'];
@@ -287,11 +286,10 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
                 $monto *= $dias_laborados;
                 break;
             case "PRIMA DE ANTIGÜEDAD":
-                $monto = 414.88;
-                $_12year = 12 * $diferencia->y + 1;;
-                $monto *= $_12year;
+                $monto = $tg_conf_provision['em_empleado_salario_diario'];
+                $monto *= 12;
                 $monto /= 365;
-                $monto *= $$dias_laborados;
+                $monto *= $this->registro['num_dias_pagados'];
                 break;
             case "GRATIFICACIÓN ANUAL (AGUINALDO)":
                 $monto = $tg_conf_provision['em_empleado_salario_diario'] * $detalle->registros[0]['im_detalle_conf_prestaciones_n_dias_aguinaldo'];
@@ -300,7 +298,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
                 break;
         }
 
-        $data['monto'] = $monto;
+        $data['monto'] = round($monto, 2);
 
         return $data;
     }
