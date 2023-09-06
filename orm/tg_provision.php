@@ -76,19 +76,20 @@ class tg_provision extends _modelo_parent {
             return $this->error->error(mensaje: 'Error al obtener isn',data:  $isn);
         }
 
-        $fecha = date("Y/m/d");
+        $inicio_fecha = date("Y/m/d", strtotime("01/01"));
+        $fin_fecha = date("Y/m/d", strtotime("12/31"));
 
         $filtro = array();
         $filtro['tg_conf_comision.com_sucursal_id']  = $registro['fc_factura_com_sucursal_id'];
-        $filtro_especial[0][$fecha]['operador'] = '>=';
-        $filtro_especial[0][$fecha]['valor'] = 'tg_conf_comision.fecha_inicio';
-        $filtro_especial[0][$fecha]['comparacion'] = 'AND';
-        $filtro_especial[0][$fecha]['valor_es_campo'] = true;
+        $filtro_especial[0][$inicio_fecha]['operador'] = '>=';
+        $filtro_especial[0][$inicio_fecha]['valor'] = 'tg_conf_comision.fecha_inicio';
+        $filtro_especial[0][$inicio_fecha]['comparacion'] = 'AND';
+        $filtro_especial[0][$inicio_fecha]['valor_es_campo'] = true;
 
-        $filtro_especial[1][$fecha]['operador'] = '<=';
-        $filtro_especial[1][$fecha]['valor'] = 'tg_conf_comision.fecha_fin';
-        $filtro_especial[1][$fecha]['comparacion'] = 'AND';
-        $filtro_especial[1][$fecha]['valor_es_campo'] = true;
+        $filtro_especial[1][$fin_fecha]['operador'] = '<=';
+        $filtro_especial[1][$fin_fecha]['valor'] = 'tg_conf_comision.fecha_fin';
+        $filtro_especial[1][$fin_fecha]['comparacion'] = 'AND';
+        $filtro_especial[1][$fin_fecha]['valor_es_campo'] = true;
         $conf = (new tg_conf_comision(link: $this->link))->filtro_and(filtro: $filtro,filtro_especial: $filtro_especial);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener configuraciones de comision',data:  $conf);
