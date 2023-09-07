@@ -1,6 +1,7 @@
 <?php
 namespace tglobally\tg_nomina\models;
 
+use base\orm\_modelo_parent;
 use base\orm\modelo;
 
 use gamboamartin\errores\errores;
@@ -8,7 +9,7 @@ use gamboamartin\errores\errores;
 use PDO;
 use stdClass;
 
-class tg_sucursal_alianza extends modelo{
+class tg_sucursal_alianza extends _modelo_parent{
 
     public function __construct(PDO $link){
         $tabla = 'tg_sucursal_alianza';
@@ -21,27 +22,25 @@ class tg_sucursal_alianza extends modelo{
         $this->NAMESPACE = __NAMESPACE__;
     }
 
-    public function alta_bd(): array|stdClass
+    public function alta_bd(array $keys_integra_ds = array('codigo', 'descripcion')): array|stdClass
     {
-        if (!isset($this->registro['descripcion_select'])) {
-            $this->registro['descripcion_select'] = $this->registro['descripcion'];
+        if(!isset($this->registro['codigo'])){
+            $this->registro['codigo'] =  $this->get_codigo_aleatorio();
+            if(errores::$error){
+                return $this->error->error(mensaje: 'Error al generar codigo aleatorio',data:  $this->registro);
+            }
         }
 
-        if (!isset($this->registro['codigo_bis'])) {
-            $this->registro['codigo_bis'] = $this->registro['codigo'];
-        }
-
-        if (!isset($this->registro['alias'])) {
-            $this->registro['alias'] = $this->registro['codigo'];
-            $this->registro['alias'] .= $this->registro['descripcion'];
-        }
-
-        $r_alta_bd = parent::alta_bd();
+        $this->registro = $this->campos_base(data: $this->registro,modelo: $this);
         if(errores::$error){
-            return $this->error->error(mensaje: 'Error al dar de alta anticipo',data: $r_alta_bd);
+            return $this->error->error(mensaje: 'Error al inicializar campos base',data: $this->registro);
+        }
+
+        $r_alta_bd =  parent::alta_bd();
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error registrar conf. nomina', data: $r_alta_bd);
         }
 
         return $r_alta_bd;
     }
-
 }
