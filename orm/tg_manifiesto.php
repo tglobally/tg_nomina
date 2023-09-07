@@ -259,7 +259,7 @@ class tg_manifiesto extends _modelo_parent{
             $registros_provisiones[] = $provisiones;
             $registros_pagos[] = $pagos;
 
-            $suma_percepcion = (new nom_nomina($this->link))->total_percepciones_gravado(nom_nomina_id: $nomina['nom_nomina_id']);
+            $suma_percepcion = (new nom_nomina($this->link))->total_ingreso_bruto(nom_nomina_id: $nomina['nom_nomina_id']);
             if (errores::$error) {
                 return $this->error->error(mensaje: 'Error al obtener la suma de percepciones',
                     data: $nomina);
@@ -372,7 +372,7 @@ class tg_manifiesto extends _modelo_parent{
         $datos_provisiones['FACTOR TOTAL'] = 0;
 
         foreach ($registros_provisiones as $registro_provision){
-            $datos_provisiones['PERCEPCIONES'] += $registro_provision['suma_percepcion'];
+            $datos_provisiones['PERCEPCIONES'] += $total;
             $datos_provisiones['CUOTAS PATRONALES'] += $registro_provision['total_impuesto'];
             $datos_provisiones['PROVISIONES'] += $registro_provision['total_provicionado'];
             $datos_provisiones['FACTOR DE SERVICIO'] += $registro_provision['factor_de_servicio'];

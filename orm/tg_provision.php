@@ -109,15 +109,9 @@ class tg_provision extends _modelo_parent {
         $datos['registro_patronal'] = $registro['em_registro_patronal_descripcion'];
         $datos['ubicacion'] = $cliente['dp_estado_descripcion'];
 
-        $suma_base_gravable = (new nom_nomina(link: $this->link))->total_percepciones_gravado(nom_nomina_id: $nom_nomina_id);
+        $suma_base_gravable = (new nom_nomina(link: $this->link))->total_ingreso_bruto(nom_nomina_id: $nom_nomina_id);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al obtener la suma de percepciones',
-                data: $registro);
-        }
-
-        $suma_base_gravable += (new nom_nomina(link: $this->link))->total_otros_pagos_gravado(nom_nomina_id: $nom_nomina_id);
-        if (errores::$error) {
-            return $this->error->error(mensaje: 'Error al obtener la suma de otros pagos',
                 data: $registro);
         }
 
