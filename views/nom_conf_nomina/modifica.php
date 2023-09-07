@@ -7,6 +7,22 @@
     <?php echo $controlador->inputs->nom_conf_factura_id; ?>
     <?php echo $controlador->inputs->descripcion; ?>
 
+    <div class="control-group col-sm-12">
+        <label class="form-label" for="aplicaciones">Aplicaciones</label>
+        <div class="controls">
+            <select class="form-multi-select" name="aplicaciones[]"
+                    multiple="multiple" data-coreui-selection-type="tags" data-coreui-search="true" >
+                <option value="aplica_septimo_dia">Séptimo Día</option>
+                <option value="aplica_despensa">Despensa</option>
+                <option value="aplica_prima_dominical">Prima Dominical</option>
+                <option value="aplica_dia_festivo_laborado">Día Festivo Laborado</option>
+                <option value="aplica_dia_descanso">Día Descanso</option>
+                <option value="aplica_desgaste">Desgaste</option>
+                <option value="aplica_nomina_pura">Nomina Pura</option>
+            </select>
+        </div>
+    </div>
+
     <div class="col-12 d-flex justify-content-end">
         <button type="submit" class="btn btn-primary" name="btn_action_next">Actualizar</button>
     </div>
