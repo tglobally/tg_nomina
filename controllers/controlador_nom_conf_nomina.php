@@ -9,6 +9,7 @@ use tglobally\template_tg\html;
 
 class controlador_nom_conf_nomina extends \gamboamartin\nomina\controllers\controlador_nom_conf_nomina
 {
+    public array $estado_aplicaciones;
 
     public function __construct(PDO $link, stdClass $paths_conf = new stdClass())
     {
@@ -94,7 +95,28 @@ class controlador_nom_conf_nomina extends \gamboamartin\nomina\controllers\contr
     public function modifica(bool $header, bool $ws = false): array|stdClass
     {
         $this->titulo_accion = "Modifica Configuración";
+
+        $registro = $this->modelo->registro(registro_id: $this->registro_id);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al obtener registro', data: $registro, header: $header, ws: $ws);
+        }
+
+        $this->estado_aplicaciones = $registro;
+
         return parent::modifica($header, $ws);
+    }
+
+    public function modifica_bd(bool $header, bool $ws): array|stdClass
+    {
+        $aplicaciones = $this->maqueta_aplicaciones(datos: $_POST['aplicaciones']);
+
+        unset($_POST['aplicaciones']);
+        unset($_POST['btn_action_next']);
+
+        $_POST = array_merge($_POST, $aplicaciones);
+        $_POST['descripcion_select'] = $_POST['descripcion'];
+
+        return parent::modifica_bd($header, $ws);
     }
 
 }

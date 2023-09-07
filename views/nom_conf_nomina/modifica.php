@@ -12,13 +12,13 @@
         <div class="controls">
             <select class="form-multi-select" name="aplicaciones[]"
                     multiple="multiple" data-coreui-selection-type="tags" data-coreui-search="true" >
-                <option value="aplica_septimo_dia">Séptimo Día</option>
-                <option value="aplica_despensa">Despensa</option>
-                <option value="aplica_prima_dominical">Prima Dominical</option>
-                <option value="aplica_dia_festivo_laborado">Día Festivo Laborado</option>
-                <option value="aplica_dia_descanso">Día Descanso</option>
-                <option value="aplica_desgaste">Desgaste</option>
-                <option value="aplica_nomina_pura">Nomina Pura</option>
+                <option value="aplica_septimo_dia" <?php echo ($controlador->estado_aplicaciones['nom_conf_nomina_aplica_septimo_dia'] === "activo" ? "selected":"");?>>Séptimo Día</option>
+                <option value="aplica_despensa" <?php echo ($controlador->estado_aplicaciones['nom_conf_nomina_aplica_despensa'] === "activo" ? "selected":"");?>>Despensa</option>
+                <option value="aplica_prima_dominical" <?php echo ($controlador->estado_aplicaciones['nom_conf_nomina_aplica_prima_dominical'] === "activo" ? "selected":"");?>>Prima Dominical</option>
+                <option value="aplica_dia_festivo_laborado" <?php echo ($controlador->estado_aplicaciones['nom_conf_nomina_aplica_dia_festivo_laborado'] === "activo" ? "selected":"");?>>Día Festivo Laborado</option>
+                <option value="aplica_dia_descanso" <?php echo ($controlador->estado_aplicaciones['nom_conf_nomina_aplica_dia_descanso'] === "activo" ? "selected":"");?>>Día Descanso</option>
+                <option value="aplica_desgaste" <?php echo ($controlador->estado_aplicaciones['nom_conf_nomina_aplica_desgaste'] === "activo" ? "selected":"");?>>Desgaste</option>
+                <option value="aplica_nomina_pura" <?php echo ($controlador->estado_aplicaciones['nom_conf_nomina_aplica_nomina_pura'] === "activo" ? "selected":"");?>>Nomina Pura</option>
             </select>
         </div>
     </div>
