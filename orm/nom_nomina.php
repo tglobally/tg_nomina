@@ -156,6 +156,10 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
             return $this->error->error(mensaje: 'Error al obtener cliente del empleado', data: $empleado);
         }
 
+        if($empleado->n_registros <= 0){
+            return $this->error->error(mensaje: 'Error el empleado no tiene relacionado un cliente', data: $empleado);
+        }
+
         $data = $this->get_tg_conf_provisiones(empleado: $empleado, em_empleado_id: $em_empleado_id);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al obtener conf. de provisiones del empleado', data: $data);
@@ -186,6 +190,10 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         $empleado = (new tg_empleado_sucursal($this->link))->filtro_and(filtro: $filtro_empleado);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al obtener cliente del empleado', data: $empleado);
+        }
+
+        if($empleado->n_registros <= 0){
+            return $this->error->error(mensaje: 'Error el empleado no tiene relacionado un cliente', data: $empleado);
         }
 
         $filtro_conf['tg_conf_percepcion.com_sucursal_id'] = $empleado->registros[0]['com_sucursal_id'];
