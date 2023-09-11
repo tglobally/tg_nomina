@@ -322,7 +322,8 @@ class tg_manifiesto extends _modelo_parent{
 
         $keys_provisiones_sum =  array('IMSS','RCV','INFONAVIT','ISN','ISN ADICIONAL','TOTAL IMPUESTO',
             'PRIMA VACACIONAL','VACACIONES','PRIMA DE ANTIGÜEDAD','GRATIFICACIÓN ANUAL (AGUINALDO)',
-            'TOTAL PROVICIONADO','SUMA PERCEPCION','FACTOR DE SERVICIO','SUBTOTAL','IVA','TOTAL');
+            'TOTAL PROVICIONADO','PROV PRIMA VACACIONAL','PROV VACACIONES','PROV PRIMA DE ANTIGÜEDAD',
+            'PROV GRATIFICACIÓN ANUAL (AGUINALDO)','SUMA PERCEPCION','FACTOR DE SERVICIO','SUBTOTAL','IVA','TOTAL');
         $totales = array();
         foreach ($registros_provisiones_excel as $empleado) {
             foreach ($empleado as $campo => $valor) {

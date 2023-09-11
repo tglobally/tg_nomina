@@ -176,6 +176,29 @@ class tg_provision extends _modelo_parent {
             return $this->error->error(mensaje: 'Error al obtener la suma de otros pagos',
                 data: $registro);
         }
+        $tipos_provision = (new tg_tipo_provision($this->link))->registros();
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener tipos',
+                data: $tipos_provision);
+        }
+
+        $total_perc_prov = 0;
+        foreach ($tipos_provision as $tipo_provision){
+            $filtro_per['nom_nomina.id'] = $nom_nomina_id;
+            $filtro_per['nom_percepcion.id'] = $tipo_provision['nom_percepcion_id'];
+            $nom_percep = (new nom_par_percepcion($this->link))->filtro_and(filtro:$filtro_per);
+            if (errores::$error) {
+                return $this->error->error(mensaje: 'Error al obtener percepcion por tipo',
+                    data: $nom_percep);
+            }
+
+            if($nom_percep->n_registros > 0){
+                $datos['prov '.$tipo_provision['tg_tipo_provision_descripcion']] =
+                    round($nom_percep->registros[0]['nom_par_percepcion_importe_exento']+
+                        $nom_percep->registros[0]['nom_par_percepcion_importe_gravado'],2);
+                $total_perc_prov += $datos['prov '.$tipo_provision['tg_tipo_provision_descripcion']];
+            }
+        }
 
         $datos['suma_percepcion'] = round($suma_percepcion + $datos['total_provicionado'] +
             $datos['total_impuesto'] - $subsidio,2);
@@ -185,29 +208,6 @@ class tg_provision extends _modelo_parent {
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener percepcion',data:  $r_nom_par_percepcion);
         }*/
-
-        $tipos_provision = (new tg_tipo_provision($this->link))->registros();
-        if (errores::$error) {
-            return $this->error->error(mensaje: 'Error al obtener tipos',
-                data: $tipos_provision);
-        }
-
-        $total_perc_prov = 0;
-        foreach ($tipos_provision as $tipo_provision){
-            $filtro_per['nom_percepcion.id'] = $tipo_provision;
-            $nom_percep = (new nom_par_percepcion($this->link))->filtro_and(filtro:$filtro_per);
-            if (errores::$error) {
-                return $this->error->error(mensaje: 'Error al obtener percepcion por tipo',
-                    data: $nom_percep);
-            }
-
-            if($nom_percep->n_registros > 0){
-                $datos['prov '.$tipo_provision['tg_tipo_provision_descripcion']] =
-                    round($nom_percep[0]->registros['nom_percepcion_exento']+
-                        $nom_percep[0]->registros['nom_percepcion_gravado'],2);
-                $total_perc_prov += $datos['prov '.$tipo_provision['tg_tipo_provision_descripcion']];
-            }
-        }
 
         $porcentaje = $conf->registros[0]['tg_conf_comision_porcentaje']/100;
 
