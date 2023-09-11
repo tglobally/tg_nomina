@@ -201,7 +201,7 @@ class tg_provision extends _modelo_parent {
             }
 
             if($nom_percep->n_registros > 0){
-                $datos['prov'.$tipo_provision['tg_tipo_provision_descripcion']] =
+                $datos['prov '.$tipo_provision['tg_tipo_provision_descripcion']] =
                     round($nom_percep[0]->registros['nom_percepcion_exento']+
                         $nom_percep[0]->registros['nom_percepcion_gravado'],2);
             }
