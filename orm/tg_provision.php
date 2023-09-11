@@ -186,6 +186,27 @@ class tg_provision extends _modelo_parent {
             return $this->error->error(mensaje: 'Error al obtener percepcion',data:  $r_nom_par_percepcion);
         }*/
 
+        $tipos_provision = (new tg_tipo_provision($this->link))->registros();
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener tipos',
+                data: $tipos_provision);
+        }
+
+        foreach ($tipos_provision as $tipo_provision){
+            $filtro_per['nom_percepcion.id'] = $tipo_provision;
+            $nom_percep = (new nom_par_percepcion($this->link))->filtro_and(filtro:$filtro_per);
+            if (errores::$error) {
+                return $this->error->error(mensaje: 'Error al obtener percepcion por tipo',
+                    data: $nom_percep);
+            }
+
+            if($nom_percep->n_registros > 0){
+                $datos['prov'.$tipo_provision['tg_tipo_provision_descripcion']] =
+                    round($nom_percep[0]->registros['nom_percepcion_exento']+
+                        $nom_percep[0]->registros['nom_percepcion_gravado'],2);
+            }
+        }
+
         $porcentaje = $conf->registros[0]['tg_conf_comision_porcentaje']/100;
 
         $datos['factor_de_servicio'] = round($datos['suma_percepcion']  * $porcentaje,2);
