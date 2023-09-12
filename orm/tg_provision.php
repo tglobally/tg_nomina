@@ -79,7 +79,7 @@ class tg_provision extends _modelo_parent {
         $fecha = date("Y/m/d");
 
         $filtro = array();
-        $filtro['tg_conf_comision.com_sucursal_id']  = $registro['fc_factura_com_sucursal_id'];
+        $filtro['tg_conf_comision.com_sucursal_id']  = $empleado->registros[0]['com_sucursal_id'];
         $filtro_especial[0][$fecha]['operador'] = '>=';
         $filtro_especial[0][$fecha]['valor'] = 'tg_conf_comision.fecha_inicio';
         $filtro_especial[0][$fecha]['comparacion'] = 'AND';
