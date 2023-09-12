@@ -17,7 +17,6 @@ use gamboamartin\nomina\models\nom_incidencia;
 use gamboamartin\nomina\models\nom_par_deduccion;
 use gamboamartin\nomina\models\nom_par_percepcion;
 use gamboamartin\nomina\models\nom_percepcion;
-use tglobally\tg_nomina\models\nom_periodo;
 use gamboamartin\organigrama\models\org_departamento;
 use gamboamartin\organigrama\models\org_sucursal;
 use PDO;
