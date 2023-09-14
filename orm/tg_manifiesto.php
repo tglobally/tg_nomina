@@ -76,7 +76,7 @@ class tg_manifiesto extends _modelo_parent{
         }
 
         if($fc_csd->n_registros < 1){
-            return $this->error->error(mensaje: "Error no existe csd relacionado para la  empresa: ". $this->registro['org_sucursal_id'],
+            return $this->error->error(mensaje: 'Error no existe registro de fc_csd relacionado',
                 data: $fc_csd);
         }
 
@@ -86,7 +86,6 @@ class tg_manifiesto extends _modelo_parent{
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener registro sucursal alianza',data: $tg_sucursal_alianza);
         }
-
 
         $this->registro['tg_sucursal_alianza_id'] = $tg_sucursal_alianza['tg_sucursal_alianza_id'];
 
@@ -116,8 +115,8 @@ class tg_manifiesto extends _modelo_parent{
 
         if (!isset($this->registro['descripcion'])) {
             $this->registro['descripcion'] = $fc_csd['org_empresa_rfc'].' ';
-                $this->registro['descripcion'] .= $this->registro['codigo'];
-            }
+            $this->registro['descripcion'] .= $this->registro['codigo'];
+        }
 
         if (!isset($this->registro['descripcion_select'])) {
             $this->registro['descripcion_select'] = $this->registro['codigo'].' ';
@@ -155,21 +154,21 @@ class tg_manifiesto extends _modelo_parent{
             return $this->error->error(mensaje: 'Error al dar de alta manifiesto',data: $r_alta_bd);
         }
 
-        $tg_tipo_servicio = (new tg_tipo_servicio($this->link))->registro(registro_id: $this->registro['tg_tipo_servicio_id']);
+        $tg_tipo_servicio = (new tg_tipo_servicio($this->link))->registro(
+            registro_id: $this->registro['tg_tipo_servicio_id']);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener tipo de servicio',data: $tg_tipo_servicio);
         }
 
         $filtro_im['fc_csd.id'] = $this->registro['fc_csd_id'];
-        $em_registro_patronal = (new em_registro_patronal($this->link))->filtro_and(columnas: array('em_registro_patronal_id'),
-            filtro: $filtro_im);
+        $em_registro_patronal = (new em_registro_patronal($this->link))->filtro_and(filtro: $filtro_im);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error obtener registro patronal',data:  $em_registro_patronal);
         }
 
         if($em_registro_patronal->n_registros < 1){
-            return $this->error->error(mensaje: "Error no existe  registro patronal relacionado para la  empresa: ".
-                $this->registro['org_sucursal_id'], data: $fc_csd);
+            return $this->error->error(mensaje: 'Error no existe registro patronal relacionado',
+                data:  $em_registro_patronal);
         }
 
         $registro_periodo['codigo'] = $this->registro['codigo'];
@@ -197,20 +196,16 @@ class tg_manifiesto extends _modelo_parent{
             return $this->error->error(mensaje: 'Error al dar de alta manifiesto_periodo',data:  $r_tg_manifiesto_periodo);
         }
 
-        $sube_manifiesto = $this->lee_archivo(registro_id: $r_alta_bd->registro_id, em_registro_patronal: $em_registro_patronal->registros[0],
-            nom_conf_nomina_id: $tg_tipo_servicio['nom_conf_nomina_id'], manifiesto_descripcion: $this->registro['descripcion']);
+        $sube_manifiesto = $this->lee_archivo($r_alta_bd->registro_id);
         if(errores::$error){
-            return $this->error->error(mensaje: 'Error al leer archivo',data:  $sube_manifiesto);
+            return $this->error->error(mensaje: 'Error al dar de alta manifiesto_periodo',data:  $sube_manifiesto);
         }
-
-
-
-/*
-        $descarga_nomina = $this->descarga_nomina($r_alta_bd->registro_id);
-        if(errores::$error){
-            return $this->error->error(mensaje: 'Error al dar de alta manifiesto_periodo',data:  $descarga_nomina);
-        }
-*/
+        /*
+                $descarga_nomina = $this->descarga_nomina($r_alta_bd->registro_id);
+                if(errores::$error){
+                    return $this->error->error(mensaje: 'Error al dar de alta manifiesto_periodo',data:  $descarga_nomina);
+                }
+        */
         return $r_alta_bd;
     }
 
@@ -938,59 +933,6 @@ class tg_manifiesto extends _modelo_parent{
         return $columna;
     }
 
-    public function obten_empleados_excel2(string $ruta_absoluta): array{
-        $columnas = array("ID_TRABAJADOR", "NOMBRE_DEL_TRABAJADOR", "PATERNO", "MATERNO", "SD", "DIAS_LABORADOS", "FALTAS",
-            "INCAPACIDAD", "DIAS_DE_VACACIONES", "DESCANSO_LABORADO", "FESTIVO_LABORADO", "DIAS_DE_PRIMA_DOMINICAL", "PRIMA_VACACIONAL",
-            "AYUDA_TRANSPORTE","PREMIO_ASISTENCIA", "PREMIO_PUNTUALIDAD", "GRATIFICACION_ESPECIAL", "GRATIFICACION", "COMPENSACION",
-            "HORAS_EXTRAS_DOBLES","DESPENSA", "MONTO_NETO", "SEGURO_DE_VIDA", "DESCUENTOS");
-
-        $empleados_excel = Importador::getInstance()->leer_registros(ruta_absoluta: $ruta_absoluta, columnas: $columnas,
-                inicio: "A6");
-        if (errores::$error) {
-            return $this->error->error(mensaje: 'Error recuperar empleados desde layout', data: $empleados_excel);
-        }
-
-        $empleados = array();
-        foreach ($empleados_excel as $registro) {
-            $reg = new stdClass();
-            $reg->codigo = $registro->ID_TRABAJADOR;
-            $reg->nombre = $registro->NOMBRE_DEL_TRABAJADOR;
-            $reg->ap = $registro->PATERNO;
-            $reg->am = $registro->MATERNO;
-            $reg->faltas = $registro->FALTAS ?? 0;
-            $reg->prima_dominical = $registro->DIAS_DE_PRIMA_DOMINICAL ?? 0;
-            $reg->dias_festivos_laborados = $registro->FESTIVO_LABORADO ?? 0;
-            $reg->incapacidades = $registro->INCAPACIDAD ?? 0;
-            $reg->vacaciones = $registro->DIAS_DE_VACACIONES ?? 0;
-            $reg->dias_descanso_laborado = $registro->DESCANSO_LABORADO ?? 0;
-            $reg->compensacion = $registro->COMPENSACION ?? 0;
-            $reg->haberes = 0;
-
-            $reg->prima_vacacional = $registro->PRIMA_VACACIONAL ?? 0;
-            $reg->despensa = $registro->DESPENSA ?? 0;
-            $reg->actividades_culturales = 0;
-            $reg->seguro_vida = $registro->SEGURO_DE_VIDA ?? 0;
-            $reg->caja_ahorro = 0;
-            $reg->anticipo_nomina = 0;
-            $reg->pension_alimenticia = 0;
-            $reg->descuentos = $registro->DESCUENTOS ?? 0;
-            $reg->horas_extras_dobles = $registro->HORAS_EXTRAS_DOBLES ?? 0;
-            $reg->horas_extras_triples = 0;
-            $reg->gratificacion_especial = $registro->GRATIFICACION_ESPECIAL ?? 0;
-            $reg->premio_puntualidad = $registro->PREMIO_PUNTUALIDAD ?? 0;
-            $reg->premio_asistencia = $registro->PREMIO_ASISTENCIA ?? 0;
-            $reg->ayuda_transporte = $registro->AYUDA_TRANSPORTE ?? 0;
-            $reg->productividad = 0;
-            $reg->gratificacion = $registro->GRATIFICACION ?? 0;
-            $reg->monto_neto = $registro->MONTO_NETO ?? 0;
-            $reg->monto_sueldo = 0;
-
-            $empleados[] = $reg;
-        }
-
-        return $empleados;
-    }
-
     public function obten_empleados_excel(string $ruta_absoluta)
     {
         $documento = IOFactory::load($ruta_absoluta);
@@ -1497,6 +1439,59 @@ class tg_manifiesto extends _modelo_parent{
         return $empleados;
     }
 
+    public function obten_empleados_excel2(string $ruta_absoluta): array{
+        $columnas = array("ID_TRABAJADOR", "NOMBRE_DEL_TRABAJADOR", "PATERNO", "MATERNO", "SD", "DIAS_LABORADOS", "FALTAS",
+            "INCAPACIDAD", "DIAS_DE_VACACIONES", "DESCANSO_LABORADO", "FESTIVO_LABORADO", "DIAS_DE_PRIMA_DOMINICAL", "PRIMA_VACACIONAL",
+            "AYUDA_TRANSPORTE","PREMIO_ASISTENCIA", "PREMIO_PUNTUALIDAD", "GRATIFICACION_ESPECIAL", "GRATIFICACION", "COMPENSACION",
+            "HORAS_EXTRAS_DOBLES","DESPENSA", "MONTO_NETO", "SEGURO_DE_VIDA", "DESCUENTOS");
+
+        $empleados_excel = Importador::getInstance()->leer_registros(ruta_absoluta: $ruta_absoluta, columnas: $columnas,
+            inicio: "A6");
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error recuperar empleados desde layout', data: $empleados_excel);
+        }
+
+        $empleados = array();
+        foreach ($empleados_excel as $registro) {
+            $reg = new stdClass();
+            $reg->codigo = $registro->ID_TRABAJADOR;
+            $reg->nombre = $registro->NOMBRE_DEL_TRABAJADOR;
+            $reg->ap = $registro->PATERNO;
+            $reg->am = $registro->MATERNO;
+            $reg->faltas = $registro->FALTAS ?? 0;
+            $reg->prima_dominical = $registro->DIAS_DE_PRIMA_DOMINICAL ?? 0;
+            $reg->dias_festivos_laborados = $registro->FESTIVO_LABORADO ?? 0;
+            $reg->incapacidades = $registro->INCAPACIDAD ?? 0;
+            $reg->vacaciones = $registro->DIAS_DE_VACACIONES ?? 0;
+            $reg->dias_descanso_laborado = $registro->DESCANSO_LABORADO ?? 0;
+            $reg->compensacion = $registro->COMPENSACION ?? 0;
+            $reg->haberes = 0;
+
+            $reg->prima_vacacional = $registro->PRIMA_VACACIONAL ?? 0;
+            $reg->despensa = $registro->DESPENSA ?? 0;
+            $reg->actividades_culturales = 0;
+            $reg->seguro_vida = $registro->SEGURO_DE_VIDA ?? 0;
+            $reg->caja_ahorro = 0;
+            $reg->anticipo_nomina = 0;
+            $reg->pension_alimenticia = 0;
+            $reg->descuentos = $registro->DESCUENTOS ?? 0;
+            $reg->horas_extras_dobles = $registro->HORAS_EXTRAS_DOBLES ?? 0;
+            $reg->horas_extras_triples = 0;
+            $reg->gratificacion_especial = $registro->GRATIFICACION_ESPECIAL ?? 0;
+            $reg->premio_puntualidad = $registro->PREMIO_PUNTUALIDAD ?? 0;
+            $reg->premio_asistencia = $registro->PREMIO_ASISTENCIA ?? 0;
+            $reg->ayuda_transporte = $registro->AYUDA_TRANSPORTE ?? 0;
+            $reg->productividad = 0;
+            $reg->gratificacion = $registro->GRATIFICACION ?? 0;
+            $reg->monto_neto = $registro->MONTO_NETO ?? 0;
+            $reg->monto_sueldo = 0;
+
+            $empleados[] = $reg;
+        }
+
+        return $empleados;
+    }
+
     public function obten_registro_patronal(int $tg_manifiesto_id)
     {
         $tg_manifiesto = (new tg_manifiesto($this->link))->registro(registro_id: $tg_manifiesto_id);
@@ -1514,11 +1509,14 @@ class tg_manifiesto extends _modelo_parent{
     }
 
 
-    public function lee_archivo($registro_id, array $em_registro_patronal, int $nom_conf_nomina_id,
-                                string $manifiesto_descripcion = "DEFAULT"){
+    public function lee_archivo($registro_id){
+        $tg_manifiesto = (new tg_manifiesto($this->link))->registro(registro_id: $registro_id);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener manifiesto', data: $tg_manifiesto);
+        }
         $doc_documento_modelo = new doc_documento($this->link);
-        $doc_documento_modelo->registro['descripcion'] = $manifiesto_descripcion;
-        $doc_documento_modelo->registro['descripcion_select'] = $manifiesto_descripcion;
+        $doc_documento_modelo->registro['descripcion'] = $tg_manifiesto['tg_manifiesto_descripcion'];
+        $doc_documento_modelo->registro['descripcion_select'] = $tg_manifiesto['tg_manifiesto_descripcion'];
         $doc_documento_modelo->registro['doc_tipo_documento_id'] = 1;
         $doc_documento = $doc_documento_modelo->alta_bd(file: $_FILES['archivo']);
         if (errores::$error) {
@@ -1528,6 +1526,11 @@ class tg_manifiesto extends _modelo_parent{
         $empleados_excel = $this->obten_empleados_excel2(ruta_absoluta: $doc_documento->registro['doc_documento_ruta_absoluta']);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error obtener empleados', data: $empleados_excel);
+        }
+
+        $em_registro_patronal = $this->obten_registro_patronal(tg_manifiesto_id: $registro_id);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error obtener registro patronal', data: $em_registro_patronal);
         }
 
         $em_registro_patronal_id = $em_registro_patronal['em_registro_patronal_id'];
@@ -1542,12 +1545,13 @@ class tg_manifiesto extends _modelo_parent{
             if (errores::$error) {
                 return $this->error->error(mensaje: 'Error al al obtener registro de empleado', data: $registro);
             }
-            if ($registro->n_registros <= 0) {
-                return $this->error->error(mensaje: "Error no se encontro al empleado: $empleado_excel->nombre 
-                $empleado_excel->ap $empleado_excel->am con el registro patronal $em_registro_patronal_id", data: $registro);
+            if ($registro->n_registros === 0) {
+                return $this->error->error(mensaje: 'Error se encontro el empleado ' . $empleado_excel->nombre . ' ' .
+                    $empleado_excel->ap . ' ' . $empleado_excel->am, data: $registro);
             }
-
-            $empleados[] = $registro->registros[0];
+            if ($registro->n_registros > 0) {
+                $empleados[] = $registro->registros[0];
+            }
         }
 
         $filtro_per['tg_manifiesto.id'] = $registro_id;
@@ -1560,7 +1564,7 @@ class tg_manifiesto extends _modelo_parent{
             $empleados_res = array();
             foreach ($empleados as $empleado) {
                 $filtro_em['em_empleado.id'] = $empleado['em_empleado_id'];
-                $filtro_em['nom_conf_nomina.id'] = $nom_conf_nomina_id;
+                $filtro_em['nom_conf_nomina.id'] = $tg_manifiesto['nom_conf_nomina_id'];
                 $conf_empleado = (new nom_conf_empleado($this->link))->filtro_and(filtro: $filtro_em);
                 if (errores::$error) {
                     return $this->error->error(mensaje: 'Error al obtener configuracion de empleado',
@@ -1953,7 +1957,7 @@ class tg_manifiesto extends _modelo_parent{
         }
 
         if($tg_sucursal_alianza->n_registros < 1){
-            return $this->error->error(mensaje: "Error no existe una alianza relacionada al cliente: '$com_sucursal_id'",
+            return $this->error->error(mensaje: 'Error no existe alianza',
                 data: $tg_sucursal_alianza);
         }
 
