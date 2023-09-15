@@ -1560,6 +1560,7 @@ class tg_manifiesto extends _modelo_parent{
             return $this->error->error(mensaje: 'Error al al obtener periodos', data: $nom_periodos);
         }
 
+
         foreach ($nom_periodos->registros as $nom_periodo) {
             $empleados_res = array();
             foreach ($empleados as $empleado) {
@@ -1572,6 +1573,7 @@ class tg_manifiesto extends _modelo_parent{
                 }
 
                 if (isset($conf_empleado->registros[0])) {
+                    $conf_empleado->registros[0]['nom_periodo_id'] = $nom_periodo['nom_periodo_id'];
                     $empleados_res[] = $conf_empleado->registros[0];
                 }
             }
@@ -1596,6 +1598,7 @@ class tg_manifiesto extends _modelo_parent{
 
                             $registro_inc['nom_tipo_incidencia_id'] = 1;
                             $registro_inc['em_empleado_id'] = $empleado['em_empleado_id'];
+                            $registro_inc['nom_periodo_id'] = $empleado['nom_periodo_id'];
                             $registro_inc['n_dias'] = $dias_faltas;
                             $registro_inc['fecha_incidencia'] = $nom_periodo['nom_periodo_fecha_inicial_pago'];
 
@@ -1609,6 +1612,7 @@ class tg_manifiesto extends _modelo_parent{
                         if ((int)$empleado_excel->faltas > 0) {
                             $registro_inc['nom_tipo_incidencia_id'] = 1;
                             $registro_inc['em_empleado_id'] = $empleado['em_empleado_id'];
+                            $registro_inc['nom_periodo_id'] = $empleado['nom_periodo_id'];
                             $registro_inc['n_dias'] = $empleado_excel->faltas;
                             $registro_inc['fecha_incidencia'] = $nom_periodo['nom_periodo_fecha_inicial_pago'];
 
@@ -1621,6 +1625,7 @@ class tg_manifiesto extends _modelo_parent{
                         if ((int)$empleado_excel->prima_dominical > 0) {
                             $registro_inc['nom_tipo_incidencia_id'] = 2;
                             $registro_inc['em_empleado_id'] = $empleado['em_empleado_id'];
+                            $registro_inc['nom_periodo_id'] = $empleado['nom_periodo_id'];
                             $registro_inc['n_dias'] = $empleado_excel->prima_dominical;
                             $registro_inc['fecha_incidencia'] = $nom_periodo['nom_periodo_fecha_inicial_pago'];
 
@@ -1633,6 +1638,7 @@ class tg_manifiesto extends _modelo_parent{
                         if ((int)$empleado_excel->dias_festivos_laborados > 0) {
                             $registro_inc['nom_tipo_incidencia_id'] = 3;
                             $registro_inc['em_empleado_id'] = $empleado['em_empleado_id'];
+                            $registro_inc['nom_periodo_id'] = $empleado['nom_periodo_id'];
                             $registro_inc['n_dias'] = $empleado_excel->dias_festivos_laborados;
                             $registro_inc['fecha_incidencia'] = $nom_periodo['nom_periodo_fecha_inicial_pago'];
 
@@ -1645,6 +1651,7 @@ class tg_manifiesto extends _modelo_parent{
                         if ((int)$empleado_excel->incapacidades > 0) {
                             $registro_inc['nom_tipo_incidencia_id'] = 4;
                             $registro_inc['em_empleado_id'] = $empleado['em_empleado_id'];
+                            $registro_inc['nom_periodo_id'] = $empleado['nom_periodo_id'];
                             $registro_inc['n_dias'] = $empleado_excel->incapacidades;
                             $registro_inc['fecha_incidencia'] = $nom_periodo['nom_periodo_fecha_inicial_pago'];
 
@@ -1657,6 +1664,7 @@ class tg_manifiesto extends _modelo_parent{
                         if ((int)$empleado_excel->vacaciones > 0) {
                             $registro_inc['nom_tipo_incidencia_id'] = 5;
                             $registro_inc['em_empleado_id'] = $empleado['em_empleado_id'];
+                            $registro_inc['nom_periodo_id'] = $empleado['nom_periodo_id'];
                             $registro_inc['n_dias'] = $empleado_excel->vacaciones;
                             $registro_inc['fecha_incidencia'] = $nom_periodo['nom_periodo_fecha_inicial_pago'];
 
@@ -1669,6 +1677,7 @@ class tg_manifiesto extends _modelo_parent{
                         if ((int)$empleado_excel->dias_descanso_laborado > 0) {
                             $registro_inc['nom_tipo_incidencia_id'] = 6;
                             $registro_inc['em_empleado_id'] = $empleado['em_empleado_id'];
+                            $registro_inc['nom_periodo_id'] = $empleado['nom_periodo_id'];
                             $registro_inc['n_dias'] = $empleado_excel->dias_descanso_laborado;
                             $registro_inc['fecha_incidencia'] = $nom_periodo['nom_periodo_fecha_inicial_pago'];
 
