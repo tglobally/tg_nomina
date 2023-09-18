@@ -22,6 +22,7 @@ use gamboamartin\im_registro_patronal\models\im_detalle_conf_prestaciones;
 use gamboamartin\im_registro_patronal\models\im_movimiento;
 use gamboamartin\nomina\controllers\xml_nom;
 use gamboamartin\nomina\models\nom_conf_empleado;
+use gamboamartin\nomina\models\nom_incidencia;
 use gamboamartin\nomina\models\nom_nomina_documento;
 use gamboamartin\nomina\models\nom_par_percepcion;
 use gamboamartin\plugins\files;
@@ -73,6 +74,8 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
             return $this->error->error(mensaje: 'Error al calcular los dias pagados', data: $dias);
         }
 
+        $dias_pagos = $dias->dias_vacaciones + $dias->dias_septimo_dia + $dias->dias_pagados_reales_sep;
+
         if(!isset($dias->dias_pagados_reales_sep) && $dias->dias_pagados_reales_sep <= 0){
             return $this->error->error(mensaje: 'Error num_dias_pagados no tiene el formato correcto', data: $this->registro);
         }
@@ -83,10 +86,9 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al ejecutar acciones de conf. de provisiones', data: $acciones);
         }
-        
 
         $acciones = $this->conf_percepciones_acciones(em_empleado_id: $this->registro['em_empleado_id'],
-            nom_nomina_id: $alta->registro_id, num_dias_pagados: $dias->dias_pagados_reales_sep);
+            nom_nomina_id: $alta->registro_id, num_dias_pagados: $dias_pagos);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al ejecutar acciones de conf. de percepciones', data: $acciones);
         }
