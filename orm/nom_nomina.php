@@ -46,6 +46,23 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
     public function alta_bd(): array|stdClass
     {
         $conf_empl = $this->registro['nom_conf_empleado_id'];
+        $dias_periodo = $this->registro['num_dias_pagados'];
+
+        $incidencias = (new nom_incidencia($this->link))->get_incidencias_faltas(em_empleado_id: $this->registro['em_empleado_id'],
+            nom_periodo_id: $this->registro['nom_periodo_id']);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener las incidencias', data: $incidencias);
+        }
+
+        $total = 0;
+
+        if ($incidencias->n_registros > 0){
+            foreach ($incidencias->registros as $incidencia){
+                $total += $incidencia['nom_incidencia_n_dias'];
+            }
+        }
+
+        $dias_periodo -= $total;
 
         $movimiento = (new im_movimiento($this->link))->filtro_and(filtro: array("em_empleado.id" => $this->registro['em_empleado_id']),
             limit: 1, order: array("im_movimiento_id" => "DESC"));
@@ -74,8 +91,6 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
             return $this->error->error(mensaje: 'Error al calcular los dias pagados', data: $dias);
         }
 
-        $dias_pagos = $dias->dias_vacaciones + $dias->dias_septimo_dia + $dias->dias_pagados_reales_sep;
-
         if(!isset($dias->dias_pagados_reales_sep) && $dias->dias_pagados_reales_sep <= 0){
             return $this->error->error(mensaje: 'Error num_dias_pagados no tiene el formato correcto', data: $this->registro);
         }
@@ -88,7 +103,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         }
 
         $acciones = $this->conf_percepciones_acciones(em_empleado_id: $this->registro['em_empleado_id'],
-            nom_nomina_id: $alta->registro_id, num_dias_pagados: $dias_pagos);
+            nom_nomina_id: $alta->registro_id, num_dias_pagados: $dias_periodo);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al ejecutar acciones de conf. de percepciones', data: $acciones);
         }
