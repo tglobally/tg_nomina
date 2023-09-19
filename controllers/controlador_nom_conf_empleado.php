@@ -18,6 +18,8 @@ use tglobally\tg_nomina\models\tg_tipo_provision;
 
 class controlador_nom_conf_empleado extends \gamboamartin\nomina\controllers\controlador_nom_conf_empleado
 {
+    public string $link_asigna_configuracion = '';
+
     public function __construct(PDO $link, stdClass $paths_conf = new stdClass())
     {
         $html_base = new html();
@@ -27,7 +29,10 @@ class controlador_nom_conf_empleado extends \gamboamartin\nomina\controllers\con
         $this->titulo_pagina = "Nomina - Conf. Empleado";
         $this->titulo_accion = "Listado de Configuraciones";
 
-        $acciones = $this->define_acciones_menu(acciones: array("alta" => $this->link_alta));
+        $hd = "index.php?seccion=nom_conf_empleado&accion=asigna_configuracion&session_id=$this->session_id";
+        $this->link_asigna_configuracion = $hd;
+
+        $acciones = $this->define_acciones_menu(acciones: array("alta" => $this->link_alta, "alta masiva" => $this->link_asigna_configuracion));
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al integrar acciones para el menu', data: $acciones);
             print_r($error);
@@ -38,7 +43,6 @@ class controlador_nom_conf_empleado extends \gamboamartin\nomina\controllers\con
     public function alta(bool $header, bool $ws = false): array|string
     {
         $this->titulo_accion = "Alta Configuración";
-
         return parent::alta($header, $ws);
     }
 
@@ -47,6 +51,51 @@ class controlador_nom_conf_empleado extends \gamboamartin\nomina\controllers\con
         $_POST['descripcion_select'] = $_POST['descripcion'];
 
         return parent::alta_bd($header, $ws);
+    }
+
+    public function asigna_configuracion(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
+    {
+        $this->titulo_accion = "Alta Masiva de Configuraciones";
+
+        $r_alta = $this->init_alta();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar alta', data: $r_alta, header: $header, ws: $ws);
+        }
+
+        $keys_selects = $this->init_selects_inputs();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar selects', data: $keys_selects, header: $header,
+                ws: $ws);
+        }
+        $keys_selects['em_empleado_id']->con_registros = false;
+
+        $inputs = $this->inputs(keys_selects: $keys_selects);
+        if (errores::$error) {
+            return $this->retorno_error(
+                mensaje: 'Error al obtener inputs', data: $inputs, header: $header, ws: $ws);
+        }
+
+        return $r_alta;
+    }
+
+    protected function campos_view(): array
+    {
+        $keys = new stdClass();
+        $keys->inputs = array('codigo', 'descripcion');
+        $keys->selects = array();
+
+        $init_data = array();
+        $init_data['em_empleado'] = "gamboamartin\\empleado";
+        $init_data['em_cuenta_bancaria'] = "gamboamartin\\empleado";
+        $init_data['nom_conf_nomina'] = "gamboamartin\\nomina";
+        $init_data['com_sucursal'] = "gamboamartin\\comercial";
+
+        $campos_view = $this->campos_view_base(init_data: $init_data, keys: $keys);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al inicializar campo view', data: $campos_view);
+        }
+
+        return $campos_view;
     }
 
     protected function init_datatable(): stdClass
@@ -66,6 +115,14 @@ class controlador_nom_conf_empleado extends \gamboamartin\nomina\controllers\con
         $datatables->menu_active = true;
 
         return $datatables;
+    }
+
+    public function init_selects_inputs(): array
+    {
+        $keys_selects = parent::init_selects_inputs();
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "com_sucursal_id", label: "Cliente",
+            cols: 6);
+        return $keys_selects;
     }
 
     public function modifica(bool $header, bool $ws = false): array|stdClass
