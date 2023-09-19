@@ -1,7 +1,5 @@
 let sl_cliente = $("#com_sucursal_id");
-let sl_empleado = $("#em_empleado_id");
-
-
+const sl_empleados = document.getElementById('empleados')
 
 let sl_empresa = $("#org_sucursal_id");
 
@@ -11,14 +9,31 @@ sl_cliente.change(function () {
     let url = get_url("tg_empleado_sucursal","get_empleados", {com_sucursal_id: selected.val()});
 
     get_data(url, function (data) {
-        sl_empleado.empty();
 
-        integra_new_option(sl_empleado,'Seleccione un registro','-1');
+        let index = sl_empleados.options.length;
+        while (index--) {
+            if (selected[index]) {
+                sl_empleados.remove(index);
+            }
+        }
+
+        let options = [];
 
         $.each(data.registros, function( index, registro ) {
-            integra_new_option(sl_empleado,registro.em_empleado_descripcion_select, registro.em_empleado_id);
+            options.push({
+                value: registro.em_empleado_id,
+                text: registro.em_empleado_descripcion_select
+            });
         });
-        sl_empleado.selectpicker('refresh');
+
+        if (sl_empleados) {
+            new coreui.MultiSelect(sl_empleados, {
+                name: 'empleados',
+                options: options,
+                search: true
+            })
+        }
+
     });
 })
 
