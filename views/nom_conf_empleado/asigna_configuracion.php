@@ -8,10 +8,8 @@
     <div class="control-group col-sm-12">
         <label class="form-label" for="empleados">Empleados</label>
         <div class="controls">
-            <select  class="form-multi-select" name="empleados[]"
+            <select id="lista" class="form-multi-select" name="empleados[]"
                     multiple="multiple" data-coreui-selection-type="tags" data-coreui-search="true" >
-                <option value="32">Séptimo Día</option>
-                <option value="1952">Despensa</option>
             </select>
         </div>
     </div>
