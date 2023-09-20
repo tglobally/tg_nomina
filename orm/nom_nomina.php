@@ -97,7 +97,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
 
         $acciones = $this->conf_provisiones_acciones(em_empleado_id: $this->registro['em_empleado_id'],
             nom_nomina_id: $alta->registro_id, fecha: $this->registro['fecha_pago'], conf_empl: $conf_empl,
-            dias_laborados: $dias->dias_pagados_reales_sep);
+            dias_laborados: $dias_periodo);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al ejecutar acciones de conf. de provisiones', data: $acciones);
         }
@@ -302,7 +302,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
             case "PRIMA VACACIONAL":
                 $monto = $tg_conf_provision['em_empleado_salario_diario'] * $detalle->registros[0]['im_detalle_conf_prestaciones_n_dias_vacaciones'];
                 $monto /= 365;
-                $monto *= $this->registro['num_dias_pagados'];
+                $monto *= $dias_laborados;
                 $monto *= 0.25;
                 break;
             case "VACACIONES":
@@ -314,7 +314,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
                 $monto = $tg_conf_provision['em_empleado_salario_diario'];
                 $monto *= 12;
                 $monto /= 365;
-                $monto *= $this->registro['num_dias_pagados'];
+                $monto *= $dias_laborados;
                 break;
             case "GRATIFICACIÓN ANUAL (AGUINALDO)":
                 $monto = $tg_conf_provision['em_empleado_salario_diario'] * $detalle->registros[0]['im_detalle_conf_prestaciones_n_dias_aguinaldo'];
