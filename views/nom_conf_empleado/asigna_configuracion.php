@@ -8,7 +8,7 @@
     <div class="control-group col-sm-12">
         <label class="form-label" for="empleados">Empleados</label>
         <div class="controls">
-            <select id="lista" class="form-multi-select" name="empleados[]"
+            <select class="form-multi-select lista" name="empleados[]"
                     multiple="multiple" data-coreui-selection-type="tags" data-coreui-search="true" >
             </select>
         </div>

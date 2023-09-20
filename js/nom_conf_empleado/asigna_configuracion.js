@@ -1,7 +1,8 @@
 let sl_cliente = $("#com_sucursal_id");
-let sl_empleados = $("#lista");
-let myMultiSelect = document.getElementById('lista')
-let instance = new coreui.MultiSelect(myMultiSelect, {})
+let sl_empleados = $(".lista");
+let myMultiSelect = document.getElementsByClassName('lista')
+
+let instance = new coreui.MultiSelect(myMultiSelect[0], {})
 
 sl_cliente.change(function () {
     let selected = $(this).find('option:selected');
@@ -18,7 +19,6 @@ sl_cliente.change(function () {
             }));
         });
 
-        $('#lista')
         instance.update();
     });
 })
