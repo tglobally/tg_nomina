@@ -480,7 +480,7 @@ class exportador_eliminar
     }
 
     public function genera_salida_xls(bool $header, Spreadsheet $libro, string $name, string $path_base,
-                                      int $registro_id = 0, string $session_id = ''): array|string
+                                      string $enlace_salida = ''): array|string
     {
         if(trim($name) === ''){
             $error = $this->error->error('Error al name no puede venir vacio',$name);
