@@ -209,10 +209,8 @@ class tg_provision extends _modelo_parent {
             return $this->error->error(mensaje: 'Error al obtener percepcion',data:  $r_nom_par_percepcion);
         }*/
 
-        $porcentaje = $conf->registros[0]['tg_conf_comision_porcentaje']/100;
-
         $suma_percepcion_final = $datos['suma_percepcion'] - $total_perc_prov;
-        $datos['factor_de_servicio'] = round($suma_percepcion_final  * $porcentaje,2);
+        $datos['factor_de_servicio'] = round($suma_percepcion_final  * $conf->registros[0]['tg_conf_comision_porcentaje'],2);
         $datos['subtotal'] = round($suma_percepcion_final + $datos['factor_de_servicio'],2);
         $datos['iva'] = round($datos['subtotal'] * .16,2);
         $datos['total'] = round($datos['subtotal'] + $datos['iva'],2);
