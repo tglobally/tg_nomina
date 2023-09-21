@@ -78,7 +78,7 @@ class exportador_eliminar
     public function genera_xls(bool  $header, string $name, array $nombre_hojas, array $keys_hojas, string $path_base,
                                array $size_columnas = array(), array $centers = array(), array $moneda = array(),
                                array $moneda_sin_decimal = array(), string $color_contenido = 'FFFFFF',
-                               string $color_encabezado = 'FFFFFF'): array|string
+                               string $color_encabezado = 'FFFFFF', string $enlace_salida = ''): array|string
     {
         if(trim($name) === ''){
             $error = $this->error->error('Error al $name no puede venir vacio', $name);
@@ -480,7 +480,7 @@ class exportador_eliminar
     }
 
     public function genera_salida_xls(bool $header, Spreadsheet $libro, string $name, string $path_base,
-                                      int $registro_id = 0, string $session_id = ''): array|string
+                                      string $enlace_salida = ''): array|string
     {
         if(trim($name) === ''){
             $error = $this->error->error('Error al name no puede venir vacio',$name);
