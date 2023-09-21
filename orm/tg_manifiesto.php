@@ -1913,6 +1913,18 @@ class tg_manifiesto extends _modelo_parent{
                             }
                         }
 
+                        if ($empleado_excel->infonavit > 0) {
+                            $nom_par_deduccion_sep = array();
+                            $nom_par_deduccion_sep['nom_nomina_id'] = $alta_empleado->registro_id;
+                            $nom_par_deduccion_sep['nom_deduccion_id'] = 4;
+                            $nom_par_deduccion_sep['importe_gravado'] = $empleado_excel->infonavit;
+
+                            $r_alta_nom_par_deduccion = (new nom_par_deduccion($this->link))->alta_registro(registro: $nom_par_deduccion_sep);
+                            if (errores::$error) {
+                                return $this->error->error(mensaje: 'Error al insertar deduccion default', data: $r_alta_nom_par_deduccion);
+                            }
+                        }
+
                         if ($empleado_excel->monto_neto > 0) {
 
                             $nom_nomina = (new nom_nomina($this->link))->registro(registro_id: $alta_empleado->registro_id);
