@@ -1443,7 +1443,7 @@ class tg_manifiesto extends _modelo_parent{
         $columnas = array("ID_TRABAJADOR", "NOMBRE_DEL_TRABAJADOR", "PATERNO", "MATERNO", "SD", "DIAS_LABORADOS", "FALTAS",
             "INCAPACIDAD", "DIAS_DE_VACACIONES", "DESCANSO_LABORADO", "FESTIVO_LABORADO", "DIAS_DE_PRIMA_DOMINICAL", "PRIMA_VACACIONAL",
             "AYUDA_TRANSPORTE","PREMIO_ASISTENCIA", "PREMIO_PUNTUALIDAD", "GRATIFICACION_ESPECIAL", "GRATIFICACION", "COMPENSACION",
-            "HORAS_EXTRAS_DOBLES","DESPENSA", "MONTO_NETO", "SEGURO_DE_VIDA", "DESCUENTOS");
+            "HORAS_EXTRAS_DOBLES","DESPENSA", "MONTO_NETO", "SEGURO_DE_VIDA", "DESCUENTOS", "INFONAVIT");
 
         $empleados_excel = Importador::getInstance()->leer_registros(ruta_absoluta: $ruta_absoluta, columnas: $columnas,
             inicio: "A6");
@@ -1485,6 +1485,7 @@ class tg_manifiesto extends _modelo_parent{
             $reg->gratificacion = $registro->GRATIFICACION ?? 0;
             $reg->monto_neto = $registro->MONTO_NETO ?? 0;
             $reg->monto_sueldo = 0;
+            $reg->infonavit = $registro->INFONAVIT ?? 0;
 
             $empleados[] = $reg;
         }
