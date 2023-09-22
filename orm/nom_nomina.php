@@ -46,7 +46,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
     public function alta_bd(): array|stdClass
     {
         $conf_empl = $this->registro['nom_conf_empleado_id'];
-        $dias_periodo = $this->registro['num_dias_pagados'];
+        $dias_pagado = $this->registro['num_dias_pagados'];
 
         $incidencias = (new nom_incidencia($this->link))->get_incidencias_faltas(em_empleado_id: $this->registro['em_empleado_id'],
             nom_periodo_id: $this->registro['nom_periodo_id']);
@@ -62,7 +62,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
             }
         }
 
-        $dias_periodo -= $total;
+        $dias_periodo = $dias_pagado - $total;
 
         $movimiento = (new im_movimiento($this->link))->filtro_and(filtro: array("em_empleado.id" => $this->registro['em_empleado_id']),
             limit: 1, order: array("im_movimiento_id" => "DESC"));
@@ -97,7 +97,7 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
 
         $acciones = $this->conf_provisiones_acciones(em_empleado_id: $this->registro['em_empleado_id'],
             nom_nomina_id: $alta->registro_id, fecha: $this->registro['fecha_pago'], conf_empl: $conf_empl,
-            dias_laborados: $dias_periodo);
+            dias_laborados: $dias_pagado);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al ejecutar acciones de conf. de provisiones', data: $acciones);
         }
