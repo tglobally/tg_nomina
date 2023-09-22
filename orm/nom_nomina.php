@@ -287,10 +287,11 @@ class nom_nomina extends \gamboamartin\nomina\models\nom_nomina
         $inicio = new \DateTime($tg_conf_provision['em_empleado_fecha_antiguedad']);
         $ahora = new \DateTime(date("Y-m-d"));
         $diferencia = $ahora->diff($inicio);
+        $year = ceil($diferencia->days/365);
 
         $filtro = array();
         $filtro['im_detalle_conf_prestaciones.im_conf_prestaciones_id'] = $pres_empresa->registros[0]['im_conf_prestaciones_id'];
-        $filtro['im_detalle_conf_prestaciones.n_year'] = $diferencia->y;
+        $filtro['im_detalle_conf_prestaciones.n_year'] = $year;
         $detalle = (new im_detalle_conf_prestaciones($this->link))->filtro_and(filtro: $filtro);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al obtener prestaciones', data: $detalle);
