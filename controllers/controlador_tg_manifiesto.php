@@ -1497,6 +1497,20 @@ class controlador_tg_manifiesto extends _ctl_base
         //return $this->nominas;
     }
 
+    public function descarga_layout(bool $header, bool $ws = false): array|stdClass
+    {
+        $res = (new tg_manifiesto($this->link))->descarga_layout();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al generar xls', data: $res, header: $header,
+                ws: $ws);
+        }
+
+        $link = "./index.php?seccion=tg_manifiesto&accion=lista&registro_id=" . $this->registro_id;
+        $link .= "&session_id=$this->session_id";
+        header('Location:' . $link);
+        exit;
+        //return $this->nominas;
+    }
 
 
 

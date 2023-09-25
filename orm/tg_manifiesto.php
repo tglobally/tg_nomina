@@ -413,6 +413,41 @@ class tg_manifiesto extends _modelo_parent{
         return $xls;
     }
 
+    public function descarga_layout()
+    {
+        $exportador = (new exportador_eliminar(num_hojas: 1));
+        $keys = array("ID TRABAJADOR","NOMBRE DEL TRABAJADOR ","PATERNO","MATERNO","SD","DÍAS LABORADOS","FALTAS",
+            "INCAPACIDAD","DÍAS DE VACACIONES","DESCANSO LABORADO","FESTIVO LABORADO","DÍAS DE PRIMA DOMINICAL",
+            "PRIMA VACACIONAL","AYUDA TRANSPORTE","PREMIO ASISTENCIA","PREMIO PUNTUALIDAD","GRATIFICACION ESPECIAL",
+            "GRATIFICACION","COMPENSACION","HORAS EXTRAS DOBLES","DESPENSA","MONTO NETO","SEGURO DE VIDA","DESCUENTOS",
+            "DESCUENTO");
+        foreach ($keys as $key) {
+            $keys[$key] = strtoupper(str_replace('_', ' ', $key));
+        }
+
+        $registros = array();
+        $keys_hojas = array();
+        $keys_hojas['LAYOUT'] = new stdClass();
+        $keys_hojas['LAYOUT']->keys = $keys;
+        $keys_hojas['LAYOUT']->registros = $registros;
+        $keys_hojas['LAYOUT']->inicio_fila_encabezado =  1;
+        $keys_hojas['LAYOUT']->inicio_fila_contenido = 2;
+
+        $xls = $exportador->genera_xls(header: true, name: "layout",
+            nombre_hojas: array("LAYOUT"), keys_hojas: $keys_hojas,
+            path_base: (new generales())->path_base,  color_contenido: 'DCE6FF', color_encabezado: '0070C0');
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al generar xls', data: $xls);
+        }
+        $controlador = new controlador_tg_manifiesto($this->link);
+
+        $link = "./index.php?seccion=tg_manifiesto&accion=lista&registro_id=" . $this->registro_id;
+        $link .= "&session_id=$controlador->session_id";
+        header('Location:' . $link);
+
+        return $xls;
+    }
+
     public function obten_columna_faltas(Spreadsheet $documento)
     {
         $totalDeHojas = $documento->getSheetCount();
