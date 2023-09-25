@@ -81,6 +81,8 @@ class controlador_tg_manifiesto extends _ctl_base
 
     public string $link_tg_manifiesto_exportar_documentos = '';
 
+    public string $link_descarga_layout = '';
+
     public array $nominas_seleccionadas = array();
 
     public function __construct(PDO      $link, html $html = new \gamboamartin\template_1\html(),
@@ -100,7 +102,11 @@ class controlador_tg_manifiesto extends _ctl_base
         parent::__construct(html: $html_, link: $link, modelo: $modelo, obj_link: $obj_link, datatables: $datatables,
             paths_conf: $paths_conf);
 
-        $acciones = $this->define_acciones_menu(acciones: array("alta" => $this->link_alta));
+        $hd = "index.php?seccion=tg_manifiesto&accion=descarga_layout&session_id=$this->session_id";
+        $this->link_descarga_layout = $hd;
+
+        $acciones = $this->define_acciones_menu(acciones: array("alta" => $this->link_alta,
+            'descarga_layout'=> $this->link_descarga_layout ));
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al integrar acciones para el menu', data: $acciones);
             print_r($error);

@@ -420,7 +420,7 @@ class tg_manifiesto extends _modelo_parent{
             "INCAPACIDAD","DÍAS DE VACACIONES","DESCANSO LABORADO","FESTIVO LABORADO","DÍAS DE PRIMA DOMINICAL",
             "PRIMA VACACIONAL","AYUDA TRANSPORTE","PREMIO ASISTENCIA","PREMIO PUNTUALIDAD","GRATIFICACION ESPECIAL",
             "GRATIFICACION","COMPENSACION","HORAS EXTRAS DOBLES","DESPENSA","MONTO NETO","SEGURO DE VIDA","DESCUENTOS",
-            "DESCUENTO");
+            "DESCUENTO","INFONAVIT");
         foreach ($keys as $key) {
             $keys[$key] = strtoupper(str_replace('_', ' ', $key));
         }
