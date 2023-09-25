@@ -510,10 +510,8 @@ class exportador_eliminar
                 print_r($error);
                 die('Error');
             }
-
-            $link = "./index.php?seccion=tg_manifiesto&accion=lista&registro_id=" . $registro_id;
-            $link .= "&session_id=$session_id";
-            header('Location:' . $link);
+            
+            header('Location:' . $enlace_salida);
             exit;
         }
 
